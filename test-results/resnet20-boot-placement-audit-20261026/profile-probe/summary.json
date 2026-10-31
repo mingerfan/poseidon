@@ -1,0 +1,36 @@
+{
+  "scope": "Exact source d13 ReLU expression compiled alone; nominal 30-bit logical planning only; no full-model compilation or native CKKS execution. Input scale40. Latency arrays extended by repeating final entries solely for feasibility probing.",
+  "rows": [
+    {
+      "budget": 18,
+      "boot_scale": 45,
+      "boots": 1,
+      "return_type": "return %318 : tensor<1x!ckks.poly<2 * 45 * 1>>",
+      "elapsed": 0.15674751400365494
+    },
+    {
+      "budget": 25,
+      "boot_scale": 45,
+      "boots": 0,
+      "return_type": "return %327 : tensor<1x!ckks.poly<2 * 40 * 2>>",
+      "elapsed": 0.045160678011598065,
+      "relu_q_consumed": 24
+    },
+    {
+      "budget": 25,
+      "boot_scale": 40,
+      "boots": 0,
+      "return_type": "return %327 : tensor<1x!ckks.poly<2 * 40 * 2>>",
+      "elapsed": 0.05145325599005446,
+      "relu_q_consumed": 24
+    },
+    {
+      "budget": 30,
+      "boot_scale": 40,
+      "boots": 0,
+      "return_type": "return %327 : tensor<1x!ckks.poly<2 * 40 * 7>>",
+      "elapsed": 0.04387403398868628,
+      "relu_q_consumed": 24
+    }
+  ]
+}

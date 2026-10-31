@@ -1,0 +1,8 @@
+{
+  "poseidon": "280e47159ff7b4c201a6bd8f77b37536edc2bbc9",
+  "runtime": "378bd95be9ca44f5e9ae7ab555f6f131c5435f2c",
+  "dacapo": "89288174c13a034839f356ce892ad13eefdaddc7",
+  "branch": "experiment/native-scale-planning",
+  "uncommitted": true,
+  "modified_sources_match_built_remote_overlay": true
+}

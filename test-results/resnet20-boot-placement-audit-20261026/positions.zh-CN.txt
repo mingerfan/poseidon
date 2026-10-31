@@ -1,0 +1,188 @@
+历史计划说明：本文件只核对10月21日57次旧计划；10月24日当前保留模式为37次，见同目录latest-positions.zh-CN.txt。
+
+ResNet20 Boot位置核对（2026-10-26）
+对象：2026-10-21归档的真实ReLU DSL及optimized/depth-dp逻辑CKKS计划。
+方法：将19个ReLU的算术表达式逐一对应到源码P1/P2/P3；剥离管理节点与编码1的scale对齐乘法，常量比较使用12位有效数字。
+这是结构核对；没有重编译、没有运行CKKS/GPU数值测试，没有修改生产源码。
+手工版本：18次完整Boot，9个残差块各2次，stem不Boot；36是EvalMod子调用次数。
+optimized：57 = P1后19 + P2后19 + stem P3后1 + conv2偏置前9 + 前8个block输出后8 + pool后1。
+depth-dp：113 = P1后19 + P2后19 + 多项式边界保留ReLU输入38 + 保留shortcut18 + residual sum后9 + 其余边界10。
+depth-dp多出的38+18=56次刷新针对保留的ReLU输入和shortcut；其余57次的位置也有变化。
+手工参数：Boot Q6→Q31/scale40；ReLU Q31→Q9（消耗22Q），后续卷积到Q6。
+自动参数：Boot输出physical level22/scale45，工作下界level4，可用18Q；不能把18与57解释为同参数插入算法的净差距。
+下面的level为物理level，按归档审计的logical level+3换算；SSA名和行号对应解压后的logical.mlir。
+源文件：test-results/model-regression-20261021/server/resnet20-after/optimized/logical.mlir.gz
+源文件SHA256：eb54a9c2f46d8b68c906507235d399721acf6921d18313ab9b0eb9f49f39c16b
+
+optimized的全部57个Boot：
+01. stem.relu / P1(15次)结果之后
+    %276，MLIR行279，输入level9/scale60 → 输出level22/scale45
+    %276 = "ckks.bootstrapc"(%275) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+02. stem.relu / P2(15次)结果之后
+    %380，MLIR行383，输入level11/scale55 → 输出level22/scale45
+    %380 = "ckks.bootstrapc"(%379) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+03. stem.relu / P3(27次)结果之后
+    %537，MLIR行540，输入level9/scale65 → 输出level22/scale45
+    %537 = "ckks.bootstrapc"(%536) : (tensor<1x!ckks.poly<2 * 65 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+04. layer1.0.relu1 / P1(15次)结果之后
+    %1084，MLIR行1087，输入level4/scale65 → 输出level22/scale45
+    %1084 = "ckks.bootstrapc"(%1083) : (tensor<1x!ckks.poly<2 * 65 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+05. layer1.0.relu1 / P2(15次)结果之后
+    %1171，MLIR行1174，输入level11/scale55 → 输出level22/scale45
+    %1171 = "ckks.bootstrapc"(%1170) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+06. layer1.0.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %1750，MLIR行1753，输入level4/scale60 → 输出level22/scale45
+    %1750 = "ckks.bootstrapc"(%1749) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+07. layer1.0.relu2 / P1(15次)结果之后
+    %1856，MLIR行1859，输入level7/scale55 → 输出level22/scale45
+    %1856 = "ckks.bootstrapc"(%1855) : (tensor<1x!ckks.poly<2 * 55 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+08. layer1.0.relu2 / P2(15次)结果之后
+    %1943，MLIR行1946，输入level11/scale55 → 输出level22/scale45
+    %1943 = "ckks.bootstrapc"(%1942) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+09. layer1.0.relu2 / 残差块输出之后、下一残差块之前
+    %2088，MLIR行2091，输入level7/scale50 → 输出level22/scale45
+    %2088 = "ckks.bootstrapc"(%2087) : (tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+10. layer1.1.relu1 / P1(15次)结果之后
+    %2619，MLIR行2622，输入level8/scale65 → 输出level22/scale45
+    %2619 = "ckks.bootstrapc"(%2618) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+11. layer1.1.relu1 / P2(15次)结果之后
+    %2706，MLIR行2709，输入level11/scale55 → 输出level22/scale45
+    %2706 = "ckks.bootstrapc"(%2705) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+12. layer1.1.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %3284，MLIR行3287，输入level4/scale60 → 输出level22/scale45
+    %3284 = "ckks.bootstrapc"(%3283) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+13. layer1.1.relu2 / P1(15次)结果之后
+    %3382，MLIR行3385，输入level11/scale55 → 输出level22/scale45
+    %3382 = "ckks.bootstrapc"(%3381) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+14. layer1.1.relu2 / P2(15次)结果之后
+    %3469，MLIR行3472，输入level11/scale55 → 输出level22/scale45
+    %3469 = "ckks.bootstrapc"(%3468) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+15. layer1.1.relu2 / 残差块输出之后、下一残差块之前
+    %3614，MLIR行3617，输入level7/scale50 → 输出level22/scale45
+    %3614 = "ckks.bootstrapc"(%3613) : (tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+16. layer1.2.relu1 / P1(15次)结果之后
+    %4138，MLIR行4141，输入level8/scale65 → 输出level22/scale45
+    %4138 = "ckks.bootstrapc"(%4137) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+17. layer1.2.relu1 / P2(15次)结果之后
+    %4225，MLIR行4228，输入level11/scale55 → 输出level22/scale45
+    %4225 = "ckks.bootstrapc"(%4224) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+18. layer1.2.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %4803，MLIR行4806，输入level4/scale60 → 输出level22/scale45
+    %4803 = "ckks.bootstrapc"(%4802) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+19. layer1.2.relu2 / P1(15次)结果之后
+    %4893，MLIR行4896，输入level11/scale55 → 输出level22/scale45
+    %4893 = "ckks.bootstrapc"(%4892) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+20. layer1.2.relu2 / P2(15次)结果之后
+    %4980，MLIR行4983，输入level11/scale55 → 输出level22/scale45
+    %4980 = "ckks.bootstrapc"(%4979) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+21. layer1.2.relu2 / 残差块输出之后、下一残差块之前
+    %5125，MLIR行5128，输入level7/scale50 → 输出level22/scale45
+    %5125 = "ckks.bootstrapc"(%5124) : (tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+22. layer2.0.relu1 / P1(15次)结果之后
+    %6158，MLIR行6161，输入level8/scale65 → 输出level22/scale45
+    %6158 = "ckks.bootstrapc"(%6157) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+23. layer2.0.relu1 / P2(15次)结果之后
+    %6245，MLIR行6248，输入level11/scale55 → 输出level22/scale45
+    %6245 = "ckks.bootstrapc"(%6244) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+24. layer2.0.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %6921，MLIR行6924，输入level4/scale60 → 输出level22/scale45
+    %6921 = "ckks.bootstrapc"(%6920) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+25. layer2.0.relu2 / P1(15次)结果之后
+    %7025，MLIR行7028，输入level10/scale65 → 输出level22/scale45
+    %7025 = "ckks.bootstrapc"(%7024) : (tensor<1x!ckks.poly<2 * 65 * 7>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+26. layer2.0.relu2 / P2(15次)结果之后
+    %7112，MLIR行7115，输入level11/scale55 → 输出level22/scale45
+    %7112 = "ckks.bootstrapc"(%7111) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+27. layer2.0.relu2 / 残差块输出之后、下一残差块之前
+    %7257，MLIR行7260，输入level7/scale60 → 输出level22/scale45
+    %7257 = "ckks.bootstrapc"(%7256) : (tensor<1x!ckks.poly<2 * 60 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+28. layer2.1.relu1 / P1(15次)结果之后
+    %7879，MLIR行7882，输入level8/scale65 → 输出level22/scale45
+    %7879 = "ckks.bootstrapc"(%7878) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+29. layer2.1.relu1 / P2(15次)结果之后
+    %7966，MLIR行7969，输入level11/scale55 → 输出level22/scale45
+    %7966 = "ckks.bootstrapc"(%7965) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+30. layer2.1.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %8642，MLIR行8645，输入level4/scale60 → 输出level22/scale45
+    %8642 = "ckks.bootstrapc"(%8641) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+31. layer2.1.relu2 / P1(15次)结果之后
+    %8732，MLIR行8735，输入level11/scale55 → 输出level22/scale45
+    %8732 = "ckks.bootstrapc"(%8731) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+32. layer2.1.relu2 / P2(15次)结果之后
+    %8819，MLIR行8822，输入level11/scale55 → 输出level22/scale45
+    %8819 = "ckks.bootstrapc"(%8818) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+33. layer2.1.relu2 / 残差块输出之后、下一残差块之前
+    %8964，MLIR行8967，输入level7/scale50 → 输出level22/scale45
+    %8964 = "ckks.bootstrapc"(%8963) : (tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+34. layer2.2.relu1 / P1(15次)结果之后
+    %9586，MLIR行9589，输入level8/scale65 → 输出level22/scale45
+    %9586 = "ckks.bootstrapc"(%9585) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+35. layer2.2.relu1 / P2(15次)结果之后
+    %9673，MLIR行9676，输入level11/scale55 → 输出level22/scale45
+    %9673 = "ckks.bootstrapc"(%9672) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+36. layer2.2.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %10349，MLIR行10352，输入level4/scale60 → 输出level22/scale45
+    %10349 = "ckks.bootstrapc"(%10348) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+37. layer2.2.relu2 / P1(15次)结果之后
+    %10439，MLIR行10442，输入level11/scale55 → 输出level22/scale45
+    %10439 = "ckks.bootstrapc"(%10438) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+38. layer2.2.relu2 / P2(15次)结果之后
+    %10526，MLIR行10529，输入level11/scale55 → 输出level22/scale45
+    %10526 = "ckks.bootstrapc"(%10525) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+39. layer2.2.relu2 / 残差块输出之后、下一残差块之前
+    %10671，MLIR行10674，输入level7/scale50 → 输出level22/scale45
+    %10671 = "ckks.bootstrapc"(%10670) : (tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+40. layer3.0.relu1 / P1(15次)结果之后
+    %11900，MLIR行11903，输入level8/scale65 → 输出level22/scale45
+    %11900 = "ckks.bootstrapc"(%11899) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+41. layer3.0.relu1 / P2(15次)结果之后
+    %11987，MLIR行11990，输入level11/scale55 → 输出level22/scale45
+    %11987 = "ckks.bootstrapc"(%11986) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+42. layer3.0.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %12841，MLIR行12844，输入level4/scale60 → 输出level22/scale45
+    %12841 = "ckks.bootstrapc"(%12840) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+43. layer3.0.relu2 / P1(15次)结果之后
+    %12933，MLIR行12936，输入level10/scale65 → 输出level22/scale45
+    %12933 = "ckks.bootstrapc"(%12932) : (tensor<1x!ckks.poly<2 * 65 * 7>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+44. layer3.0.relu2 / P2(15次)结果之后
+    %13020，MLIR行13023，输入level11/scale55 → 输出level22/scale45
+    %13020 = "ckks.bootstrapc"(%13019) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+45. layer3.0.relu2 / 残差块输出之后、下一残差块之前
+    %13165，MLIR行13168，输入level7/scale60 → 输出level22/scale45
+    %13165 = "ckks.bootstrapc"(%13164) : (tensor<1x!ckks.poly<2 * 60 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+46. layer3.1.relu1 / P1(15次)结果之后
+    %13965，MLIR行13968，输入level8/scale65 → 输出level22/scale45
+    %13965 = "ckks.bootstrapc"(%13964) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+47. layer3.1.relu1 / P2(15次)结果之后
+    %14052，MLIR行14055，输入level11/scale55 → 输出level22/scale45
+    %14052 = "ckks.bootstrapc"(%14051) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+48. layer3.1.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %14906，MLIR行14909，输入level4/scale60 → 输出level22/scale45
+    %14906 = "ckks.bootstrapc"(%14905) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+49. layer3.1.relu2 / P1(15次)结果之后
+    %14996，MLIR行14999，输入level11/scale55 → 输出level22/scale45
+    %14996 = "ckks.bootstrapc"(%14995) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+50. layer3.1.relu2 / P2(15次)结果之后
+    %15083，MLIR行15086，输入level11/scale55 → 输出level22/scale45
+    %15083 = "ckks.bootstrapc"(%15082) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+51. layer3.1.relu2 / 残差块输出之后、下一残差块之前
+    %15228，MLIR行15231，输入level7/scale50 → 输出level22/scale45
+    %15228 = "ckks.bootstrapc"(%15227) : (tensor<1x!ckks.poly<2 * 50 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+52. layer3.2.relu1 / P1(15次)结果之后
+    %16028，MLIR行16031，输入level8/scale65 → 输出level22/scale45
+    %16028 = "ckks.bootstrapc"(%16027) : (tensor<1x!ckks.poly<2 * 65 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+53. layer3.2.relu1 / P2(15次)结果之后
+    %16115，MLIR行16118，输入level11/scale55 → 输出level22/scale45
+    %16115 = "ckks.bootstrapc"(%16114) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+54. layer3.2.conv2 / 加权卷积和槽内复制完成之后、BN偏置与残差相加之前
+    %16969，MLIR行16972，输入level4/scale60 → 输出level22/scale45
+    %16969 = "ckks.bootstrapc"(%16968) : (tensor<1x!ckks.poly<2 * 60 * 1>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+55. layer3.2.relu2 / P1(15次)结果之后
+    %17059，MLIR行17062，输入level11/scale55 → 输出level22/scale45
+    %17059 = "ckks.bootstrapc"(%17058) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+56. layer3.2.relu2 / P2(15次)结果之后
+    %17146，MLIR行17149，输入level11/scale55 → 输出level22/scale45
+    %17146 = "ckks.bootstrapc"(%17145) : (tensor<1x!ckks.poly<2 * 55 * 8>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>
+57. head / 全局平均池化结果之后、全连接之前
+    %17381，MLIR行17384，输入level6/scale60 → 输出level22/scale45
+    %17381 = "ckks.bootstrapc"(%17380) : (tensor<1x!ckks.poly<2 * 60 * 3>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>

@@ -1,0 +1,114 @@
+{
+  "name": "all32",
+  "phase": "stages",
+  "strategy": "greedy",
+  "initial_q": 31,
+  "diagnostic": true,
+  "command": [
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/hecate-opt-wrapper",
+    "--dacapo",
+    "--boot-placement=greedy",
+    "--ckks-config=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/compiler.json",
+    "--waterline=40",
+    "--bootstrap-scale=40",
+    "--mlir-print-debuginfo",
+    "--mlir-pretty-debuginfo",
+    "--mlir-print-local-scope",
+    "--mlir-disable-threading",
+    "--runtime-plan-id=1",
+    "--runtime-plan-format=json",
+    "--runtime-plan-target-id=poseidon-ckks-gpu",
+    "--runtime-plan-capability-version=1",
+    "--runtime-plan-operator-spec-id=resnet20-chain32-all32",
+    "--runtime-plan-operator-spec-version=1",
+    "--runtime-plan-operator-spec-sha256=sha256:b5c803fa93cdb54c3557ef4af22797ef1dd90e29e9e2866c7dc2dfd7b85b3e31",
+    "--runtime-plan-context-id=resnet20-chain32-all32",
+    "--runtime-plan-ntt=true",
+    "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+    "--runtime-plan-boot-implementation=native",
+    "--runtime-plan-inline-payload-max-bytes=0",
+    "--native-input-level=30",
+    "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/diagnostic-spec.json",
+    "--runtime-plan-levels-per-logical-level=1",
+    "--runtime-plan-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/diagnostic-spec.json",
+    "--runtime-plan-device-counts=1",
+    "--runtime-plan-intra-rank-communication-cost=1000",
+    "--runtime-plan-inter-rank-communication-cost=10000",
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/relu-stages.mlir",
+    "-o",
+    "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/stages/model.optimized.mlirbc",
+    "--emit-bytecode"
+  ],
+  "compiler_sha256": "395e6fb9178bb673a197f51de79c2964da7ddb0fc76a7f0dbea7c2b9d7eb7060",
+  "pid": 4154710,
+  "returncode": 0,
+  "seconds": 0.21509227401111275,
+  "peak_child_rss_kib": 49152,
+  "boots": 0,
+  "counts": {
+    "add_cc": 43,
+    "mul_cc": 27,
+    "relinearize": 27,
+    "rescale": 91,
+    "add_cp": 11,
+    "mod_switch": 36,
+    "mul_cp": 63,
+    "negate": 4
+  },
+  "input": {
+    "components": 2,
+    "context": "resnet20-chain32-all32",
+    "id": "0",
+    "kind": "ciphertext",
+    "level": 30,
+    "ntt": true,
+    "place": {
+      "kind": "host",
+      "rank": 0
+    },
+    "scale_log2": 40.0
+  },
+  "output": {
+    "components": 2,
+    "context": "resnet20-chain32-all32",
+    "id": "375",
+    "kind": "ciphertext",
+    "level": 5,
+    "ntt": true,
+    "place": {
+      "index": 0,
+      "kind": "device",
+      "rank": 0
+    },
+    "scale_log2": 42.93538831068589
+  },
+  "stage_outputs": [
+    {
+      "level": 24,
+      "scale_log2": 65.21012821353867,
+      "consumed_q": 6
+    },
+    {
+      "level": 16,
+      "scale_log2": 58.82241537084599,
+      "consumed_q": 14
+    },
+    {
+      "level": 7,
+      "scale_log2": 66.87802632572792,
+      "consumed_q": 23
+    },
+    {
+      "level": 5,
+      "scale_log2": 42.93538831068589,
+      "consumed_q": 25
+    }
+  ],
+  "plan_sha256": "c7f116013a4ab80e17c93d5c4b14c46a6fac325ee791ca5812d85cd02008fb1a",
+  "consumed_q": 25,
+  "alignment_drops": 2,
+  "alignment_fits": false,
+  "alignment_plain_scale": 61.00724970435614,
+  "q_including_alignment": 27,
+  "max_rescale_formula_error": 0.0
+}

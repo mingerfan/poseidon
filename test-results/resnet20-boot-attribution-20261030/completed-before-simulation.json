@@ -1,0 +1,5358 @@
+[
+  {
+    "name": "threshold-min20-optimized",
+    "strategy": "optimized",
+    "initial_q": 34,
+    "encoding_floor": 20,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/hecate-opt-wrapper",
+      "--dacapo",
+      "--boot-placement=optimized",
+      "--ckks-config=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/compiler.json",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-print-debuginfo",
+      "--mlir-pretty-debuginfo",
+      "--mlir-print-local-scope",
+      "--mlir-disable-threading",
+      "--runtime-plan-id=1",
+      "--runtime-plan-format=json",
+      "--runtime-plan-target-id=poseidon-ckks-gpu",
+      "--runtime-plan-capability-version=1",
+      "--runtime-plan-operator-spec-id=resnet20-chain32-manual",
+      "--runtime-plan-operator-spec-version=1",
+      "--runtime-plan-operator-spec-sha256=sha256:ea18bfc475c415484663186699cae4914590a47960fbe861bfc0ff362d6e3f40",
+      "--runtime-plan-context-id=resnet20-chain32-manual",
+      "--runtime-plan-ntt=true",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--runtime-plan-boot-implementation=native",
+      "--runtime-plan-inline-payload-max-bytes=0",
+      "--native-input-level=33",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-levels-per-logical-level=1",
+      "--runtime-plan-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-device-counts=1",
+      "--runtime-plan-intra-rank-communication-cost=1000",
+      "--runtime-plan-inter-rank-communication-cost=10000",
+      "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+      "-o",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/threshold-min20-optimized/model.optimized.mlirbc",
+      "--emit-bytecode",
+      "--audit-boot-min-plain-scale=20"
+    ],
+    "compiler_sha256": "fe9cc19647c7fea5a84e0463578a392bac65c5fa946960bc1bfdf903479556c5",
+    "pid": 128980,
+    "returncode": 0,
+    "seconds": 184.59538820397574,
+    "boots": 27,
+    "counts": {
+      "rotate": 1709,
+      "mul_cp": 3603,
+      "rescale": 4336,
+      "add_cc": 3677,
+      "add_cp": 229,
+      "mul_cc": 513,
+      "relinearize": 513,
+      "mod_switch": 737,
+      "negate": 76,
+      "boot": 27
+    },
+    "alignment_rescales": 45,
+    "alignment_distribution": {
+      "1": 9,
+      "2": 18
+    },
+    "boot_entries": [
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "388",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.82974637384333
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "392",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "393",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 25.160313259071465,
+        "scalar_unit_rounding_error": 1.209538025293e-08
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1127",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 64.93846611244817
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1132",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1133",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 39.04196344374514,
+        "scalar_unit_rounding_error": 9.325873406851315e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1930",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 58.197756878795886
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1935",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1936",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 45.78267267739742,
+        "scalar_unit_rounding_error": 4.884981308350689e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2143",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2147",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2148",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2857",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2862",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2863",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3564",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3569",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3570",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3761",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3765",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3766",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4468",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4473",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4474",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5174",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5179",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5180",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5371",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5375",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5376",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6603",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6608",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6609",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7407",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7412",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7413",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7604",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7608",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7609",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8409",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8414",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8415",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9213",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9218",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9219",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9410",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9414",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9415",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10215",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10220",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10221",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11019",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11024",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11025",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11216",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11220",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11221",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12644",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12649",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12650",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13625",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13630",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13631",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13999",
+          "kind": "ciphertext",
+          "level": 7,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 68.82600159449024
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14003",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14004",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 35.15442796170307,
+        "scalar_unit_rounding_error": 4.271916154152677e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14992",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 48.81275617468071
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14996",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14997",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 23.177303458234086,
+        "scalar_unit_rounding_error": 2.56448842161916e-08
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15979",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.918577569637044
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15984",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15985",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.06185198655626,
+        "scalar_unit_rounding_error": 1.9984014443252818e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16246",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.072280125767755
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16250",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16251",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 25.91777950714704,
+        "scalar_unit_rounding_error": 6.0592446615714834e-09
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17165",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 61.862379580880116
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17170",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17171",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 42.11804997531319,
+        "scalar_unit_rounding_error": 6.128431095930864e-14
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18230",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 69.79504098502059
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18235",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18236",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 34.185388571172716,
+        "scalar_unit_rounding_error": 2.434530355088782e-11
+      }
+    ],
+    "plan_sha256": "082c2a200fe1f2d7bc5f21640e536ddf80e244fa81e8ee0ded8466bd2b07d623",
+    "validation": "PASS Q=50 values=21908\n",
+    "validation_code": 0,
+    "max_rescale_formula_error": 0.0
+  },
+  {
+    "name": "threshold-min15-optimized",
+    "strategy": "optimized",
+    "initial_q": 34,
+    "encoding_floor": 15,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/hecate-opt-wrapper",
+      "--dacapo",
+      "--boot-placement=optimized",
+      "--ckks-config=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/compiler.json",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-print-debuginfo",
+      "--mlir-pretty-debuginfo",
+      "--mlir-print-local-scope",
+      "--mlir-disable-threading",
+      "--runtime-plan-id=1",
+      "--runtime-plan-format=json",
+      "--runtime-plan-target-id=poseidon-ckks-gpu",
+      "--runtime-plan-capability-version=1",
+      "--runtime-plan-operator-spec-id=resnet20-chain32-manual",
+      "--runtime-plan-operator-spec-version=1",
+      "--runtime-plan-operator-spec-sha256=sha256:ea18bfc475c415484663186699cae4914590a47960fbe861bfc0ff362d6e3f40",
+      "--runtime-plan-context-id=resnet20-chain32-manual",
+      "--runtime-plan-ntt=true",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--runtime-plan-boot-implementation=native",
+      "--runtime-plan-inline-payload-max-bytes=0",
+      "--native-input-level=33",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-levels-per-logical-level=1",
+      "--runtime-plan-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-device-counts=1",
+      "--runtime-plan-intra-rank-communication-cost=1000",
+      "--runtime-plan-inter-rank-communication-cost=10000",
+      "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+      "-o",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/threshold-min15-optimized/model.optimized.mlirbc",
+      "--emit-bytecode",
+      "--audit-boot-min-plain-scale=15"
+    ],
+    "compiler_sha256": "fe9cc19647c7fea5a84e0463578a392bac65c5fa946960bc1bfdf903479556c5",
+    "pid": 128981,
+    "returncode": 0,
+    "seconds": 186.44764670706354,
+    "boots": 27,
+    "counts": {
+      "rotate": 1709,
+      "mul_cp": 3603,
+      "rescale": 4329,
+      "add_cc": 3677,
+      "add_cp": 229,
+      "mul_cc": 513,
+      "relinearize": 513,
+      "mod_switch": 737,
+      "negate": 76,
+      "boot": 27
+    },
+    "alignment_rescales": 38,
+    "alignment_distribution": {
+      "1": 16,
+      "2": 11
+    },
+    "boot_entries": [
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "388",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.82974637384333
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "392",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "393",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 25.160313259071465,
+        "scalar_unit_rounding_error": 1.209538025293e-08
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1127",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 64.93846611244817
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1132",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1133",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 39.04196344374514,
+        "scalar_unit_rounding_error": 9.325873406851315e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1930",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 58.197756878795886
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1935",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1936",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 45.78267267739742,
+        "scalar_unit_rounding_error": 4.884981308350689e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2143",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2147",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2148",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2857",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2861",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2862",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.115945456397093,
+        "scalar_unit_rounding_error": 5.348648122738275e-06
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3563",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3568",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3569",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3760",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3764",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3765",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4467",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4471",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4472",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.115945456397093,
+        "scalar_unit_rounding_error": 5.348648122738275e-06
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5172",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5177",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5178",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5369",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5373",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5374",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6601",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6605",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6606",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.115945456397093,
+        "scalar_unit_rounding_error": 5.348648122738275e-06
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7404",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7409",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7410",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7601",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7605",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7606",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8406",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8410",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8411",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.115945456397093,
+        "scalar_unit_rounding_error": 5.348648122738275e-06
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9209",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9214",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9215",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9406",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9410",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9411",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10211",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10215",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10216",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.115945456397093,
+        "scalar_unit_rounding_error": 5.348648122738275e-06
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11014",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11019",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11020",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11211",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11215",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11216",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12639",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12643",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12644",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.115945456397093,
+        "scalar_unit_rounding_error": 5.348648122738275e-06
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13619",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13624",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13625",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13993",
+          "kind": "ciphertext",
+          "level": 7,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 68.82600159449024
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13997",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13998",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 35.15442796170307,
+        "scalar_unit_rounding_error": 4.271916154152677e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14986",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 48.81275617468071
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14990",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14991",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 23.177303458234086,
+        "scalar_unit_rounding_error": 2.56448842161916e-08
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15973",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.918577569637044
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15977",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15978",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 15.071482063277749,
+        "scalar_unit_rounding_error": 1.3655406066681586e-05
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16239",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.072280125767755
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16243",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16244",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 25.91777950714704,
+        "scalar_unit_rounding_error": 6.0592446615714834e-09
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17158",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 61.862379580880116
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17163",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17164",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 42.11804997531319,
+        "scalar_unit_rounding_error": 6.128431095930864e-14
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18223",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 69.79504098502059
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18228",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18229",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 34.185388571172716,
+        "scalar_unit_rounding_error": 2.434530355088782e-11
+      }
+    ],
+    "plan_sha256": "154cd9f79e68321c39918989cbe213abf2763a673180751fc19eb9062a03e3b7",
+    "validation": "PASS Q=50 values=21901\n",
+    "validation_code": 0,
+    "max_rescale_formula_error": 0.0
+  },
+  {
+    "name": "threshold-min24-optimized",
+    "strategy": "optimized",
+    "initial_q": 34,
+    "encoding_floor": 24,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/hecate-opt-wrapper",
+      "--dacapo",
+      "--boot-placement=optimized",
+      "--ckks-config=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/compiler.json",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-print-debuginfo",
+      "--mlir-pretty-debuginfo",
+      "--mlir-print-local-scope",
+      "--mlir-disable-threading",
+      "--runtime-plan-id=1",
+      "--runtime-plan-format=json",
+      "--runtime-plan-target-id=poseidon-ckks-gpu",
+      "--runtime-plan-capability-version=1",
+      "--runtime-plan-operator-spec-id=resnet20-chain32-manual",
+      "--runtime-plan-operator-spec-version=1",
+      "--runtime-plan-operator-spec-sha256=sha256:ea18bfc475c415484663186699cae4914590a47960fbe861bfc0ff362d6e3f40",
+      "--runtime-plan-context-id=resnet20-chain32-manual",
+      "--runtime-plan-ntt=true",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--runtime-plan-boot-implementation=native",
+      "--runtime-plan-inline-payload-max-bytes=0",
+      "--native-input-level=33",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-levels-per-logical-level=1",
+      "--runtime-plan-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-device-counts=1",
+      "--runtime-plan-intra-rank-communication-cost=1000",
+      "--runtime-plan-inter-rank-communication-cost=10000",
+      "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+      "-o",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/threshold-min24-optimized/model.optimized.mlirbc",
+      "--emit-bytecode",
+      "--audit-boot-min-plain-scale=24"
+    ],
+    "compiler_sha256": "fe9cc19647c7fea5a84e0463578a392bac65c5fa946960bc1bfdf903479556c5",
+    "pid": 128978,
+    "returncode": 0,
+    "seconds": 184.3658632049337,
+    "boots": 27,
+    "counts": {
+      "rotate": 1709,
+      "mul_cp": 3603,
+      "rescale": 4337,
+      "add_cc": 3677,
+      "add_cp": 229,
+      "mul_cc": 513,
+      "relinearize": 513,
+      "mod_switch": 737,
+      "negate": 76,
+      "boot": 27
+    },
+    "alignment_rescales": 46,
+    "alignment_distribution": {
+      "1": 8,
+      "2": 19
+    },
+    "boot_entries": [
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "388",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.82974637384333
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "392",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "393",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 25.160313259071465,
+        "scalar_unit_rounding_error": 1.209538025293e-08
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1127",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 64.93846611244817
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1132",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1133",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 39.04196344374514,
+        "scalar_unit_rounding_error": 9.325873406851315e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1930",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 58.197756878795886
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1935",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1936",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 45.78267267739742,
+        "scalar_unit_rounding_error": 4.884981308350689e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2143",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2147",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2148",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2857",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2862",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2863",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3564",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3569",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3570",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3761",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3765",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3766",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4468",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4473",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4474",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5174",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5179",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5180",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5371",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5375",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5376",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6603",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6608",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6609",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7407",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7412",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7413",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7604",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7608",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7609",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8409",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8414",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8415",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9213",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9218",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9219",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9410",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9414",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9415",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10215",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10220",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10221",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11019",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11024",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11025",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11216",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11220",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11221",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12644",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12649",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12650",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13625",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13630",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13631",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13999",
+          "kind": "ciphertext",
+          "level": 7,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 68.82600159449024
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14003",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14004",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 35.15442796170307,
+        "scalar_unit_rounding_error": 4.271916154152677e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14992",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 48.81275617468071
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14997",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14998",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 55.1676733815126,
+        "scalar_unit_rounding_error": 0.0
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15980",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.918577569637044
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15985",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15986",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.06185198655626,
+        "scalar_unit_rounding_error": 1.9984014443252818e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16247",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.072280125767755
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16251",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16252",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 25.91777950714704,
+        "scalar_unit_rounding_error": 6.0592446615714834e-09
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17166",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 61.862379580880116
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17171",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17172",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 42.11804997531319,
+        "scalar_unit_rounding_error": 6.128431095930864e-14
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18231",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 69.79504098502059
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18236",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18237",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 34.185388571172716,
+        "scalar_unit_rounding_error": 2.434530355088782e-11
+      }
+    ],
+    "plan_sha256": "49f304f5ed71130065ed88a2243c5a2fae9033b227fac36c5992a15835bee3fe",
+    "validation": "PASS Q=50 values=21909\n",
+    "validation_code": 0,
+    "max_rescale_formula_error": 0.0
+  },
+  {
+    "name": "threshold-min30-optimized",
+    "strategy": "optimized",
+    "initial_q": 34,
+    "encoding_floor": 30,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/hecate-opt-wrapper",
+      "--dacapo",
+      "--boot-placement=optimized",
+      "--ckks-config=/home/xuming/poseidon-manual-boot-20261026/alignment-tests/compiler.json",
+      "--waterline=40",
+      "--bootstrap-scale=40",
+      "--mlir-print-debuginfo",
+      "--mlir-pretty-debuginfo",
+      "--mlir-print-local-scope",
+      "--mlir-disable-threading",
+      "--runtime-plan-id=1",
+      "--runtime-plan-format=json",
+      "--runtime-plan-target-id=poseidon-ckks-gpu",
+      "--runtime-plan-capability-version=1",
+      "--runtime-plan-operator-spec-id=resnet20-chain32-manual",
+      "--runtime-plan-operator-spec-version=1",
+      "--runtime-plan-operator-spec-sha256=sha256:ea18bfc475c415484663186699cae4914590a47960fbe861bfc0ff362d6e3f40",
+      "--runtime-plan-context-id=resnet20-chain32-manual",
+      "--runtime-plan-ntt=true",
+      "--runtime-plan-boot-profile=poseidon-resnet20-manual-q50-scale40",
+      "--runtime-plan-boot-implementation=native",
+      "--runtime-plan-inline-payload-max-bytes=0",
+      "--native-input-level=33",
+      "--runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-levels-per-logical-level=1",
+      "--runtime-plan-operator-spec-path=/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/operator-spec.json",
+      "--runtime-plan-device-counts=1",
+      "--runtime-plan-intra-rank-communication-cost=1000",
+      "--runtime-plan-inter-rank-communication-cost=10000",
+      "/home/xuming/poseidon-mixed-q-20261026/data/ResNet20.mlirbc",
+      "-o",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/boot-attribution-20261030/threshold-min30-optimized/model.optimized.mlirbc",
+      "--emit-bytecode",
+      "--audit-boot-min-plain-scale=30"
+    ],
+    "compiler_sha256": "fe9cc19647c7fea5a84e0463578a392bac65c5fa946960bc1bfdf903479556c5",
+    "pid": 128979,
+    "returncode": 0,
+    "seconds": 186.75827813206706,
+    "boots": 27,
+    "counts": {
+      "rotate": 1709,
+      "mul_cp": 3603,
+      "rescale": 4339,
+      "add_cc": 3677,
+      "add_cp": 229,
+      "mul_cc": 513,
+      "relinearize": 513,
+      "mod_switch": 737,
+      "negate": 76,
+      "boot": 27
+    },
+    "alignment_rescales": 48,
+    "alignment_distribution": {
+      "2": 21,
+      "1": 6
+    },
+    "boot_entries": [
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "388",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.82974637384333
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "393",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "394",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 57.15068318234998,
+        "scalar_unit_rounding_error": 0.0
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1128",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 64.93846611244817
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1133",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1134",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 39.04196344374514,
+        "scalar_unit_rounding_error": 9.325873406851315e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1931",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 58.197756878795886
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1936",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "1937",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 45.78267267739742,
+        "scalar_unit_rounding_error": 4.884981308350689e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2144",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2148",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2149",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2858",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2863",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "2864",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3565",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3570",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3571",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3762",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3766",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "3767",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4469",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4474",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "4475",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5175",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5180",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5181",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5372",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5376",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "5377",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6604",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6609",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "6610",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7408",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7413",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7414",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7605",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7609",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "7610",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8410",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8415",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "8416",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9214",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9219",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9220",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9411",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9415",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "9416",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10216",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10221",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "10222",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11020",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.1826157666535
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11025",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11026",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.79781378953981,
+        "scalar_unit_rounding_error": 1.8747225993820393e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11217",
+          "kind": "ciphertext",
+          "level": 16,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 41.758471659418916
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11221",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "11222",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 1,
+        "plain_scale": 30.231587973495877,
+        "scalar_unit_rounding_error": 3.0295077557696004e-10
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12645",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.8741141765177
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12650",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "12651",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.10631537967561,
+        "scalar_unit_rounding_error": 2.220446049250313e-16
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13626",
+          "kind": "ciphertext",
+          "level": 10,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 66.20640967513894
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13631",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "13632",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 37.774019881054365,
+        "scalar_unit_rounding_error": 6.910028105266974e-13
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14000",
+          "kind": "ciphertext",
+          "level": 7,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 68.82600159449024
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14004",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14005",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 35.15442796170307,
+        "scalar_unit_rounding_error": 4.271916154152677e-12
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14993",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 48.81275617468071
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14998",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "14999",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 55.1676733815126,
+        "scalar_unit_rounding_error": 0.0
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15981",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 56.918577569637044
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15986",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "15987",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 47.06185198655626,
+        "scalar_unit_rounding_error": 1.9984014443252818e-15
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16248",
+          "kind": "ciphertext",
+          "level": 12,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 46.072280125767755
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16253",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "16254",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 57.90814943042555,
+        "scalar_unit_rounding_error": 0.0
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17168",
+          "kind": "ciphertext",
+          "level": 14,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 61.862379580880116
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17173",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "17174",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 42.11804997531319,
+        "scalar_unit_rounding_error": 6.128431095930864e-14
+      },
+      {
+        "source": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18233",
+          "kind": "ciphertext",
+          "level": 9,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 69.79504098502059
+        },
+        "input": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18238",
+          "kind": "ciphertext",
+          "level": 5,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.000000000000014
+        },
+        "output": {
+          "components": 2,
+          "context": "resnet20-chain32-manual",
+          "id": "18239",
+          "kind": "ciphertext",
+          "level": 30,
+          "ntt": true,
+          "place": {
+            "index": 0,
+            "kind": "device",
+            "rank": 0
+          },
+          "scale_log2": 40.0
+        },
+        "alignment_drops": 2,
+        "plain_scale": 34.185388571172716,
+        "scalar_unit_rounding_error": 2.434530355088782e-11
+      }
+    ],
+    "plan_sha256": "b677bd7f3a284b99e88054ba778c72df80691c61518259d520d175e8d0116b6a",
+    "validation": "PASS Q=50 values=21911\n",
+    "validation_code": 0,
+    "max_rescale_formula_error": 0.0
+  }
+]

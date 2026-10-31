@@ -1,0 +1,111 @@
+{
+  "same_full_arithmetic_dag": true,
+  "same_19_relu_arithmetic_dags": true,
+  "input_q": 34,
+  "boot_input_q": 6,
+  "boot_output_q": 31,
+  "comparison": {
+    "manual_scales_18": {
+      "total_counts": {
+        "rotate": 1709,
+        "mul_cp": 3155,
+        "add_cc": 3677,
+        "rescale": 1218,
+        "add_cp": 229,
+        "mul_cc": 513,
+        "relinearize": 513,
+        "mod_switch": 254,
+        "negate": 76,
+        "boot": 18
+      },
+      "unit_muls": 380,
+      "relu_counts": {
+        "rescale": 1121,
+        "relinearize": 513,
+        "mul_cc": 513,
+        "add_cp": 209,
+        "add_cc": 817,
+        "mul_cp": 946,
+        "mod_switch": 247,
+        "negate": 76
+      },
+      "outside_relu_counts": {
+        "rotate": 1709,
+        "mul_cp": 2209,
+        "add_cc": 2860,
+        "rescale": 97,
+        "add_cp": 20,
+        "boot": 18,
+        "mod_switch": 7
+      },
+      "outside_relu_unit_muls": 4,
+      "rescale_owners": {
+        "outside_relu": {
+          "add_cc": 64,
+          "mul_cp": 33
+        },
+        "relu": {
+          "add_cp": 304,
+          "mul_cp": 76,
+          "add_cc": 703,
+          "mul_cc": 38
+        }
+      },
+      "outside_core_cp_immediate_rescales": {
+        "0": 2172,
+        "1": 33
+      }
+    },
+    "threshold_27": {
+      "total_counts": {
+        "rotate": 1709,
+        "mul_cp": 3603,
+        "rescale": 4339,
+        "add_cc": 3677,
+        "add_cp": 229,
+        "mul_cc": 513,
+        "relinearize": 513,
+        "mod_switch": 737,
+        "negate": 76,
+        "boot": 27
+      },
+      "unit_muls": 828,
+      "relu_counts": {
+        "rescale": 1878,
+        "relinearize": 513,
+        "mul_cc": 513,
+        "add_cp": 209,
+        "add_cc": 817,
+        "mul_cp": 1374,
+        "mod_switch": 690,
+        "negate": 76,
+        "boot": 19
+      },
+      "outside_relu_counts": {
+        "rotate": 1709,
+        "mul_cp": 2229,
+        "rescale": 2461,
+        "add_cc": 2860,
+        "add_cp": 20,
+        "mod_switch": 47,
+        "boot": 8
+      },
+      "outside_relu_unit_muls": 24,
+      "rescale_owners": {
+        "outside_relu": {
+          "mul_cp": 2445,
+          "mul_cp_unit": 16
+        },
+        "relu": {
+          "mul_cc": 887,
+          "mul_cp": 959,
+          "mul_cp_unit": 32
+        }
+      },
+      "outside_core_cp_immediate_rescales": {
+        "1": 1965,
+        "2": 240
+      }
+    }
+  }
+}

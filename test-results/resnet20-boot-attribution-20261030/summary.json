@@ -1,0 +1,56 @@
+{
+  "type": "Python region model; not production-compiler attribution",
+  "seconds": 0.21458672100015974,
+  "configurations": 28,
+  "primitive_polynomial_nodes": 115,
+  "question2": {
+    "relu_level_use_reference": 418,
+    "relu_level_use_threshold": 449,
+    "relu_extra_levels": 31,
+    "per_relu_extra_level_histogram": {
+      "2": 10,
+      "3": 1,
+      "1": 8
+    },
+    "total_main_path_extra_arithmetic_levels": 33,
+    "boot_change_with_real_alignment": 9,
+    "boot_change_with_ideal_exit": 5
+  },
+  "question3": {
+    "precision_floor_only_boot_change": 0,
+    "whole_alignment_oracle_boot_change": 4,
+    "interaction_boots": 4
+  },
+  "boot_matrix": [
+    {
+      "policy": "threshold",
+      "alignment": 30,
+      "boots": 27
+    },
+    {
+      "policy": "threshold",
+      "alignment": 0,
+      "boots": 27
+    },
+    {
+      "policy": "threshold",
+      "alignment": "ideal_exit",
+      "boots": 23
+    },
+    {
+      "policy": "manual22",
+      "alignment": 30,
+      "boots": 18
+    },
+    {
+      "policy": "manual22",
+      "alignment": 0,
+      "boots": 18
+    },
+    {
+      "policy": "manual22",
+      "alignment": "ideal_exit",
+      "boots": 18
+    }
+  ]
+}

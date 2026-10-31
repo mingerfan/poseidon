@@ -1,0 +1,1770 @@
+{
+  "manual22": [
+    {
+      "name": "stem",
+      "kind": "linear",
+      "inputs": [
+        "input"
+      ],
+      "output": "stem",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu0",
+      "kind": "manual22",
+      "inputs": [
+        "stem"
+      ],
+      "output": "relu0",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block0/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu0"
+      ],
+      "output": "block0/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu1",
+      "kind": "manual22",
+      "inputs": [
+        "block0/conv1"
+      ],
+      "output": "relu1",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block0/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu1"
+      ],
+      "output": "block0/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block0/sum",
+      "kind": "add",
+      "inputs": [
+        "block0/conv2",
+        "relu0"
+      ],
+      "output": "block0/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu2",
+      "kind": "manual22",
+      "inputs": [
+        "block0/sum"
+      ],
+      "output": "relu2",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block1/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu2"
+      ],
+      "output": "block1/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu3",
+      "kind": "manual22",
+      "inputs": [
+        "block1/conv1"
+      ],
+      "output": "relu3",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block1/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu3"
+      ],
+      "output": "block1/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block1/sum",
+      "kind": "add",
+      "inputs": [
+        "block1/conv2",
+        "relu2"
+      ],
+      "output": "block1/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu4",
+      "kind": "manual22",
+      "inputs": [
+        "block1/sum"
+      ],
+      "output": "relu4",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block2/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu4"
+      ],
+      "output": "block2/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu5",
+      "kind": "manual22",
+      "inputs": [
+        "block2/conv1"
+      ],
+      "output": "relu5",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block2/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu5"
+      ],
+      "output": "block2/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block2/sum",
+      "kind": "add",
+      "inputs": [
+        "block2/conv2",
+        "relu4"
+      ],
+      "output": "block2/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu6",
+      "kind": "manual22",
+      "inputs": [
+        "block2/sum"
+      ],
+      "output": "relu6",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block3/projection",
+      "kind": "linear",
+      "inputs": [
+        "relu6"
+      ],
+      "output": "block3/projection",
+      "stage": "",
+      "cp_depth": 1,
+      "terminal": false
+    },
+    {
+      "name": "block3/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu6"
+      ],
+      "output": "block3/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu7",
+      "kind": "manual22",
+      "inputs": [
+        "block3/conv1"
+      ],
+      "output": "relu7",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block3/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu7"
+      ],
+      "output": "block3/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block3/sum",
+      "kind": "add",
+      "inputs": [
+        "block3/conv2",
+        "block3/projection"
+      ],
+      "output": "block3/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu8",
+      "kind": "manual22",
+      "inputs": [
+        "block3/sum"
+      ],
+      "output": "relu8",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block4/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu8"
+      ],
+      "output": "block4/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu9",
+      "kind": "manual22",
+      "inputs": [
+        "block4/conv1"
+      ],
+      "output": "relu9",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block4/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu9"
+      ],
+      "output": "block4/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block4/sum",
+      "kind": "add",
+      "inputs": [
+        "block4/conv2",
+        "relu8"
+      ],
+      "output": "block4/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu10",
+      "kind": "manual22",
+      "inputs": [
+        "block4/sum"
+      ],
+      "output": "relu10",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block5/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu10"
+      ],
+      "output": "block5/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu11",
+      "kind": "manual22",
+      "inputs": [
+        "block5/conv1"
+      ],
+      "output": "relu11",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block5/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu11"
+      ],
+      "output": "block5/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block5/sum",
+      "kind": "add",
+      "inputs": [
+        "block5/conv2",
+        "relu10"
+      ],
+      "output": "block5/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu12",
+      "kind": "manual22",
+      "inputs": [
+        "block5/sum"
+      ],
+      "output": "relu12",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block6/projection",
+      "kind": "linear",
+      "inputs": [
+        "relu12"
+      ],
+      "output": "block6/projection",
+      "stage": "",
+      "cp_depth": 1,
+      "terminal": false
+    },
+    {
+      "name": "block6/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu12"
+      ],
+      "output": "block6/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu13",
+      "kind": "manual22",
+      "inputs": [
+        "block6/conv1"
+      ],
+      "output": "relu13",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block6/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu13"
+      ],
+      "output": "block6/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block6/sum",
+      "kind": "add",
+      "inputs": [
+        "block6/conv2",
+        "block6/projection"
+      ],
+      "output": "block6/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu14",
+      "kind": "manual22",
+      "inputs": [
+        "block6/sum"
+      ],
+      "output": "relu14",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block7/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu14"
+      ],
+      "output": "block7/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu15",
+      "kind": "manual22",
+      "inputs": [
+        "block7/conv1"
+      ],
+      "output": "relu15",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block7/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu15"
+      ],
+      "output": "block7/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block7/sum",
+      "kind": "add",
+      "inputs": [
+        "block7/conv2",
+        "relu14"
+      ],
+      "output": "block7/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu16",
+      "kind": "manual22",
+      "inputs": [
+        "block7/sum"
+      ],
+      "output": "relu16",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block8/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu16"
+      ],
+      "output": "block8/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu17",
+      "kind": "manual22",
+      "inputs": [
+        "block8/conv1"
+      ],
+      "output": "relu17",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block8/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu17"
+      ],
+      "output": "block8/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block8/sum",
+      "kind": "add",
+      "inputs": [
+        "block8/conv2",
+        "relu16"
+      ],
+      "output": "block8/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu18",
+      "kind": "manual22",
+      "inputs": [
+        "block8/sum"
+      ],
+      "output": "relu18",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "pool-fc",
+      "kind": "linear",
+      "inputs": [
+        "relu18"
+      ],
+      "output": "pool-fc",
+      "stage": "",
+      "cp_depth": 3,
+      "terminal": true
+    }
+  ],
+  "threshold": [
+    {
+      "name": "stem",
+      "kind": "linear",
+      "inputs": [
+        "input"
+      ],
+      "output": "stem",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu0/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "stem"
+      ],
+      "output": "relu0/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu0/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu0/P1(d15)"
+      ],
+      "output": "relu0/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu0/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu0/P2(d15)"
+      ],
+      "output": "relu0/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu0/尾部",
+      "kind": "poly",
+      "inputs": [
+        "stem",
+        "relu0/P3(d27)"
+      ],
+      "output": "relu0/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block0/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu0/尾部"
+      ],
+      "output": "block0/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu1/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block0/conv1"
+      ],
+      "output": "relu1/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu1/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu1/P1(d15)"
+      ],
+      "output": "relu1/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu1/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu1/P2(d15)"
+      ],
+      "output": "relu1/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu1/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block0/conv1",
+        "relu1/P3(d27)"
+      ],
+      "output": "relu1/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block0/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu1/尾部"
+      ],
+      "output": "block0/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block0/sum",
+      "kind": "add",
+      "inputs": [
+        "block0/conv2",
+        "relu0/尾部"
+      ],
+      "output": "block0/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu2/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block0/sum"
+      ],
+      "output": "relu2/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu2/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu2/P1(d15)"
+      ],
+      "output": "relu2/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu2/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu2/P2(d15)"
+      ],
+      "output": "relu2/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu2/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block0/sum",
+        "relu2/P3(d27)"
+      ],
+      "output": "relu2/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block1/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu2/尾部"
+      ],
+      "output": "block1/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu3/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block1/conv1"
+      ],
+      "output": "relu3/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu3/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu3/P1(d15)"
+      ],
+      "output": "relu3/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu3/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu3/P2(d15)"
+      ],
+      "output": "relu3/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu3/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block1/conv1",
+        "relu3/P3(d27)"
+      ],
+      "output": "relu3/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block1/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu3/尾部"
+      ],
+      "output": "block1/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block1/sum",
+      "kind": "add",
+      "inputs": [
+        "block1/conv2",
+        "relu2/尾部"
+      ],
+      "output": "block1/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu4/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block1/sum"
+      ],
+      "output": "relu4/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu4/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu4/P1(d15)"
+      ],
+      "output": "relu4/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu4/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu4/P2(d15)"
+      ],
+      "output": "relu4/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu4/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block1/sum",
+        "relu4/P3(d27)"
+      ],
+      "output": "relu4/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block2/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu4/尾部"
+      ],
+      "output": "block2/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu5/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block2/conv1"
+      ],
+      "output": "relu5/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu5/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu5/P1(d15)"
+      ],
+      "output": "relu5/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu5/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu5/P2(d15)"
+      ],
+      "output": "relu5/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu5/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block2/conv1",
+        "relu5/P3(d27)"
+      ],
+      "output": "relu5/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block2/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu5/尾部"
+      ],
+      "output": "block2/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block2/sum",
+      "kind": "add",
+      "inputs": [
+        "block2/conv2",
+        "relu4/尾部"
+      ],
+      "output": "block2/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu6/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block2/sum"
+      ],
+      "output": "relu6/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu6/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu6/P1(d15)"
+      ],
+      "output": "relu6/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu6/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu6/P2(d15)"
+      ],
+      "output": "relu6/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu6/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block2/sum",
+        "relu6/P3(d27)"
+      ],
+      "output": "relu6/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block3/projection",
+      "kind": "linear",
+      "inputs": [
+        "relu6/尾部"
+      ],
+      "output": "block3/projection",
+      "stage": "",
+      "cp_depth": 1,
+      "terminal": false
+    },
+    {
+      "name": "block3/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu6/尾部"
+      ],
+      "output": "block3/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu7/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block3/conv1"
+      ],
+      "output": "relu7/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu7/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu7/P1(d15)"
+      ],
+      "output": "relu7/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu7/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu7/P2(d15)"
+      ],
+      "output": "relu7/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu7/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block3/conv1",
+        "relu7/P3(d27)"
+      ],
+      "output": "relu7/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block3/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu7/尾部"
+      ],
+      "output": "block3/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block3/sum",
+      "kind": "add",
+      "inputs": [
+        "block3/conv2",
+        "block3/projection"
+      ],
+      "output": "block3/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu8/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block3/sum"
+      ],
+      "output": "relu8/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu8/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu8/P1(d15)"
+      ],
+      "output": "relu8/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu8/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu8/P2(d15)"
+      ],
+      "output": "relu8/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu8/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block3/sum",
+        "relu8/P3(d27)"
+      ],
+      "output": "relu8/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block4/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu8/尾部"
+      ],
+      "output": "block4/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu9/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block4/conv1"
+      ],
+      "output": "relu9/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu9/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu9/P1(d15)"
+      ],
+      "output": "relu9/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu9/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu9/P2(d15)"
+      ],
+      "output": "relu9/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu9/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block4/conv1",
+        "relu9/P3(d27)"
+      ],
+      "output": "relu9/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block4/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu9/尾部"
+      ],
+      "output": "block4/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block4/sum",
+      "kind": "add",
+      "inputs": [
+        "block4/conv2",
+        "relu8/尾部"
+      ],
+      "output": "block4/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu10/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block4/sum"
+      ],
+      "output": "relu10/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu10/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu10/P1(d15)"
+      ],
+      "output": "relu10/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu10/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu10/P2(d15)"
+      ],
+      "output": "relu10/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu10/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block4/sum",
+        "relu10/P3(d27)"
+      ],
+      "output": "relu10/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block5/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu10/尾部"
+      ],
+      "output": "block5/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu11/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block5/conv1"
+      ],
+      "output": "relu11/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu11/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu11/P1(d15)"
+      ],
+      "output": "relu11/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu11/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu11/P2(d15)"
+      ],
+      "output": "relu11/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu11/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block5/conv1",
+        "relu11/P3(d27)"
+      ],
+      "output": "relu11/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block5/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu11/尾部"
+      ],
+      "output": "block5/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block5/sum",
+      "kind": "add",
+      "inputs": [
+        "block5/conv2",
+        "relu10/尾部"
+      ],
+      "output": "block5/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu12/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block5/sum"
+      ],
+      "output": "relu12/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu12/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu12/P1(d15)"
+      ],
+      "output": "relu12/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu12/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu12/P2(d15)"
+      ],
+      "output": "relu12/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu12/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block5/sum",
+        "relu12/P3(d27)"
+      ],
+      "output": "relu12/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block6/projection",
+      "kind": "linear",
+      "inputs": [
+        "relu12/尾部"
+      ],
+      "output": "block6/projection",
+      "stage": "",
+      "cp_depth": 1,
+      "terminal": false
+    },
+    {
+      "name": "block6/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu12/尾部"
+      ],
+      "output": "block6/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu13/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block6/conv1"
+      ],
+      "output": "relu13/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu13/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu13/P1(d15)"
+      ],
+      "output": "relu13/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu13/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu13/P2(d15)"
+      ],
+      "output": "relu13/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu13/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block6/conv1",
+        "relu13/P3(d27)"
+      ],
+      "output": "relu13/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block6/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu13/尾部"
+      ],
+      "output": "block6/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block6/sum",
+      "kind": "add",
+      "inputs": [
+        "block6/conv2",
+        "block6/projection"
+      ],
+      "output": "block6/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu14/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block6/sum"
+      ],
+      "output": "relu14/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu14/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu14/P1(d15)"
+      ],
+      "output": "relu14/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu14/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu14/P2(d15)"
+      ],
+      "output": "relu14/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu14/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block6/sum",
+        "relu14/P3(d27)"
+      ],
+      "output": "relu14/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block7/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu14/尾部"
+      ],
+      "output": "block7/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu15/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block7/conv1"
+      ],
+      "output": "relu15/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu15/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu15/P1(d15)"
+      ],
+      "output": "relu15/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu15/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu15/P2(d15)"
+      ],
+      "output": "relu15/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu15/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block7/conv1",
+        "relu15/P3(d27)"
+      ],
+      "output": "relu15/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block7/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu15/尾部"
+      ],
+      "output": "block7/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block7/sum",
+      "kind": "add",
+      "inputs": [
+        "block7/conv2",
+        "relu14/尾部"
+      ],
+      "output": "block7/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu16/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block7/sum"
+      ],
+      "output": "relu16/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu16/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu16/P1(d15)"
+      ],
+      "output": "relu16/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu16/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu16/P2(d15)"
+      ],
+      "output": "relu16/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu16/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block7/sum",
+        "relu16/P3(d27)"
+      ],
+      "output": "relu16/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block8/conv1",
+      "kind": "linear",
+      "inputs": [
+        "relu16/尾部"
+      ],
+      "output": "block8/conv1",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "relu17/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block8/conv1"
+      ],
+      "output": "relu17/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu17/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu17/P1(d15)"
+      ],
+      "output": "relu17/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu17/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu17/P2(d15)"
+      ],
+      "output": "relu17/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu17/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block8/conv1",
+        "relu17/P3(d27)"
+      ],
+      "output": "relu17/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "block8/conv2",
+      "kind": "linear",
+      "inputs": [
+        "relu17/尾部"
+      ],
+      "output": "block8/conv2",
+      "stage": "",
+      "cp_depth": 2,
+      "terminal": false
+    },
+    {
+      "name": "block8/sum",
+      "kind": "add",
+      "inputs": [
+        "block8/conv2",
+        "relu16/尾部"
+      ],
+      "output": "block8/sum",
+      "stage": "",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu18/P1(d15)",
+      "kind": "poly",
+      "inputs": [
+        "block8/sum"
+      ],
+      "output": "relu18/P1(d15)",
+      "stage": "P1(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu18/P2(d15)",
+      "kind": "poly",
+      "inputs": [
+        "relu18/P1(d15)"
+      ],
+      "output": "relu18/P2(d15)",
+      "stage": "P2(d15)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu18/P3(d27)",
+      "kind": "poly",
+      "inputs": [
+        "relu18/P2(d15)"
+      ],
+      "output": "relu18/P3(d27)",
+      "stage": "P3(d27)",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "relu18/尾部",
+      "kind": "poly",
+      "inputs": [
+        "block8/sum",
+        "relu18/P3(d27)"
+      ],
+      "output": "relu18/尾部",
+      "stage": "尾部",
+      "cp_depth": 0,
+      "terminal": false
+    },
+    {
+      "name": "pool-fc",
+      "kind": "linear",
+      "inputs": [
+        "relu18/尾部"
+      ],
+      "output": "pool-fc",
+      "stage": "",
+      "cp_depth": 3,
+      "terminal": true
+    }
+  ]
+}

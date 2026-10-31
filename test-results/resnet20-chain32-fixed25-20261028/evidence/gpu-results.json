@@ -1,0 +1,80 @@
+[
+  {
+    "name": "all32",
+    "returncode": 1,
+    "seconds": 32.815250554005615,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/variable-chain32/gpu/relu_gpu",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/gpu-relu/one.optimized.one_relu.runtime-plan.json",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/diagnostic-spec.json",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/gpu-relu/gpu-report.json"
+    ],
+    "cuda_device": 0,
+    "expression": "single ReLU, no Boot, actual-prime context",
+    "format_version": 1,
+    "input_level": 30,
+    "input_scale_log2": 40.0,
+    "max_abs_error": 0.08282581400157163,
+    "max_identity_error": 0.08282581400157163,
+    "max_imaginary": 1.1253349001224947e-05,
+    "operator_spec_sha256": "sha256:b5c803fa93cdb54c3557ef4af22797ef1dd90e29e9e2866c7dc2dfd7b85b3e31",
+    "output_level": 5,
+    "output_scale_log2": 42.93538831068589,
+    "passed": false,
+    "plan_sha256": "sha256:4d833c7aaa628b0150789e28870a54264aa67385eba721f4790cc3867a32c6bb",
+    "tolerance": 0.0001,
+    "remote_result": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/all32/gpu-relu/result.json"
+  },
+  {
+    "name": "manual",
+    "returncode": 1,
+    "seconds": 34.520954081905074,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/variable-chain32/gpu/relu_gpu",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/gpu-relu/one.optimized.one_relu.runtime-plan.json",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/diagnostic-spec.json",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/gpu-relu/gpu-report.json"
+    ],
+    "cuda_device": 0,
+    "expression": "single ReLU, no Boot, actual-prime context",
+    "format_version": 1,
+    "input_level": 30,
+    "input_scale_log2": 40.0,
+    "max_abs_error": 0.03363065434614332,
+    "max_identity_error": 0.03363065434614332,
+    "max_imaginary": 1.1444725325446715e-05,
+    "operator_spec_sha256": "sha256:a20ed07bc9245f08c1c1ef70645097ec707eaf74795bae972db2454f3335f91b",
+    "output_level": 5,
+    "output_scale_log2": 44.845572038296936,
+    "passed": false,
+    "plan_sha256": "sha256:93a44a8f2e3c78c9da43b1b5491ff9bdd13e04b27adb0f583d07ce3bb314a3c1",
+    "tolerance": 0.0001,
+    "remote_result": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/manual/gpu-relu/result.json"
+  },
+  {
+    "name": "mix-30-20-2",
+    "returncode": 1,
+    "seconds": 30.958041921025142,
+    "command": [
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/variable-chain32/gpu/relu_gpu",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/mix-30-20-2/gpu-relu/one.optimized.one_relu.runtime-plan.json",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/mix-30-20-2/diagnostic-spec.json",
+      "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/mix-30-20-2/gpu-relu/gpu-report.json"
+    ],
+    "cuda_device": 0,
+    "expression": "single ReLU, no Boot, actual-prime context",
+    "format_version": 1,
+    "input_level": 30,
+    "input_scale_log2": 40.0,
+    "max_abs_error": 0.06202580887034784,
+    "max_identity_error": 0.06202580887034784,
+    "max_imaginary": 6.182347428834831e-06,
+    "operator_spec_sha256": "sha256:3048cec234dc2bff23312a2eab911aabfd5b236efe95df6f3e7f4faa457bf5b5",
+    "output_level": 6,
+    "output_scale_log2": 70.92857679425911,
+    "passed": false,
+    "plan_sha256": "sha256:e8c56bd0705300c7b4b9421d03aaf133ca555296a046d1369b8c9bde2d0dfc5f",
+    "tolerance": 0.0001,
+    "remote_result": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028/candidates/mix-30-20-2/gpu-relu/result.json"
+  }
+]

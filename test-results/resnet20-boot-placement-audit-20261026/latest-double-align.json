@@ -1,0 +1,729 @@
+{
+  "strategy": "latest",
+  "source": "test-results/relu-compiler-20261024/double-align/optimized/logical.mlir.gz",
+  "source_sha256": "70820209487bcb8e64244a62607e415658b744e51b7688bcd15c4a3e1a85df99",
+  "method": "Match all 19 ReLU arithmetic expression DAGs to source component(p1,p2,p3), ignoring management operations and scale-alignment multiplication by encoded 1; commutative operand order normalized; constants matched to 12 significant digits. Nonuniform convolution constants are not compared. No CKKS numerical test was run. For double-align, full-slot multiply by 2 and self-addition are normalized to the same expression.",
+  "relus": [
+    {
+      "name": "stem.relu",
+      "input": "%167",
+      "final_multiply": "%474",
+      "p1": "%255",
+      "p2": "%344",
+      "p3": "%470",
+      "boots": [
+        {
+          "id": "%345",
+          "line": 348,
+          "where": "after_p2",
+          "input": "%344",
+          "instruction": "%345 = \"ckks.bootstrapc\"(%344) : (tensor<1x!ckks.poly<2 * 60 * 3>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 6,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer1.0.relu1",
+      "input": "%928",
+      "final_multiply": "%1208",
+      "p1": "%1005",
+      "p2": "%1097",
+      "p3": "%1205",
+      "boots": [
+        {
+          "id": "%1098",
+          "line": 1101,
+          "where": "after_p2",
+          "input": "%1097",
+          "instruction": "%1098 = \"ckks.bootstrapc\"(%1097) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer1.0.relu2",
+      "input": "%1649",
+      "final_multiply": "%1906",
+      "p1": "%1719",
+      "p2": "%1795",
+      "p3": "%1903",
+      "boots": [
+        {
+          "id": "%1650",
+          "line": 1653,
+          "where": "before_relu2",
+          "input": "%1649",
+          "instruction": "%1650 = \"ckks.bootstrapc\"(%1649) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%1796",
+          "line": 1799,
+          "where": "after_p2",
+          "input": "%1795",
+          "instruction": "%1796 = \"ckks.bootstrapc\"(%1795) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer1.1.relu1",
+      "input": "%2344",
+      "final_multiply": "%2600",
+      "p1": "%2413",
+      "p2": "%2489",
+      "p3": "%2597",
+      "boots": [
+        {
+          "id": "%2490",
+          "line": 2493,
+          "where": "after_p2",
+          "input": "%2489",
+          "instruction": "%2490 = \"ckks.bootstrapc\"(%2489) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer1.1.relu2",
+      "input": "%3040",
+      "final_multiply": "%3297",
+      "p1": "%3110",
+      "p2": "%3186",
+      "p3": "%3294",
+      "boots": [
+        {
+          "id": "%3041",
+          "line": 3044,
+          "where": "before_relu2",
+          "input": "%3040",
+          "instruction": "%3041 = \"ckks.bootstrapc\"(%3040) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%3187",
+          "line": 3190,
+          "where": "after_p2",
+          "input": "%3186",
+          "instruction": "%3187 = \"ckks.bootstrapc\"(%3186) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer1.2.relu1",
+      "input": "%3735",
+      "final_multiply": "%3991",
+      "p1": "%3804",
+      "p2": "%3880",
+      "p3": "%3988",
+      "boots": [
+        {
+          "id": "%3881",
+          "line": 3884,
+          "where": "after_p2",
+          "input": "%3880",
+          "instruction": "%3881 = \"ckks.bootstrapc\"(%3880) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer1.2.relu2",
+      "input": "%4431",
+      "final_multiply": "%4688",
+      "p1": "%4501",
+      "p2": "%4577",
+      "p3": "%4685",
+      "boots": [
+        {
+          "id": "%4432",
+          "line": 4435,
+          "where": "before_relu2",
+          "input": "%4431",
+          "instruction": "%4432 = \"ckks.bootstrapc\"(%4431) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%4578",
+          "line": 4581,
+          "where": "after_p2",
+          "input": "%4577",
+          "instruction": "%4578 = \"ckks.bootstrapc\"(%4577) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer2.0.relu1",
+      "input": "%5636",
+      "final_multiply": "%5892",
+      "p1": "%5705",
+      "p2": "%5781",
+      "p3": "%5889",
+      "boots": [
+        {
+          "id": "%5782",
+          "line": 5785,
+          "where": "after_p2",
+          "input": "%5781",
+          "instruction": "%5782 = \"ckks.bootstrapc\"(%5781) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer2.0.relu2",
+      "input": "%6429",
+      "final_multiply": "%6686",
+      "p1": "%6499",
+      "p2": "%6575",
+      "p3": "%6683",
+      "boots": [
+        {
+          "id": "%6430",
+          "line": 6433,
+          "where": "before_relu2",
+          "input": "%6429",
+          "instruction": "%6430 = \"ckks.bootstrapc\"(%6429) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%6576",
+          "line": 6579,
+          "where": "after_p2",
+          "input": "%6575",
+          "instruction": "%6576 = \"ckks.bootstrapc\"(%6575) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer2.1.relu1",
+      "input": "%7222",
+      "final_multiply": "%7478",
+      "p1": "%7291",
+      "p2": "%7367",
+      "p3": "%7475",
+      "boots": [
+        {
+          "id": "%7368",
+          "line": 7371,
+          "where": "after_p2",
+          "input": "%7367",
+          "instruction": "%7368 = \"ckks.bootstrapc\"(%7367) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer2.1.relu2",
+      "input": "%8016",
+      "final_multiply": "%8273",
+      "p1": "%8086",
+      "p2": "%8162",
+      "p3": "%8270",
+      "boots": [
+        {
+          "id": "%8017",
+          "line": 8020,
+          "where": "before_relu2",
+          "input": "%8016",
+          "instruction": "%8017 = \"ckks.bootstrapc\"(%8016) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%8163",
+          "line": 8166,
+          "where": "after_p2",
+          "input": "%8162",
+          "instruction": "%8163 = \"ckks.bootstrapc\"(%8162) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer2.2.relu1",
+      "input": "%8809",
+      "final_multiply": "%9065",
+      "p1": "%8878",
+      "p2": "%8954",
+      "p3": "%9062",
+      "boots": [
+        {
+          "id": "%8955",
+          "line": 8958,
+          "where": "after_p2",
+          "input": "%8954",
+          "instruction": "%8955 = \"ckks.bootstrapc\"(%8954) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer2.2.relu2",
+      "input": "%9603",
+      "final_multiply": "%9860",
+      "p1": "%9673",
+      "p2": "%9749",
+      "p3": "%9857",
+      "boots": [
+        {
+          "id": "%9604",
+          "line": 9607,
+          "where": "before_relu2",
+          "input": "%9603",
+          "instruction": "%9604 = \"ckks.bootstrapc\"(%9603) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%9750",
+          "line": 9753,
+          "where": "after_p2",
+          "input": "%9749",
+          "instruction": "%9750 = \"ckks.bootstrapc\"(%9749) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer3.0.relu1",
+      "input": "%11004",
+      "final_multiply": "%11260",
+      "p1": "%11073",
+      "p2": "%11149",
+      "p3": "%11257",
+      "boots": [
+        {
+          "id": "%11150",
+          "line": 11153,
+          "where": "after_p2",
+          "input": "%11149",
+          "instruction": "%11150 = \"ckks.bootstrapc\"(%11149) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer3.0.relu2",
+      "input": "%11975",
+      "final_multiply": "%12232",
+      "p1": "%12045",
+      "p2": "%12121",
+      "p3": "%12229",
+      "boots": [
+        {
+          "id": "%11976",
+          "line": 11979,
+          "where": "before_relu2",
+          "input": "%11975",
+          "instruction": "%11976 = \"ckks.bootstrapc\"(%11975) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%12122",
+          "line": 12125,
+          "where": "after_p2",
+          "input": "%12121",
+          "instruction": "%12122 = \"ckks.bootstrapc\"(%12121) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer3.1.relu1",
+      "input": "%12946",
+      "final_multiply": "%13202",
+      "p1": "%13015",
+      "p2": "%13091",
+      "p3": "%13199",
+      "boots": [
+        {
+          "id": "%13092",
+          "line": 13095,
+          "where": "after_p2",
+          "input": "%13091",
+          "instruction": "%13092 = \"ckks.bootstrapc\"(%13091) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer3.1.relu2",
+      "input": "%13918",
+      "final_multiply": "%14175",
+      "p1": "%13988",
+      "p2": "%14064",
+      "p3": "%14172",
+      "boots": [
+        {
+          "id": "%13919",
+          "line": 13922,
+          "where": "before_relu2",
+          "input": "%13918",
+          "instruction": "%13919 = \"ckks.bootstrapc\"(%13918) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%14065",
+          "line": 14068,
+          "where": "after_p2",
+          "input": "%14064",
+          "instruction": "%14065 = \"ckks.bootstrapc\"(%14064) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer3.2.relu1",
+      "input": "%14889",
+      "final_multiply": "%15145",
+      "p1": "%14958",
+      "p2": "%15034",
+      "p3": "%15142",
+      "boots": [
+        {
+          "id": "%15035",
+          "line": 15038,
+          "where": "after_p2",
+          "input": "%15034",
+          "instruction": "%15035 = \"ckks.bootstrapc\"(%15034) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    },
+    {
+      "name": "layer3.2.relu2",
+      "input": "%15861",
+      "final_multiply": "%16118",
+      "p1": "%15931",
+      "p2": "%16007",
+      "p3": "%16115",
+      "boots": [
+        {
+          "id": "%15862",
+          "line": 15865,
+          "where": "before_relu2",
+          "input": "%15861",
+          "instruction": "%15862 = \"ckks.bootstrapc\"(%15861) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 9,
+          "output_physical_level": 22,
+          "input_scale_log2": 60,
+          "output_scale_log2": 45
+        },
+        {
+          "id": "%16008",
+          "line": 16011,
+          "where": "after_p2",
+          "input": "%16007",
+          "instruction": "%16008 = \"ckks.bootstrapc\"(%16007) : (tensor<1x!ckks.poly<2 * 65 * 4>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+          "input_physical_level": 7,
+          "output_physical_level": 22,
+          "input_scale_log2": 65,
+          "output_scale_log2": 45
+        }
+      ]
+    }
+  ],
+  "other_boots": [
+    {
+      "id": "%926",
+      "line": 929,
+      "input": "%925",
+      "previous_relu": "stem.relu",
+      "next_relu": "layer1.0.relu1",
+      "preceding": [
+        "    %923 = \"ckks.addcc\"(%917, %922) : (tensor<1x!ckks.poly<2 * 45 * 5>>, tensor<1x!ckks.poly<2 * 45 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 5>>",
+        "    %924 = \"ckks.rotatec\"(%923) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 45 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 5>>",
+        "    %925 = \"ckks.addcc\"(%923, %924) : (tensor<1x!ckks.poly<2 * 45 * 5>>, tensor<1x!ckks.poly<2 * 45 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 5>>"
+      ],
+      "following": [
+        "    %927 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %928 = \"ckks.addcp\"(%926, %927) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %929 = \"ckks.addcc\"(%928, %928) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %930 = \"ckks.mulcc\"(%929, %928) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %931 = \"ckks.relinearize\"(%930) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%926 = \"ckks.bootstrapc\"(%925) : (tensor<1x!ckks.poly<2 * 45 * 5>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 8,
+      "output_physical_level": 22,
+      "input_scale_log2": 45,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%2342",
+      "line": 2345,
+      "input": "%2341",
+      "previous_relu": "layer1.0.relu2",
+      "next_relu": "layer1.1.relu1",
+      "preceding": [
+        "    %2339 = \"ckks.addcc\"(%2334, %2338) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %2340 = \"ckks.rotatec\"(%2339) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %2341 = \"ckks.addcc\"(%2339, %2340) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %2343 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %2344 = \"ckks.addcp\"(%2342, %2343) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %2345 = \"ckks.addcc\"(%2344, %2344) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %2346 = \"ckks.mulcc\"(%2345, %2344) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %2347 = \"ckks.relinearize\"(%2346) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%2342 = \"ckks.bootstrapc\"(%2341) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%3733",
+      "line": 3736,
+      "input": "%3732",
+      "previous_relu": "layer1.1.relu2",
+      "next_relu": "layer1.2.relu1",
+      "preceding": [
+        "    %3730 = \"ckks.addcc\"(%3725, %3729) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %3731 = \"ckks.rotatec\"(%3730) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %3732 = \"ckks.addcc\"(%3730, %3731) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %3734 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %3735 = \"ckks.addcp\"(%3733, %3734) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %3736 = \"ckks.addcc\"(%3735, %3735) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %3737 = \"ckks.mulcc\"(%3736, %3735) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %3738 = \"ckks.relinearize\"(%3737) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%3733 = \"ckks.bootstrapc\"(%3732) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%5634",
+      "line": 5637,
+      "input": "%5633",
+      "previous_relu": "layer1.2.relu2",
+      "next_relu": "layer2.0.relu1",
+      "preceding": [
+        "    %5631 = \"ckks.addcc\"(%5629, %5630) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %5632 = \"ckks.rotatec\"(%5631) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %5633 = \"ckks.addcc\"(%5631, %5632) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %5635 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %5636 = \"ckks.addcp\"(%5634, %5635) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %5637 = \"ckks.addcc\"(%5636, %5636) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %5638 = \"ckks.mulcc\"(%5637, %5636) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %5639 = \"ckks.relinearize\"(%5638) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%5634 = \"ckks.bootstrapc\"(%5633) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%7220",
+      "line": 7223,
+      "input": "%7219",
+      "previous_relu": "layer2.0.relu2",
+      "next_relu": "layer2.1.relu1",
+      "preceding": [
+        "    %7217 = \"ckks.addcc\"(%7215, %7216) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %7218 = \"ckks.rotatec\"(%7217) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %7219 = \"ckks.addcc\"(%7217, %7218) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %7221 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %7222 = \"ckks.addcp\"(%7220, %7221) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %7223 = \"ckks.addcc\"(%7222, %7222) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %7224 = \"ckks.mulcc\"(%7223, %7222) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %7225 = \"ckks.relinearize\"(%7224) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%7220 = \"ckks.bootstrapc\"(%7219) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%8807",
+      "line": 8810,
+      "input": "%8806",
+      "previous_relu": "layer2.1.relu2",
+      "next_relu": "layer2.2.relu1",
+      "preceding": [
+        "    %8804 = \"ckks.addcc\"(%8802, %8803) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %8805 = \"ckks.rotatec\"(%8804) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %8806 = \"ckks.addcc\"(%8804, %8805) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %8808 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %8809 = \"ckks.addcp\"(%8807, %8808) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %8810 = \"ckks.addcc\"(%8809, %8809) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %8811 = \"ckks.mulcc\"(%8810, %8809) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %8812 = \"ckks.relinearize\"(%8811) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%8807 = \"ckks.bootstrapc\"(%8806) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%11002",
+      "line": 11005,
+      "input": "%11001",
+      "previous_relu": "layer2.2.relu2",
+      "next_relu": "layer3.0.relu1",
+      "preceding": [
+        "    %10999 = \"ckks.addcc\"(%10997, %10998) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %11000 = \"ckks.rotatec\"(%10999) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %11001 = \"ckks.addcc\"(%10999, %11000) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %11003 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %11004 = \"ckks.addcp\"(%11002, %11003) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %11005 = \"ckks.addcc\"(%11004, %11004) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %11006 = \"ckks.mulcc\"(%11005, %11004) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %11007 = \"ckks.relinearize\"(%11006) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%11002 = \"ckks.bootstrapc\"(%11001) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%12944",
+      "line": 12947,
+      "input": "%12943",
+      "previous_relu": "layer3.0.relu2",
+      "next_relu": "layer3.1.relu1",
+      "preceding": [
+        "    %12941 = \"ckks.addcc\"(%12939, %12940) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %12942 = \"ckks.rotatec\"(%12941) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %12943 = \"ckks.addcc\"(%12941, %12942) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %12945 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %12946 = \"ckks.addcp\"(%12944, %12945) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %12947 = \"ckks.addcc\"(%12946, %12946) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %12948 = \"ckks.mulcc\"(%12947, %12946) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %12949 = \"ckks.relinearize\"(%12948) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%12944 = \"ckks.bootstrapc\"(%12943) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    },
+    {
+      "id": "%14887",
+      "line": 14890,
+      "input": "%14886",
+      "previous_relu": "layer3.1.relu2",
+      "next_relu": "layer3.2.relu1",
+      "preceding": [
+        "    %14884 = \"ckks.addcc\"(%14882, %14883) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %14885 = \"ckks.rotatec\"(%14884) <{offset = array<i64: -16384>}> : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>",
+        "    %14886 = \"ckks.addcc\"(%14884, %14885) : (tensor<1x!ckks.poly<2 * 60 * 6>>, tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 60 * 6>>"
+      ],
+      "following": [
+        "    %14888 = \"ckks.encode\"() <{payload = dense_resource<__elided__> : tensor<32768xf64>}> : () -> tensor<1x!ckks.poly<1 * 45 * 19>>",
+        "    %14889 = \"ckks.addcp\"(%14887, %14888) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<1 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %14890 = \"ckks.addcc\"(%14889, %14889) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+        "    %14891 = \"ckks.mulcc\"(%14890, %14889) : (tensor<1x!ckks.poly<2 * 45 * 19>>, tensor<1x!ckks.poly<2 * 45 * 19>>) -> tensor<1x!ckks.poly<3 * 90 * 19>>",
+        "    %14892 = \"ckks.relinearize\"(%14891) : (tensor<1x!ckks.poly<3 * 90 * 19>>) -> tensor<1x!ckks.poly<2 * 90 * 19>>"
+      ],
+      "instruction": "%14887 = \"ckks.bootstrapc\"(%14886) : (tensor<1x!ckks.poly<2 * 60 * 6>>) -> tensor<1x!ckks.poly<2 * 45 * 19>>",
+      "input_physical_level": 9,
+      "output_physical_level": 22,
+      "input_scale_log2": 60,
+      "output_scale_log2": 45
+    }
+  ],
+  "totals": {
+    "after_p2": 19,
+    "before_relu2": 9
+  },
+  "total_boots": 37
+}

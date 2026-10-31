@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-28",
+  "branch": "experiment/native-scale-planning",
+  "compiler_sha256": "395e6fb9178bb673a197f51de79c2964da7ddb0fc76a7f0dbea7c2b9d7eb7060",
+  "model_sha256": "d29b1693f705976e75aa02b146251040811418ded92ed2dfe3ce2e6e21350816",
+  "constraints": {
+    "working_q": 25,
+    "boot_input_q": 6,
+    "boot_output_q": 31,
+    "boot_input_scale": 40,
+    "boot_output_scale": 40,
+    "poly_degree": 65536,
+    "max_prime_bits": 32,
+    "waterline": 40,
+    "rescale_policy": "threshold; no target options/goals/schedules"
+  },
+  "prepared_candidates": 6421,
+  "distinct_working_chains": 6224,
+  "diagnostic_evaluations": 6602,
+  "diagnostic_outcomes": {
+    "unbooted": 6557,
+    "failed": 45
+  },
+  "diagnostic_phases": {
+    "pair": 116,
+    "relu": 2153,
+    "stages": 78,
+    "prefix1": 4255
+  },
+  "full_candidates": 23,
+  "full_compilations": 52,
+  "full_boot_counts": {
+    "greedy-q31": {
+      "154": 2,
+      "182": 1,
+      "209": 1,
+      "118": 1,
+      "172": 1,
+      "166": 2,
+      "151": 2,
+      "143": 3,
+      "191": 1,
+      "190": 1,
+      "211": 1,
+      "156": 2,
+      "178": 2,
+      "145": 1,
+      "177": 1,
+      "238": 1
+    },
+    "greedy-q34": {
+      "150": 1,
+      "184": 1,
+      "114": 1
+    },
+    "optimized-q31": {
+      "27": 16,
+      "28": 7
+    },
+    "optimized-q34": {
+      "27": 3
+    }
+  },
+  "min_optimized": 27,
+  "min_greedy_q31": 118,
+  "min_greedy_q34": 114,
+  "min_unbooted_relu_q": 23,
+  "min_unbooted_pair_q": 26,
+  "min_unbooted_pair_q_with_alignment": 28,
+  "regression": {
+    "checks": 607,
+    "graph_cases": 540,
+    "valid_graph_plans": 489,
+    "infeasible_graph_budgets": 45,
+    "documented_single_prefix_rejections": 6,
+    "native_planning": 25,
+    "manual_boot": 9,
+    "native_artifacts": 18,
+    "budget_and_removed_options": 15
+  },
+  "remote_artifacts": "/home/xuming/poseidon-manual-boot-20261026/resnet20-optimized-20261027T055506Z/placement-audit/target-scale-experiment/chain32-fixed25-20261028",
+  "limitations": [
+    "Finite chain search; not a proof of impossibility.",
+    "Optimized retains one prefix per cut and minimizes estimated latency; not a global Boot optimum.",
+    "Diagnostics lower the supported minimum level and remove Boot scale contract only to measure unbooted depth; only production full plans count toward the objective.",
+    "GPU checks cover one no-Boot ReLU only, not full encrypted inference or real Boot with changed parameters.",
+    "peak_child_rss_kib uses cumulative child-process high-water mark; do not compare it as isolated per-case RSS."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "95cfee92a3905a8289ab74a0c19f5f1ea11868ec50bd1a4dbcea2c14245db268",
+  "include/hecate/Dialect/Earth/Transforms/Common.h": "44bc4bf9644945324d3b2e88d991619982bcd9a333c3abb48e0543b8b539372e",
+  "lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": "980ad61f9ac44631eba44f152e577e4f6beafca5ce5d75a5c8b150a43fc5f56f",
+  "lib/Dialect/Earth/IR/EarthDialect.cpp": "367a8f79d3fea84cdd96b32f4b937f85a179c876cbd91a22323e057c31923337",
+  "lib/Dialect/Earth/Transforms/CMakeLists.txt": "792d702511338e762fd4c2bda50ec433600c7c95d58fa34ad058406e4fad9084",
+  "lib/Dialect/Earth/Transforms/EarlyModswitch.cpp": "1026338eeab0a55a5b940b5441d5a6be0f6cd33fd330f6415ba3082f89256942",
+  "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "8b15cceb5ee49fdb6d980728ce031b649f853762d980be3109bb205bfe2b4996",
+  "lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp": "56e720552b28d9ac531c8916411d7eaa06aaed62acd64e9b939e69ff47c1170a",
+  "lib/Dialect/Earth/Transforms/RemoveBootstrap.cpp": "aa2c52062f9690b9e326e5ffbfa180be26a0615113efcd22e6fefb600cf5678b",
+  "lib/Dialect/Earth/Transforms/TargetScalePlanning.cpp": null
+}

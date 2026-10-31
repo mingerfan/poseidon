@@ -2,3 +2,17 @@
 llm_dsl/** -text -whitespace
 test-results/qwen-dacapo-188-20261010/** -text -whitespace
 test-results/qwen24-dacapo-188-20261010/** -text -whitespace
+
+# Preserve raw scale-management evidence and its recorded hashes.
+test-results/resnet20-boot-placement-audit-20261026/** -text -whitespace
+test-results/resnet20-chain32-fixed25-20261028/** -text -whitespace
+test-results/resnet20-scale-overhead-20261028/** -text -whitespace
+test-results/resnet20-boot-attribution-20261030/** -text -whitespace
+test-results/scale-state-step1-20261031/** -text -whitespace
+test-results/reduction-rs-step2-20261031/** -text -whitespace
+test-results/local-scale-step3-20261031/** -text -whitespace
+test-results/multiplication-scale-simulation-20261031/** -text -whitespace
+test-results/regional-scale-20261031/** -text -whitespace
+test-results/regional-arithmetic-q5-20261031/** -text -whitespace
+test-results/regional-level-comparison-20261031/** -text -whitespace
+test-results/regional-optimized-check-20261031/** -text -whitespace

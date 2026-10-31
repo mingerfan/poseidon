@@ -1,0 +1,229 @@
+{
+  "name": "mix-30-20-2",
+  "boots": [
+    {
+      "relu": 1,
+      "where": "P2_boundary",
+      "ssa": "%6687",
+      "input_root": "%6682",
+      "mlir_line": 6691,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 2,
+      "where": "P1_boundary",
+      "ssa": "%7272",
+      "input_root": "%7267",
+      "mlir_line": 7276,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 3,
+      "where": "relu_input",
+      "ssa": "%7859",
+      "input_root": "%7854",
+      "mlir_line": 7863,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 3,
+      "where": "P3_boundary",
+      "ssa": "%8161",
+      "input_root": "%8157",
+      "mlir_line": 8165,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 4,
+      "where": "P2_boundary",
+      "ssa": "%8683",
+      "input_root": "%8678",
+      "mlir_line": 8687,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 4,
+      "where": "between_relus",
+      "ssa": "%8824",
+      "input_root": "%8816",
+      "mlir_line": 8828,
+      "input_root_op": "mulcc"
+    },
+    {
+      "relu": 5,
+      "where": "P2_boundary",
+      "ssa": "%9354",
+      "input_root": "%9349",
+      "mlir_line": 9358,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 6,
+      "where": "P1_boundary",
+      "ssa": "%9939",
+      "input_root": "%9934",
+      "mlir_line": 9943,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 7,
+      "where": "relu_input",
+      "ssa": "%10526",
+      "input_root": "%10521",
+      "mlir_line": 10530,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 7,
+      "where": "P3_boundary",
+      "ssa": "%10828",
+      "input_root": "%10824",
+      "mlir_line": 10832,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 8,
+      "where": "P2_boundary",
+      "ssa": "%11688",
+      "input_root": "%11683",
+      "mlir_line": 11692,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 8,
+      "where": "between_relus",
+      "ssa": "%11829",
+      "input_root": "%11821",
+      "mlir_line": 11833,
+      "input_root_op": "mulcc"
+    },
+    {
+      "relu": 9,
+      "where": "P2_boundary",
+      "ssa": "%12506",
+      "input_root": "%12501",
+      "mlir_line": 12510,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 10,
+      "where": "P1_boundary",
+      "ssa": "%13189",
+      "input_root": "%13184",
+      "mlir_line": 13193,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 11,
+      "where": "relu_input",
+      "ssa": "%13858",
+      "input_root": "%13853",
+      "mlir_line": 13862,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 11,
+      "where": "P3_boundary",
+      "ssa": "%14160",
+      "input_root": "%14156",
+      "mlir_line": 14164,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 12,
+      "where": "P2_boundary",
+      "ssa": "%14764",
+      "input_root": "%14759",
+      "mlir_line": 14768,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 12,
+      "where": "between_relus",
+      "ssa": "%14905",
+      "input_root": "%14897",
+      "mlir_line": 14909,
+      "input_root_op": "mulcc"
+    },
+    {
+      "relu": 13,
+      "where": "P2_boundary",
+      "ssa": "%15517",
+      "input_root": "%15512",
+      "mlir_line": 15521,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 14,
+      "where": "P1_boundary",
+      "ssa": "%16650",
+      "input_root": "%16645",
+      "mlir_line": 16654,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 15,
+      "where": "relu_input",
+      "ssa": "%17548",
+      "input_root": "%17543",
+      "mlir_line": 17552,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 15,
+      "where": "P3_boundary",
+      "ssa": "%17850",
+      "input_root": "%17846",
+      "mlir_line": 17854,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 16,
+      "where": "P2_boundary",
+      "ssa": "%18600",
+      "input_root": "%18595",
+      "mlir_line": 18604,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 17,
+      "where": "relu_input",
+      "ssa": "%19389",
+      "input_root": "%19384",
+      "mlir_line": 19393,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 17,
+      "where": "P3_boundary",
+      "ssa": "%19691",
+      "input_root": "%19687",
+      "mlir_line": 19695,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 18,
+      "where": "P2_boundary",
+      "ssa": "%20441",
+      "input_root": "%20436",
+      "mlir_line": 20445,
+      "input_root_op": "addcc"
+    },
+    {
+      "relu": 19,
+      "where": "P1_boundary",
+      "ssa": "%21318",
+      "input_root": "%21313",
+      "mlir_line": 21322,
+      "input_root_op": "addcc"
+    }
+  ],
+  "counts": {
+    "P2_boundary": 9,
+    "P1_boundary": 5,
+    "relu_input": 5,
+    "P3_boundary": 5,
+    "between_relus": 3
+  },
+  "method": "Strip scale-management and transfer nodes. Identify 19 ReLU final x*(P3+0.5) operands; classify interior boundaries by the unchanged 8/8/10/1 MulCC groups. This is structural placement evidence, not encrypted accuracy."
+}

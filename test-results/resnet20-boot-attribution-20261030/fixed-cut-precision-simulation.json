@@ -1,0 +1,84 @@
+{
+  "rows": [
+    {
+      "floor": 30,
+      "boots_fixed": 27,
+      "rescale_levels": 48,
+      "modswitch_levels": 123,
+      "total_entry_levels": 171,
+      "drops": {
+        "2": 21,
+        "1": 6
+      },
+      "smallest_plain_scale": 30.231587973495877
+    },
+    {
+      "floor": 24,
+      "boots_fixed": 27,
+      "rescale_levels": 46,
+      "modswitch_levels": 125,
+      "total_entry_levels": 171,
+      "drops": {
+        "1": 8,
+        "2": 19
+      },
+      "smallest_plain_scale": 25.160313259071465
+    },
+    {
+      "floor": 20,
+      "boots_fixed": 27,
+      "rescale_levels": 45,
+      "modswitch_levels": 126,
+      "total_entry_levels": 171,
+      "drops": {
+        "1": 9,
+        "2": 18
+      },
+      "smallest_plain_scale": 23.177303458234086
+    },
+    {
+      "floor": 15,
+      "boots_fixed": 27,
+      "rescale_levels": 38,
+      "modswitch_levels": 133,
+      "total_entry_levels": 171,
+      "drops": {
+        "1": 16,
+        "2": 11
+      },
+      "smallest_plain_scale": 15.071482063277749
+    },
+    {
+      "floor": 8,
+      "boots_fixed": 27,
+      "rescale_levels": 36,
+      "modswitch_levels": 135,
+      "total_entry_levels": 171,
+      "drops": {
+        "1": 18,
+        "2": 9
+      },
+      "smallest_plain_scale": 10.127680052034677
+    },
+    {
+      "floor": 0,
+      "boots_fixed": 27,
+      "rescale_levels": 27,
+      "modswitch_levels": 144,
+      "total_entry_levels": 171,
+      "drops": {
+        "1": 27
+      },
+      "smallest_plain_scale": 2.1950186478942015
+    }
+  ],
+  "baseline_slack": {
+    "7": 2,
+    "2": 9,
+    "3": 7,
+    "10": 6,
+    "0": 1,
+    "5": 2
+  },
+  "completed_controls_same_sources": true
+}

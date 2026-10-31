@@ -1,0 +1,3 @@
+audit fixed schedule: 18 boundaries, 11984 original values
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py:96:0: error: operation exceeds the Boot Q budget after threshold Rescale
+/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/model-regression-20261021/source/ResNet20.py:96:0: note: see current operation: %424 = "earth.mul"(%417, %423) {audit.original_opid = 263 : i64, earth.actual_scale = 127.03718811077387 : f64} : (tensor<1x!earth.ci<69 * 27>>, tensor<1x!earth.ci<59 * 27>>) -> tensor<1x!earth.ci<128 * 27>>

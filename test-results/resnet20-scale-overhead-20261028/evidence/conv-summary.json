@@ -1,0 +1,18 @@
+[
+  {
+    "input_q": 31,
+    "input_scale": 40,
+    "output_q": 29,
+    "output_scale": 60.003349245508474,
+    "q_consumed": 2,
+    "rescale_ops": 88
+  },
+  {
+    "input_q": 9,
+    "input_scale": 40,
+    "output_q": 7,
+    "output_scale": 56.018905617583094,
+    "q_consumed": 2,
+    "rescale_ops": 88
+  }
+]
