@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/xuming/poseidon-scale-state-step1-20261031/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py", line 96, in <module>
+    main()
+  File "/home/xuming/poseidon-scale-state-step1-20261031/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py", line 78, in main
+    assert 40 < len(rescales) < 60
+AssertionError

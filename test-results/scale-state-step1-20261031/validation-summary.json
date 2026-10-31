@@ -1,0 +1,39 @@
+{
+  "scope": "step1: shared actual-prime RS/capacity calculation and Boot input alignment",
+  "host": "188Server (HPU-001)",
+  "remote_directory": "/home/xuming/poseidon-scale-state-step1-20261031",
+  "compiler_build": "existing local LLVM/MLIR 18 toolchain; tests executed over SSH",
+  "compiler_sha256": "4e880febe0ad994bf092122ab67125bcfd1ac70e00dd836ec003c2b581a80f9a",
+  "ctest": {
+    "passed": 18,
+    "failed": 0,
+    "excluded": [
+      "DacapoFrontendBytecode"
+    ]
+  },
+  "native_artifact_checks_passed": 18,
+  "manual_boot_alignment_checks_passed": 9,
+  "native_boot_budget_checks_passed": 15,
+  "support_test": "also compiled and passed with g++ 11 on 188Server",
+  "test_correction": "Before and after this change, optimized s45 produced a valid 40-RS plan; corrected its old strict lower bound from >40 to >=40.",
+  "gpu": {
+    "cuda_device": 0,
+    "expression": "scalar plan with manual Boot sine map",
+    "format_version": 1,
+    "input_level": 30,
+    "input_scale_log2": 40.0,
+    "max_abs_error": 2.8933084679938492e-05,
+    "max_identity_error": 0.00016647500435917895,
+    "max_imaginary": 1.9537223499024726e-06,
+    "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+    "output_level": 6,
+    "output_scale_log2": 55.0,
+    "passed": true,
+    "plan_sha256": "sha256:ef7d93942e3758b2b6e5bc8374d2fc038f77cde1140da515bec3401e31dcec85",
+    "tolerance": 0.0001,
+    "physical_gpu": 1,
+    "boot_count": 2,
+    "reference": "manual Boot sine-map reference, not identity Boot",
+    "initial_gpu0_attempt": "cudaSetDevice failed with uncorrectable ECC; retried on GPU1"
+  }
+}

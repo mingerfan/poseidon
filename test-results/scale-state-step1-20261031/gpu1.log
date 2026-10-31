@@ -1,0 +1,3 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576
+PASS max_abs_error=2.89331e-05 max_imaginary=1.95372e-06
+report=/home/xuming/poseidon-scale-state-step1-20261031/gpu-report.json

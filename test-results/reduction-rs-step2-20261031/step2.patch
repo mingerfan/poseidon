@@ -1,0 +1,1065 @@
+diff --git a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/Transforms/Passes.td b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/Transforms/Passes.td
+--- a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/Transforms/Passes.td
++++ b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/CKKS/Transforms/Passes.td
+@@ -69,6 +69,20 @@
+     Option<"levelsPerLogicalLevel", "levels-per-logical-level", "int64_t",
+            /*default=*/[{4}],
+            "Physical RNS levels consumed by one logical level">
++  ];
++}
++
++def CoalesceReductionRescales : Pass<"coalesce-reduction-rescales", "::mlir::func::FuncOp"> {
++  let summary = "Share native Rescales at the exit of compatible product reductions";
++  let description = [{
++    Runs after physical scale materialization and before placement. Preserves
++    the addition tree and its output level/scale. Shared values, rotations,
++    unequal source states and insufficient accumulation headroom are barriers.
++    Uses OperatorSpec latency to account for the higher-level additions.
++  }];
++  let options = [
++    Option<"operatorSpecPath", "operator-spec", "std::string", [{""}],
++           "Native OperatorSpec with AddCC and Rescale latency tables">
+   ];
+ }
+ 
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CMakeLists.txt b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CMakeLists.txt
+--- a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CMakeLists.txt
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CMakeLists.txt
+@@ -2,6 +2,7 @@
+ add_mlir_dialect_library(CKKSTransforms
+   AssignPlacement.cpp
+   MaterializePhysicalLevels.cpp
++  CoalesceReductionRescales.cpp
+   MaterializeCommunication.cpp
+   EmitRuntimePlan.cpp
+   RuntimePlanUtils.cpp
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CoalesceReductionRescales.cpp b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CoalesceReductionRescales.cpp
+--- /dev/null
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/CoalesceReductionRescales.cpp
+@@ -0,0 +1,255 @@
++#include "hecate/Dialect/CKKS/IR/CKKSOps.h"
++#include "hecate/Dialect/CKKS/Transforms/Passes.h"
++#include "hecate/Support/ModulusChain.h"
++#include "mlir/IR/PatternMatch.h"
++#include "nlohmann/json.hpp"
++#include "llvm/ADT/DenseMap.h"
++#include <cmath>
++#include <cstdint>
++#include <fstream>
++#include <utility>
++#include <vector>
++
++namespace hecate::ckks {
++#define GEN_PASS_DEF_COALESCEREDUCTIONRESCALES
++#include "hecate/Dialect/CKKS/Transforms/Passes.h.inc"
++} // namespace hecate::ckks
++
++using namespace mlir;
++namespace ckks = hecate::ckks;
++
++namespace {
++struct Costs {
++  SmallVector<double> add, rescalePrefix;
++
++  LogicalResult read(StringRef path, ArrayRef<int64_t> moduli,
++                     func::FuncOp func) {
++    std::ifstream input(path.str());
++    auto spec = nlohmann::json::parse(input, nullptr, false);
++    if (spec.is_discarded() || !spec.is_object() || !spec.contains("context") ||
++        !spec["context"].contains("rns_moduli") ||
++        spec["context"]["rns_moduli"] !=
++            std::vector<int64_t>(moduli.begin(), moduli.end()) ||
++        !spec.contains("operators"))
++      return func.emitError("reduction Rescale requires an OperatorSpec "
++                            "matching the actual Q chain");
++    SmallVector<double> rescale;
++    for (auto entry : {std::make_pair("add_cc", &add),
++                       std::make_pair("rescale", &rescale)}) {
++      const auto &operators = spec["operators"];
++      if (!operators.contains(entry.first) ||
++          !operators[entry.first].contains("supported") ||
++          operators[entry.first]["supported"] != true ||
++          !operators[entry.first].contains("latency_us_by_level") ||
++          !operators[entry.first]["latency_us_by_level"].is_array())
++        return func.emitError(
++            "reduction Rescale requires AddCC and Rescale latency tables");
++      for (const auto &value : operators[entry.first]["latency_us_by_level"]) {
++        if (!value.is_number() || !std::isfinite(value.get<double>()) ||
++            value.get<double>() < 0)
++          return func.emitError(
++              "reduction Rescale latency must be finite and nonnegative");
++        entry.second->push_back(value.get<double>());
++      }
++    }
++    rescalePrefix.push_back(0);
++    for (double cost : rescale)
++      rescalePrefix.push_back(rescalePrefix.back() + cost);
++    return success();
++  }
++
++  FailureOr<bool> profitable(unsigned source, unsigned target,
++                             Operation *op) const {
++    if (source >= add.size() || source + 1 >= rescalePrefix.size())
++      return op->emitError(
++                 "reduction Rescale latency tables do not cover the source Q"),
++             failure();
++    double saved = rescalePrefix[source + 1] - rescalePrefix[target + 1];
++    if (add[source] <= 0 || add[target] <= 0 || saved <= 0)
++      return op->emitError("reduction Rescale requires positive latency at the "
++                           "used Q levels"),
++             failure();
++    return saved > add[source] - add[target];
++  }
++};
++
++// An entry represents either one private RS chain after MulCP, or an AddCC
++// tree of such chains. Each entry has constant size, including for long sums.
++struct Reduction {
++  Value raw, exemplar;
++  Type rawType;
++  double rawScale;
++  uint64_t terms;
++  bool child = false;
++};
++
++struct CoalesceReductionRescalesPass
++    : ckks::impl::CoalesceReductionRescalesBase<CoalesceReductionRescalesPass> {
++  using Base::Base;
++
++  void runOnOperation() override {
++    auto func = getOperation();
++    auto moduli = func->getAttrOfType<DenseI64ArrayAttr>("ckks.rns_moduli");
++    if (func.isExternal() || !moduli)
++      return; // Lazy/eager plans do not describe native scale transitions.
++    if (!func.getBody().hasOneBlock() || func->hasAttr("dist.device_counts")) {
++      func.emitError(
++          "reduction Rescale requires one unplaced physical CKKS block");
++      return signalPassFailure();
++    }
++    for (auto q : moduli.asArrayRef())
++      if (q <= 1 || q >= (int64_t{1} << 53)) {
++        func.emitError("reduction Rescale requires moduli in (1, 2^53)");
++        return signalPassFailure();
++      }
++    hecate::ModulusChain chain;
++    chain.reset(moduli.asArrayRef());
++    llvm::DenseMap<Value, Reduction> reductions;
++    Costs costs;
++    bool haveCosts = false;
++    auto scaleOf = [](Value value) -> FailureOr<double> {
++      auto *op = value.getDefiningOp();
++      auto scale = op->getAttrOfType<FloatAttr>("runtime.scale_log2");
++      if (!scale || !std::isfinite(scale.getValueAsDouble()) ||
++          scale.getValueAsDouble() < 0 || scale.getValueAsDouble() > 1023)
++        return op->emitError(
++                   "reduction Rescale requires materialized actual scales"),
++               failure();
++      return scale.getValueAsDouble();
++    };
++
++    // Analyze without mutating. Consecutive RS summaries and addition summaries
++    // are extended in O(1), rather than rescanning every partial sum's history.
++    for (auto &op : func.front()) {
++      if (op.hasAttr("sm_fixed"))
++        continue;
++      if (auto rs = dyn_cast<ckks::RescaleCOp>(op)) {
++        Value input = rs.getSrc();
++        auto source = ckks::getPolyType(input),
++             target = ckks::getPolyType(rs.getResult());
++        if (source.getLevel() != target.getLevel() + 1)
++          continue;
++        if (auto mul = input.getDefiningOp<ckks::MulCPOp>();
++            mul && !mul->hasAttr("sm_fixed")) {
++          auto scale = scaleOf(input);
++          if (failed(scale))
++            return signalPassFailure();
++          reductions[rs.getResult()] = {input, rs.getResult(), input.getType(),
++                                        *scale, 1};
++        } else if (input.hasOneUse() &&
++                   input.getDefiningOp<ckks::RescaleCOp>()) {
++          auto previous = reductions.find(input);
++          if (previous != reductions.end()) {
++            auto next = previous->second;
++            next.exemplar = rs.getResult();
++            reductions[rs.getResult()] = next;
++          }
++        }
++        continue;
++      }
++      auto add = dyn_cast<ckks::AddCCOp>(op);
++      if (!add || !add.getLhs().hasOneUse() || !add.getRhs().hasOneUse())
++        continue;
++      auto left = reductions.find(add.getLhs()),
++           right = reductions.find(add.getRhs());
++      if (left == reductions.end() || right == reductions.end())
++        continue;
++      auto a = left->second, b = right->second;
++      if (a.rawType != b.rawType || a.rawScale != b.rawScale ||
++          add.getLhs().getType() != add.getRhs().getType())
++        continue;
++      unsigned source = cast<ckks::PolyTypeInterface>(
++                            cast<RankedTensorType>(a.rawType).getElementType())
++                            .getLevel();
++      unsigned target = ckks::getPolyType(add.getResult()).getLevel();
++      uint64_t terms = a.terms + b.terms;
++      // Reserve carry bits for every term, including every partial sum. This
++      // extends the existing scale-capacity check, not a full range analysis.
++      if (source >= chain.size() ||
++          a.rawScale + std::log2(static_cast<double>(terms)) >=
++              chain.capacity(source))
++        continue;
++      if (!haveCosts) {
++        if (failed(costs.read(operatorSpecPath, moduli.asArrayRef(), func)))
++          return signalPassFailure();
++        haveCosts = true;
++      }
++      auto profitable = costs.profitable(source, target, add);
++      if (failed(profitable))
++        return signalPassFailure();
++      if (!*profitable)
++        continue;
++      // DenseMap insertion can invalidate its iterators, so mark children
++      // first.
++      left->second.child = right->second.child = true;
++      reductions[add.getResult()] = {add.getResult(), a.exemplar, a.rawType,
++                                     a.rawScale, terms};
++    }
++
++    IRRewriter rewriter(func.getContext());
++    SmallVector<Value> roots;
++    for (auto &op : func.front())
++      if (auto add = dyn_cast<ckks::AddCCOp>(op)) {
++        auto entry = reductions.find(add.getResult());
++        if (entry != reductions.end() && !entry->second.child)
++          roots.push_back(add.getResult());
++      }
++    for (Value root : roots) {
++      const auto &region = reductions.find(root)->second;
++      // Snapshot one original RS sequence: copy its exact types and actual
++      // scales, so all consumers retain precisely the planned output state.
++      SmallVector<ckks::RescaleCOp> pattern;
++      Value cursor = region.exemplar;
++      while (auto rs = cursor.getDefiningOp<ckks::RescaleCOp>()) {
++        pattern.push_back(rs);
++        cursor = rs.getSrc();
++      }
++      rewriter.setInsertionPointAfter(root.getDefiningOp());
++      Value output = root;
++      Operation *first = nullptr;
++      for (auto rs : llvm::reverse(pattern)) {
++        auto replacement = rewriter.create<ckks::RescaleCOp>(
++            rs.getLoc(), rs.getResult().getType(), output);
++        auto scale = rs->getAttrOfType<FloatAttr>("runtime.scale_log2");
++        if (!scale) {
++          rs.emitError("reduction Rescale requires materialized actual scales");
++          return signalPassFailure();
++        }
++        replacement->setAttr("runtime.scale_log2", scale);
++        if (!first)
++          first = replacement;
++        output = replacement.getResult();
++      }
++      rewriter.replaceAllUsesExcept(root, output, first);
++
++      SmallVector<Value> pending{root}, leaves;
++      while (!pending.empty()) {
++        Value value = pending.pop_back_val();
++        const auto &entry = reductions.find(value)->second;
++        if (auto add = value.getDefiningOp<ckks::AddCCOp>()) {
++          for (unsigned i = 0; i < 2; ++i) {
++            Value operand = add->getOperand(i);
++            pending.push_back(operand);
++            add->setOperand(i, reductions.find(operand)->second.raw);
++          }
++          value.setType(entry.rawType);
++          add->setAttr("runtime.scale_log2",
++                       rewriter.getF64FloatAttr(entry.rawScale));
++        } else {
++          leaves.push_back(value);
++        }
++      }
++      for (Value leaf : leaves) {
++        Value raw = reductions.find(leaf)->second.raw;
++        while (leaf != raw) {
++          auto rs = leaf.getDefiningOp<ckks::RescaleCOp>();
++          Value input = rs.getSrc();
++          assert(rs->use_empty() && "only private RS chains may be removed");
++          rewriter.eraseOp(rs);
++          leaf = input;
++        }
++      }
++    }
++  }
++};
++} // namespace
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp b/third_party/ckks-runtime/third_party/dacapo/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp
+--- a/third_party/ckks-runtime/third_party/dacapo/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Conversion/EarthToCKKS/EarthToCKKS.cpp
+@@ -152,6 +152,7 @@
+ LogicalResult
+ MulOpLowering::matchAndRewrite(hecate::earth::MulOp op, OpAdaptor adaptor,
+                                ConversionPatternRewriter &rewriter) const {
++  auto fixed = op->getAttr("sm_fixed");
+   auto resultType =
+       getTypeConverter()->convertType(op.getType()).cast<RankedTensorType>();
+   auto resultElementType =
+@@ -165,11 +166,13 @@
+         op.getLoc(), mulType, adaptor.getLhs(), adaptor.getRhs());
+     rewriter.replaceOpWithNewOp<ckks::RelinearizeOp>(op, resultType, mul);
+   } else if (ckks::getPolyType(adaptor.getLhs()).getComponents() == 1) {
+-    rewriter.replaceOpWithNewOp<ckks::MulCPOp>(op, resultType, adaptor.getRhs(),
+-                                               adaptor.getLhs());
++    auto replacement = rewriter.replaceOpWithNewOp<ckks::MulCPOp>(
++        op, resultType, adaptor.getRhs(), adaptor.getLhs());
++    if (fixed) replacement->setAttr("sm_fixed", fixed);
+   } else {
+-    rewriter.replaceOpWithNewOp<ckks::MulCPOp>(op, resultType, adaptor.getLhs(),
+-                                               adaptor.getRhs());
++    auto replacement = rewriter.replaceOpWithNewOp<ckks::MulCPOp>(
++        op, resultType, adaptor.getLhs(), adaptor.getRhs());
++    if (fixed) replacement->setAttr("sm_fixed", fixed);
+   }
+   return success();
+ }
+@@ -182,11 +185,13 @@
+ AddOpLowering::matchAndRewrite(hecate::earth::AddOp op, OpAdaptor adaptor,
+                                ConversionPatternRewriter &rewriter) const {
+   auto resultType = getTypeConverter()->convertType(op.getType());
++  auto fixed = op->getAttr("sm_fixed");
+ 
+   if (ckks::getPolyType(adaptor.getLhs()).getComponents() > 1 &&
+       ckks::getPolyType(adaptor.getRhs()).getComponents() > 1) {
+-    rewriter.replaceOpWithNewOp<ckks::AddCCOp>(op, resultType, adaptor.getLhs(),
+-                                               adaptor.getRhs());
++    auto replacement = rewriter.replaceOpWithNewOp<ckks::AddCCOp>(
++        op, resultType, adaptor.getLhs(), adaptor.getRhs());
++    if (fixed) replacement->setAttr("sm_fixed", fixed);
+   } else if (ckks::getPolyType(adaptor.getLhs()).getComponents() == 1) {
+     rewriter.replaceOpWithNewOp<ckks::AddCPOp>(op, resultType, adaptor.getRhs(),
+                                                adaptor.getLhs());
+@@ -244,8 +249,10 @@
+ RescaleOpLowering::matchAndRewrite(hecate::earth::RescaleOp op,
+                                    OpAdaptor adaptor,
+                                    ConversionPatternRewriter &rewriter) const {
+-  rewriter.replaceOpWithNewOp<ckks::RescaleCOp>(
++  auto fixed = op->getAttr("sm_fixed");
++  auto replacement = rewriter.replaceOpWithNewOp<ckks::RescaleCOp>(
+       op, getTypeConverter()->convertType(op.getType()), adaptor.getValue());
++  if (fixed) replacement->setAttr("sm_fixed", fixed);
+   return success();
+ }
+ 
+diff --git a/third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp b/third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp
+--- a/third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp
++++ b/third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp
+@@ -306,6 +306,10 @@
+       "runtime-plan-levels-per-logical-level",
+       cl::desc("Physical RNS levels consumed by one logical CKKS level"),
+       cl::init(1)};
++  static cl::opt<bool> runtime_plan_coalesce_rescales{
++      "runtime-plan-coalesce-rescales",
++      cl::desc("Share compatible native product-reduction Rescales before placement"),
++      cl::init(true)};
+   static cl::opt<int64_t> runtime_plan_intra_rank_communication_cost{
+       "runtime-plan-intra-rank-communication-cost",
+       cl::desc("Fixed intra-rank point-to-point placement cost"),
+@@ -370,6 +374,14 @@
+       physicalLevels.bootProfile = runtime_plan_boot_profile;
+       pm.addNestedPass<func::FuncOp>(
+           hecate::ckks::createMaterializePhysicalLevels(physicalLevels));
++    }
++    if (runtime_plan_coalesce_rescales) {
++      hecate::ckks::CoalesceReductionRescalesOptions reduction;
++      reduction.operatorSpecPath = runtime_plan_physical_level_operator_spec_path.empty()
++          ? runtime_plan_operator_spec_path.getValue()
++          : runtime_plan_physical_level_operator_spec_path.getValue();
++      pm.addNestedPass<func::FuncOp>(
++          hecate::ckks::createCoalesceReductionRescales(reduction));
+     }
+     if (!runtime_plan_device_counts.empty()) {
+       hecate::ckks::AssignPlacementOptions placement;
+diff --git a/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt b/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt
+--- a/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt
++++ b/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt
+@@ -2,6 +2,12 @@
+ 
+ add_executable(DacapoModulusChainTest Support/ModulusChainTest.cpp)
+ add_test(NAME DacapoModulusChain COMMAND DacapoModulusChainTest)
++
++add_test(NAME DacapoReductionRescales
++  COMMAND ${Python3_EXECUTABLE}
++          ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-reduction-rescales.py
++          --hecate-opt $<TARGET_FILE:hecate-opt>
++          --source-dir ${PROJECT_SOURCE_DIR})
+ 
+ add_test(NAME DacapoNativePlanning
+   COMMAND ${Python3_EXECUTABLE}
+diff --git a/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-reduction-rescales.py b/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-reduction-rescales.py
+--- /dev/null
++++ b/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-reduction-rescales.py
+@@ -0,0 +1,528 @@
++#!/usr/bin/env python3
++"""Check reduction RS work, path depth, shared users and actual-prime states."""
++
++import argparse
++import hashlib
++import json
++import math
++from pathlib import Path
++import re
++import subprocess
++import tempfile
++
++
++def poly(scale, level, components=2):
++    return f"tensor<1x!ckks.poly<{components} * {math.ceil(scale)} * {level}>>"
++
++
++def physical_source(
++    moduli,
++    width=2,
++    drops=1,
++    raw_scale=80,
++    form="linear",
++    shared=False,
++    shared_root=False,
++    reuse=False,
++    rotate=False,
++    fixed=False,
++    unequal=False,
++    different_levels=False,
++    distinct_inputs=False,
++):
++    source = len(moduli) - 1
++    target = source - drops
++    scale = raw_scale
++    states = []
++    for i in range(drops):
++        scale -= math.log2(moduli[source - i])
++        states.append(scale)
++    raw, low, arg = poly(raw_scale, source), poly(scale, target), poly(40, source)
++    lines, products, coefficients = [], [], []
++    for i in range(width):
++        coefficient = (-1 if i % 2 else 1) * (i % 7 + 1) / 16
++        coefficients.append(coefficient)
++        # Unequal effective scales can have the same nominal integer type.
++        offset = 0.01 if unequal and i == width - 1 else 0
++        plain_scale = raw_scale - 40 + offset
++        pt = poly(plain_scale, source, 1)
++        operand = "%z" if distinct_inputs and i % 2 else "%x"
++        lines += [
++            f'%p{i} = "ckks.encode"() {{payload = dense<{coefficient}> : tensor<8xf64>, '
++            f"runtime.scale_log2 = {plain_scale:.17e} : f64}} : () -> {pt}",
++            f'%m{i} = "ckks.mulcp"({operand}, %p{i}) {{runtime.scale_log2 = {raw_scale + offset:.17e} : f64}} '
++            f": ({arg}, {pt}) -> {raw}",
++        ]
++        previous, before = f"%m{i}", raw
++        for j, actual in enumerate(states):
++            # Deliberately retain equal nominal types for the unequal-scale
++            # negative case; the pass must compare actual scales too.
++            after = poly(actual, source - j - 1)
++            attrs = "sm_fixed, " if fixed and i == 0 and j == 0 else ""
++            lines.append(
++                f'%r{i}_{j} = "ckks.rescalec"({previous}) '
++                f"{{{attrs}runtime.scale_log2 = {actual + offset:.17e} : f64}} : ({before}) -> {after}"
++            )
++            previous, before = f"%r{i}_{j}", after
++        products.append(previous)
++    if different_levels:
++        assert width == drops == 2
++        level = source - 1
++        actual = states[0]
++        pt, raw_a, input_a = (
++            poly(actual - 40, level, 1),
++            poly(actual, level),
++            poly(40, level),
++        )
++        lines[:4] = [
++            f'%xm = "ckks.modswitchc"(%x) {{downFactor = 1 : i64, runtime.scale_log2 = 4.000000e+01 : f64}} : ({arg}) -> {input_a}',
++            f'%p0 = "ckks.encode"() {{payload = dense<{coefficients[0]}> : tensor<8xf64>, runtime.scale_log2 = {actual - 40:.17e} : f64}} : () -> {pt}',
++            f'%m0 = "ckks.mulcp"(%xm, %p0) {{runtime.scale_log2 = {actual:.17e} : f64}} : ({input_a}, {pt}) -> {raw_a}',
++            f'%r0_1 = "ckks.rescalec"(%m0) {{runtime.scale_log2 = {scale:.17e} : f64}} : ({raw_a}) -> {low}',
++        ]
++    if rotate:
++        lines.append(
++            f'%rot = "ckks.rotatec"({products[0]}) '
++            f"{{offset = array<i64: 1>, runtime.scale_log2 = {scale:.17e} : f64}} : ({low}) -> {low}"
++        )
++        products[0] = "%rot"
++    counter = 0
++
++    def add(left, right):
++        nonlocal counter
++        name = f"%a{counter}"
++        counter += 1
++        lines.append(
++            f'{name} = "ckks.addcc"({left}, {right}) '
++            f"{{runtime.scale_log2 = {scale:.17e} : f64}} : ({low}, {low}) -> {low}"
++        )
++        return name
++
++    if reuse:
++        assert width == 1
++        result = add(products[0], products[0])
++        coefficients *= 2
++    elif form == "balanced":
++        values = products
++        while len(values) > 1:
++            values = [
++                add(values[i], values[i + 1]) if i + 1 < len(values) else values[i]
++                for i in range(0, len(values), 2)
++            ]
++        result = values[0]
++    else:
++        result = products[0]
++        for value in products[1:]:
++            result = add(result, value)
++    outputs = (
++        [result] + ([products[0]] if shared else []) + (["%a0"] if shared_root else [])
++    )
++    types = ", ".join([low] * len(outputs))
++    attrs = ", ".join(str(q) for q in moduli)
++    arguments = f"%x: {arg}" + (f", %z: {arg}" if distinct_inputs else "")
++    arg_scales = "4.000000e+01" + (", 4.000000e+01" if distinct_inputs else "")
++    text = (
++        f"module {{ func.func @reduction({arguments}) -> ({types}) "
++        f"attributes {{init_level = {source} : i64, ckks.rns_moduli = array<i64: {attrs}>, "
++        f"earth.arg_scales = array<f64: {arg_scales}>}} {{\n"
++        + "\n".join(lines)
++        + "\nreturn "
++        + ", ".join(outputs)
++        + f" : {types}\n}}}}\n"
++    )
++    return text, [
++        c * (-2 if distinct_inputs and i % 2 else 1) for i, c in enumerate(coefficients)
++    ]
++
++
++def inspect(text):
++    types, depths, outputs, ops, scales = {}, {"%arg0": 0, "%arg1": 0}, [], [], {}
++    for line in text.splitlines():
++        match = re.search(r'(%\w+) = "ckks\.(\w+)"\(([^)]*)\)', line)
++        if match:
++            name, kind, args = match.groups()
++            args = re.findall(r"%\w+", args)
++            metadata = [
++                tuple(map(int, item))
++                for item in re.findall(r"!ckks.poly<(\d+) \* (\d+) \* (\d+)>", line)
++            ]
++            types[name] = metadata[-1]
++            if args and args[0] not in types:
++                types[args[0]] = metadata[0]
++            depth = max((depths[v] for v in args), default=0)
++            if kind == "rescalec":
++                depth += types[args[0]][2] - metadata[-1][2]
++            depths[name] = depth
++            scales[name] = float(re.search(r"runtime.scale_log2 = ([^ ]+)", line)[1])
++            ops.append((name, kind, args, line))
++        elif "return " in line:
++            outputs = re.findall(r"%\w+", line)
++    return dict(
++        rs=sum(kind == "rescalec" for _, kind, _, _ in ops),
++        muls=sum(kind == "mulcp" for _, kind, _, _ in ops),
++        adds=sum(kind == "addcc" for _, kind, _, _ in ops),
++        output_types=[types[v] for v in outputs],
++        output_scales=[scales[v] for v in outputs],
++        output_depths=[depths[v] for v in outputs],
++        ops=ops,
++        outputs=outputs,
++    )
++
++
++def replay(text, moduli):
++    # Independent scalar fixed-point replay with integer rounding at RS. This
++    # checks semantics/rounding, not encrypted noise or a GPU accuracy claim.
++    info = inspect(text)
++    values = {"%arg0": round(0.25 * 2**40), "%arg1": round(-0.5 * 2**40)}
++    for name, kind, args, line in info["ops"]:
++        scale = float(re.search(r"runtime.scale_log2 = ([^ ]+)", line)[1])
++        if kind == "encode":
++            coefficient = float(re.search(r"payload = dense<([^>]+)>", line)[1])
++            values[name] = round(coefficient * 2**scale)
++        elif kind == "mulcp":
++            values[name] = values[args[0]] * values[args[1]]
++        elif kind == "addcc":
++            values[name] = values[args[0]] + values[args[1]]
++        elif kind == "rotatec":
++            values[name] = values[args[0]]
++        elif kind == "modswitchc":
++            values[name] = values[args[0]]
++        elif kind == "rescalec":
++            source_level = int(re.findall(r"!ckks.poly<\d+ \* \d+ \* (\d+)>", line)[0])
++            q, value = moduli[source_level], values[args[0]]
++            values[name] = (value + q // 2) // q
++        else:
++            raise AssertionError(kind)
++    scales = {
++        name: float(re.search(r"runtime.scale_log2 = ([^ ]+)", line)[1])
++        for name, _, _, line in info["ops"]
++    }
++    return [values[name] / 2 ** scales[name] for name in info["outputs"]]
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--hecate-opt", type=Path, required=True)
++    parser.add_argument("--source-dir", type=Path, required=True)
++    parser.add_argument("--output-dir", type=Path)
++    args = parser.parse_args()
++    fixture = (
++        args.source_dir / "test/runtime-plan/lazy-physical-level-operator-spec.json"
++    )
++    uniform = [(1 << 30) - (i + 1) * 32768 + 1 for i in range(10)]
++    mixed = [(1 << (30 + i % 3)) - (i + 1) * 32768 + 1 for i in range(10)]
++    checks = 0
++    with tempfile.TemporaryDirectory(prefix="reduction-rs-") as temporary:
++        out = args.output_dir or Path(temporary)
++        out.mkdir(parents=True, exist_ok=True)
++
++        def run(name, moduli=uniform, expected=1, expensive=False, **kw):
++            nonlocal checks
++            source, coefficients = physical_source(moduli, **kw)
++            spec = json.loads(fixture.read_text())
++            spec["context"]["rns_moduli"] = moduli
++            for op in ("add_cc", "rescale"):
++                spec["operators"][op]["supported"] = True
++                spec["operators"][op]["latency_us_by_level"] = [10] * len(moduli)
++            if expensive:
++                spec["operators"]["add_cc"]["latency_us_by_level"][-1] = 1000
++            (out / "spec.json").write_text(json.dumps(spec))
++            input_file, output = out / (name + ".input.mlir"), out / (name + ".mlir")
++            input_file.write_text(source)
++            pipeline = (
++                "builtin.module(func.func(coalesce-reduction-rescales{"
++                f"operator-spec={out}/spec.json" + "}))"
++            )
++            command = [
++                str(args.hecate_opt.resolve()),
++                str(input_file),
++                f"--ckks-config={args.source_dir}/config.json",
++                f"--pass-pipeline={pipeline}",
++                "-o",
++                str(output),
++            ]
++            result = subprocess.run(command, capture_output=True, text=True, timeout=60)
++            assert result.returncode == 0, (name, result.stderr)
++            text = output.read_text()
++            normalized_source = source.replace("%x", "%arg0").replace("%z", "%arg1")
++            before, after = inspect(normalized_source), inspect(text)
++            assert after["rs"] == expected, (name, after["rs"], expected, text)
++            assert before["muls"] == after["muls"] and before["adds"] == after["adds"]
++            assert before["output_types"] == after["output_types"]
++            assert before["output_depths"] == after["output_depths"]
++            assert before["output_scales"] == after["output_scales"]
++            if not kw.get("unequal"):
++                a, b = (
++                    replay(normalized_source, moduli),
++                    replay(text, moduli),
++                )
++                assert max(abs(x - y) for x, y in zip(a, b)) < 1e-8, (name, a, b)
++                assert abs(b[0] - 0.25 * sum(coefficients)) < 1e-8, (name, b)
++            # The second application must not progressively rescan/rewrite the
++            # same reduction or add a further RS.
++            command[1] = str(output)
++            command[-1] = str(out / "again.mlir")
++            result = subprocess.run(command, capture_output=True, text=True, timeout=60)
++            assert result.returncode == 0, result.stderr
++            assert (out / "again.mlir").read_text() == text, name
++            print(
++                name,
++                "RS",
++                before["rs"],
++                "->",
++                after["rs"],
++                "path Q",
++                after["output_depths"],
++                flush=True,
++            )
++            checks += 1
++
++        run("two-products")
++        run("two-distinct-inputs", distinct_inputs=True)
++        run("long-sum", width=64)
++        run("balanced", width=32, form="balanced")
++        run("two-rescales", width=8, drops=2, raw_scale=110, expected=2)
++        run("mixed-primes", moduli=mixed, width=16, drops=2, raw_scale=110, expected=2)
++        run("shared-leaf", shared=True, expected=2)
++        run(
++            "shared-subtree-exit",
++            width=4,
++            form="balanced",
++            shared_root=True,
++            expected=2,
++        )
++        run("reuse-one-product", width=1, reuse=True, expected=1)
++        run("rotation-barrier", rotate=True, expected=2)
++        run("fixed-rescale", fixed=True, expected=2)
++        run("unequal-actual-scales", unequal=True, raw_scale=80.1, expected=2)
++        run(
++            "different-raw-levels",
++            drops=2,
++            raw_scale=110,
++            different_levels=True,
++            expected=3,
++        )
++        run("unprofitable-adds", expensive=True, expected=2)
++        # Capacity carries split a four-term tree into two safe groups.
++        exact = [1 << 30] * 3
++        run("capacity-boundary", moduli=exact, width=2, raw_scale=89, expected=2)
++        run("capacity-split", moduli=exact, width=4, raw_scale=88, expected=2)
++
++        # A malformed cost model is an error, not an unnoticed alternative plan.
++        spec = json.loads((out / "spec.json").read_text())
++        del spec["operators"]["add_cc"]["latency_us_by_level"]
++        (out / "spec.json").write_text(json.dumps(spec))
++        result = subprocess.run(
++            [
++                str(args.hecate_opt.resolve()),
++                str(out / "capacity-split.input.mlir"),
++                f"--ckks-config={args.source_dir}/config.json",
++                "--pass-pipeline=builtin.module(func.func(coalesce-reduction-rescales{"
++                f"operator-spec={out}/spec.json" + "}))",
++            ],
++            capture_output=True,
++            text=True,
++        )
++        assert result.returncode != 0 and "latency tables" in result.stderr, (
++            result.stderr
++        )
++        checks += 1
++
++        # Exercise the default pipeline on each Boot policy, including two RS
++        # per product and mixed-width primes. IDs may change; output states and
++        # the critical-path Q must not.
++        ct, pt = "tensor<1x!earth.ci<0 * 0>>", "tensor<1x!earth.pl<0 * 0>>"
++        for chain_name, chain in [("uniform", uniform * 5), ("mixed", mixed * 5)]:
++            spec = json.loads(fixture.read_text())
++            spec["rescale_mode"] = "native"
++            spec["context"].update(
++                rns_moduli=chain,
++                rns_moduli_log2=[q.bit_length() for q in chain],
++                default_scale_log2=40,
++                max_modulus_log2=max(q.bit_length() for q in chain),
++            )
++            for name, entry in spec["operators"].items():
++                entry["supported"] = True
++                if name != "boot":
++                    entry["latency_us_by_level"] = [10] * len(chain)
++            spec["boot_profiles"] = [
++                dict(
++                    profile_id="reduction40",
++                    implementation="native",
++                    input_level_min=4,
++                    input_level_max=49,
++                    input_components=2,
++                    output_level=15,
++                    output_scale_log2=40,
++                    output_components=2,
++                    latency_us_by_input_level=[85000] * 50,
++                    noise_by_input_level=None,
++                    host_requirements=dict(
++                        needs_secret_key=False, needs_host_compute=False
++                    ),
++                )
++            ]
++            (out / "pipeline-spec.json").write_text(json.dumps(spec))
++            config = json.loads((args.source_dir / "config.json").read_text())
++            config.update(
++                polynomialDegree=16,
++                rescalingFactor=30,
++                bootstrapLevelLowerBound=1,
++                bootstrapLevelUpperBound=12,
++                levelLowerBound=1,
++                levelUpperBound=12,
++            )
++            (out / "config.json").write_text(json.dumps(config))
++            for seeds in (0, 2):
++                lines = [
++                    f"module {{ func.func @reduce(%x: {ct}) -> {ct} {{",
++                    f'%c = "earth.constant"() {{value = dense<1.125> : tensor<8xf64>, rms_var = 1.125 : f64}} : () -> {pt}',
++                ]
++                value = "%x"
++                for i in range(seeds):
++                    lines.append(
++                        f'%seed{i} = "earth.mul"({value}, %c) : ({ct}, {pt}) -> {ct}'
++                    )
++                    value = f"%seed{i}"
++                for i in range(8):
++                    coefficient = (i + 1) / 16
++                    lines += [
++                        f'%p{i} = "earth.constant"() {{value = dense<{coefficient}> : tensor<8xf64>, rms_var = 1.0 : f64}} : () -> {pt}',
++                        f'%m{i} = "earth.mul"({value}, %p{i}) : ({ct}, {pt}) -> {ct}',
++                    ]
++                value = "%m0"
++                for i in range(1, 8):
++                    lines.append(
++                        f'%sum{i} = "earth.add"({value}, %m{i}) : ({ct}, {ct}) -> {ct}'
++                    )
++                    value = f"%sum{i}"
++                lines += [f"return {value} : {ct}", "}}"]
++                (out / "earth.mlir").write_text("\n".join(lines))
++                for strategy in ("greedy", "depth-dp", "optimized"):
++                    plans = []
++                    for enabled in (False, True):
++                        dest = out / f"{chain_name}-{seeds}-{strategy}-{enabled}.mlir"
++                        command = [
++                            str(args.hecate_opt.resolve()),
++                            str(out / "earth.mlir"),
++                            "--dacapo",
++                            f"--ckks-config={out}/config.json",
++                            "--waterline=40",
++                            "--bootstrap-scale=40",
++                            "--polynomial-optimizations=none",
++                            f"--boot-placement={strategy}",
++                            f"--runtime-plan-coalesce-rescales={str(enabled).lower()}",
++                            "--runtime-plan-format=json",
++                            "--runtime-plan-boot-profile=reduction40",
++                            f"--runtime-plan-physical-level-operator-spec-path={out}/pipeline-spec.json",
++                            "--runtime-plan-levels-per-logical-level=1",
++                            "--runtime-plan-device-counts=1",
++                            "--runtime-plan-device-count=1",
++                            f"--runtime-plan-operator-spec-path={out}/pipeline-spec.json",
++                            "--runtime-plan-target-id=lazy-physical-level-test",
++                            "--runtime-plan-context-id=lazy-physical-level-test",
++                            "--runtime-plan-operator-spec-id=lazy-physical-level-test-v1",
++                            "--runtime-plan-operator-spec-version=1",
++                            "--runtime-plan-operator-spec-sha256=sha256:"
++                            + hashlib.sha256(
++                                (out / "pipeline-spec.json").read_bytes()
++                            ).hexdigest(),
++                            "-o",
++                            str(dest),
++                        ]
++                        result = subprocess.run(
++                            command, capture_output=True, text=True, timeout=90
++                        )
++                        assert result.returncode == 0, result.stderr[-6000:]
++                        plans.append(
++                            json.loads(
++                                dest.with_name(
++                                    dest.stem + ".reduce.runtime-plan.json"
++                                ).read_text()
++                            )
++                        )
++                    states, counts, depths = [], [], []
++                    for plan in plans:
++                        values = {v["id"]: v for v in plan["values"]}
++                        states.append(
++                            [
++                                (values[v]["level"], values[v]["scale_log2"])
++                                for v in plan["final_outputs"]
++                            ]
++                        )
++                        steps = [
++                            s for s in plan["execution"] if s.get("op") == "rescale"
++                        ]
++                        counts.append(len(steps))
++                        assert not any(s.get("op") == "boot" for s in plan["execution"])
++                        depth = {v: 0 for v in plan["external_inputs"]}
++                        for step in plan["initialization"] + plan["execution"]:
++                            if "output" not in step:
++                                continue
++                            value = max(
++                                (depth.get(v, 0) for v in step.get("inputs", [])),
++                                default=0,
++                            )
++                            if step.get("op") == "rescale":
++                                value += (
++                                    values[step["inputs"][0]]["level"]
++                                    - values[step["output"]]["level"]
++                                )
++                            depth[step["output"]] = value
++                        depths.append([depth[v] for v in plan["final_outputs"]])
++                    assert states[0] == states[1] and depths[0] == depths[1], (
++                        states,
++                        depths,
++                    )
++                    # The common seed keeps its RS. The eight reduction terms
++                    # contribute one shared RS sequence instead of eight.
++                    assert counts[0] > counts[1] and (counts[0] - counts[1]) % 7 == 0, (
++                        counts
++                    )
++                    print(
++                        chain_name,
++                        seeds,
++                        strategy,
++                        "pipeline RS",
++                        counts,
++                        "path Q",
++                        depths[1],
++                        flush=True,
++                    )
++                    checks += 1
++        # A fixed Earth multiply must still be fixed after lowering to CKKS.
++        earth = (out / "earth.mlir").read_text()
++        earth = re.sub(r'(%m0 = "earth.mul"\([^\n]+?\)) :', r"\1 {sm_fixed} :", earth)
++        assert "{sm_fixed}" in earth
++        (out / "earth.mlir").write_text(earth)
++        fixed_counts = []
++        for enabled in (False, True):
++            fixed_command = [a for a in command]
++            index = next(
++                i
++                for i, a in enumerate(fixed_command)
++                if a.startswith("--runtime-plan-coalesce-rescales=")
++            )
++            fixed_command[index] = (
++                f"--runtime-plan-coalesce-rescales={str(enabled).lower()}"
++            )
++            dest = out / f"fixed-earth-{enabled}.mlir"
++            fixed_command[-1] = str(dest)
++            result = subprocess.run(
++                fixed_command, capture_output=True, text=True, timeout=90
++            )
++            assert result.returncode == 0, result.stderr
++            assert "sm_fixed" in dest.read_text()
++            plan = json.loads(
++                dest.with_name(dest.stem + ".reduce.runtime-plan.json").read_text()
++            )
++            fixed_counts.append(
++                sum(s.get("op") == "rescale" for s in plan["execution"])
++            )
++        assert fixed_counts[0] == fixed_counts[1], fixed_counts
++        checks += 1
++    print(checks, "reduction RS cases passed")
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/benchmark-reduction-rescales.py b/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/benchmark-reduction-rescales.py
+--- /dev/null
++++ b/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/benchmark-reduction-rescales.py
+@@ -0,0 +1,117 @@
++#!/usr/bin/env python3
++"""Measure the reduction pass on already managed 10k/100k/1m instruction IR."""
++
++import argparse
++import json
++import math
++from pathlib import Path
++import re
++import subprocess
++import time
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--hecate-opt", type=Path, required=True)
++    parser.add_argument("--source-dir", type=Path, required=True)
++    parser.add_argument("--output-dir", type=Path, required=True)
++    parser.add_argument("--widths", type=int, nargs="+", default=[2500, 25000, 250000])
++    args = parser.parse_args()
++    out = args.output_dir.resolve()
++    out.mkdir(parents=True, exist_ok=True)
++    moduli = [(1 << 30) - (i + 1) * 32768 + 1 for i in range(10)]
++    actual = 80 - math.log2(moduli[-1])
++    ct = "tensor<1x!ckks.poly<2 * 40 * 9>>"
++    pt = "tensor<1x!ckks.poly<1 * 40 * 9>>"
++    raw = "tensor<1x!ckks.poly<2 * 80 * 9>>"
++    low = f"tensor<1x!ckks.poly<2 * {math.ceil(actual)} * 8>>"
++    fixture = (
++        args.source_dir / "test/runtime-plan/lazy-physical-level-operator-spec.json"
++    )
++    spec = json.loads(fixture.read_text())
++    spec["context"]["rns_moduli"] = moduli
++    for op in ("add_cc", "rescale"):
++        spec["operators"][op].update(supported=True, latency_us_by_level=[10] * 10)
++    (out / "spec.json").write_text(json.dumps(spec))
++    rows = []
++    for width in args.widths:
++        src = out / f"{width}.input.mlir"
++        dest = out / f"{width}.mlir"
++        with src.open("w") as f:
++            f.write(
++                f"module {{ func.func @reduce(%x: {ct}) -> {low} attributes {{"
++                "ckks.rns_moduli = array<i64: " + ", ".join(map(str, moduli)) + ">} {\n"
++            )
++            previous = "%r0"
++            for i in range(width):
++                f.write(
++                    f'%p{i} = "ckks.encode"() {{payload = dense<0.125> : tensor<8xf64>, runtime.scale_log2 = 4.000000e+01 : f64}} : () -> {pt}\n'
++                )
++                f.write(
++                    f'%m{i} = "ckks.mulcp"(%x, %p{i}) {{runtime.scale_log2 = 8.000000e+01 : f64}} : ({ct}, {pt}) -> {raw}\n'
++                )
++                f.write(
++                    f'%r{i} = "ckks.rescalec"(%m{i}) {{runtime.scale_log2 = {actual:.17e} : f64}} : ({raw}) -> {low}\n'
++                )
++                if i:
++                    f.write(
++                        f'%a{i} = "ckks.addcc"({previous}, %r{i}) {{runtime.scale_log2 = {actual:.17e} : f64}} : ({low}, {low}) -> {low}\n'
++                    )
++                    previous = f"%a{i}"
++            f.write(f"return {previous} : {low}\n}}}}\n")
++        pipeline = (
++            "builtin.module(func.func(coalesce-reduction-rescales{"
++            + f"operator-spec={out}/spec.json"
++            + "}))"
++        )
++        command = [
++            "/usr/bin/time",
++            "-v",
++            "-o",
++            str(out / f"{width}.time.log"),
++            str(args.hecate_opt.resolve()),
++            str(src),
++            f"--ckks-config={args.source_dir}/config.json",
++            f"--pass-pipeline={pipeline}",
++            "--mlir-timing",
++            "--mlir-disable-threading",
++            "-o",
++            str(dest),
++        ]
++        start = time.monotonic()
++        with (out / f"{width}.pass.log").open("w") as log:
++            result = subprocess.run(
++                command, stdout=log, stderr=subprocess.STDOUT, timeout=600
++            )
++        assert result.returncode == 0, (out / f"{width}.pass.log").read_text()[-6000:]
++        elapsed = time.monotonic() - start
++        count = 0
++        with dest.open() as f:
++            for line in f:
++                count += '"ckks.rescalec"' in line
++        assert count == 1, count
++        resource = (out / f"{width}.time.log").read_text()
++        rss = int(
++            re.search(r"Maximum resident set size \(kbytes\): (\d+)", resource)[1]
++        )
++        timing = (out / f"{width}.pass.log").read_text()
++        match = re.search(
++            r"(?m)^\s*([\d.]+)\s+\([^)]*\)\s+CoalesceReductionRescales\s*$", timing
++        )
++        assert match, timing
++        rows.append(
++            dict(
++                input_instructions=4 * width - 1,
++                products=width,
++                output_rs=count,
++                wall_seconds=elapsed,
++                pass_seconds=float(match[1]),
++                max_rss_kib=rss,
++            )
++        )
++        (out / "summary.json").write_text(json.dumps(rows, indent=2) + "\n")
++        print(json.dumps(rows[-1]), flush=True)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/third_party/ckks-runtime/integrations/dacapo/README.md b/third_party/ckks-runtime/integrations/dacapo/README.md
+--- a/third_party/ckks-runtime/integrations/dacapo/README.md
++++ b/third_party/ckks-runtime/integrations/dacapo/README.md
+@@ -62,6 +62,12 @@
+ 默认 `threshold` 策略的 native rescale 时机由当前位置的实际素数决定：只有 `s - log2(q_last) >= waterline` 才继续删除一个 Q。greedy、depth-dp 和 optimized 使用相同的状态推导；分段候选保留实际浮点 scale。整数 IR 类型用于类型检查和编码、对齐的整数部分，Rescale 结果类型取实际指数的向上取整；计划和运行时保留实际浮点指数。物理转换重新计算并核对出口 scale、实际模数容量和规划所用的 Q 链。native 路径不允许 EarlyModswitch 越过 Rescale，也不执行用固定步长抵消 Rescale 的改写。
+ 
+ 规划、物理转换和 RuntimePlan 导出共用 `hecate/Support/ModulusChain.h` 的实际素数计算。每条链预计算一次 `log2(q)` 和前缀和，耗时、内存均为 O(L)；容量和指定区间的 Rescale 降幅查询为 O(1)。阈值归约按实际插入顺序逐次推导，耗时为 O(1 + RS 次数)。Boot 入口对齐共用 `BootstrapInputAlignment.h`，用 O(log L) 找到满足编码精度的最小 Q 前缀，并统一检查容量；已对齐的输入也必须满足目标 Q 的容量要求。`DacapoModulusChain` 测试用逐项计算和穷举核对这些结果。
++
++native 导出在物理 Q 和实际 scale 确定后、设备分配前，默认运行 `coalesce-reduction-rescales`。对于相同来源 Q、实际 scale、类型和 Rescale 序列的 MulCP 乘积，识别直接的 AddCC 归约，把各分支的 Rescale 合并到归约出口。k 个乘积、每支 r 次 RS，可从 k×r 次变为 r 次；出口 Q、实际 scale 和加法顺序保留，路径上的 Q 消耗不因此减少。Boot 位置规划在这之前完成，这个 pass 不与 Boot 联合搜索；逻辑 CKKS 检查点仍保留前面 scale 管理阶段生成的 RS 布局。
++
++该 pass 处理逐 Q 的 RS 链，不越过旋转、ModSwitch、Boot、其他乘法或 `sm_fixed` 操作。共享的 RS 支路保持原样；共享加法子树可以在自身出口归约，再供多个用户使用。每个部分和检查实际模数容量，并额外为 k 个归约项预留 `log2(k)` 位；这项检查沿用当前 scale 容量模型，不替代输入值域和完整误差分析。只有省下的 RS 估算延迟大于高 Q 加法增加的延迟，才按 OperatorSpec 代价表合并。更少的 RS 不保证任意多 GPU 调度的总耗时或峰值内存都下降；RS 的舍入位置改变，密态结果也不要求逐位相同。
++
++可用 `--runtime-plan-coalesce-rescales=false` 做对照；独立运行时使用 `coalesce-reduction-rescales{operator-spec=PATH}`，输入必须是未分配设备的物理 native CKKS。扫描缓存每个节点的固定大小摘要，修改归约树时使用显式栈，不展开所有前缀或递归遍历长加法链；时间和额外内存为 O(V+E+L)。`DacapoReductionRescales` 覆盖兼容性、容量、共享用户及三种 Boot 策略的完整导出；`test/runtime-plan/benchmark-reduction-rescales.py --hecate-opt PATH --source-dir third_party/dacapo --output-dir /tmp/reduction-bench` 可单独测约一万、十万和百万条已管理指令，耗时包含解析、验证和输出，pass 自身耗时另见生成的 timing 日志。
+ 
+ 手动运行 native `--dacapo-precompile` 时，必须同时传入 `--runtime-plan-physical-level-operator-spec-path`、`--runtime-plan-boot-profile` 和匹配 profile 的 `--bootstrap-scale`，使 Boot 规划阶段就能读取实际 Q 链和出口约定；完整模型生成命令自动传入这三项。未指定 native OperatorSpec 的逻辑预编译继续使用 compiler profile 的固定步长。生成的 native 检查点保留规划 Q 链、Boot 出口位置和实际 scale，后续导出必须匹配。
+ 

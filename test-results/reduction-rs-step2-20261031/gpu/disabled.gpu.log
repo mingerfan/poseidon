@@ -1,0 +1,3 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=30380536576 maximum_bytes=30380536576
+PASS max_abs_error=2.19979e-05 max_imaginary=2.32431e-06
+report=/home/xuming/poseidon-reduction-rs-step2-20261031/gpu/disabled.report.json

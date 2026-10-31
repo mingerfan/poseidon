@@ -1,0 +1,44 @@
+Internal ctest changing into directory: /home/xuming/poseidon-reduction-rs-step2-20261031/bin
+Test project /home/xuming/poseidon-reduction-rs-step2-20261031/bin
+      Start  5: DacapoThresholdGraphs
+      Start  4: DacapoPolynomialArithmetic
+ 1/19 Test  #4: DacapoPolynomialArithmetic .......   Passed    3.51 sec
+      Start 11: DacapoRuntimeScale
+ 2/19 Test #11: DacapoRuntimeScale ...............   Passed    2.27 sec
+      Start  2: DacapoReductionRescales
+ 3/19 Test  #2: DacapoReductionRescales ..........   Passed    1.92 sec
+      Start 18: DacapoOptimizedNativeScale45
+ 4/19 Test #18: DacapoOptimizedNativeScale45 .....   Passed    1.47 sec
+      Start 13: DacapoGreedyBootstrap
+ 5/19 Test #13: DacapoGreedyBootstrap ............   Passed    1.25 sec
+      Start 14: DacapoManualPrecompile
+ 6/19 Test #14: DacapoManualPrecompile ...........   Passed    1.06 sec
+      Start  3: DacapoNativePlanning
+ 7/19 Test  #3: DacapoNativePlanning .............   Passed    1.07 sec
+      Start 15: DacapoRuntimePlanPipeline
+ 8/19 Test #15: DacapoRuntimePlanPipeline ........   Passed    0.72 sec
+      Start 10: DacapoUnitPlaintext
+ 9/19 Test #10: DacapoUnitPlaintext ..............   Passed    0.80 sec
+      Start 17: DacapoPlaintextWaterline
+10/19 Test #17: DacapoPlaintextWaterline .........   Passed    0.48 sec
+      Start  9: DacapoRuntimePlanIO
+11/19 Test  #9: DacapoRuntimePlanIO ..............   Passed    0.38 sec
+      Start 16: DacapoRuntimeMemory
+12/19 Test #16: DacapoRuntimeMemory ..............   Passed    0.38 sec
+      Start  7: DacapoNativeScale45
+13/19 Test  #7: DacapoNativeScale45 ..............   Passed    0.29 sec
+      Start  6: DacapoNativeScale40
+14/19 Test  #6: DacapoNativeScale40 ..............   Passed    0.28 sec
+      Start 19: DacapoOptimizedSchedule
+15/19 Test #19: DacapoOptimizedSchedule ..........   Passed    0.24 sec
+      Start  8: DacapoRuntimePlanBinary
+16/19 Test  #8: DacapoRuntimePlanBinary ..........   Passed    0.16 sec
+      Start 12: DacapoFrontendLocations
+17/19 Test #12: DacapoFrontendLocations ..........   Passed    0.07 sec
+      Start  1: DacapoModulusChain
+18/19 Test  #1: DacapoModulusChain ...............   Passed    0.01 sec
+19/19 Test  #5: DacapoThresholdGraphs ............   Passed   21.11 sec
+
+100% tests passed, 0 tests failed out of 19
+
+Total Test time (real) =  21.11 sec

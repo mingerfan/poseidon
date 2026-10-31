@@ -1,0 +1,53 @@
+Internal ctest changing into directory: /home/xuming/poseidon-scale-state-step1-20261031/bin
+Test project /home/xuming/poseidon-scale-state-step1-20261031/bin
+      Start  1: DacapoModulusChain
+      Start  2: DacapoNativePlanning
+ 1/18 Test  #1: DacapoModulusChain ...............   Passed    0.01 sec
+      Start  3: DacapoPolynomialArithmetic
+ 2/18 Test  #2: DacapoNativePlanning .............   Passed    0.82 sec
+      Start  4: DacapoThresholdGraphs
+ 3/18 Test  #3: DacapoPolynomialArithmetic .......   Passed    3.32 sec
+      Start  5: DacapoNativeScale40
+ 4/18 Test  #5: DacapoNativeScale40 ..............   Passed    0.27 sec
+      Start  6: DacapoNativeScale45
+ 5/18 Test  #6: DacapoNativeScale45 ..............   Passed    0.27 sec
+      Start  7: DacapoRuntimePlanBinary
+ 6/18 Test  #7: DacapoRuntimePlanBinary ..........   Passed    0.16 sec
+      Start  8: DacapoRuntimePlanIO
+ 7/18 Test  #8: DacapoRuntimePlanIO ..............   Passed    0.40 sec
+      Start  9: DacapoUnitPlaintext
+ 8/18 Test  #9: DacapoUnitPlaintext ..............   Passed    0.77 sec
+      Start 10: DacapoRuntimeScale
+ 9/18 Test #10: DacapoRuntimeScale ...............   Passed    1.94 sec
+      Start 11: DacapoFrontendLocations
+10/18 Test #11: DacapoFrontendLocations ..........   Passed    0.07 sec
+      Start 12: DacapoGreedyBootstrap
+11/18 Test #12: DacapoGreedyBootstrap ............   Passed    1.13 sec
+      Start 13: DacapoManualPrecompile
+12/18 Test #13: DacapoManualPrecompile ...........   Passed    1.07 sec
+      Start 14: DacapoRuntimePlanPipeline
+13/18 Test #14: DacapoRuntimePlanPipeline ........   Passed    0.73 sec
+      Start 15: DacapoRuntimeMemory
+14/18 Test #15: DacapoRuntimeMemory ..............   Passed    0.36 sec
+      Start 16: DacapoPlaintextWaterline
+15/18 Test #16: DacapoPlaintextWaterline .........   Passed    0.46 sec
+      Start 17: DacapoOptimizedNativeScale45
+16/18 Test #17: DacapoOptimizedNativeScale45 .....***Failed    0.50 sec
+Traceback (most recent call last):
+  File "/home/xuming/poseidon-scale-state-step1-20261031/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py", line 96, in <module>
+    main()
+  File "/home/xuming/poseidon-scale-state-step1-20261031/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py", line 78, in main
+    assert 40 < len(rescales) < 60
+AssertionError
+
+      Start 18: DacapoOptimizedSchedule
+17/18 Test #18: DacapoOptimizedSchedule ..........   Passed    0.24 sec
+18/18 Test  #4: DacapoThresholdGraphs ............   Passed   20.16 sec
+
+94% tests passed, 1 tests failed out of 18
+
+Total Test time (real) =  20.99 sec
+
+The following tests FAILED:
+	 17 - DacapoOptimizedNativeScale45 (Failed)
+Errors while running CTest

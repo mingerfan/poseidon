@@ -1,0 +1,128 @@
+{
+  "stage": 2,
+  "host": "188Server (HPU-001)",
+  "remote_directory": "/home/xuming/poseidon-reduction-rs-step2-20261031",
+  "compiler_build": "existing local LLVM/MLIR 18 toolchain; validation executed over SSH",
+  "compiler_sha256": "a71c75b324937a34af3d34afc636b3f80d4e6f867a5d9bdfc2a53bdf31117b21",
+  "ctest": {
+    "passed": 19,
+    "failed": 0,
+    "excluded": [
+      "DacapoFrontendBytecode"
+    ]
+  },
+  "reduction_checks_passed": 30,
+  "native_artifact_checks_passed": 18,
+  "manual_boot_alignment_checks_passed": 9,
+  "native_budget_checks_passed": 15,
+  "benchmark": [
+    {
+      "input_instructions": 9999,
+      "products": 2500,
+      "output_rs": 1,
+      "wall_seconds": 0.21539733500685543,
+      "pass_seconds": 0.0105,
+      "max_rss_kib": 51844
+    },
+    {
+      "input_instructions": 99999,
+      "products": 25000,
+      "output_rs": 1,
+      "wall_seconds": 1.869801303022541,
+      "pass_seconds": 0.1802,
+      "max_rss_kib": 118712
+    },
+    {
+      "input_instructions": 999999,
+      "products": 250000,
+      "output_rs": 1,
+      "wall_seconds": 17.070934501010925,
+      "pass_seconds": 1.5735,
+      "max_rss_kib": 766092
+    }
+  ],
+  "benchmark_scope": "Already materialized CKKS IR; wall time and max RSS include parse, verification and output",
+  "gpu_physical_device": 1,
+  "gpu_reference": "manual Boot sine-map reference, not identity Boot",
+  "gpu": [
+    {
+      "cuda_device": 0,
+      "expression": "scalar plan with manual Boot sine map",
+      "format_version": 1,
+      "input_level": 30,
+      "input_scale_log2": 40.0,
+      "max_abs_error": 2.199790991813666e-05,
+      "max_identity_error": 0.00021252965624124487,
+      "max_imaginary": 2.3243117929084203e-06,
+      "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+      "output_level": 6,
+      "output_scale_log2": 55.0,
+      "passed": true,
+      "plan_sha256": "sha256:83ed03e9e0b6b5291bb066c4e6717528f9623330b07aba0e15d563faf1811190",
+      "tolerance": 0.0001,
+      "enabled": false,
+      "rs": 40,
+      "boots": 2,
+      "final": [
+        [
+          6,
+          55.0
+        ]
+      ],
+      "boot_inputs": [
+        [
+          5,
+          40.0
+        ],
+        [
+          5,
+          40.000000000000014
+        ]
+      ],
+      "matches_final_compiler_plan": true
+    },
+    {
+      "cuda_device": 0,
+      "expression": "scalar plan with manual Boot sine map",
+      "format_version": 1,
+      "input_level": 30,
+      "input_scale_log2": 40.0,
+      "max_abs_error": 2.2054537774429672e-05,
+      "max_identity_error": 0.00020868378011595912,
+      "max_imaginary": 4.8786721436206395e-06,
+      "operator_spec_sha256": "sha256:f37403b1cdbdbbf9633dfa032e66d43ebab6674c18edb9ba535cfd5027a70bb2",
+      "output_level": 6,
+      "output_scale_log2": 55.0,
+      "passed": true,
+      "plan_sha256": "sha256:330784907c870ac814e10e2a790e191204918055bc2350e7d61784157ea34962",
+      "tolerance": 0.0001,
+      "enabled": true,
+      "rs": 33,
+      "boots": 2,
+      "final": [
+        [
+          6,
+          55.0
+        ]
+      ],
+      "boot_inputs": [
+        [
+          5,
+          40.0
+        ],
+        [
+          5,
+          40.000000000000014
+        ]
+      ],
+      "matches_final_compiler_plan": true
+    }
+  ],
+  "source_sha256": {
+    "lib/Dialect/CKKS/Transforms/CoalesceReductionRescales.cpp": "ca8b58fad329e42d0bfc67a51f6a7c7a7d5bd6fbc6193e7381432f045da1c011",
+    "lib/Conversion/EarthToCKKS/EarthToCKKS.cpp": "da7fc7e08cf6acdc828c374943388eb9fb5910a9af0e052831c38b724dfa5c0e",
+    "tools/optimizer.cpp": "cbe61dfc7dd799a5bfaa65f5edfd1e2d9d1c91b100aef958c39068a67e37cda6",
+    "test/runtime-plan/check-reduction-rescales.py": "940e0a1c133f4ee115f315c7f74036bf31e703dc40faeb571863bf4d1ece07ed",
+    "test/runtime-plan/benchmark-reduction-rescales.py": "9f3397c6ac280a8c8a0f71246414a7699ac387a9354d460ccaf64c8e4dc72c59"
+  }
+}

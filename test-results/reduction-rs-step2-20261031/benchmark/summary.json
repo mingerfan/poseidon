@@ -1,0 +1,26 @@
+[
+  {
+    "input_instructions": 9999,
+    "products": 2500,
+    "output_rs": 1,
+    "wall_seconds": 0.21539733500685543,
+    "pass_seconds": 0.0105,
+    "max_rss_kib": 51844
+  },
+  {
+    "input_instructions": 99999,
+    "products": 25000,
+    "output_rs": 1,
+    "wall_seconds": 1.869801303022541,
+    "pass_seconds": 0.1802,
+    "max_rss_kib": 118712
+  },
+  {
+    "input_instructions": 999999,
+    "products": 250000,
+    "output_rs": 1,
+    "wall_seconds": 17.070934501010925,
+    "pass_seconds": 1.5735,
+    "max_rss_kib": 766092
+  }
+]

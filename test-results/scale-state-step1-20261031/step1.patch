@@ -1,0 +1,522 @@
+diff --git a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/ModulusChain.h b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/ModulusChain.h
+--- /dev/null
++++ b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/ModulusChain.h
+@@ -0,0 +1,70 @@
++#ifndef HECATE_SUPPORT_MODULUSCHAIN_H
++#define HECATE_SUPPORT_MODULUSCHAIN_H
++
++#include <cassert>
++#include <cmath>
++#include <vector>
++
++namespace hecate {
++
++// Moduli are ordered q0, q1, ... . Physical level l means Q(l+1).
++// All scales and capacities here are log2 values, not integer bit widths.
++class ModulusChain {
++public:
++  template <class Moduli> void reset(const Moduli &moduli) {
++    logs.clear();
++    prefix.assign(1, 0);
++    logs.reserve(moduli.size());
++    prefix.reserve(moduli.size() + 1);
++    for (auto q : moduli) {
++      assert(q > 1);
++      logs.push_back(std::log2(static_cast<double>(q)));
++      prefix.push_back(prefix.back() + logs.back());
++    }
++  }
++
++  unsigned size() const { return logs.size(); }
++  double modulusLog2(unsigned level) const { return logs.at(level); }
++  double capacity(unsigned level) const { return prefix.at(level + 1); }
++
++  double removedLog2(unsigned sourceLevel, unsigned drops) const {
++    assert(sourceLevel < size() && drops <= sourceLevel + 1);
++    // Preserve the exact single-RS calculation used by physical replay.
++    if (drops == 1)
++      return modulusLog2(sourceLevel);
++    return capacity(sourceLevel) - prefix.at(sourceLevel + 1 - drops);
++  }
++
++  double rescale(double scale, unsigned sourceLevel, unsigned drops = 1) const {
++    return scale - removedLog2(sourceLevel, drops);
++  }
++
++  struct Normalization {
++    unsigned drops;
++    double scale;
++  };
++
++  Normalization normalize(double scale, unsigned sourceLevel,
++                          double waterline) const {
++    assert(sourceLevel < size());
++    unsigned drops = 0;
++    // Replay each RS in emission order. This is O(1 + number of RS), with
++    // no repeated logarithms. Consuming q0 is an infeasible-trial sentinel;
++    // callers must reject it before emitting any operations.
++    while (drops <= sourceLevel) {
++      double next = rescale(scale, sourceLevel - drops);
++      if (next < waterline)
++        break;
++      scale = next;
++      ++drops;
++    }
++    return {drops, scale};
++  }
++
++private:
++  std::vector<double> logs;
++  std::vector<double> prefix{0};
++};
++
++} // namespace hecate
++#endif
+diff --git a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/BootstrapInputAlignment.h b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/BootstrapInputAlignment.h
+--- a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/BootstrapInputAlignment.h
++++ b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Support/BootstrapInputAlignment.h
+@@ -1,6 +1,7 @@
+ #ifndef HECATE_SUPPORT_BOOTSTRAPINPUTALIGNMENT_H
+ #define HECATE_SUPPORT_BOOTSTRAPINPUTALIGNMENT_H
+ 
++#include "hecate/Support/ModulusChain.h"
+ #include <cmath>
+ #include <optional>
+ 
+@@ -12,28 +13,41 @@
+ };
+ 
+ // ModSwitch to the smallest prefix that permits a >=30-bit encoded-one
+-// alignment, then Rescale to the Boot input level. Scales are log2 values.
+-template <class Moduli>
+-std::optional<BootstrapInputAlignment>
+-planBootstrapInputAlignment(const Moduli &moduli, unsigned sourceLevel,
++// alignment, then Rescale to the Boot input level. The returned plan includes
++// the capacity check, so planning and materialization accept the same states.
++// Chain preprocessing is O(L); each query is O(log L).
++inline std::optional<BootstrapInputAlignment>
++planBootstrapInputAlignment(const ModulusChain &chain, unsigned sourceLevel,
+                             double scale, unsigned targetLevel,
+                             double targetScale) {
+-  if (sourceLevel < targetLevel || sourceLevel >= moduli.size() ||
+-      !std::isfinite(scale))
++  if (sourceLevel < targetLevel || sourceLevel >= chain.size() ||
++      !std::isfinite(scale) || scale < 0 || !std::isfinite(targetScale) ||
++      targetScale < 0 || scale >= chain.capacity(sourceLevel) ||
++      targetScale >= chain.capacity(targetLevel))
+     return std::nullopt;
+-  double plain = targetScale - scale;
+-  if (std::abs(plain) <= 1e-8)
+-    return BootstrapInputAlignment{0, plain, 0};
+-  for (unsigned drops = 1; targetLevel + drops <= sourceLevel; ++drops) {
+-    plain += std::log2(static_cast<double>(moduli.at(targetLevel + drops)));
+-    if (plain < 30)
+-      continue;
+-    double capacity = 0;
+-    for (unsigned i = 0; i <= targetLevel + drops; ++i)
+-      capacity += std::log2(static_cast<double>(moduli.at(i)));
+-    return BootstrapInputAlignment{drops, plain, capacity};
++  if (std::abs(targetScale - scale) <= 1e-8) {
++    if (scale >= chain.capacity(targetLevel))
++      return std::nullopt;
++    return BootstrapInputAlignment{0, 0, chain.capacity(targetLevel)};
+   }
+-  return std::nullopt;
++  auto plaintextScale = [&](unsigned drops) {
++    return targetScale - scale + chain.removedLog2(targetLevel + drops, drops);
++  };
++  unsigned low = 1, high = sourceLevel - targetLevel;
++  if (high == 0 || plaintextScale(high) < 30)
++    return std::nullopt;
++  while (low < high) {
++    unsigned mid = low + (high - low) / 2;
++    if (plaintextScale(mid) >= 30)
++      high = mid;
++    else
++      low = mid + 1;
++  }
++  double plain = plaintextScale(low);
++  double capacity = chain.capacity(targetLevel + low);
++  if (!std::isfinite(plain) || scale + plain >= capacity)
++    return std::nullopt;
++  return BootstrapInputAlignment{low, plain, capacity};
+ }
+ } // namespace hecate
+ #endif
+diff --git a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.h b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.h
+--- a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.h
++++ b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.h
+@@ -19,6 +19,7 @@
+ #include <vector>
+ 
+ #include "hecate/Support/Support.h"
++#include "hecate/Support/ModulusChain.h"
+ 
+ #include "hecate/Dialect/Earth/IR/ForwardManagementInterface.h"
+ #include "hecate/Dialect/Earth/IR/HEParameterInterface.h"
+diff --git a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.td b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.td
+--- a/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.td
++++ b/third_party/ckks-runtime/third_party/dacapo/include/hecate/Dialect/Earth/IR/EarthOps.td
+@@ -24,6 +24,7 @@
+     static void setNativeScaleParameters(llvm::StringRef specPath,
+                                          llvm::StringRef bootProfile);
+     static std::vector<int64_t> nativeModuli;
++    static hecate::ModulusChain nativeScaleChain;
+     static int64_t nativeOutputLevel;
+     static int64_t nativeLevelAnchor;
+     static int64_t nativeLowerLevel;
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp
+--- a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp
+@@ -121,6 +121,7 @@
+ int64_t hecate::earth::EarthDialect::levelUpperBound;
+ int64_t hecate::earth::EarthDialect::levelLowerBound;
+ std::vector<int64_t> hecate::earth::EarthDialect::nativeModuli;
++hecate::ModulusChain hecate::earth::EarthDialect::nativeScaleChain;
+ int64_t hecate::earth::EarthDialect::nativeOutputLevel = -1;
+ int64_t hecate::earth::EarthDialect::nativeLevelAnchor = -1;
+ int64_t hecate::earth::EarthDialect::nativeLowerLevel = -1;
+@@ -134,6 +135,7 @@
+     std::exit(1);
+   };
+   nativeModuli.clear();
++  nativeScaleChain = {};
+   nativeOutputLevel = nativeLowerLevel = nativeLevelAnchor = -1;
+   nativeBootInputLevel = -1;
+   nativeBootInputScale = 0;
+@@ -178,6 +180,7 @@
+   for (auto q : nativeModuli)
+     if (q <= 1 || q >= (int64_t{1} << 53))
+       fail("moduli must be in (1, 2^53)");
++  nativeScaleChain.reset(nativeModuli);
+ }
+ 
+ double hecate::earth::actualScale(Value value) {
+@@ -210,8 +213,8 @@
+         scale = actualScale(add.getRhs());
+     } else if (auto rescale = dyn_cast<RescaleOp>(op)) {
+       auto consumed = getScaleType(rescale.getValue()).getLevel();
+-      scale -= std::log2(static_cast<double>(
+-          EarthDialect::nativeModuli.at(EarthDialect::nativeLevelAnchor - consumed)));
++      scale = EarthDialect::nativeScaleChain.rescale(
++          scale, EarthDialect::nativeLevelAnchor - consumed);
+     } else if (auto upscale = dyn_cast<UpscaleOp>(op)) {
+       scale += upscale.getUpFactor();
+     }
+@@ -321,8 +324,7 @@
+   if (!EarthDialect::nativeModuli.empty()) {
+     auto index = EarthDialect::nativeLevelAnchor - lScale.getLevel();
+     if (index < 1) return failure();
+-    double scale = actualScale(op.getValue()) -
+-        std::log2(static_cast<double>(EarthDialect::nativeModuli.at(index)));
++    double scale = EarthDialect::nativeScaleChain.rescale(actualScale(op.getValue()), index);
+     if (scale < 0) return failure();
+     inferredReturnTypes.push_back(lScale.switchLevel(lScale.getLevel() + 1)
+                                       .switchScale(static_cast<unsigned>(std::ceil(scale))));
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp
+--- a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/Common.cpp
+@@ -30,11 +30,10 @@
+   if (!usesNativeScalePlanning() || EarthDialect::nativeBootInputScale == 0)
+     return true;
+   auto alignment = hecate::planBootstrapInputAlignment(
+-      EarthDialect::nativeModuli, EarthDialect::nativeLevelAnchor - state.level,
++      EarthDialect::nativeScaleChain, EarthDialect::nativeLevelAnchor - state.level,
+       state.scale, EarthDialect::nativeBootInputLevel,
+       EarthDialect::nativeBootInputScale);
+-  return alignment && (!alignment->drops ||
+-                       state.scale + alignment->plaintextScale < alignment->capacity);
++  return alignment.has_value();
+ }
+ 
+ hecate::earth::ScaleState hecate::earth::normalizeScaleState(
+@@ -46,13 +45,12 @@
+     }
+     return state;
+   }
+-  while (EarthDialect::nativeLevelAnchor - state.level >= 0) {
+-    auto index = EarthDialect::nativeLevelAnchor - state.level;
+-    double next = state.scale - std::log2(static_cast<double>(EarthDialect::nativeModuli[index]));
+-    if (next < waterline) break;
+-    state.scale = next;
+-    ++state.level;
+-  }
++  if (state.level > EarthDialect::nativeLevelAnchor)
++    return state;
++  auto normalized = EarthDialect::nativeScaleChain.normalize(
++      state.scale, EarthDialect::nativeLevelAnchor - state.level, waterline);
++  state.scale = normalized.scale;
++  state.level += normalized.drops;
+   return state;
+ }
+ 
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp
+--- a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/MaterializePhysicalLevels.cpp
+@@ -252,6 +252,8 @@
+ }
+ 
+ LogicalResult materializeActualScales(func::FuncOp func, const PhysicalLevelSpec &spec) {
++  hecate::ModulusChain chain;
++  chain.reset(spec.moduli);
+   llvm::DenseMap<Value, double> scales;
+   auto arguments = func->getAttrOfType<DenseF64ArrayAttr>("earth.arg_scales");
+   for (auto [i, arg] : llvm::enumerate(func.getArguments()))
+@@ -281,7 +283,7 @@
+         if (poly.getLevel() < targetLevel)
+           return op->emitError("native Boot input is below the required level");
+         auto alignment = hecate::planBootstrapInputAlignment(
+-            spec.moduli, poly.getLevel(), scale, targetLevel, targetScale);
++            chain, poly.getLevel(), scale, targetLevel, targetScale);
+         if (!alignment)
+           return op->emitError("native Boot scale alignment has insufficient Q/encoding precision");
+         const auto drops = alignment->drops;
+@@ -301,9 +303,6 @@
+           input = mod.getResult();
+         }
+         if (drops) {
+-          if (!std::isfinite(plainScale) ||
+-              scale + plainScale >= alignment->capacity)
+-            return op->emitError("native Boot alignment exceeds the modulus capacity");
+           auto payloadType = RankedTensorType::get(
+               {hecate::earth::EarthDialect::polynomialDegree / 2}, builder.getF64Type());
+           auto one = DenseElementsAttr::get(payloadType, builder.getF64FloatAttr(1.0));
+@@ -318,7 +317,7 @@
+           annotate(multiplied, scale);
+           input = multiplied.getResult();
+           for (unsigned remaining = drops; remaining > 0; --remaining) {
+-            scale -= std::log2(static_cast<double>(spec.moduli.at(targetLevel + remaining)));
++            scale = chain.rescale(scale, targetLevel + remaining);
+             auto rescale = builder.create<ckks::RescaleCOp>(op->getLoc(),
+                 typeAt(targetLevel + remaining - 1, scale, poly.getComponents()), input);
+             annotate(rescale, scale);
+@@ -340,8 +339,7 @@
+     } else if (auto rescale = dyn_cast<ckks::RescaleCOp>(op)) {
+       auto source = ckks::getPolyType(rescale.getSrc());
+       auto target = ckks::getPolyType(rescale.getResult());
+-      for (unsigned level = source.getLevel(); level > target.getLevel(); --level)
+-        scale -= std::log2(static_cast<double>(spec.moduli.at(level)));
++      scale = chain.rescale(scale, source.getLevel(), source.getLevel() - target.getLevel());
+       if (auto floor = func->getAttrOfType<FloatAttr>("earth.scale_waterline");
+           floor && scale < floor.getValueAsDouble())
+         return op->emitError("native Rescale violates the planned scale waterline");
+@@ -403,9 +401,7 @@
+       return op->emitError("actual CKKS scale is outside the supported range");
+     if (func->hasAttr("earth.native_scale_moduli") &&
+         ckks::getPolyType(op->getResult(0)).getComponents() > 1) {
+-      double capacity = 0;
+-      for (unsigned i = 0; i <= ckks::getPolyType(op->getResult(0)).getLevel(); ++i)
+-        capacity += std::log2(static_cast<double>(spec.moduli[i]));
++      double capacity = chain.capacity(ckks::getPolyType(op->getResult(0)).getLevel());
+       if (scale >= capacity)
+         return op->emitError("actual CKKS scale exceeds the remaining modulus capacity");
+     }
+diff --git a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp
+--- a/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp
++++ b/third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp
+@@ -3,6 +3,7 @@
+ #include "hecate/Dialect/CKKS/Transforms/RuntimePlanUtils.h"
+ #include "RuntimePlanBinaryWriter.h"
+ #include "hecate/Dialect/Dist/IR/DistOps.h"
++#include "hecate/Support/ModulusChain.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/IR/BuiltinAttributes.h"
+ #include "nlohmann/json.hpp"
+@@ -660,7 +661,10 @@
+                      uint64_t inlinePayloadMaxBytes, bool profile)
+       : func(func), contextId(contextId), ntt(ntt), bootProfile(bootProfile),
+         bootImplementation(bootImplementation), bundle(bundle),
+-        inlinePayloadMaxBytes(inlinePayloadMaxBytes), profile(profile) {}
++        inlinePayloadMaxBytes(inlinePayloadMaxBytes), profile(profile) {
++    if (auto moduli = func->getAttrOfType<DenseI64ArrayAttr>("ckks.rns_moduli"))
++      scaleChain.reset(moduli.asArrayRef());
++  }
+ 
+   template<class Writer> LogicalResult write(Writer &writer) {
+     if (!func.getBody().hasOneBlock())
+@@ -825,8 +829,8 @@
+           if (failed(rhs)) return failure();
+           scale += *rhs;
+         } else if (auto rescale = dyn_cast<ckks::RescaleCOp>(op)) {
+-          for (unsigned level = ckks::getPolyType(rescale.getSrc()).getLevel(); level > type.getLevel(); --level)
+-            scale -= std::log2(static_cast<double>(moduli.asArrayRef()[level]));
++          unsigned level = ckks::getPolyType(rescale.getSrc()).getLevel();
++          scale = scaleChain.rescale(scale, level, level - type.getLevel());
+         } else if (isa<ckks::AddCCOp, ckks::AddCPOp>(op)) {
+           auto rhs = actualScale(op->getOperand(1));
+           if (failed(rhs)) return failure();
+@@ -994,6 +998,7 @@
+   bool profile;
+   llvm::DenseMap<Value, uint64_t> ids;
+   llvm::DenseMap<Value, double> actualScales;
++  hecate::ModulusChain scaleChain;
+   std::map<uint64_t, Value> valuesById;
+   std::vector<ckks::RuntimeInstruction> instructions;
+ };
+diff --git a/third_party/ckks-runtime/third_party/dacapo/test/Support/ModulusChainTest.cpp b/third_party/ckks-runtime/third_party/dacapo/test/Support/ModulusChainTest.cpp
+--- /dev/null
++++ b/third_party/ckks-runtime/third_party/dacapo/test/Support/ModulusChainTest.cpp
+@@ -0,0 +1,126 @@
++#include "hecate/Support/BootstrapInputAlignment.h"
++#include <cstdint>
++#include <cstdlib>
++#include <iostream>
++#include <limits>
++
++namespace {
++void check(bool condition, const char *message) {
++  if (!condition) {
++    std::cerr << message << '\n';
++    std::exit(1);
++  }
++}
++
++double capacity(const std::vector<uint64_t> &moduli, unsigned level) {
++  double result = 0;
++  for (unsigned i = 0; i <= level; ++i)
++    result += std::log2(static_cast<double>(moduli.at(i)));
++  return result;
++}
++
++// Exhaustively try every working prefix, independently of the binary search.
++std::optional<unsigned> referenceAlignment(const std::vector<uint64_t> &moduli,
++                                          unsigned source, double scale,
++                                          unsigned target, double targetScale) {
++  if (scale >= capacity(moduli, source) || targetScale >= capacity(moduli, target))
++    return std::nullopt;
++  if (std::abs(scale - targetScale) <= 1e-8)
++    return 0;
++  for (unsigned work = target + 1; work <= source; ++work) {
++    double removed = 0;
++    for (unsigned i = target + 1; i <= work; ++i)
++      removed += std::log2(static_cast<double>(moduli.at(i)));
++    double plain = targetScale - scale + removed;
++    if (plain >= 30 && scale + plain < capacity(moduli, work))
++      return work - target;
++  }
++  return std::nullopt;
++}
++
++void checkChain(const std::vector<uint64_t> &moduli) {
++  hecate::ModulusChain chain;
++  chain.reset(moduli);
++  for (unsigned source = 0; source < moduli.size(); ++source) {
++    check(std::abs(chain.capacity(source) - capacity(moduli, source)) < 1e-10,
++          "capacity differs from actual-prime sum");
++    for (unsigned drops = 0; drops <= source + 1; ++drops) {
++      double expected = 250;
++      for (unsigned i = 0; i < drops; ++i)
++        expected -= std::log2(static_cast<double>(moduli[source - i]));
++      check(std::abs(chain.rescale(250, source, drops) - expected) < 1e-10,
++            "multi-RS differs from sequential actual-prime division");
++    }
++    for (double scale : {39., 40., 60., 70., 80., 100., 120., 250., 900.}) {
++      unsigned drops = 0;
++      double expected = scale;
++      while (drops <= source &&
++             expected - std::log2(static_cast<double>(moduli[source - drops])) >= 40) {
++        expected -= std::log2(static_cast<double>(moduli[source - drops]));
++        ++drops;
++      }
++      auto normalized = chain.normalize(scale, source, 40);
++      check(normalized.drops == drops && normalized.scale == expected,
++            "threshold normalization changed sequential RS behavior");
++    }
++    for (unsigned target = 0; target <= source; ++target)
++      for (double scale = 1; scale < 350; scale += 0.73) {
++        auto expected = referenceAlignment(moduli, source, scale, target, 40);
++        auto plan = hecate::planBootstrapInputAlignment(chain, source, scale, target, 40);
++        check(plan.has_value() == expected.has_value(), "Boot feasibility disagrees with enumeration");
++        if (!plan)
++          continue;
++        check(plan->drops == *expected, "Boot plan did not choose the smallest working prefix");
++        double replay = scale + plan->plaintextScale;
++        for (unsigned i = plan->drops; i > 0; --i)
++          replay -= std::log2(static_cast<double>(moduli[target + i]));
++        check(std::abs(replay - 40) < 1e-8, "Boot plan replay missed the fixed input scale");
++        check(!plan->drops || plan->plaintextScale >= 30, "Boot unit encoding lost precision");
++      }
++  }
++}
++} // namespace
++
++int main() {
++  // Actual values matter even at the same nominal bit width. Include moduli
++  // near both ends of a bit-width interval and a nonuniform 30/31/32-bit chain.
++  checkChain({1073479681, 1072496641, 1071513601, 1070727169, 1069219841});
++  checkChain({1073479681, 2147352577, 4293918721, 1072496641, 2146041857, 4292870145});
++  checkChain({536903681, 536952833, 1073479681, 1072496641, 536903681});
++
++  hecate::ModulusChain chain;
++  // Exact powers of two isolate inclusive thresholds from floating-point logs.
++  chain.reset(std::vector<uint64_t>{1ULL << 30, 1ULL << 30, 1ULL << 30, 1ULL << 32});
++  auto aligned = hecate::planBootstrapInputAlignment(chain, 3, 40, 1, 40);
++  check(aligned && aligned->drops == 0 && aligned->plaintextScale == 0,
++        "already aligned input should only need ModSwitch");
++  auto one = hecate::planBootstrapInputAlignment(chain, 3, 39, 1, 40);
++  auto two = hecate::planBootstrapInputAlignment(chain, 3, 41, 1, 40);
++  check(one && one->drops == 1 && two && two->drops == 2,
++        "a 30-bit removed modulus must not be rounded into enough encoding precision");
++  auto boundary = hecate::planBootstrapInputAlignment(chain, 3, 72, 1, 40);
++  check(boundary && boundary->drops == 2 && boundary->plaintextScale == 30,
++        "exact 30-bit unit-encoding boundary must be accepted");
++  check(!hecate::planBootstrapInputAlignment(chain, 2, 41, 1, 40),
++        "insufficient Q must be rejected");
++  check(!hecate::planBootstrapInputAlignment(chain, 3, 60, 1, 60),
++        "already aligned scale at modulus capacity must be rejected");
++  check(!hecate::planBootstrapInputAlignment(chain, 3, 60, 1, 60 - 5e-9),
++        "alignment tolerance must not hide target capacity overflow");
++  check(!hecate::planBootstrapInputAlignment(chain, 3, 60, 1, 61),
++        "alignment exceeding target modulus capacity must be rejected");
++  check(!hecate::planBootstrapInputAlignment(chain, 0, 40, 1, 40),
++        "source below Boot input level must be rejected");
++  check(!hecate::planBootstrapInputAlignment(chain, 4, 40, 1, 40),
++        "source outside chain must be rejected");
++  check(!hecate::planBootstrapInputAlignment(chain, 3, -1, 1, 40) &&
++        !hecate::planBootstrapInputAlignment(chain, 3, 40, 1,
++                                            std::numeric_limits<double>::quiet_NaN()),
++        "invalid scales must be rejected");
++  auto exhausted = chain.normalize(100, 0, 40);
++  check(exhausted.drops == 1, "exhausted trial must report consumption of terminal q0");
++  chain.reset(std::vector<uint64_t>{1ULL << 31, 1ULL << 32});
++  check(chain.size() == 2 && chain.capacity(1) == 63,
++        "reset must discard the previous chain prefix sums");
++  std::cout << "actual-prime transitions and exhaustive Boot alignment checks passed\n";
++}
+diff --git a/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt b/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt
+--- a/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt
++++ b/third_party/ckks-runtime/third_party/dacapo/test/CMakeLists.txt
+@@ -1,4 +1,7 @@
+ find_package(Python3 REQUIRED COMPONENTS Interpreter)
++
++add_executable(DacapoModulusChainTest Support/ModulusChainTest.cpp)
++add_test(NAME DacapoModulusChain COMMAND DacapoModulusChainTest)
+ 
+ add_test(NAME DacapoNativePlanning
+   COMMAND ${Python3_EXECUTABLE}
+diff --git a/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py b/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py
+--- a/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py
++++ b/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py
+@@ -75,7 +75,9 @@
+             assert all(0 <= v['scale_log2'] < 140 for v in plan['values'])
+             # Boot consumes no extra rescale and requires no Host round trip.
+             rescales = [s for s in plan['execution'] if s.get('op') == 'rescale']
+-            assert 40 < len(rescales) < 60
++            # Each of the 40 squares needs at least one RS. Optimized may
++            # refresh before every square, leaving exactly 40 RS in the plan.
++            assert 40 <= len(rescales) < 60, (args.strategy, boot_scale, len(rescales))
+             assert all(values[s['inputs'][0]]['level'] - values[s['output']]['level'] == 1 for s in rescales)
+             for phase in ('initialization', 'execution', 'finalization'):
+                 for step in plan[phase]:
+diff --git a/third_party/ckks-runtime/integrations/dacapo/README.md b/third_party/ckks-runtime/integrations/dacapo/README.md
+--- a/third_party/ckks-runtime/integrations/dacapo/README.md
++++ b/third_party/ckks-runtime/integrations/dacapo/README.md
+@@ -60,6 +60,8 @@
+ optimized 对每个候选切分点只保留累计估算延迟最低的一份方案，并携带所有存活值（包括绕行值）的实际 level/scale 继续推导。不按不同出口状态保留多份前缀，也不保留旧多状态模式或失败时的备用搜索。较贵但更利于后续计算的前缀可能被丢弃，因此可能漏掉可行方案；目标仍是估算延迟，不是直接最小化 Boot 数。
+ 
+ 默认 `threshold` 策略的 native rescale 时机由当前位置的实际素数决定：只有 `s - log2(q_last) >= waterline` 才继续删除一个 Q。greedy、depth-dp 和 optimized 使用相同的状态推导；分段候选保留实际浮点 scale。整数 IR 类型用于类型检查和编码、对齐的整数部分，Rescale 结果类型取实际指数的向上取整；计划和运行时保留实际浮点指数。物理转换重新计算并核对出口 scale、实际模数容量和规划所用的 Q 链。native 路径不允许 EarlyModswitch 越过 Rescale，也不执行用固定步长抵消 Rescale 的改写。
++
++规划、物理转换和 RuntimePlan 导出共用 `hecate/Support/ModulusChain.h` 的实际素数计算。每条链预计算一次 `log2(q)` 和前缀和，耗时、内存均为 O(L)；容量和指定区间的 Rescale 降幅查询为 O(1)。阈值归约按实际插入顺序逐次推导，耗时为 O(1 + RS 次数)。Boot 入口对齐共用 `BootstrapInputAlignment.h`，用 O(log L) 找到满足编码精度的最小 Q 前缀，并统一检查容量；已对齐的输入也必须满足目标 Q 的容量要求。`DacapoModulusChain` 测试用逐项计算和穷举核对这些结果。
+ 
+ 手动运行 native `--dacapo-precompile` 时，必须同时传入 `--runtime-plan-physical-level-operator-spec-path`、`--runtime-plan-boot-profile` 和匹配 profile 的 `--bootstrap-scale`，使 Boot 规划阶段就能读取实际 Q 链和出口约定；完整模型生成命令自动传入这三项。未指定 native OperatorSpec 的逻辑预编译继续使用 compiler profile 的固定步长。生成的 native 检查点保留规划 Q 链、Boot 出口位置和实际 scale，后续导出必须匹配。
+ 
