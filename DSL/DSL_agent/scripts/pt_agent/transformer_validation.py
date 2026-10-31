@@ -133,6 +133,21 @@ def exact_check(program,ctx,*,engine='mock'):
                 logit_max_diff=diff,first_mismatch=first,act_count=[len(observations),len(reference)])
 
 
+def add_required_logit_error(measured,threshold,exact,approx):
+    """A1 §6.20: a threshold that bounds logit_rel_err gets the value for every task.
+
+    compare() reports it only for causal_lm; the formula is the same one the report uses.
+    Thresholds without the key keep their original measured fields.
+    """
+    if 'logit_rel_err' not in threshold or 'logit_rel_err' in measured:
+        return measured
+    from .metrics import _relative
+    exact,approx=np.asarray(exact),np.asarray(approx)
+    valid=np.isfinite(approx).reshape(len(approx),-1).all(axis=1)
+    measured['logit_rel_err']=_relative(exact,approx,valid)
+    return measured
+
+
 def validate(program,ctx,n=None,*,engine='tensor',stop_on_divergence=True,output_callback=None,
              diagnostic_callback=None,batch_callback=None,**kwargs):
     from .planners.agent_tools import VAL_BATCH,MOCK_VAL_BATCH,FEASIBLE_MAX_U
@@ -198,6 +213,7 @@ def validate(program,ctx,n=None,*,engine='tensor',stop_on_divergence=True,output
         metric.update(lengths=ctx.val_inputs['attention_mask'][:total].sum(1).astype(int),
                       selected_last=info.input_handling.get('single_lm_head',False))
     measured=compare(metric,outputs,None if ctx.val_labels is None else ctx.val_labels[:total])
+    add_required_logit_error(measured,info.threshold,ctx.val_exact_logits[:total],outputs)
     max_u=max((r['max_u'] for r in rows),default=0.0)
     result=dict(measured,total=total,rows=rows,max_u=max_u,diverged=bool(diverged),n_diverged=len(diverged),
                 diverged_indices=diverged,images_done=done,boot_input_max_abs=None,

@@ -19,23 +19,30 @@ PRE_TUNE_RULE = 'v8-pre-6.11'
 CONVERGENT_TUNE_RULE = 'v8-6.14'
 ACCURACY_TUNE_RULE = 'v8-6.17'
 MARGIN_TUNE_RULE = 'v8-6.19'
+STRICT_MARGIN_TUNE_RULE = 'v8-6.21'
 MARGIN_TARGET_U = 0.80
 MARGIN_ACCURACY_FACTOR = 0.5
+# §6.19 keeps half of the task logit limit; §6.21 keeps a quarter, with the same alignment.
+MARGIN_RULE_FACTORS = {MARGIN_TUNE_RULE: MARGIN_ACCURACY_FACTOR, STRICT_MARGIN_TUNE_RULE: 0.25}
 _tune_rule = ContextVar('a1_tune_rule', default=DEFAULT_TUNE_RULE)
 
 
 def convergent_rule(rule):
-    return rule in (CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE, MARGIN_TUNE_RULE)
+    return rule in (CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE, *MARGIN_RULE_FACTORS)
 
 
 def accuracy_rule(rule):
-    return rule in (ACCURACY_TUNE_RULE, MARGIN_TUNE_RULE)
+    return rule in (ACCURACY_TUNE_RULE, *MARGIN_RULE_FACTORS)
+
+
+def margin_rule(rule):
+    return rule in MARGIN_RULE_FACTORS
 
 
 def move_logit_limit(ctx, rule):
-    """Tuner acceptance limit on heldout logit_rel_err; §6.19 keeps half of the task limit."""
+    """Tuner acceptance limit on heldout logit_rel_err; margin rules keep a fraction of the task limit."""
     limit = min(1e-2, ctx.model_info.threshold.get('logit_rel_err', 1e-2))
-    return MARGIN_ACCURACY_FACTOR*limit if rule == MARGIN_TUNE_RULE else limit
+    return MARGIN_RULE_FACTORS.get(rule, 1.0)*limit
 
 
 def move_accuracy_ok(result, ctx, rule):
@@ -69,7 +76,7 @@ def validate_tune_rule(prompt_version, rule):
     if rule is None:
         rule = (ACCURACY_TUNE_RULE if prompt_version == 'r8-v10' else
                 CONVERGENT_TUNE_RULE if prompt_version in ('r8-v8','r8-v9') else DEFAULT_TUNE_RULE)
-    if rule not in (DEFAULT_TUNE_RULE, PRE_TUNE_RULE, CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE, MARGIN_TUNE_RULE):
+    if rule not in (DEFAULT_TUNE_RULE, PRE_TUNE_RULE, CONVERGENT_TUNE_RULE, ACCURACY_TUNE_RULE, *MARGIN_RULE_FACTORS):
         raise ValueError('Unknown tune_rule: '+str(rule))
     if prompt_version not in ('r8-v8','r8-v9','r8-v10') and rule != DEFAULT_TUNE_RULE:
         raise ValueError('Nondefault tune_rule requires r8-v8')
@@ -237,7 +244,7 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
         measured=ctx.calibration[names[index]]
         lo,hi=measured['min'],measured['max']
         if lo is None or hi is None:continue
-        if rule == MARGIN_TUNE_RULE:
+        if margin_rule(rule):
             domain = margin_domain(lo, hi, log_scale=getattr(ctx, 'prompt_version', None) == 'r8-v10'
                                    and point.attrs['fn'] in ('inv', 'rsqrt'))
         elif getattr(ctx, 'prompt_version', None) in ('r8-v9','r8-v10'):

@@ -54,6 +54,17 @@ class AccuracyTests(unittest.TestCase):
         self.assertFalse(tuner.move_accuracy_ok(dict(logit_rel_err=.0051), causal, 'v8-6.19'))
         self.assertTrue(tuner.move_accuracy_ok(dict(logit_rel_err=.0099), causal, 'v8-6.17'))
 
+    def test_quarter_limit_rule(self):
+        causal = ctx(dict(agreement_pct=99.0, logit_rel_err=1e-2))
+        self.assertEqual(tuner.move_logit_limit(causal, 'v8-6.21'), 2.5e-3)
+        self.assertEqual(tuner.move_logit_limit(ctx(dict(agreement_pct=99.5, logit_rel_err=1e-2)), 'v8-6.21'), 2.5e-3)
+        self.assertTrue(tuner.move_accuracy_ok(dict(logit_rel_err=.0024), causal, 'v8-6.21'))
+        self.assertFalse(tuner.move_accuracy_ok(dict(logit_rel_err=.0026), causal, 'v8-6.21'))
+        self.assertTrue(tuner.convergent_rule('v8-6.21'))
+        self.assertTrue(tuner.margin_rule('v8-6.21') and tuner.margin_rule('v8-6.19'))
+        self.assertFalse(tuner.margin_rule('v8-6.17'))
+        self.assertEqual(tuner.validate_tune_rule('r8-v10', 'v8-6.21'), 'v8-6.21')
+
     def test_rule_selection(self):
         self.assertEqual(tuner.validate_tune_rule('r8-v10', None), 'v8-6.17')
         self.assertEqual(tuner.validate_tune_rule('r8-v10', 'v8-6.19'), 'v8-6.19')

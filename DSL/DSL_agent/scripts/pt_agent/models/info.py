@@ -84,10 +84,24 @@ def infer_task(output_shape, *, architectures=(), vocab_size=None):
     return 'regression', 'other output head'
 
 
-def metric_for(task, *, has_labels):
+METRIC_VERSIONS = ('u1', 'a1-6.20')
+
+
+def metric_for(task, *, has_labels, version='u1'):
+    """Task metric and default threshold.
+
+    Version 'a1-6.20' (A1 §6.20) also bounds the logit relative error of unlabelled
+    classification, as causal_lm already does; 'u1' keeps the original thresholds.
+    """
+    if version not in METRIC_VERSIONS:
+        raise ValueError(f'Unknown metric version {version}')
     if task == 'classification':
-        return ('classification_top1', {'acc_drop_pp': 0.5}) if has_labels else (
-            'classification_top1', {'agreement_pct': 99.5})
+        if has_labels:
+            return 'classification_top1', {'acc_drop_pp': 0.5}
+        threshold = {'agreement_pct': 99.5}
+        if version == 'a1-6.20':
+            threshold['logit_rel_err'] = 1e-2
+        return 'classification_top1', threshold
     if task == 'causal_lm':
         return 'lm_next_token', {'agreement_pct': 99.0, 'logit_rel_err': 1e-2}
     if task == 'regression':
