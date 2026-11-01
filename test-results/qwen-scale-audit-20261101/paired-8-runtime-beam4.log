@@ -1,0 +1,96 @@
+Number of Bootstrapping: 6
+[compile] input-parser begin total_s=0
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=1.580863e-03
+[compile] RemoveBootstrap begin total_s=1.617823e-03
+[compile] RemoveBootstrap end total_s=1.698305e-03
+[compile] OptimizePolynomialArithmetic begin total_s=1.711133e-03
+[compile] OptimizePolynomialArithmetic end total_s=1.799965e-03
+[compile] GreedyBootstrapPlacement begin total_s=1.812849e-03
+[compile] regional-greedy begin elapsed_s=1.335200e-05
+[compile] regional-build begin elapsed_s=5.184000e-06
+[compile] regional-build end elapsed_s=9.954200e-05
+[compile] regional-greedy checkpoint region=10 resume=2 refresh=2
+[compile] regional-greedy checkpoint region=13 resume=4 refresh=1
+[compile] regional-greedy checkpoint region=15 resume=6 refresh=1
+[compile] regional-greedy checkpoint region=16 resume=8 refresh=1
+[compile] regional-greedy checkpoint region=16 resume=10 refresh=1
+[compile] regional-greedy end elapsed_s=2.108691e+00
+[compile] GreedyBootstrapPlacement end total_s=2.111443e+00
+[compile] EarlyModswitch begin total_s=2.111483e+00
+[compile] EarlyModswitch end total_s=2.111642e+00
+[compile] AbsorbCoefficientScale begin total_s=2.111662e+00
+[compile] AbsorbCoefficientScale end total_s=2.111825e+00
+[compile] mlir::detail::OpToOpPassAdaptor end total_s=2.111856e+00
+[compile] Canonicalizer begin total_s=2.111885e+00
+[compile] Canonicalizer end total_s=2.112250e+00
+[compile] CSE begin total_s=2.112288e+00
+[compile] CSE end total_s=2.112585e+00
+[compile] CSE begin total_s=2.112596e+00
+[compile] CSE end total_s=2.112699e+00
+[compile] Canonicalizer begin total_s=2.112709e+00
+[compile] Canonicalizer end total_s=2.112975e+00
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=2.112987e+00
+[compile] EarthToCKKSConversion begin total_s=2.113030e+00
+[compile] EarthToCKKSConversion end total_s=2.113668e+00
+[compile] UpscaleToMulcpConversion begin total_s=2.113697e+00
+[compile] UpscaleToMulcpConversion end total_s=2.113843e+00
+[compile] CSE begin total_s=2.113853e+00
+[compile] CSE end total_s=2.113890e+00
+[compile] Canonicalizer begin total_s=2.113900e+00
+[compile] Canonicalizer end total_s=2.114144e+00
+[compile] MaterializePhysicalLevels begin total_s=2.114156e+00
+[compile] MaterializePhysicalLevels end total_s=2.114773e+00
+[compile] CoalesceReductionRescales begin total_s=2.114813e+00
+[compile] CoalesceReductionRescales end total_s=2.114967e+00
+[compile] AssignPlacement begin total_s=2.114977e+00
+[compile] AssignPlacement end total_s=2.116281e+00
+[compile] MaterializeCommunication begin total_s=2.116310e+00
+[compile] MaterializeCommunication end total_s=2.116730e+00
+[compile] EstimateRuntimeMemory begin total_s=2.116756e+00
+runtime memory graph rank=0 device=-1 peak=7.987500e+01 MiB
+runtime memory graph rank=0 device=0 peak=4.103125e+02 MiB
+[compile] EstimateRuntimeMemory end total_s=2.117938e+00
+[compile] PlanRuntimeMemory begin total_s=2.117967e+00
+[compile] PlanRuntimeMemory end total_s=2.118737e+00
+[compile] EstimateRuntimeMemory begin total_s=2.118764e+00
+runtime memory graph rank=0 device=-1 peak=1.437500e+01 MiB
+runtime memory graph rank=0 device=0 peak=4.881250e+01 MiB
+[compile] EstimateRuntimeMemory end total_s=2.119749e+00
+[compile] EmitRuntimePlan begin total_s=2.119777e+00
+[compile] EmitRuntimePlan end total_s=2.174971e+00
+[compile] mlir::detail::OpToOpPassAdaptor end total_s=2.175050e+00
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 2.1776 seconds
+
+  ----Wall Time----  ----Name----
+    0.0009 (  0.0%)  Parser
+    2.1102 ( 96.9%)  'func.func' Pipeline
+    0.0001 (  0.0%)    RemoveBootstrap
+    0.0001 (  0.0%)    OptimizePolynomialArithmetic
+    2.1097 ( 96.9%)    GreedyBootstrapPlacement
+    0.0002 (  0.0%)    EarlyModswitch
+    0.0002 (  0.0%)    AbsorbCoefficientScale
+    0.0004 (  0.0%)  Canonicalizer
+    0.0003 (  0.0%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0001 (  0.0%)  CSE
+    0.0003 (  0.0%)  Canonicalizer
+    0.0620 (  2.8%)  'func.func' Pipeline
+    0.0007 (  0.0%)    EarthToCKKSConversion
+    0.0002 (  0.0%)    UpscaleToMulcpConversion
+    0.0000 (  0.0%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0003 (  0.0%)    Canonicalizer
+    0.0006 (  0.0%)    MaterializePhysicalLevels
+    0.0002 (  0.0%)    CoalesceReductionRescales
+    0.0013 (  0.1%)    AssignPlacement
+    0.0004 (  0.0%)    MaterializeCommunication
+    0.0012 (  0.1%)    EstimateRuntimeMemory
+    0.0008 (  0.0%)    PlanRuntimeMemory
+    0.0010 (  0.0%)    EstimateRuntimeMemory
+    0.0552 (  2.5%)    EmitRuntimePlan
+    0.0027 (  0.1%)  Output
+    0.0006 (  0.0%)  Rest
+    2.1776 (100.0%)  Total

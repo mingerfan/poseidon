@@ -1,0 +1,13 @@
+{
+  "strategy": "greedy",
+  "returncode": 1,
+  "timed_out": false,
+  "seconds": 286.56817030604,
+  "peak_rss_kib_sampled": 121331516,
+  "compiler_sha256": "0818d50664165cbfb2d699bf2a7c7455ead644016d74b5f3bc524de066a4d88e",
+  "source_bytes": 61353321306,
+  "source_mtime_ns": 1791887376996487390,
+  "source_inode": 241435420,
+  "required_output_s": 40,
+  "timeout_seconds": 900
+}

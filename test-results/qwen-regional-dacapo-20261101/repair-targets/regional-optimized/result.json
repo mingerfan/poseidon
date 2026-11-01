@@ -1,0 +1,13 @@
+{
+  "strategy": "optimized",
+  "returncode": 124,
+  "timed_out": true,
+  "seconds": 900.720333930105,
+  "peak_rss_kib_sampled": 123420024,
+  "compiler_sha256": "469d7ceb256e3777442e66e4442cd9f6782c7acb8dcba0818c4afa41288cedfe",
+  "source_bytes": 61353321306,
+  "source_mtime_ns": 1791887376996487390,
+  "source_inode": 241435420,
+  "required_output_s": 40,
+  "timeout_seconds": 900
+}

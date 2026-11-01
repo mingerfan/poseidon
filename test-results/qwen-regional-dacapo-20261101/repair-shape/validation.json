@@ -1,0 +1,24 @@
+{
+  "compiler_sha256": "58722af3853d63c66efe97604c2538c4e484afa9d9a81e007f33d6e5edbf71d9",
+  "local_ctest": {
+    "passed": 23,
+    "total": 23,
+    "seconds": 16.2
+  },
+  "regional_replay": {
+    "greedy_beam4": 30,
+    "optimized_beam4": 30,
+    "default32": "included in ctest, both modes and all-candidates"
+  },
+  "distinct_weight_rebinding_case": true,
+  "resnet_default32_remote": {
+    "seconds": 12.498689584899694,
+    "verifier_passed": true,
+    "boots": 18,
+    "rescales": 1391,
+    "output_q": 5,
+    "output_s": 39.99999999999989,
+    "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d"
+  },
+  "qwen_status": "running; not yet validated"
+}

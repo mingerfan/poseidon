@@ -1,0 +1,323 @@
+{
+  "qwen-before": {
+    "model": "qwen-before",
+    "compiler_sha256": "82429449bf14183e19b1c3335a716c34397ccbf85b4d4c24fc6f3ac5412acdb1",
+    "started": 1793519038.968061,
+    "returncode": 0,
+    "seconds": 362.2883993550204,
+    "regions": 69070,
+    "last_state": {
+      "cp_depth": 1,
+      "input_q": 17,
+      "linear_nodes": 2834,
+      "location": "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/ops.py\":41:0)",
+      "node": 3171045,
+      "opid": -1,
+      "q": 15,
+      "s": 40.0
+    },
+    "boots": 10884,
+    "regional_trace_boots": 10884,
+    "boot_input_q_histogram": {
+      "5": 84,
+      "6": 999,
+      "7": 52,
+      "8": 191,
+      "9": 503,
+      "11": 829,
+      "12": 55,
+      "13": 224,
+      "14": 242,
+      "15": 233,
+      "16": 492,
+      "17": 1005,
+      "18": 56,
+      "20": 167,
+      "21": 1566,
+      "22": 4184,
+      "23": 2
+    },
+    "boot_input_q_ge21": 5752,
+    "planner_seconds": 165.1908,
+    "peak_rss_kib": 124253132
+  },
+  "qwen-after": {
+    "model": "qwen-after",
+    "compiler_sha256": "ea8428be680dc3d113c5c02f030bcda6134aaf4a6fea6c35b85207c10d711e53",
+    "started": 1793519401.632135,
+    "returncode": 0,
+    "seconds": 377.08021158888005,
+    "regions": 68747,
+    "last_state": {
+      "cp_depth": 1,
+      "input_q": 17,
+      "linear_nodes": 2834,
+      "location": "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/ops.py\":41:0)",
+      "node": 3171045,
+      "opid": -1,
+      "q": 15,
+      "s": 40.0
+    },
+    "boots": 10561,
+    "regional_trace_boots": 10561,
+    "boot_input_q_histogram": {
+      "5": 139,
+      "6": 514,
+      "7": 672,
+      "8": 56,
+      "9": 224,
+      "11": 1277,
+      "13": 224,
+      "14": 295,
+      "15": 9,
+      "16": 174,
+      "17": 1244,
+      "18": 56,
+      "20": 167,
+      "21": 1621,
+      "22": 3887,
+      "23": 2
+    },
+    "boot_input_q_ge21": 5510,
+    "planner_seconds": 172.0683,
+    "peak_rss_kib": 124302004
+  },
+  "resnet-after": {
+    "model": "resnet-after",
+    "compiler_sha256": "ea8428be680dc3d113c5c02f030bcda6134aaf4a6fea6c35b85207c10d711e53",
+    "started": 1793519144.568879,
+    "returncode": 0,
+    "seconds": 11.950182497967035,
+    "regions": 456,
+    "last_state": {
+      "cp_depth": 3,
+      "input_q": 9,
+      "linear_nodes": 96,
+      "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":597:0)",
+      "node": 213,
+      "opid": 11984,
+      "q": 5,
+      "s": 40.0,
+      "segment_from": 11704,
+      "segment_to": 11985
+    },
+    "boots": 18,
+    "rescales": 1391,
+    "output_q": 5,
+    "output_s": 39.99999999999989,
+    "verifier_passed": true,
+    "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d",
+    "peak_rss_kib": 1236376
+  },
+  "scope": "Qwen3-0.6B, 28 layers, 2-token prefill; same trace/profile/output s40 and greedy beam4. Full precompile including scale materialization; no full runtime export or encrypted GPU inference. ResNet20 uses optimized beam32 and verified physical runtime plan.",
+  "historical_qwen": {
+    "boots": 12315,
+    "seconds": 369.7507575158961,
+    "planner_seconds": 157.9938,
+    "scope": "Before both linear reduction and multiplication input fixes; same Qwen trace/profile/beam4/output s40."
+  },
+  "micro": {
+    "beam4": {
+      "ops": {
+        "transfer": 34,
+        "encode": 32,
+        "mul_cc": 24,
+        "relinearize": 24,
+        "mul_cp": 16,
+        "rescale": 61,
+        "add_cp": 16,
+        "mod_switch": 7,
+        "boot": 2
+      },
+      "expected": 0.479157423749955,
+      "actual": 0.4791574237499514,
+      "absolute_error": 3.608224830031759e-15,
+      "output": {
+        "components": 2,
+        "context": "poseidon-ckks-gpu-16384-q50-estimated",
+        "id": "183",
+        "kind": "ciphertext",
+        "level": 11,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000085
+      },
+      "max_scale_error": 0.0
+    },
+    "beam32": {
+      "ops": {
+        "transfer": 34,
+        "encode": 32,
+        "mul_cc": 24,
+        "relinearize": 24,
+        "mul_cp": 16,
+        "rescale": 54,
+        "add_cp": 16,
+        "mod_switch": 10,
+        "boot": 2
+      },
+      "expected": 0.479157423749955,
+      "actual": 0.47915742374994436,
+      "absolute_error": 1.0658141036401503e-14,
+      "output": {
+        "components": 2,
+        "context": "poseidon-ckks-gpu-16384-q50-estimated",
+        "id": "179",
+        "kind": "ciphertext",
+        "level": 11,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000085
+      },
+      "max_scale_error": 0.0
+    },
+    "linear_oracle": {
+      "input_q": 23,
+      "input_scale": 40,
+      "plaintext_scale": 59.96536335554083,
+      "product_scale": 99.96536335554083,
+      "output_q": 21,
+      "output_scale": 40.0,
+      "boots": 0,
+      "total_rescales_two_outputs": 4,
+      "scope": "Scale/level feasibility plus uniform scalar plaintext rounding; no encrypted execution",
+      "64": {
+        "max_uniform_input_error": 0.0,
+        "sum_abs_weights": [
+          1.04921875,
+          1.24921875
+        ]
+      },
+      "256": {
+        "max_uniform_input_error": 0.0,
+        "sum_abs_weights": [
+          1.0498046875,
+          1.2498046875
+        ]
+      },
+      "1024": {
+        "max_uniform_input_error": 0.0,
+        "sum_abs_weights": [
+          1.049951171875,
+          1.249951171875
+        ]
+      }
+    },
+    "limitations": "Boot is identity; full-slot constants are rounded, but ciphertext encryption, RS rounding and Boot approximation errors are not simulated."
+  },
+  "tests": [
+    {
+      "name": "DacapoReductionRescales",
+      "returncode": 0,
+      "seconds": 1.9435352708678693
+    },
+    {
+      "name": "DacapoNativePlanning",
+      "returncode": 0,
+      "seconds": 0.8739464599639177
+    },
+    {
+      "name": "DacapoPolynomialArithmetic",
+      "returncode": 0,
+      "seconds": 3.7529778880998492
+    },
+    {
+      "name": "DacapoThresholdGraphs",
+      "returncode": 0,
+      "seconds": 21.33264677412808
+    },
+    {
+      "name": "DacapoNativeScale40",
+      "returncode": 0,
+      "seconds": 0.2567677670158446
+    },
+    {
+      "name": "DacapoNativeScale45",
+      "returncode": 0,
+      "seconds": 0.25561631191521883
+    },
+    {
+      "name": "DacapoRuntimePlanBinary",
+      "returncode": 0,
+      "seconds": 0.13102361490018666
+    },
+    {
+      "name": "DacapoRuntimePlanIO",
+      "returncode": 0,
+      "seconds": 0.33294302388094366
+    },
+    {
+      "name": "DacapoUnitPlaintext",
+      "returncode": 0,
+      "seconds": 0.6459282371215522
+    },
+    {
+      "name": "DacapoRuntimeScale",
+      "returncode": 0,
+      "seconds": 1.97854338795878
+    },
+    {
+      "name": "DacapoFrontendLocations",
+      "returncode": 0,
+      "seconds": 0.06499558687210083
+    },
+    {
+      "name": "DacapoGreedyBootstrap",
+      "returncode": 0,
+      "seconds": 1.1046572069171816
+    },
+    {
+      "name": "DacapoManualPrecompile",
+      "returncode": 0,
+      "seconds": 0.9835590880829841
+    },
+    {
+      "name": "DacapoRuntimePlanPipeline",
+      "returncode": 0,
+      "seconds": 0.7511706289369613
+    },
+    {
+      "name": "DacapoRuntimeMemory",
+      "returncode": 0,
+      "seconds": 0.3764287650119513
+    },
+    {
+      "name": "DacapoPlaintextWaterline",
+      "returncode": 0,
+      "seconds": 0.48139857803471386
+    },
+    {
+      "name": "DacapoOptimizedNativeScale45",
+      "returncode": 0,
+      "seconds": 1.4872616860084236
+    },
+    {
+      "name": "DacapoOptimizedSchedule",
+      "returncode": 0,
+      "seconds": 0.2352975970134139
+    },
+    {
+      "name": "DacapoRegionalScale",
+      "returncode": 0,
+      "seconds": 3.1879936640616506
+    },
+    {
+      "name": "DacapoRegionalOptimized",
+      "returncode": 0,
+      "seconds": 4.675721541047096
+    },
+    {
+      "name": "DacapoRegionalAllCandidates",
+      "returncode": 0,
+      "seconds": 5.273700868012384
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+# Generated binaries and duplicate evidence bundles are archived locally.
+# See ../regional-dacapo-20261101-artifacts.json for checksums and recovery.
+*.real
+*.runtime-plan.bin
+*.bundle/
+*.tar.gz

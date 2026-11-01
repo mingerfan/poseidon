@@ -1,0 +1,61 @@
+{
+  "model": "Qwen3-0.6B, full 28 layers, 2 tokens, pretrained weights, BSGS B64 lowering",
+  "machine": "188Server",
+  "comparison": "regional scale + greedy versus regional scale + DaCapo optimized",
+  "scope": "Full compilation through runtime plan export; no GPU inference. Same input and compiler, sequential runs, 300 seconds per strategy.",
+  "input_gib": 57.13973315991461,
+  "results": [
+    {
+      "strategy": "greedy",
+      "returncode": 1,
+      "timed_out": false,
+      "seconds": 278.5795600300189,
+      "peak_rss_kib_sampled": 121331556,
+      "compiler_sha256": "d9767c5fd2ad5e82e4b60ce5486043f3a74e6c246a5d92ab2ce77d58fe1ee2b2",
+      "source_bytes": 61353321306,
+      "source_mtime_ns": 1791887376996487390,
+      "source_inode": 241435420,
+      "required_output_s": 40,
+      "timeout_seconds": 300,
+      "status": "failed",
+      "peak_rss_gib_sampled": 115.71078872680664,
+      "valid_plan": false,
+      "boots": null,
+      "inference_latency": null,
+      "parser_seconds": 80.7855,
+      "boot_scale_planning_seconds": 168.9579,
+      "error": "ops.py:41: no feasible regional scale plan in the Q budget"
+    },
+    {
+      "strategy": "optimized",
+      "returncode": 124,
+      "timed_out": true,
+      "seconds": 300.58884419710375,
+      "peak_rss_kib_sampled": 126055656,
+      "compiler_sha256": "d9767c5fd2ad5e82e4b60ce5486043f3a74e6c246a5d92ab2ce77d58fe1ee2b2",
+      "source_bytes": 61353321306,
+      "source_mtime_ns": 1791887376996487390,
+      "source_inode": 241435420,
+      "required_output_s": 40,
+      "timeout_seconds": 300,
+      "status": "timeout",
+      "peak_rss_gib_sampled": 120.2160415649414,
+      "valid_plan": false,
+      "boots": null,
+      "inference_latency": null,
+      "last_completed_phase": "Unknown: no phase report emitted before timeout",
+      "observed_candidate_boundary_log": false,
+      "compiler_process_absent_after_timeout": true
+    }
+  ],
+  "interpretation": "Neither strategy produced a valid complete plan. No successful compile-time ratio, Boot-count comparison, or inference speedup is available. Greedy feasibility and optimized performance need further diagnosis; the failure does not prove mathematical infeasibility.",
+  "profile_fix": "See profile-fix-validation.json. Initial greedy failure (123.25 seconds) and aborted optimized run (43.13 seconds) are retained under before-profile-fix and excluded from this comparison.",
+  "network_interruption": "SSH was temporarily unreachable during optimized; connection recovered, remote supervisor continued and wrote timeout result. Compiler and time processes were confirmed absent afterward.",
+  "limitations": [
+    "One bounded run per strategy, not a repeated statistical benchmark.",
+    "Input bytecode was not rehashed (58 GiB); both commands use identical path/stat tuple.",
+    "Existing Qwen Boot profile has no fixed input scale; outputs Q23/s45. Final outputs requested s40.",
+    "Latency-table extension to 50 levels uses repeated estimates, not measured hardware timings.",
+    "Optimized timeout has no completed phase breakdown, so the exact hot function is not established."
+  ]
+}

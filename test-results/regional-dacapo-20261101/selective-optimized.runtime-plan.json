@@ -1,0 +1,1931 @@
+{
+  "format_version": 5,
+  "plan_id": "0",
+  "target": {
+    "capability_version": 1,
+    "device_counts": [
+      0
+    ],
+    "operator_spec": {
+      "id": "lazy-physical-level-test-v1",
+      "source_sha256": "sha256:c90a86469b07e8def410255d59ec6c65a279e1bc05c0f660837831de1a4ccbc2",
+      "version": 1
+    },
+    "target_id": "lazy-physical-level-test",
+    "world_size": 1
+  },
+  "values": [
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "0",
+      "kind": "ciphertext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "1",
+      "kind": "ciphertext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "2",
+      "kind": "ciphertext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 1,
+      "context": "lazy-physical-level-test",
+      "id": "3",
+      "kind": "plaintext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "4",
+      "kind": "ciphertext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.0
+    },
+    {
+      "components": 1,
+      "context": "lazy-physical-level-test",
+      "id": "5",
+      "kind": "plaintext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 55.97115401533168
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "6",
+      "kind": "ciphertext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 135.97115401533168
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "7",
+      "kind": "ciphertext",
+      "level": 7,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 103.98042955619329
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "8",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 71.99005963291478
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "9",
+      "kind": "ciphertext",
+      "level": 5,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 39.999999999999986
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "10",
+      "kind": "ciphertext",
+      "level": 30,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "11",
+      "kind": "ciphertext",
+      "level": 30,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.0
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "12",
+      "kind": "ciphertext",
+      "level": 30,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.0
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "13",
+      "kind": "ciphertext",
+      "level": 29,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 50.00035226212769
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "14",
+      "kind": "ciphertext",
+      "level": 29,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 100.00070452425538
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "15",
+      "kind": "ciphertext",
+      "level": 29,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 100.00070452425538
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "16",
+      "kind": "ciphertext",
+      "level": 28,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 70.00370150763617
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "17",
+      "kind": "ciphertext",
+      "level": 27,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.007757738523814
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "18",
+      "kind": "ciphertext",
+      "level": 27,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.01551547704763
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "19",
+      "kind": "ciphertext",
+      "level": 27,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.01551547704763
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "20",
+      "kind": "ciphertext",
+      "level": 26,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 50.02293113169129
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "21",
+      "kind": "ciphertext",
+      "level": 26,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 100.04586226338257
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "22",
+      "kind": "ciphertext",
+      "level": 26,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 100.04586226338257
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "23",
+      "kind": "ciphertext",
+      "level": 25,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 70.0570000892451
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "24",
+      "kind": "ciphertext",
+      "level": 24,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.06920315884753
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "25",
+      "kind": "ciphertext",
+      "level": 24,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.13840631769506
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "26",
+      "kind": "ciphertext",
+      "level": 24,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.13840631769506
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "27",
+      "kind": "ciphertext",
+      "level": 23,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 50.15309801908184
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "28",
+      "kind": "ciphertext",
+      "level": 23,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 100.30619603816368
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "29",
+      "kind": "ciphertext",
+      "level": 23,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 100.30619603816368
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "30",
+      "kind": "ciphertext",
+      "level": 22,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 70.32142157675896
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "31",
+      "kind": "ciphertext",
+      "level": 21,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.33896269527156
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "32",
+      "kind": "ciphertext",
+      "level": 21,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.67792539054312
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "33",
+      "kind": "ciphertext",
+      "level": 21,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 80.67792539054312
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "34",
+      "kind": "ciphertext",
+      "level": 20,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 50.70136126576217
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "35",
+      "kind": "ciphertext",
+      "level": 20,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 101.40272253152435
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "36",
+      "kind": "ciphertext",
+      "level": 20,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 101.40272253152435
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "37",
+      "kind": "ciphertext",
+      "level": 19,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 71.42651644000979
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "38",
+      "kind": "ciphertext",
+      "level": 18,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 41.45156416510859
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "39",
+      "kind": "ciphertext",
+      "level": 18,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 82.90312833021719
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "40",
+      "kind": "ciphertext",
+      "level": 18,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 82.90312833021719
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "41",
+      "kind": "ciphertext",
+      "level": 17,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 52.92961032414496
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "42",
+      "kind": "ciphertext",
+      "level": 17,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 105.85922064828992
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "43",
+      "kind": "ciphertext",
+      "level": 17,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 105.85922064828992
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "44",
+      "kind": "ciphertext",
+      "level": 16,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 75.88624086085461
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "45",
+      "kind": "ciphertext",
+      "level": 15,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 45.91505658707922
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "46",
+      "kind": "ciphertext",
+      "level": 15,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 91.83011317415844
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "47",
+      "kind": "ciphertext",
+      "level": 15,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 91.83011317415844
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "48",
+      "kind": "ciphertext",
+      "level": 14,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 61.860007282174514
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "49",
+      "kind": "ciphertext",
+      "level": 14,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 123.72001456434903
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "50",
+      "kind": "ciphertext",
+      "level": 14,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 123.72001456434903
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "51",
+      "kind": "ciphertext",
+      "level": 13,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 93.75350911106811
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "52",
+      "kind": "ciphertext",
+      "level": 12,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 63.78754449942034
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "53",
+      "kind": "ciphertext",
+      "level": 12,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 127.57508899884068
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "54",
+      "kind": "ciphertext",
+      "level": 12,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 127.57508899884068
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "55",
+      "kind": "ciphertext",
+      "level": 11,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 97.61363930306248
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "56",
+      "kind": "ciphertext",
+      "level": 10,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 67.65490535453695
+    },
+    {
+      "components": 3,
+      "context": "lazy-physical-level-test",
+      "id": "57",
+      "kind": "ciphertext",
+      "level": 10,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 135.3098107090739
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "58",
+      "kind": "ciphertext",
+      "level": 10,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 135.3098107090739
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "59",
+      "kind": "ciphertext",
+      "level": 9,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 105.3525272521015
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "60",
+      "kind": "ciphertext",
+      "level": 8,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 75.39742227049885
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "61",
+      "kind": "ciphertext",
+      "level": 7,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 43.40669781136046
+    },
+    {
+      "components": 1,
+      "context": "lazy-physical-level-test",
+      "id": "62",
+      "kind": "plaintext",
+      "level": 7,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 60.573731744832855
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "63",
+      "kind": "ciphertext",
+      "level": 7,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 103.98042955619331
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "64",
+      "kind": "ciphertext",
+      "level": 6,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 71.99005963291481
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "65",
+      "kind": "ciphertext",
+      "level": 5,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.000000000000014
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "66",
+      "kind": "ciphertext",
+      "level": 5,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.0
+    },
+    {
+      "components": 2,
+      "context": "lazy-physical-level-test",
+      "id": "67",
+      "kind": "ciphertext",
+      "level": 5,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40.000000000000014
+    }
+  ],
+  "external_inputs": [
+    "0",
+    "1"
+  ],
+  "initialization": [
+    {
+      "kind": "encode",
+      "ordinal": 0,
+      "output": "3",
+      "payload": {
+        "kind": "inline",
+        "values": [
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01
+        ]
+      }
+    },
+    {
+      "kind": "encode",
+      "ordinal": 1,
+      "output": "5",
+      "payload": {
+        "kind": "inline",
+        "values": [
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01
+        ]
+      }
+    },
+    {
+      "kind": "encode",
+      "ordinal": 2,
+      "output": "62",
+      "payload": {
+        "kind": "inline",
+        "values": [
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01,
+          1.01
+        ]
+      }
+    }
+  ],
+  "execution": [
+    {
+      "attrs": {
+        "steps": 1
+      },
+      "inputs": [
+        "0"
+      ],
+      "kind": "compute",
+      "op": "rotate",
+      "ordinal": 3,
+      "output": "2",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "2",
+        "3"
+      ],
+      "kind": "compute",
+      "op": "mul_cp",
+      "ordinal": 4,
+      "output": "4",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "4",
+        "5"
+      ],
+      "kind": "compute",
+      "op": "mul_cp",
+      "ordinal": 5,
+      "output": "6",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 7,
+        "target_scale_log2": 103.98042955619329
+      },
+      "inputs": [
+        "6"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 6,
+      "output": "7",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 6,
+        "target_scale_log2": 71.99005963291478
+      },
+      "inputs": [
+        "7"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 7,
+      "output": "8",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 5,
+        "target_scale_log2": 39.999999999999986
+      },
+      "inputs": [
+        "8"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 8,
+      "output": "9",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "implementation": "native",
+        "operator_profile": "regional40",
+        "target_components": 2,
+        "target_level": 30,
+        "target_scale_log2": 40
+      },
+      "inputs": [
+        "9"
+      ],
+      "kind": "compute",
+      "op": "boot",
+      "ordinal": 9,
+      "output": "10",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "10",
+        "10"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 10,
+      "output": "11",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "11"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 11,
+      "output": "12",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 29,
+        "target_scale_log2": 50.00035226212769
+      },
+      "inputs": [
+        "12"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 12,
+      "output": "13",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "13",
+        "13"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 13,
+      "output": "14",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "14"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 14,
+      "output": "15",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 28,
+        "target_scale_log2": 70.00370150763617
+      },
+      "inputs": [
+        "15"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 15,
+      "output": "16",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 27,
+        "target_scale_log2": 40.007757738523814
+      },
+      "inputs": [
+        "16"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 16,
+      "output": "17",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "17",
+        "17"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 17,
+      "output": "18",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "18"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 18,
+      "output": "19",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 26,
+        "target_scale_log2": 50.02293113169129
+      },
+      "inputs": [
+        "19"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 19,
+      "output": "20",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "20",
+        "20"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 20,
+      "output": "21",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "21"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 21,
+      "output": "22",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 25,
+        "target_scale_log2": 70.0570000892451
+      },
+      "inputs": [
+        "22"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 22,
+      "output": "23",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 24,
+        "target_scale_log2": 40.06920315884753
+      },
+      "inputs": [
+        "23"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 23,
+      "output": "24",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "24",
+        "24"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 24,
+      "output": "25",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "25"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 25,
+      "output": "26",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 23,
+        "target_scale_log2": 50.15309801908184
+      },
+      "inputs": [
+        "26"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 26,
+      "output": "27",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "27",
+        "27"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 27,
+      "output": "28",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "28"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 28,
+      "output": "29",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 22,
+        "target_scale_log2": 70.32142157675896
+      },
+      "inputs": [
+        "29"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 29,
+      "output": "30",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 21,
+        "target_scale_log2": 40.33896269527156
+      },
+      "inputs": [
+        "30"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 30,
+      "output": "31",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "31",
+        "31"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 31,
+      "output": "32",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "32"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 32,
+      "output": "33",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 20,
+        "target_scale_log2": 50.70136126576217
+      },
+      "inputs": [
+        "33"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 33,
+      "output": "34",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "34",
+        "34"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 34,
+      "output": "35",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "35"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 35,
+      "output": "36",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 19,
+        "target_scale_log2": 71.42651644000979
+      },
+      "inputs": [
+        "36"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 36,
+      "output": "37",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 18,
+        "target_scale_log2": 41.45156416510859
+      },
+      "inputs": [
+        "37"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 37,
+      "output": "38",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "38",
+        "38"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 38,
+      "output": "39",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "39"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 39,
+      "output": "40",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 17,
+        "target_scale_log2": 52.92961032414496
+      },
+      "inputs": [
+        "40"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 40,
+      "output": "41",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "41",
+        "41"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 41,
+      "output": "42",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "42"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 42,
+      "output": "43",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 16,
+        "target_scale_log2": 75.88624086085461
+      },
+      "inputs": [
+        "43"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 43,
+      "output": "44",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 15,
+        "target_scale_log2": 45.91505658707922
+      },
+      "inputs": [
+        "44"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 44,
+      "output": "45",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "45",
+        "45"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 45,
+      "output": "46",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "46"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 46,
+      "output": "47",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 14,
+        "target_scale_log2": 61.860007282174514
+      },
+      "inputs": [
+        "47"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 47,
+      "output": "48",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "48",
+        "48"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 48,
+      "output": "49",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "49"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 49,
+      "output": "50",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 13,
+        "target_scale_log2": 93.75350911106811
+      },
+      "inputs": [
+        "50"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 50,
+      "output": "51",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 12,
+        "target_scale_log2": 63.78754449942034
+      },
+      "inputs": [
+        "51"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 51,
+      "output": "52",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "52",
+        "52"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 52,
+      "output": "53",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "53"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 53,
+      "output": "54",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 11,
+        "target_scale_log2": 97.61363930306248
+      },
+      "inputs": [
+        "54"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 54,
+      "output": "55",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 10,
+        "target_scale_log2": 67.65490535453695
+      },
+      "inputs": [
+        "55"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 55,
+      "output": "56",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "56",
+        "56"
+      ],
+      "kind": "compute",
+      "op": "mul_cc",
+      "ordinal": 56,
+      "output": "57",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "57"
+      ],
+      "kind": "compute",
+      "op": "relinearize",
+      "ordinal": 57,
+      "output": "58",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 9,
+        "target_scale_log2": 105.3525272521015
+      },
+      "inputs": [
+        "58"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 58,
+      "output": "59",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 8,
+        "target_scale_log2": 75.39742227049885
+      },
+      "inputs": [
+        "59"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 59,
+      "output": "60",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 7,
+        "target_scale_log2": 43.40669781136046
+      },
+      "inputs": [
+        "60"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 60,
+      "output": "61",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "61",
+        "62"
+      ],
+      "kind": "compute",
+      "op": "mul_cp",
+      "ordinal": 61,
+      "output": "63",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 6,
+        "target_scale_log2": 71.99005963291481
+      },
+      "inputs": [
+        "63"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 62,
+      "output": "64",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 5,
+        "target_scale_log2": 40.000000000000014
+      },
+      "inputs": [
+        "64"
+      ],
+      "kind": "compute",
+      "op": "rescale",
+      "ordinal": 63,
+      "output": "65",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "attrs": {
+        "target_level": 5
+      },
+      "inputs": [
+        "0"
+      ],
+      "kind": "compute",
+      "op": "mod_switch",
+      "ordinal": 64,
+      "output": "66",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    },
+    {
+      "inputs": [
+        "65",
+        "66"
+      ],
+      "kind": "compute",
+      "op": "add_cc",
+      "ordinal": 65,
+      "output": "67",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      }
+    }
+  ],
+  "finalization": [],
+  "final_outputs": [
+    "67"
+  ]
+}

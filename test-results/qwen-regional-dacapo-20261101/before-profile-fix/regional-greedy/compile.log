@@ -1,0 +1,14 @@
+/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py:135:0: error: no feasible regional scale plan in the Q budget
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 116.8949 seconds
+
+  ----Wall Time----  ----Name----
+   85.9778 ( 73.6%)  Parser
+   28.3720 ( 24.3%)  'func.func' Pipeline
+    8.5178 (  7.3%)    RemoveBootstrap
+    9.4226 (  8.1%)    OptimizePolynomialArithmetic
+   10.4315 (  8.9%)    GreedyBootstrapPlacement
+    2.5451 (  2.2%)  Rest
+  116.8949 (100.0%)  Total

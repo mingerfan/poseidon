@@ -1,0 +1,40 @@
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=3.679250e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=1.678668e+05 MiB
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=4.650000e+01 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=1.852025e+04 MiB
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 9.7186 seconds
+
+  ----Wall Time----  ----Name----
+    0.6307 (  6.5%)  Parser
+    0.5675 (  5.8%)  'func.func' Pipeline
+    0.0135 (  0.1%)    RemoveBootstrap
+    0.0102 (  0.1%)    OptimizePolynomialArithmetic
+    0.5177 (  5.3%)    GreedyBootstrapPlacement
+    0.0130 (  0.1%)    EarlyModswitch
+    0.0132 (  0.1%)    AbsorbCoefficientScale
+    0.0230 (  0.2%)  Canonicalizer
+    0.0268 (  0.3%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0127 (  0.1%)  CSE
+    0.0211 (  0.2%)  Canonicalizer
+    7.9842 ( 82.2%)  'func.func' Pipeline
+    0.0364 (  0.4%)    EarthToCKKSConversion
+    0.0102 (  0.1%)    UpscaleToMulcpConversion
+    0.0021 (  0.0%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0150 (  0.2%)    Canonicalizer
+    0.0238 (  0.2%)    MaterializePhysicalLevels
+    0.0118 (  0.1%)    CoalesceReductionRescales
+    0.1105 (  1.1%)    AssignPlacement
+    0.0322 (  0.3%)    MaterializeCommunication
+    0.0680 (  0.7%)    EstimateRuntimeMemory
+    0.0659 (  0.7%)    PlanRuntimeMemory
+    0.0495 (  0.5%)    EstimateRuntimeMemory
+    7.5586 ( 77.8%)    EmitRuntimePlan
+    0.4467 (  4.6%)  Output
+    0.0040 (  0.0%)  Rest
+    9.7186 (100.0%)  Total
+Number of Bootstrapping: 19

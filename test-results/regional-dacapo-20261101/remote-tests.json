@@ -1,0 +1,228 @@
+[
+  {
+    "name": "DacapoRegionalScale",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-regional-scale.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoRegionalOptimized",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-regional-scale.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo",
+      "--boot-placement",
+      "optimized"
+    ]
+  },
+  {
+    "name": "DacapoReductionRescales",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-reduction-rescales.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoNativePlanning",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-native-planning.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoPolynomialArithmetic",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-polynomial-arithmetic.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoThresholdGraphs",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-threshold-graphs.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoNativeScale40",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoNativeScale45",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo",
+      "--boot-scale",
+      "45"
+    ]
+  },
+  {
+    "name": "DacapoRuntimePlanBinary",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-binary.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoRuntimePlanIO",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-io.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoUnitPlaintext",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-unit-plaintext.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoRuntimeScale",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-runtime-scale.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoFrontendLocations",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-frontend-locations.py",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoGreedyBootstrap",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-greedy.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoManualPrecompile",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-precompile.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoRuntimePlanPipeline",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoRuntimeMemory",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-memory.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoPlaintextWaterline",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-waterline.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  },
+  {
+    "name": "DacapoOptimizedNativeScale45",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-native-scale40.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo",
+      "--boot-scale",
+      "45",
+      "--strategy",
+      "optimized"
+    ]
+  },
+  {
+    "name": "DacapoOptimizedSchedule",
+    "command": [
+      "python3",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo/test/runtime-plan/check-optimized.py",
+      "--hecate-opt",
+      "/home/xuming/poseidon-regional-dacapo-20261101/bin/hecate-opt",
+      "--source-dir",
+      "/home/xuming/poseidon-regional-dacapo-20261101/runtime/third_party/dacapo"
+    ]
+  }
+]

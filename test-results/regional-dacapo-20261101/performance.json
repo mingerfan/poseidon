@@ -1,0 +1,37 @@
+{
+  "raw_candidate_boundaries": 5629,
+  "regional_boundaries": 439,
+  "all_candidate_cuts": 440,
+  "default_candidate_cuts": 79,
+  "all_segment_trials": 6653,
+  "default_segment_trials": 217,
+  "all_compile_seconds": 96.19716016412713,
+  "default_compile_seconds": 24.759338806848973,
+  "default_stage_seconds": {
+    "bypass": 9.5014,
+    "dp": 6.3005,
+    "emit_plan_and_payloads": 7.1033
+  },
+  "all_stage_seconds": {
+    "bypass": 9.7262,
+    "dp": 77.5416,
+    "emit_plan_and_payloads": 6.9775
+  },
+  "full_model_boot_count": 18,
+  "output_q": 5,
+  "output_s": 40,
+  "million_evaluation": false,
+  "gpu_inference_timed": false,
+  "scope": "Same full raw ResNet20, actual manual Q50 primes, initial Q34/s40, arithmetic floor Q5, fixed Boot Q6/s40 -> Q31/s40. Compilation includes runtime-plan payload export. The original uncontracted search was interrupted without completion after 1135 seconds; no exact original speedup is asserted.",
+  "default_compile_seconds_samples_q34": [
+    24.759338806848973,
+    32.778281517094
+  ],
+  "default_compile_seconds_samples_q31": [
+    25.26113015995361,
+    32.52568233991042
+  ],
+  "timing_note": "Observed runs, not a controlled statistical benchmark; repeated runs varied. Two full-model jobs ran concurrently, with small regressions also running in the final repetition.",
+  "same_physical_plan_as_all_candidates": true,
+  "physical_plan_sha256_q34": "db0ac3485626eebb2dacdfe69abb3d99fe3bb84587c8ea73290e5a0628784d57"
+}

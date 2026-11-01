@@ -1,0 +1,234 @@
+[compile] input-parser begin total_s=0
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=7.950170e+01
+[compile] RemoveBootstrap begin total_s=7.950175e+01
+[compile] RemoveBootstrap end total_s=8.916276e+01
+[compile] OptimizePolynomialArithmetic begin total_s=8.916282e+01
+[compile] OptimizePolynomialArithmetic end total_s=9.823958e+01
+[compile] BypassDetection begin total_s=9.823962e+01
+[compile] bypass-analysis begin elapsed_s=2.252800e-05
+[compile] regional-build begin elapsed_s=3.489900e-05
+[compile] regional-build end elapsed_s=1.070135e+01
+[compile] candidate-analysis begin elapsed_s=3.559100e-05
+[compile] candidate-analysis end elapsed_s=1.387926e+01
+[compile] regional-build begin elapsed_s=1.036500e-05
+[compile] regional-build end elapsed_s=9.682564e+00
+Regional DaCapo indexed values: 4688985, boundaries: 95846
+[compile] regional-build begin elapsed_s=1.063900e-05
+[compile] regional-build end elapsed_s=9.593709e+00
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] regional-initial-coverage limit=59 first_cut=3 inputs=2
+[compile] bypass-analysis progress elapsed_s=4.978189e+01 completed=1/95846
+[compile] bypass-analysis progress elapsed_s=5.525180e+01 completed=190/95846
+[compile] bypass-analysis progress elapsed_s=6.027083e+01 completed=2569/95846
+[compile] bypass-analysis progress elapsed_s=6.599972e+01 completed=5969/95846
+[compile] bypass-analysis progress elapsed_s=7.100456e+01 completed=7732/95846
+[compile] bypass-analysis progress elapsed_s=7.600692e+01 completed=10675/95846
+[compile] bypass-analysis progress elapsed_s=8.100881e+01 completed=13435/95846
+[compile] bypass-analysis progress elapsed_s=8.601076e+01 completed=16087/95846
+[compile] bypass-analysis progress elapsed_s=9.105278e+01 completed=18196/95846
+[compile] bypass-analysis progress elapsed_s=9.605571e+01 completed=20542/95846
+[compile] bypass-analysis progress elapsed_s=1.010562e+02 completed=22988/95846
+[compile] bypass-analysis progress elapsed_s=1.060597e+02 completed=25121/95846
+[compile] bypass-analysis progress elapsed_s=1.110711e+02 completed=26911/95846
+[compile] bypass-analysis progress elapsed_s=1.160726e+02 completed=29205/95846
+[compile] bypass-analysis progress elapsed_s=1.210739e+02 completed=30974/95846
+[compile] bypass-analysis progress elapsed_s=1.260775e+02 completed=32846/95846
+[compile] bypass-analysis progress elapsed_s=1.310818e+02 completed=34947/95846
+[compile] bypass-analysis progress elapsed_s=1.360891e+02 completed=36360/95846
+[compile] bypass-analysis progress elapsed_s=1.410916e+02 completed=38394/95846
+[compile] bypass-analysis progress elapsed_s=1.460944e+02 completed=39638/95846
+[compile] bypass-analysis progress elapsed_s=1.510947e+02 completed=41668/95846
+[compile] bypass-analysis progress elapsed_s=1.560965e+02 completed=42843/95846
+[compile] bypass-analysis progress elapsed_s=1.610991e+02 completed=44761/95846
+[compile] bypass-analysis progress elapsed_s=1.661027e+02 completed=45896/95846
+[compile] bypass-analysis progress elapsed_s=1.711029e+02 completed=47792/95846
+[compile] bypass-analysis progress elapsed_s=1.761110e+02 completed=48857/95846
+[compile] bypass-analysis progress elapsed_s=1.811193e+02 completed=50718/95846
+[compile] bypass-analysis progress elapsed_s=1.861214e+02 completed=51796/95846
+[compile] bypass-analysis progress elapsed_s=1.911277e+02 completed=53292/95846
+[compile] bypass-analysis progress elapsed_s=1.961319e+02 completed=54642/95846
+[compile] bypass-analysis progress elapsed_s=2.011360e+02 completed=55557/95846
+[compile] bypass-analysis progress elapsed_s=2.061423e+02 completed=57380/95846
+[compile] bypass-analysis progress elapsed_s=2.111428e+02 completed=58276/95846
+[compile] bypass-analysis progress elapsed_s=2.161512e+02 completed=60029/95846
+[compile] bypass-analysis progress elapsed_s=2.211569e+02 completed=60944/95846
+[compile] bypass-analysis progress elapsed_s=2.261751e+02 completed=62133/95846
+[compile] bypass-analysis progress elapsed_s=2.311760e+02 completed=63647/95846
+[compile] bypass-analysis progress elapsed_s=2.361927e+02 completed=64531/95846
+[compile] bypass-analysis progress elapsed_s=2.412000e+02 completed=66267/95846
+[compile] bypass-analysis progress elapsed_s=2.462004e+02 completed=67122/95846
+[compile] bypass-analysis progress elapsed_s=2.512005e+02 completed=67880/95846
+[compile] bypass-analysis progress elapsed_s=2.562145e+02 completed=69614/95846
+[compile] bypass-analysis progress elapsed_s=2.612228e+02 completed=70472/95846
+[compile] bypass-analysis progress elapsed_s=2.662234e+02 completed=71815/95846
+[compile] bypass-analysis progress elapsed_s=2.712236e+02 completed=72961/95846
+[compile] bypass-analysis progress elapsed_s=2.762255e+02 completed=73715/95846
+[compile] bypass-analysis progress elapsed_s=2.812372e+02 completed=75419/95846
+[compile] bypass-analysis progress elapsed_s=2.862391e+02 completed=76198/95846
+[compile] bypass-analysis progress elapsed_s=2.912398e+02 completed=76969/95846
+[compile] bypass-analysis progress elapsed_s=2.962513e+02 completed=78644/95846
+[compile] bypass-analysis progress elapsed_s=3.012689e+02 completed=79440/95846
+[compile] bypass-analysis progress elapsed_s=3.062708e+02 completed=80435/95846
+[compile] bypass-analysis progress elapsed_s=3.112880e+02 completed=81833/95846
+[compile] bypass-analysis progress elapsed_s=3.162984e+02 completed=82557/95846
+[compile] bypass-analysis progress elapsed_s=3.212996e+02 completed=83775/95846
+[compile] bypass-analysis progress elapsed_s=3.263006e+02 completed=84970/95846
+[compile] bypass-analysis progress elapsed_s=3.313011e+02 completed=85687/95846
+[compile] bypass-analysis progress elapsed_s=3.363012e+02 completed=87560/95846
+[compile] bypass-analysis progress elapsed_s=3.413013e+02 completed=91923/95846
+[compile] bypass-analysis progress elapsed_s=3.463027e+02 completed=95595/95846
+[compile] bypass-analysis end elapsed_s=3.467428e+02
+[compile] BypassDetection end total_s=4.525031e+02
+[compile] CandidateSelection begin total_s=4.525031e+02
+[compile] CandidateSelection end total_s=4.674039e+02
+[compile] DaCapoPlanner begin total_s=4.674040e+02
+[compile] dacapo-search begin elapsed_s=9.337000e-06
+Regional DaCapo candidate set 1: 16319 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.087000e-05
+[compile] regional-build begin elapsed_s=9.442000e-06
+[compile] regional-build end elapsed_s=9.314830e+00
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=9.316133e+00 completed=1/16319
+[compile] dacapo-attempt trials=5 reachable_cuts=3 last_reachable=41
+[compile] dacapo-candidate-cuts end elapsed_s=9.334961e+00
+Regional DaCapo candidate set 2: 35360 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=9.811000e-06
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-attempt trials=99 reachable_cuts=31 last_reachable=296
+[compile] dacapo-candidate-cuts end elapsed_s=1.199119e-01
+Regional DaCapo candidate set 3: 41907 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.006600e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-attempt trials=239 reachable_cuts=42 last_reachable=297
+[compile] dacapo-candidate-cuts end elapsed_s=2.253229e-01
+Regional DaCapo candidate set 4: 56439 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=9.989000e-06
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=6.885679e+00 completed=110/56439
+[compile] dacapo-candidate-cuts progress elapsed_s=1.206060e+01 completed=111/56439
+[compile] dacapo-candidate-cuts progress elapsed_s=2.381628e+01 completed=119/56439
+[compile] dacapo-candidate-cuts progress elapsed_s=3.496164e+01 completed=120/56439
+[compile] dacapo-candidate-cuts progress elapsed_s=4.610000e+01 completed=121/56439
+[compile] dacapo-attempt trials=612 reachable_cuts=129 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=4.785446e+01
+Regional DaCapo candidate set 5: 74697 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.026800e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.266360e+01 completed=120/74697
+[compile] dacapo-candidate-cuts progress elapsed_s=2.383187e+01 completed=121/74697
+[compile] dacapo-candidate-cuts progress elapsed_s=3.498348e+01 completed=122/74697
+[compile] dacapo-attempt trials=670 reachable_cuts=130 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.676633e+01
+Regional DaCapo candidate set 6: 79443 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.026900e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.304546e+01 completed=121/79443
+[compile] dacapo-candidate-cuts progress elapsed_s=2.414422e+01 completed=122/79443
+[compile] dacapo-candidate-cuts progress elapsed_s=3.525799e+01 completed=123/79443
+[compile] dacapo-attempt trials=722 reachable_cuts=131 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.706056e+01
+Regional DaCapo candidate set 7: 82185 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.059100e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.343889e+01 completed=122/82185
+[compile] dacapo-candidate-cuts progress elapsed_s=2.458040e+01 completed=123/82185
+[compile] dacapo-candidate-cuts progress elapsed_s=3.575833e+01 completed=124/82185
+[compile] dacapo-attempt trials=767 reachable_cuts=132 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.752964e+01
+Regional DaCapo candidate set 8: 84731 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.093900e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.392828e+01 completed=123/84731
+[compile] dacapo-candidate-cuts progress elapsed_s=2.502844e+01 completed=124/84731
+[compile] dacapo-candidate-cuts progress elapsed_s=3.612702e+01 completed=125/84731
+[compile] dacapo-attempt trials=808 reachable_cuts=133 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.791077e+01
+Regional DaCapo candidate set 9: 85793 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.037500e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.433622e+01 completed=124/85793
+[compile] dacapo-candidate-cuts progress elapsed_s=2.541872e+01 completed=125/85793
+[compile] dacapo-candidate-cuts progress elapsed_s=3.658879e+01 completed=126/85793
+[compile] dacapo-attempt trials=852 reachable_cuts=134 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.838956e+01
+Regional DaCapo candidate set 10: 86463 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.018100e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.471070e+01 completed=125/86463
+[compile] dacapo-candidate-cuts progress elapsed_s=2.575801e+01 completed=126/86463
+[compile] dacapo-candidate-cuts progress elapsed_s=3.690805e+01 completed=127/86463
+[compile] dacapo-attempt trials=904 reachable_cuts=135 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.875584e+01
+Regional DaCapo candidate set 11: 87133 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.064500e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.512240e+01 completed=126/87133
+[compile] dacapo-candidate-cuts progress elapsed_s=2.621107e+01 completed=127/87133
+[compile] dacapo-candidate-cuts progress elapsed_s=3.729327e+01 completed=128/87133
+[compile] dacapo-attempt trials=970 reachable_cuts=136 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.906412e+01
+Regional DaCapo candidate set 12: 87803 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.024700e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=1.601778e+01 completed=127/87803
+[compile] dacapo-candidate-cuts progress elapsed_s=2.705208e+01 completed=128/87803
+[compile] dacapo-candidate-cuts progress elapsed_s=3.815178e+01 completed=129/87803
+[compile] dacapo-attempt trials=1065 reachable_cuts=137 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=3.995785e+01
+Regional DaCapo candidate set 13: 88307 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.031600e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=5.292188e+00 completed=62/88307
+[compile] dacapo-candidate-cuts progress elapsed_s=1.688437e+01 completed=128/88307
+[compile] dacapo-candidate-cuts progress elapsed_s=2.796836e+01 completed=129/88307
+[compile] dacapo-candidate-cuts progress elapsed_s=3.904117e+01 completed=130/88307
+[compile] dacapo-attempt trials=1149 reachable_cuts=138 last_reachable=6688
+[compile] dacapo-candidate-cuts end elapsed_s=4.084781e+01
+Regional DaCapo candidate set 14: 88811 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.035700e-05
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=0
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] dacapo-initial-coverage limit=59 inputs=2 initial_boot=1
+[compile] dacapo-candidate-cuts progress elapsed_s=5.017640e+00 completed=62/88811
+[compile] dacapo-candidate-cuts progress elapsed_s=1.727258e+01 completed=129/88811
+[compile] dacapo-candidate-cuts progress elapsed_s=2.830297e+01 completed=130/88811

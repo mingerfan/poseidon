@@ -1,0 +1,1212 @@
+diff --git a/include/hecate/Dialect/Earth/Analysis/CandidateAnalysis.h b/include/hecate/Dialect/Earth/Analysis/CandidateAnalysis.h
+index 399f246..11f3ce3 100644
+--- a/include/hecate/Dialect/Earth/Analysis/CandidateAnalysis.h
++++ b/include/hecate/Dialect/Earth/Analysis/CandidateAnalysis.h
+@@ -89,6 +89,7 @@ void doLiveAnalysis(
+   void setBypassEdges(int64_t from, int64_t OverThr);
+   void sortValidCandidates(int64_t opid);
+   void finalizeCandidates(int64_t setNum);
++  void restrictToRegionalBoundaries(llvm::ArrayRef<int64_t> boundaries);
+   void pushFromCoverage(int64_t from, mlir::SmallVector<int64_t, 2> coverages);
+   mlir::SmallVector<int64_t, 4> sortTargets(int64_t setNum);
+   mlir::SmallVector<int64_t, 4>
+@@ -96,6 +97,7 @@ void doLiveAnalysis(
+   std::map<int64_t, mlir::SmallVector<int64_t, 4>> toFromMap;
+ 
+ private:
++  bool regionalBoundaries = false;
+   mlir::SmallVector<int64_t, 4> candidates;
+   mlir::SmallVector<int64_t, 4> edges;
+   llvm::DenseMap<size_t, mlir::SmallVector<int64_t, 4>> candidateSet;
+diff --git a/include/hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h b/include/hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h
+index 2da547a..3907269 100644
+--- a/include/hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h
++++ b/include/hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h
+@@ -5,11 +5,32 @@
+ 
+ namespace hecate::earth {
+ bool usesRegionalScalePlanning();
++mlir::LogicalResult scheduleRegionalRegions(mlir::func::FuncOp func);
++// Public arithmetic boundaries; cuts inside a fused region would destroy its
++// shared coefficient/Rescale plan and are not useful Boot search locations.
++mlir::FailureOr<llvm::SmallVector<int64_t>>
++regionalScaleBoundaries(mlir::func::FuncOp func);
++// Clone only the requested slice, stopping at its live frontier. Original
++// argument positions and operation IDs are preserved for the DaCapo DP.
++mlir::func::FuncOp cloneRegionalSegment(mlir::func::FuncOp func,
++                                        mlir::ValueRange inputs,
++                                        mlir::ValueRange outputs,
++                                        llvm::ArrayRef<int64_t> bootTargets,
++                                        int64_t from, int64_t bootScale,
++                                        bool intermediate);
+ // Scale search is bounded inside private arithmetic regions. The optional
+ // greedy scheduler refreshes a previously verified live frontier; it does not
+ // enumerate Boot choices as part of scale search.
+ mlir::LogicalResult planRegionalScales(mlir::func::FuncOp func,
+                                        int64_t waterline, int64_t bootScale,
+                                        bool insertBoots);
++// Analyze a supplied segment without inserting Boot or rewriting its IR.
++// Return the first regional boundary that cannot execute, or whose output
++// falls below minimumQ; -1 means the complete segment was covered.
++mlir::FailureOr<int64_t> analyzeRegionalScaleCoverage(mlir::func::FuncOp func,
++                                                      int64_t waterline,
++                                                      int64_t bootScale,
++                                                      unsigned minimumQ = 0);
++mlir::LogicalResult writeRegionalScaleReport(mlir::func::FuncOp func);
+ } // namespace hecate::earth
+ #endif
+diff --git a/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp b/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
+index ef05f64..90b4b25 100644
+--- a/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
++++ b/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
+@@ -140,6 +140,8 @@ mlir::SmallVector<int64_t, 4>
+ hecate::CandidateAnalysis::getTargets(int64_t opid, int64_t setNum) const {
+   if (opid == 0 || opid == retOpid)
+     return {};
++  if (regionalBoundaries)
++    return values[opid].getValidLiveOuts();
+   /* if (values[opid].getValidLiveOuts().size() == setNum) */
+   /*   return values[opid].getValidLiveOuts(); */
+   /* else */
+@@ -232,6 +234,8 @@ hecate::CandidateAnalysis::sortTargets(int64_t setNum,
+ }
+ 
+ void hecate::CandidateAnalysis::finalizeCandidates(int64_t setNum) {
++  candidates.clear();
++  toFromMap.clear();
+   candidates.push_back(0);
+   for (int i = 1; i <= setNum; i++) {
+     candidates.append(getCandidateSet(i));
+@@ -243,6 +247,32 @@ void hecate::CandidateAnalysis::finalizeCandidates(int64_t setNum) {
+   return;
+ }
+ 
++void hecate::CandidateAnalysis::restrictToRegionalBoundaries(
++    llvm::ArrayRef<int64_t> boundaries) {
++  regionalBoundaries = true;
++  std::set<int64_t> allowed(boundaries.begin(), boundaries.end());
++  edges.assign(1, 0);
++  auto live = values.front().getLiveOuts();
++  for (auto &op : cast<mlir::func::FuncOp>(_op).front()) {
++    auto scaleOp = dyn_cast<earth::HEScaleOpInterface>(op);
++    if (!scaleOp || !scaleOp.isCipher())
++      continue;
++    for (auto input : op.getOperands())
++      if (earth::getScaleType(input).isCipher() && _l.isDeadAfter(input, &op))
++        llvm::erase_value(live, hecate::getIntegerAttr("opid", input));
++    auto cut = hecate::getIntegerAttr("opid", op.getResult(0));
++    live.push_back(cut);
++    // Include every public regional boundary, not just old SMU edges. In
++    // particular, a region's output may feed rotations in the same SMU.
++    if (allowed.count(cut) && llvm::all_of(live, [&](int64_t value) {
++          return allowed.count(value);
++        })) {
++      values[cut].setLiveOuts(live);
++      edges.push_back(cut);
++    }
++  }
++}
++
+ void hecate::CandidateAnalysis::pushFromCoverage(
+     int64_t from, mlir::SmallVector<int64_t, 2> coverages) {
+   auto c = coverages.front();
+diff --git a/lib/Dialect/Earth/IR/EarthDialect.cpp b/lib/Dialect/Earth/IR/EarthDialect.cpp
+index ca027b2..1fb1bbd 100644
+--- a/lib/Dialect/Earth/IR/EarthDialect.cpp
++++ b/lib/Dialect/Earth/IR/EarthDialect.cpp
+@@ -277,6 +277,12 @@ void hecate::earth::EarthDialect::setCKKSParameters(llvm::StringRef filename) {
+       config["bootstrapLevelUpperBound"];
+   hecate::earth::EarthDialect::polynomialDegree = config["polynomialDegree"];
+ 
++  // Native physical levels can exceed the legacy logical level upper bound.
++  // Keep all explicitly supplied cost entries instead of truncating them.
++  size_t costLevels = levelUpperBound + 1;
++  for (const auto &entry : config["latencyTable"].items())
++    costLevels = std::max(costLevels, entry.value().size() + 1);
++
+   for (auto &&name : names) {
+     for (auto &&suffix : {"_single", "_double"}) {
+       auto &latTab = latencyTable[name.str() + suffix];
+@@ -289,7 +295,7 @@ void hecate::earth::EarthDialect::setCKKSParameters(llvm::StringRef filename) {
+           latTab.push_back(data.get<int64_t>());
+         }
+       }
+-      latTab.resize(levelUpperBound + 1, latTab.back());
++      latTab.resize(costLevels, latTab.back());
+ 
+       if (config["noiseTable"].contains(name.str() + suffix) &&
+           config["noiseTable"][name.str() + suffix].size()) {
+diff --git a/lib/Dialect/Earth/Transforms/BypassDetection.cpp b/lib/Dialect/Earth/Transforms/BypassDetection.cpp
+index 53b5cce..8e86854 100644
+--- a/lib/Dialect/Earth/Transforms/BypassDetection.cpp
++++ b/lib/Dialect/Earth/Transforms/BypassDetection.cpp
+@@ -1,6 +1,7 @@
+ #include "hecate/Dialect/Earth/Analysis/CandidateAnalysis.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
+ #include "hecate/Dialect/Earth/Transforms/Passes.h"
++#include "hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h"
+ #include "hecate/Support/Support.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Interfaces/SideEffectInterfaces.h"
+@@ -56,7 +57,19 @@ struct BypassDetectionPass
+         op.emitError("unsupported operation in DaCapo Boot analysis");
+         return signalPassFailure();
+       }
++    if (hecate::earth::usesRegionalScalePlanning() &&
++        failed(hecate::earth::scheduleRegionalRegions(func)))
++      return signalPassFailure();
+     auto &ca = getAnalysis<hecate::CandidateAnalysis>();
++    if (hecate::earth::usesRegionalScalePlanning()) {
++      auto boundaries = hecate::earth::regionalScaleBoundaries(func);
++      if (failed(boundaries))
++        return signalPassFailure();
++      auto before = ca.getNumEdges();
++      ca.restrictToRegionalBoundaries(*boundaries);
++      llvm::errs() << "Regional DaCapo boundaries: " << before << " -> "
++                   << ca.getNumEdges() << '\n';
++    }
+     std::atomic<bool> failedAny{false};
+     std::vector<std::thread> threads;
+     auto maxThreads = func.getContext()->isMultithreadingEnabled()
+@@ -82,8 +95,47 @@ struct BypassDetectionPass
+   LogicalResult findBypassEdge(func::FuncOp func, hecate::CandidateAnalysis &ca,
+                                int64_t from) {
+     OwningOpRef<ModuleOp> module = ModuleOp::create(func.getLoc());
++    OpBuilder builder(func);
++    if (hecate::earth::usesRegionalScalePlanning()) {
++      // Probe the suffix from a refreshed frontier. The prefix has no known
++      // states here and must not be evaluated with threshold scale rules.
++      SmallVector<Value> inputs;
++      if (from)
++        for (auto id : ca.getValueInfo(from)->getLiveOuts())
++          inputs.push_back(ca.getValueInfo(id)->getValue());
++      auto copy = hecate::earth::cloneRegionalSegment(
++          func, inputs, func.front().getTerminator()->getOperands(), {}, from,
++          bootstrap_scale, false);
++      if (!copy)
++        return failure();
++      module->push_back(copy);
++      const int64_t scale = bootstrap_scale
++                                ? bootstrap_scale.getValue()
++                                : hecate::earth::EarthDialect::rescalingFactor;
++      for (auto arg : copy.getArguments())
++        arg.setType(hecate::earth::getScaleType(arg)
++                        .switchLevel(hecate::earth::bootstrapOutputLevel())
++                        .switchScale(scale));
++      copy->setAttr("earth.arg_scales",
++                    builder.getDenseF64ArrayAttr(
++                        SmallVector<double>(copy.getNumArguments(), scale)));
++      hecate::earth::clearActualScales(copy);
++      auto minimumQ =
++          hecate::earth::EarthDialect::nativeLevelAnchor + 1 -
++          static_cast<int64_t>(hecate::earth::bootstrapQBudget() * threshold);
++      auto limit = hecate::earth::analyzeRegionalScaleCoverage(copy, waterline,
++                                                               scale, minimumQ);
++      if (failed(limit))
++        return failure();
++      if (*limit >= 0) {
++        ca.getValueInfo(from)->setThresholdOpid(*limit);
++        if (!from)
++          for (auto input : ca.getValueInfo(0)->getLiveOuts())
++            ca.getValueInfo(input)->setThresholdOpid(*limit);
++      }
++      return success();
++    }
+     auto copy = func.clone();
+-    OpBuilder builder(copy);
+     copy->setAttr("btp_at", builder.getI64IntegerAttr(from));
+     copy->setAttr("btp_target", builder.getDenseI64ArrayAttr(
+                                     ca.getValueInfo(from)->getLiveOuts()));
+diff --git a/lib/Dialect/Earth/Transforms/CandidateSelection.cpp b/lib/Dialect/Earth/Transforms/CandidateSelection.cpp
+index 429870a..137f7cb 100644
+--- a/lib/Dialect/Earth/Transforms/CandidateSelection.cpp
++++ b/lib/Dialect/Earth/Transforms/CandidateSelection.cpp
+@@ -1,6 +1,7 @@
+ #include "hecate/Dialect/Earth/Analysis/CandidateAnalysis.h"
+ #include "hecate/Dialect/Earth/IR/EarthOps.h"
+ #include "hecate/Dialect/Earth/Transforms/Passes.h"
++#include "hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/IR/Diagnostics.h"
+ #include "mlir/Pass/PassManager.h"
+@@ -33,6 +34,16 @@ struct CandidateSelectionPass
+       ca.sortValidCandidates(cut);
+     }
+     OpBuilder builder(func);
++    if (hecate::earth::usesRegionalScalePlanning()) {
++      // Regional scale constraints make "Boot at every cut" non-monotonic:
++      // that trial may fail even when a subset of these cuts is feasible.
++      // The regional grid is already small. Let the DP check its real edges
++      // instead of rejecting the grid using an artificial full-Boot schedule.
++      func->setAttr("selected_set", builder.getI64IntegerAttr(1));
++      ca.finalizeCandidates(1);
++      markAnalysesPreserved<hecate::CandidateAnalysis>();
++      return;
++    }
+     OwningOpRef<ModuleOp> module = ModuleOp::create(func.getLoc());
+     PassManager pm(func.getContext());
+     pm.addNestedPass<func::FuncOp>(
+diff --git a/lib/Dialect/Earth/Transforms/CoverageRecorder.cpp b/lib/Dialect/Earth/Transforms/CoverageRecorder.cpp
+index 793750f..7195298 100644
+--- a/lib/Dialect/Earth/Transforms/CoverageRecorder.cpp
++++ b/lib/Dialect/Earth/Transforms/CoverageRecorder.cpp
+@@ -7,6 +7,7 @@
+ 
+ #include "hecate/Dialect/Earth/Analysis/CandidateAnalysis.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
++#include "hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h"
+ #include "mlir/Pass/PassManager.h"
+ #include "mlir/Transforms/Passes.h"
+ #include <random>
+@@ -72,6 +73,16 @@ struct CoverageRecorderPass
+     const int64_t bootScale =
+         bootstrap_scale ? bootstrap_scale.getValue()
+                         : hecate::earth::EarthDialect::rescalingFactor;
++    if (hecate::earth::usesRegionalScalePlanning()) {
++      auto limit = hecate::earth::analyzeRegionalScaleCoverage(dup, waterline,
++                                                               bootScale);
++      dup.erase();
++      if (failed(limit))
++        return signalPassFailure();
++      func->setAttr("coverages",
++                    builder.getDenseI64ArrayAttr({*limit, *limit}));
++      return;
++    }
+     for (auto sop : original) {
+       auto opid = hecate::getIntegerAttr("opid", sop->getResult(0));
+       if (!isa<hecate::earth::BootstrapOp>(sop) &&
+diff --git a/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp b/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp
+index 0ae4490..5b43042 100644
+--- a/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp
++++ b/lib/Dialect/Earth/Transforms/DaCapoPlanner.cpp
+@@ -1,11 +1,18 @@
+ #include "hecate/Dialect/Earth/Analysis/CandidateAnalysis.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
+ #include "hecate/Dialect/Earth/Transforms/Passes.h"
++#include "hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h"
++#include "hecate/Support/Support.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/IR/Diagnostics.h"
++#include "mlir/IR/IRMapping.h"
+ #include "mlir/Pass/PassManager.h"
+ #include "mlir/Transforms/Passes.h"
++#include "nlohmann/json.hpp"
++#include "llvm/Support/CommandLine.h"
++#include <fstream>
+ #include <map>
++#include <memory>
+ 
+ namespace hecate::earth {
+ #define GEN_PASS_DEF_DACAPOPLANNER
+@@ -13,6 +20,86 @@ namespace hecate::earth {
+ } // namespace hecate::earth
+ using namespace mlir;
+ namespace {
++llvm::cl::opt<bool>
++    allRegionalCandidates("regional-all-boot-candidates",
++                          llvm::cl::desc("Search all regional Boot candidates "
++                                         "instead of increasing frontier sets"),
++                          llvm::cl::init(false));
++llvm::cl::opt<std::string> searchReport(
++    "regional-search-report",
++    llvm::cl::desc("Write regional DaCapo candidate states and rejected edges"),
++    llvm::cl::init(""));
++struct RegionalSegment {
++  int64_t from, to;
++  SmallVector<int64_t> inputs, outputs;
++  OwningOpRef<func::FuncOp> code;
++  std::shared_ptr<RegionalSegment> previous;
++};
++
++// Retain the exact successful scale plans. Re-running regional search over the
++// unsplit function can choose different boundary states from the DP trials.
++LogicalResult composeRegionalPlan(func::FuncOp func,
++                                  std::shared_ptr<RegionalSegment> last,
++                                  TypeRange inputTypes, int64_t waterline) {
++  SmallVector<std::shared_ptr<RegionalSegment>> segments;
++  for (auto part = last; part; part = part->previous)
++    segments.push_back(part);
++  std::reverse(segments.begin(), segments.end());
++  auto *old = &func.front();
++  auto *body = new Block();
++  func.getBody().push_back(body);
++  OpBuilder builder(func.getContext());
++  builder.setInsertionPointToEnd(body);
++  DenseMap<int64_t, Value> values;
++  for (auto [i, type] : llvm::enumerate(inputTypes))
++    values[i + 1] = body->addArgument(type, old->getArgument(i).getLoc());
++  SmallVector<Value> finalResults;
++  auto trace = nlohmann::json::array();
++  for (const auto &part : segments) {
++    auto piece = *part->code;
++    if (piece.getNumArguments() != inputTypes.size() + part->inputs.size())
++      return func.emitError("regional DaCapo segment argument count changed");
++    IRMapping mapping;
++    for (size_t i = 0; i < inputTypes.size(); ++i)
++      mapping.map(piece.getArgument(i), body->getArgument(i));
++    for (auto [i, id] : llvm::enumerate(part->inputs)) {
++      auto value = values.find(id);
++      if (value == values.end())
++        return func.emitError("regional DaCapo segment lost a live input");
++      mapping.map(piece.getArgument(inputTypes.size() + i), value->second);
++    }
++    for (auto &op : piece.front().without_terminator())
++      builder.clone(op, mapping);
++    finalResults.clear();
++    for (auto value : piece.front().getTerminator()->getOperands())
++      finalResults.push_back(mapping.lookup(value));
++    if (!part->outputs.empty()) {
++      if (part->outputs.size() != finalResults.size())
++        return func.emitError("regional DaCapo segment return count changed");
++      for (auto [i, id] : llvm::enumerate(part->outputs))
++        values[id] = finalResults[i];
++    }
++    if (auto rows = piece->getAttrOfType<StringAttr>("earth.regional_trace"))
++      for (auto row : nlohmann::json::parse(rows.getValue().str())) {
++        row["segment_from"] = part->from;
++        row["segment_to"] = part->to;
++        trace.push_back(std::move(row));
++      }
++  }
++  builder.create<func::ReturnOp>(func.getLoc(), finalResults);
++  old->dropAllDefinedValueUses();
++  old->erase();
++  func->setAttr("earth.arg_scales",
++                builder.getDenseF64ArrayAttr(
++                    SmallVector<double>(inputTypes.size(), waterline)));
++  func->setAttr("earth.scale_waterline", builder.getF64FloatAttr(waterline));
++  func->setAttr("earth.region_scale_policy", builder.getUnitAttr());
++  func->setAttr("earth.regional_dacapo", builder.getUnitAttr());
++  func->setAttr("earth.regional_trace", builder.getStringAttr(trace.dump(2)));
++  hecate::earth::finishThresholdScale(func, builder, inputTypes);
++  return hecate::earth::writeRegionalScaleReport(func);
++}
++
+ struct DaCapoPlannerPass
+     : hecate::earth::impl::DaCapoPlannerBase<DaCapoPlannerPass> {
+   DaCapoPlannerPass() = default;
+@@ -23,13 +110,56 @@ struct DaCapoPlannerPass
+   }
+   void runOnOperation() override {
+     auto func = getOperation();
++    if (!searchReport.empty() && !hecate::earth::usesRegionalScalePlanning()) {
++      func.emitError(
++          "--regional-search-report requires --native-scale-policy=regional");
++      return signalPassFailure();
++    }
++    if (hecate::earth::usesRegionalScalePlanning())
++      for (const auto &[name, table] :
++           hecate::earth::EarthDialect::getLatencyTable())
++        if (table.size() <=
++            static_cast<size_t>(
++                hecate::earth::EarthDialect::nativeLevelAnchor)) {
++          func.emitError("regional DaCapo latency table does not cover the "
++                         "native Q chain: ")
++              << name;
++          return signalPassFailure();
++        }
+     auto &ca = getAnalysis<hecate::CandidateAnalysis>();
++    const bool regional = hecate::earth::usesRegionalScalePlanning();
++    auto selected = func->getAttrOfType<IntegerAttr>("selected_set").getInt();
++    const int64_t maximum =
++        regional ? std::max<size_t>(1, ca.getMaxNumOuts()) : selected;
++    const int64_t first =
++        regional ? (allRegionalCandidates ? maximum : 1) : selected;
++    for (int64_t size = first; size <= maximum; ++size) {
++      if (regional) {
++        ca.finalizeCandidates(size);
++        func->setAttr(
++            "selected_set",
++            IntegerAttr::get(IntegerType::get(func.getContext(), 64), size));
++        llvm::errs() << "Regional DaCapo candidate set " << size << ": "
++                     << ca.getCandidates().size() << " cuts\n";
++      }
++      auto planned = tryPlan(func, ca, size);
++      if (failed(planned))
++        return signalPassFailure();
++      if (*planned)
++        return;
++    }
++    func.emitError("no feasible DaCapo plan after single-prefix pruning");
++    signalPassFailure();
++  }
++  FailureOr<bool> tryPlan(func::FuncOp func, hecate::CandidateAnalysis &ca,
++                          int64_t selected) {
+     OpBuilder builder(func);
+     struct Plan {
+       double cost = 0;
+       SmallVector<int64_t> cuts;
+       SmallVector<Type, 4> types;
+       SmallVector<double, 4> scales;
++      std::shared_ptr<RegionalSegment> regional;
+     };
+     // Keep one cheapest prefix per cut. Its live ciphertext types and actual
+     // scales include bypassed values and are replayed in the next segment.
+@@ -43,9 +173,11 @@ struct DaCapoPlannerPass
+     plans[0] = {0, {}, inputs, inputScales};
+     OwningOpRef<ModuleOp> module = ModuleOp::create(func.getLoc());
+     PassManager pm(func.getContext()), coverage(func.getContext());
+-    pm.addNestedPass<func::FuncOp>(
+-        hecate::earth::createBootstrapPlacement({bootstrap_scale}));
+-    pm.addNestedPass<func::FuncOp>(hecate::earth::createCodeSegmentation());
++    if (!hecate::earth::usesRegionalScalePlanning()) {
++      pm.addNestedPass<func::FuncOp>(
++          hecate::earth::createBootstrapPlacement({bootstrap_scale}));
++      pm.addNestedPass<func::FuncOp>(hecate::earth::createCodeSegmentation());
++    }
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createProactiveRescaling(
+         {waterline, output_val, bootstrap_scale}));
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createEarlyModswitch());
+@@ -54,19 +186,48 @@ struct DaCapoPlannerPass
+     pm.addPass(createCanonicalizerPass());
+     pm.addPass(createCSEPass());
+     pm.addNestedPass<func::FuncOp>(hecate::earth::createLatencyEstimator());
+-    coverage.addNestedPass<func::FuncOp>(
+-        hecate::earth::createBootstrapPlacement({bootstrap_scale}));
+-    coverage.addNestedPass<func::FuncOp>(
+-        hecate::earth::createCodeSegmentation());
++    if (!hecate::earth::usesRegionalScalePlanning()) {
++      coverage.addNestedPass<func::FuncOp>(
++          hecate::earth::createBootstrapPlacement({bootstrap_scale}));
++      coverage.addNestedPass<func::FuncOp>(
++          hecate::earth::createCodeSegmentation());
++    }
+     coverage.addNestedPass<func::FuncOp>(hecate::earth::createCoverageRecorder(
+         {waterline, .5f, bootstrap_scale}));
+-    auto selected = func->getAttrOfType<IntegerAttr>("selected_set").getInt();
+     auto initialTargets = ca.getInitialTargets();
+     auto segment = [&](int64_t from, int64_t to, const Plan &state,
+                        bool initial) {
+-      auto copy = func.clone();
+-      copy->setAttr("cutted_edge", builder.getDenseI64ArrayAttr({from, to}));
+       auto targets = initial ? initialTargets : ca.getTargets(from, selected);
++      func::FuncOp copy;
++      if (hecate::earth::usesRegionalScalePlanning()) {
++        SmallVector<Value> liveInputs, liveOutputs;
++        if (from)
++          for (auto id : ca.getValueInfo(from)->getLiveOuts())
++            liveInputs.push_back(ca.getValueInfo(id)->getValue());
++        for (auto id : ca.getValueInfo(to)->getLiveOuts())
++          liveOutputs.push_back(ca.getValueInfo(id)->getValue());
++        const bool intermediate = to != ca.getRetOpid();
++        if (!intermediate)
++          liveOutputs.append(
++              func.front().getTerminator()->getOperands().begin(),
++              func.front().getTerminator()->getOperands().end());
++        copy = hecate::earth::cloneRegionalSegment(
++            func, liveInputs, liveOutputs, targets, from, bootstrap_scale,
++            intermediate);
++        if (!copy)
++          return copy;
++        copy->setAttr("earth.regional_trial", builder.getUnitAttr());
++        SmallVector<int64_t> refreshReturns;
++        auto target = ca.getTargets(to, selected);
++        for (auto [i, id] : llvm::enumerate(ca.getValueInfo(to)->getLiveOuts()))
++          if (llvm::is_contained(target, id))
++            refreshReturns.push_back(i);
++        copy->setAttr("earth.regional_refresh_returns",
++                      builder.getDenseI64ArrayAttr(refreshReturns));
++      } else {
++        copy = func.clone();
++      }
++      copy->setAttr("cutted_edge", builder.getDenseI64ArrayAttr({from, to}));
+       copy->setAttr("btp_target", builder.getDenseI64ArrayAttr(targets));
+       copy->setAttr("segment_input",
+                     builder.getDenseI64ArrayAttr(
+@@ -81,6 +242,9 @@ struct DaCapoPlannerPass
+       module->push_back(copy);
+       return copy;
+     };
++    auto observations = nlohmann::json::array();
++    auto rejected = nlohmann::json::array();
++    unsigned trials = 0;
+     for (auto to : ca.getCandidates()) {
+       SmallVector<size_t, 4> refreshedInputs;
+       if (to && to != ca.getRetOpid()) {
+@@ -100,10 +264,25 @@ struct DaCapoPlannerPass
+             if (initial && (from || initialTargets.empty()))
+               continue;
+             auto copy = segment(from, to, state, initial);
++            if (!copy)
++              return failure();
+             LogicalResult feasible = failure();
++            ++trials;
+             {
+               ScopedDiagnosticHandler diagnostics(
+-                  func.getContext(), [](Diagnostic &) { return success(); });
++                  func.getContext(), [&](Diagnostic &diagnostic) {
++                    if (!searchReport.empty() &&
++                        diagnostic.getSeverity() == DiagnosticSeverity::Error) {
++                      std::string location;
++                      llvm::raw_string_ostream stream(location);
++                      diagnostic.getLocation().print(stream);
++                      rejected.push_back({{"from", from},
++                                          {"to", to},
++                                          {"error", diagnostic.str()},
++                                          {"location", stream.str()}});
++                    }
++                    return success();
++                  });
+               feasible = pm.run(*module);
+             }
+             if (succeeded(feasible)) {
+@@ -133,36 +312,82 @@ struct DaCapoPlannerPass
+               }
+               auto current = plans.find(to);
+               if (current == plans.end() ||
+-                  candidate.cost < current->second.cost)
++                  candidate.cost < current->second.cost) {
++                if (hecate::earth::usesRegionalScalePlanning()) {
++                  auto compiled = std::make_shared<RegionalSegment>();
++                  compiled->from = from;
++                  compiled->to = to;
++                  if (from)
++                    compiled->inputs = ca.getValueInfo(from)->getLiveOuts();
++                  compiled->outputs = ca.getValueInfo(to)->getLiveOuts();
++                  compiled->code = OwningOpRef<func::FuncOp>(copy.clone());
++                  compiled->previous = state.regional;
++                  candidate.regional = std::move(compiled);
++                }
+                 plans.insert_or_assign(to, std::move(candidate));
++              }
+             }
+             copy.erase();
+           }
+         }
+       }
+       auto state = plans.find(to);
++      if (!searchReport.empty()) {
++        nlohmann::json row = {{"cut", to},
++                              {"reachable", state != plans.end()},
++                              {"predecessors", ca.toFromMap[to]},
++                              {"targets", ca.getTargets(to, selected)}};
++        if (state != plans.end()) {
++          row["cost"] = state->second.cost;
++          row["states"] = nlohmann::json::array();
++          for (size_t i = inputs.size(); i < state->second.types.size(); ++i) {
++            auto type = cast<hecate::earth::HEScaleTypeInterface>(
++                state->second.types[i]);
++            row["states"].push_back(
++                {{"q", hecate::earth::EarthDialect::nativeLevelAnchor -
++                           type.getLevel() + 1},
++                 {"s", state->second.scales[i]}});
++          }
++        }
++        observations.push_back(std::move(row));
++      }
+       if (state == plans.end() || to == ca.getRetOpid())
+         continue;
+       for (bool initial : {false, true}) {
+         if (initial && (to || initialTargets.empty()))
+           continue;
+         auto copy = segment(to, ca.getRetOpid(), state->second, initial);
++        if (!copy)
++          return failure();
+         if (failed(coverage.run(*module))) {
+           copy.erase();
+           func.emitError("DaCapo coverage analysis failed");
+-          return signalPassFailure();
++          return failure();
+         }
+         auto ends =
+             copy->getAttrOfType<DenseI64ArrayAttr>("coverages").asArrayRef();
+         ca.pushFromCoverage(to, SmallVector<int64_t, 2>(ends));
++        if (!searchReport.empty())
++          observations.back()["coverage"] = SmallVector<int64_t>(ends);
+         copy.erase();
+       }
+     }
+-    auto result = plans.find(ca.getRetOpid());
+-    if (result == plans.end()) {
+-      func.emitError("no feasible DaCapo plan after single-prefix pruning");
+-      return signalPassFailure();
++    if (!searchReport.empty()) {
++      std::ofstream report(searchReport);
++      if (!report) {
++        func.emitError("cannot open regional search report");
++        return failure();
++      }
++      report << nlohmann::json({{"candidate_set", selected},
++                                {"segment_trials", trials},
++                                {"cuts", observations},
++                                {"rejections", rejected}})
++                    .dump(2)
++             << '\n';
+     }
++    auto result = plans.find(ca.getRetOpid());
++    if (result == plans.end())
++      return false;
+     const auto &best = result->second;
+     SmallVector<Attribute> schedule;
+     SmallVector<int64_t> targets;
+@@ -182,7 +407,13 @@ struct DaCapoPlannerPass
+     func->setAttr("planned_latency", builder.getF64FloatAttr(best.cost));
+     llvm::outs() << "Estimated Latency: " << best.cost / 1000000 << " (sec)\n"
+                  << "Number of Bootstrapping: " << targets.size() << '\n';
+-    markAnalysesPreserved<hecate::CandidateAnalysis>();
++    if (hecate::earth::usesRegionalScalePlanning()) {
++      if (failed(composeRegionalPlan(func, best.regional, inputs, waterline)))
++        return failure();
++    } else {
++      markAnalysesPreserved<hecate::CandidateAnalysis>();
++    }
++    return true;
+   }
+   void getDependentDialects(DialectRegistry &registry) const override {
+     registry.insert<hecate::earth::EarthDialect>();
+diff --git a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+index 54424c9..e3c82d2 100644
+--- a/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
++++ b/lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp
+@@ -61,7 +61,8 @@ struct GreedyBootstrapPlacementPass
+ 
+     if (usesRegionalScalePlanning()) {
+       if (depth_dp) {
+-        func.emitError("regional scale planning currently requires --boot-placement=greedy");
++        func.emitError("regional scale planning does not support "
++                       "--boot-placement=depth-dp; use greedy or optimized");
+         return signalPassFailure();
+       }
+       OpBuilder builder(func);
+diff --git a/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp b/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp
+index a28846b..07bbbb6 100644
+--- a/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp
++++ b/lib/Dialect/Earth/Transforms/ProactiveRescaling.cpp
+@@ -51,10 +51,14 @@ struct ProactiveRescalingPass
+       func.emitError("invalid threshold scale policy or Boot Q budget");
+       return signalPassFailure();
+     }
++    const auto inputBudget =
++        hecate::earth::usesRegionalScalePlanning()
++            ? hecate::earth::EarthDialect::nativeLevelAnchor -
++                  hecate::earth::EarthDialect::nativeArithmeticLowerLevel
++            : hecate::earth::bootstrapQBudget();
+     for (Value input : func.getArguments())
+       if (hecate::earth::getScaleType(input).isCipher() &&
+-          hecate::earth::getScaleType(input).getLevel() >
+-              hecate::earth::bootstrapQBudget()) {
++          hecate::earth::getScaleType(input).getLevel() > inputBudget) {
+         func.emitError("input ciphertext exceeds the Boot Q budget");
+         return signalPassFailure();
+       }
+diff --git a/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp b/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp
+index 5859beb..c814dd2 100644
+--- a/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp
++++ b/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp
+@@ -1,6 +1,7 @@
+ #include "hecate/Dialect/Earth/Transforms/RegionalScalePlanning.h"
+ #include "hecate/Dialect/Earth/Transforms/Common.h"
+ #include "hecate/Support/BootstrapInputAlignment.h"
++#include "hecate/Support/Support.h"
+ #include "mlir/IR/IRMapping.h"
+ #include "nlohmann/json.hpp"
+ #include "llvm/Support/CommandLine.h"
+@@ -72,9 +73,67 @@ public:
+         anchor(EarthDialect::nativeLevelAnchor),
+         minimumQ(EarthDialect::nativeArithmeticLowerLevel + 1) {}
+ 
+-  LogicalResult run(bool insertBoots) {
++  FailureOr<SmallVector<int64_t>> boundaries() {
+     if (failed(build()))
+       return failure();
++    SmallVector<int64_t> result;
++    for (Value arg : func.getArguments())
++      result.push_back(hecate::getIntegerAttr("opid", arg));
++    for (unsigned root : roots)
++      result.push_back(hecate::getIntegerAttr("opid", nodes[root].value));
++    return result;
++  }
++
++  LogicalResult schedule() {
++    if (failed(build()))
++      return failure();
++    SmallVector<Operation *> order;
++    DenseSet<Operation *> emitted;
++    SmallVector<bool> visited(nodes.size(), false);
++    SmallVector<std::pair<unsigned, bool>> pending;
++    for (unsigned root : roots) {
++      pending.push_back({root, false});
++      while (!pending.empty()) {
++        auto [id, ready] = pending.pop_back_val();
++        if (visited[id])
++          continue;
++        if (ready || !nodes[id].op) {
++          visited[id] = true;
++          if (nodes[id].plain && emitted.insert(nodes[id].plain).second)
++            order.push_back(nodes[id].plain);
++          if (nodes[id].op && emitted.insert(nodes[id].op).second)
++            order.push_back(nodes[id].op);
++        } else {
++          pending.push_back({id, true});
++          for (unsigned input : llvm::reverse(nodes[id].args))
++            pending.push_back({input, false});
++        }
++      }
++    }
++    // Match the existing regional emitter's dependency order. Otherwise raw
++    // interleaved convolution branches create artificial wide live frontiers.
++    auto *end = func.front().getTerminator();
++    for (auto *op : order)
++      op->moveBefore(end);
++    return success();
++  }
++
++  LogicalResult run(bool insertBoots, int64_t *coverage = nullptr,
++                    unsigned coverageMinimumQ = 0) {
++    if (failed(build()))
++      return failure();
++    const auto mid = func->getAttrOfType<BoolAttr>("is_mid_segment");
++    const double outputScale =
++        mid && mid.getValue() ? 0 : regionOutputScale.getValue();
++    std::set<unsigned> bootRequired;
++    for (const auto &node : nodes)
++      if (isa_and_nonnull<BootstrapOp>(node.op))
++        bootRequired.insert(node.args.front());
++    if (auto refreshed = func->getAttrOfType<DenseI64ArrayAttr>(
++            "earth.regional_refresh_returns"))
++      for (auto index : refreshed.asArrayRef())
++        bootRequired.insert(
++            ids.lookup(func.front().getTerminator()->getOperand(index)));
+     Frontier initial;
+     for (Value arg : func.getArguments()) {
+       if (arg.use_empty())
+@@ -124,10 +183,10 @@ public:
+         Solver solver(*this, state.values);
+         SmallVector<PlanPtr> choices;
+         if (linearGroups.count(root)) {
+-          double target =
+-              returns.count(root)
+-                  ? (regionOutputScale > 0 ? regionOutputScale.getValue() : -1)
+-                  : floor;
++          double target = bootRequired.count(root) ? bootScale
++                          : returns.count(root)
++                              ? (outputScale > 0 ? outputScale : -1)
++                              : floor;
+           for (unsigned q = solver.available(root); q >= minimumQ; --q)
+             if (auto plan = linear(root, state.values, q, target)) {
+               choices.push_back(plan);
+@@ -167,11 +226,11 @@ public:
+             targets.append({floor + 1, floor + 4, floor + 10, floor + 20,
+                             2 * floor, 2 * floor + 20, 3 * floor, 4 * floor});
+           }
+-          if (returns.count(root) && regionOutputScale > 0)
+-            targets.assign(1, regionOutputScale);
++          if (returns.count(root) && outputScale > 0)
++            targets.assign(1, outputScale);
+           if (auto required = solver.requiredScale(root))
+-            if (!returns.count(root) || regionOutputScale == 0 ||
+-                std::abs(*required - regionOutputScale) <= 1e-10)
++            if (!returns.count(root) || outputScale == 0 ||
++                std::abs(*required - outputScale) <= 1e-10)
+               targets.assign(1, *required);
+           for (double target : targets)
+             for (unsigned q = solver.available(root); q >= minimumQ; --q)
+@@ -183,6 +242,8 @@ public:
+         for (auto plan : choices) {
+           Frontier candidate = state;
+           candidate.values[root] = replay(plan, state.values);
++          if (bootRequired.count(root) && !refreshable(candidate.values[root]))
++            continue;
+           for (auto it = candidate.values.begin();
+                it != candidate.values.end();)
+             if (lastUse[it->first] <= next)
+@@ -195,6 +256,10 @@ public:
+         }
+       }
+       if (candidates.empty()) {
++        if (coverage) {
++          *coverage = hecate::getIntegerAttr("opid", nodes[root].value);
++          return success();
++        }
+         if (!insertBoots || !checkpoint) {
+           nodes[root].op->emitError(
+               "no feasible regional scale plan in the Q budget");
+@@ -218,6 +283,13 @@ public:
+         next = selected.next;
+         continue;
+       }
++      if (coverage && coverageMinimumQ &&
++          llvm::all_of(candidates, [&](const Frontier &candidate) {
++            return candidate.pending->q < coverageMinimumQ;
++          })) {
++        *coverage = hecate::getIntegerAttr("opid", nodes[root].value);
++        return success();
++      }
+       llvm::stable_sort(candidates, [&](const Frontier &a, const Frontier &b) {
+         return rank(a) < rank(b);
+       });
+@@ -243,13 +315,17 @@ public:
+       if (insertBoots)
+         save(next);
+     }
+-    if (regionOutputScale > 0)
++    if (coverage) {
++      *coverage = -1;
++      return success();
++    }
++    if (outputScale > 0)
+       for (unsigned id : returns)
+-        if (std::abs(beam.front().values.at(id).scale - regionOutputScale) >
++        if (std::abs(beam.front().values.at(id).scale - outputScale) >
+             tolerance)
+           return func.emitError(
+               "regional plan cannot satisfy the requested final scale");
+-    if (!regionReport.empty()) {
++    if (!regionReport.empty() || func->hasAttr("earth.regional_trial")) {
+       nlohmann::json report = nlohmann::json::array();
+       SmallVector<int64_t> steps;
+       for (int64_t i = beam.front().step; i >= 0; i = history[i].parent)
+@@ -275,10 +351,12 @@ public:
+           std::string location;
+           llvm::raw_string_ostream stream(location);
+           nodes[plan->id].value.getLoc().print(stream);
+-          nlohmann::json row = {{"node", plan->id},
+-                                {"q", plan->q},
+-                                {"s", plan->scale},
+-                                {"location", stream.str()}};
++          nlohmann::json row = {
++              {"node", plan->id},
++              {"opid", hecate::getIntegerAttr("opid", nodes[plan->id].value)},
++              {"q", plan->q},
++              {"s", plan->scale},
++              {"location", stream.str()}};
+           if (plan->sequence) {
+             std::map<unsigned, unsigned> depth;
+             unsigned maximum = 0;
+@@ -298,10 +376,11 @@ public:
+           report.push_back(row);
+         }
+       }
+-      std::ofstream output(regionReport);
+-      if (!output)
+-        return func.emitError("cannot open regional scale report");
+-      output << report.dump(2) << '\n';
++      func->setAttr("earth.regional_trace",
++                    StringAttr::get(func.getContext(), report.dump(2)));
++      if (!func->hasAttr("earth.regional_trial") &&
++          failed(writeRegionalScaleReport(func)))
++        return failure();
+     }
+     if (failed(emit(beam.front())))
+       return failure();
+@@ -377,11 +456,8 @@ private:
+     return {plan->q, scale};
+   }
+   bool refreshable(State value) const {
+-    return hecate::planBootstrapInputAlignment(
+-               chain, value.q - 1, value.scale,
+-               EarthDialect::nativeBootInputLevel,
+-               EarthDialect::nativeBootInputScale)
+-        .has_value();
++    return canBootstrap(
++        {static_cast<int64_t>(anchor + 1 - value.q), value.scale});
+   }
+   std::tuple<int, int, unsigned, double> rank(const Frontier &state) const {
+     int least = anchor + 1, total = 0;
+@@ -1092,3 +1168,97 @@ LogicalResult hecate::earth::planRegionalScales(func::FuncOp func,
+         "regional scale planning requires native primes and one block");
+   return Planner(func, waterline, bootScale).run(insertBoots);
+ }
++
++FailureOr<int64_t> hecate::earth::analyzeRegionalScaleCoverage(
++    func::FuncOp func, int64_t waterline, int64_t bootScale,
++    unsigned minimumQ) {
++  int64_t coverage = -1;
++  if (failed(
++          Planner(func, waterline, bootScale).run(false, &coverage, minimumQ)))
++    return failure();
++  return coverage;
++}
++
++FailureOr<SmallVector<int64_t>>
++hecate::earth::regionalScaleBoundaries(func::FuncOp func) {
++  return Planner(func, 1, 1).boundaries();
++}
++
++LogicalResult hecate::earth::scheduleRegionalRegions(func::FuncOp func) {
++  return Planner(func, 1, 1).schedule();
++}
++
++func::FuncOp hecate::earth::cloneRegionalSegment(
++    func::FuncOp func, ValueRange inputs, ValueRange outputs,
++    llvm::ArrayRef<int64_t> bootTargets, int64_t from, int64_t bootScale,
++    bool intermediate) {
++  auto copy = cast<func::FuncOp>(func->cloneWithoutRegions());
++  auto *block = new Block();
++  copy.getBody().push_back(block);
++  OpBuilder builder(func.getContext());
++  builder.setInsertionPointToEnd(block);
++  IRMapping mapping;
++  DenseMap<int64_t, Value> logical;
++  auto argument = [&](Value value) {
++    auto arg = block->addArgument(value.getType(), value.getLoc());
++    mapping.map(value, arg);
++    logical[hecate::getIntegerAttr("opid", value)] = value;
++  };
++  for (Value value : func.getArguments())
++    argument(value);
++  for (Value value : inputs)
++    argument(value);
++  for (auto target : bootTargets) {
++    auto value = logical.find(target);
++    if (value == logical.end()) {
++      func.emitError(
++          "regional segment Boot target is not on its input frontier");
++      copy.erase();
++      return {};
++    }
++    auto input = mapping.lookup(value->second);
++    auto type = getScaleType(input);
++    auto boot = builder.create<BootstrapOp>(input.getLoc(), input,
++                                            type.getLevel(), type.getScale());
++    boot->setAttr("planned_scale", builder.getI64IntegerAttr(bootScale));
++    boot->setAttr("boot_target", builder.getI64IntegerAttr(target));
++    hecate::setIntegerAttr("opid", boot.getResult(), from);
++    mapping.map(value->second, boot.getResult());
++  }
++  // Discover the needed slice without cloning or canonicalizing the prefix
++  // and suffix for every candidate edge.
++  DenseSet<Operation *> needed;
++  SmallVector<Value> pending(outputs.begin(), outputs.end());
++  while (!pending.empty()) {
++    auto value = pending.pop_back_val();
++    if (mapping.contains(value))
++      continue;
++    auto *op = value.getDefiningOp();
++    if (needed.insert(op).second)
++      pending.append(op->getOperands().begin(), op->getOperands().end());
++  }
++  for (auto &op : func.front())
++    if (needed.contains(&op))
++      builder.clone(op, mapping);
++  SmallVector<Value> returns;
++  for (Value value : outputs)
++    returns.push_back(mapping.lookup(value));
++  builder.create<func::ReturnOp>(func.getLoc(), returns);
++  copy.setFunctionType(builder.getFunctionType(block->getArgumentTypes(),
++                                               ValueRange(returns).getTypes()));
++  copy->setAttr("is_mid_segment", builder.getBoolAttr(intermediate));
++  return copy;
++}
++
++LogicalResult hecate::earth::writeRegionalScaleReport(func::FuncOp func) {
++  if (regionReport.empty())
++    return success();
++  auto trace = func->getAttrOfType<StringAttr>("earth.regional_trace");
++  if (!trace)
++    return func.emitError("missing selected regional scale trace");
++  std::ofstream output(regionReport);
++  if (!output)
++    return func.emitError("cannot open regional scale report");
++  output << trace.getValue().str() << '\n';
++  return success();
++}
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index a6f5425..52cc576 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -7,6 +7,18 @@ add_test(NAME DacapoRegionalScale
+           ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-regional-scale.py
+           --hecate-opt $<TARGET_FILE:hecate-opt>
+           --source-dir ${PROJECT_SOURCE_DIR})
++add_test(NAME DacapoRegionalOptimized
++  COMMAND ${Python3_EXECUTABLE}
++          ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-regional-scale.py
++          --hecate-opt $<TARGET_FILE:hecate-opt>
++          --source-dir ${PROJECT_SOURCE_DIR}
++          --boot-placement optimized)
++add_test(NAME DacapoRegionalAllCandidates
++  COMMAND ${Python3_EXECUTABLE}
++          ${CMAKE_CURRENT_SOURCE_DIR}/runtime-plan/check-regional-scale.py
++          --hecate-opt $<TARGET_FILE:hecate-opt>
++          --source-dir ${PROJECT_SOURCE_DIR}
++          --boot-placement optimized --all-candidates)
+ 
+ add_test(NAME DacapoReductionRescales
+   COMMAND ${Python3_EXECUTABLE}
+diff --git a/test/runtime-plan/check-regional-scale.py b/test/runtime-plan/check-regional-scale.py
+index 8b83c0d..4cd2ebb 100644
+--- a/test/runtime-plan/check-regional-scale.py
++++ b/test/runtime-plan/check-regional-scale.py
+@@ -17,7 +17,8 @@ import tempfile
+ 
+ def replay(plan, graph, spec):
+     desc = {v['id']: v for v in plan['values']}
+-    values = dict(zip(plan['external_inputs'], (.25, .75)))
++    test_inputs = getattr(graph, 'test_inputs', (.25, .75))
++    values = dict(zip(plan['external_inputs'], test_inputs))
+     boots = 0
+     for s in itertools.chain(plan['initialization'], plan['execution'], plan['finalization']):
+         kind = s['kind']
+@@ -50,8 +51,11 @@ def replay(plan, graph, spec):
+             assert after['level'] < level
+             level = after['level']
+         elif op == 'boot':
+-            assert level == 5 and abs(scale - 40) < 1e-8
+-            level, scale = 30, 40
++            profile = spec['boot_profiles'][0]
++            assert profile['input_level_min'] <= level <= profile['input_level_max']
++            if 'input_scale_log2' in profile:
++                assert abs(scale - profile['input_scale_log2']) < 1e-8
++            level, scale = profile['output_level'], profile['output_scale_log2']
+             boots += 1
+         else:
+             assert op in ('rotate', 'negate', 'relinearize', 'transfer', 'copy'), op
+@@ -63,7 +67,7 @@ def replay(plan, graph, spec):
+             capacity = sum(math.log2(q) for q in spec['context']['rns_moduli'][:level+1])
+             assert 40 - 1e-8 <= scale < capacity
+         values[out] = value
+-    for output, expected in zip(plan['final_outputs'], graph.expected()):
++    for output, expected in zip(plan['final_outputs'], graph.expected(*test_inputs)):
+         assert math.isclose(values[output], expected, rel_tol=1e-10, abs_tol=1e-10)
+     return boots
+ 
+@@ -72,6 +76,8 @@ def main():
+     parser = argparse.ArgumentParser()
+     parser.add_argument('--hecate-opt', type=Path, required=True)
+     parser.add_argument('--source-dir', type=Path, required=True)
++    parser.add_argument('--boot-placement', choices=('greedy', 'optimized'), default='greedy')
++    parser.add_argument('--all-candidates', action='store_true')
+     args = parser.parse_args()
+     source = args.source_dir.resolve()
+     definitions = runpy.run_path(str(source/'test/runtime-plan/check-threshold-graphs.py'))
+@@ -92,6 +98,8 @@ def main():
+     config = json.loads((source/'config.json').read_text())
+     config.update(polynomialDegree=16, rescalingFactor=30, bootstrapLevelLowerBound=1,
+                   bootstrapLevelUpperBound=24, levelLowerBound=1, levelUpperBound=24)
++    for name, table in config['latencyTable'].items():
++        config['latencyTable'][name] = [max(table)] * 50
+     rows = definitions['cases']()
+     g = definitions['Graph']()
+     value = 'x'
+@@ -108,16 +116,45 @@ def main():
+     g = definitions['Graph']()
+     g.outputs = [g.op('mul', g.op('rotate', 'x'), 'p')]
+     rows.append(('terminal-q5', g, 'q7'))
++    # A Q9 shortcut can survive until the residual add. Refresh only the
++    # main branch after its three-Q linear region, rather than both branches.
++    g = definitions['Graph']()
++    # Keep the squared branch near one so a wrong result cannot hide under
++    # the replay's absolute tolerance after fourteen squares.
++    g.test_inputs = (1 / 1.01**2, .75)
++    value = g.op('rotate', 'x')
++    for _ in range(2):
++        value = g.op('mul', value, 'p')
++    for _ in range(14):
++        value = g.op('mul', value, value)
++    value = g.op('mul', value, 'p')
++    g.outputs = [g.op('add', value, 'x')]
++    rows.append(('residual-selective-boot', g, 'q9'))
++    # The raw instruction order interleaves two private linear regions. A
++    # candidate grid must include the first region's exit despite that order.
++    g = definitions['Graph']()
++    g.test_inputs = (1 / 1.01**2, .75)
++    left = g.op('rotate', 'x')
++    right = g.op('rotate', 'y')
++    left = g.op('mul', left, 'p')
++    right = g.op('mul', right, 'p')
++    left = g.op('mul', left, 'p')
++    for _ in range(14):
++        left = g.op('mul', left, left)
++    right = g.op('mul', right, 'p')
++    g.outputs = [g.op('add', g.op('mul', left, 'p'), right)]
++    rows.append(('interleaved-linear-bypass', g, 'q9'))
+     with tempfile.TemporaryDirectory(prefix='regional-scale-') as directory:
+         root = Path(directory)
+         (root/'spec.json').write_text(json.dumps(spec))
+         (root/'config.json').write_text(json.dumps(config))
+         for name, graph, exhausted in rows:
+             exhausted = (25 if exhausted is True else 23 if exhausted == 'two-left'
+-                         else 24 if exhausted == 'q7' else 0)
++                         else 24 if exhausted == 'q7'
++                         else 22 if exhausted == 'q9' else 0)
+             (root/'input.mlir').write_text(graph.source(exhausted).replace('tensor<1xf64>', 'tensor<8xf64>'))
+             command = [str(args.hecate_opt.resolve()), str(root/'input.mlir'), '--dacapo',
+-                '--native-scale-policy=regional', '--boot-placement=greedy',
++                '--native-scale-policy=regional', f'--boot-placement={args.boot_placement}',
+                 f'--ckks-config={root}/config.json', '--waterline=40', '--bootstrap-scale=40',
+                 '--runtime-plan-format=json', '--runtime-plan-boot-profile=regional40',
+                 f'--runtime-plan-physical-level-operator-spec-path={root}/spec.json',
+@@ -131,10 +168,25 @@ def main():
+                 '-o', str(root/'result.mlir')]
+             if name == 'terminal-q5':
+                 command.append('--regional-output-scale=40')
++            if args.all_candidates:
++                command.append('--regional-all-boot-candidates')
+             result = subprocess.run(command, capture_output=True, text=True)
+             assert result.returncode == 0, (name, result.stderr)
+             plan = json.loads((root/'result.graph.runtime-plan.json').read_text())
+             boots = replay(plan, graph, spec)
++            if name == 'interleaved-linear-bypass' and args.boot_placement == 'optimized':
++                assert boots == 1
++            if name == 'residual-selective-boot':
++                assert boots == (1 if args.boot_placement == 'optimized' else 2)
++                if args.boot_placement == 'optimized':
++                    steps = [s for s in plan['execution'] if s['kind'] == 'compute']
++                    first_boot = next(i for i, s in enumerate(steps) if s['op'] == 'boot')
++                    assert sum(s['op'] == 'mul_cp' for s in steps[:first_boot]) == 2
++                    add = next(s for s in steps if s['op'] == 'add_cc')
++                    producers = {s['output']: s for s in steps}
++                    shortcut = producers[add['inputs'][1]]
++                    assert shortcut['op'] == 'mod_switch'
++                    assert shortcut['inputs'] == [plan['external_inputs'][0]]
+             if name == 'terminal-q5':
+                 assert boots == 0
+                 desc = {v['id']: v for v in plan['values']}
+@@ -148,7 +200,25 @@ def main():
+                 assert replay(plan, graph, spec) == 1
+                 desc = {v['id']: v for v in plan['values']}
+                 assert abs(desc[plan['final_outputs'][0]]['scale_log2'] - 40) < 1e-8
+-    print(f'{len(rows)+1} regional plan replays passed with fixed Q6/s40 Boot input')
++        # Qwen's existing profile accepts a range of input levels and does not
++        # prescribe an input scale. It must still admit Boot checkpoints.
++        profile = spec['boot_profiles'][0]
++        del profile['input_scale_log2']
++        profile.update(input_level_min=4, input_level_max=49,
++                       output_level=22, output_scale_log2=45)
++        (root/'spec.json').write_text(json.dumps(spec))
++        graph = next(graph for name, graph, _ in rows if name == 'long-cp-chain')
++        (root/'input.mlir').write_text(graph.source(0).replace('tensor<1xf64>', 'tensor<8xf64>'))
++        command = [('--bootstrap-scale=45' if arg == '--bootstrap-scale=40' else
++                    '--runtime-plan-operator-spec-sha256=sha256:' +
++                    hashlib.sha256((root/'spec.json').read_bytes()).hexdigest()
++                    if arg.startswith('--runtime-plan-operator-spec-sha256=') else arg)
++                   for arg in command]
++        result = subprocess.run(command, capture_output=True, text=True)
++        assert result.returncode == 0, ('unconstrained-boot-input', result.stderr)
++        plan = json.loads((root/'result.graph.runtime-plan.json').read_text())
++        assert replay(plan, graph, spec) > 0
++    print(f'{len(rows)+2} regional plan replays passed with fixed and unconstrained Boot inputs')
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/tools/optimizer.cpp b/tools/optimizer.cpp
+index d42f4e1..9b8f7e3 100644
+--- a/tools/optimizer.cpp
++++ b/tools/optimizer.cpp
+@@ -608,8 +608,6 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+   };
+ 
+   auto addDaCapoPrecompile = [&, addPolynomialOptimization](OpPassManager &pm) {
+-    if (earth::usesRegionalScalePlanning() && bootstrap_strategy == BootstrapStrategy::Optimized)
+-      llvm::report_fatal_error("regional scale planning currently requires --boot-placement=greedy");
+     earth::EarthDialect::setNativeScaleParameters(
+         runtime_plan_physical_level_operator_spec_path, runtime_plan_boot_profile);
+     std::string dir;
+@@ -635,10 +633,12 @@ void registerHecatePipeline(cl::opt<std::string> &outputFilename) {
+           {waterline, output_val, bootstrap_scale}));
+       pm.addNestedPass<func::FuncOp>(hecate::earth::createDaCapoPlanner(
+           {waterline, output_val, bootstrap_scale}));
+-      pm.addNestedPass<func::FuncOp>(
+-          hecate::earth::createBootstrapPlacement({bootstrap_scale}));
+-      pm.addNestedPass<func::FuncOp>(hecate::earth::createProactiveRescaling(
+-          {waterline, output_val, bootstrap_scale}));
++      if (!earth::usesRegionalScalePlanning()) {
++        pm.addNestedPass<func::FuncOp>(
++            hecate::earth::createBootstrapPlacement({bootstrap_scale}));
++        pm.addNestedPass<func::FuncOp>(hecate::earth::createProactiveRescaling(
++            {waterline, output_val, bootstrap_scale}));
++      }
+     }
+     /* pm.addNestedPass<func::FuncOp>( */
+     /*     hecate::earth::createSNRRescaling({waterline, output_val})); */

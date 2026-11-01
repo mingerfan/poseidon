@@ -1,0 +1,46 @@
+Regional DaCapo indexed values: 11986, boundaries: 439
+Regional DaCapo candidate set 1: 79 cuts
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=1.324350e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=8.941400e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=5.100000e+01 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=6.749250e+03 MiB
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 12.3254 seconds
+
+  ----Wall Time----  ----Name----
+    0.5992 (  4.9%)  Parser
+    3.1365 ( 25.4%)  'func.func' Pipeline
+    0.0132 (  0.1%)    RemoveBootstrap
+    0.0099 (  0.1%)    OptimizePolynomialArithmetic
+    0.3746 (  3.0%)    BypassDetection
+    0.0173 (  0.1%)      (A) hecate::CandidateAnalysis
+    0.0105 (  0.1%)    CandidateSelection
+    2.7028 ( 21.9%)    DaCapoPlanner
+    0.0128 (  0.1%)    EarlyModswitch
+    0.0126 (  0.1%)    AbsorbCoefficientScale
+    0.0222 (  0.2%)  Canonicalizer
+    0.0244 (  0.2%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0113 (  0.1%)  CSE
+    0.0218 (  0.2%)  Canonicalizer
+    8.0049 ( 64.9%)  'func.func' Pipeline
+    0.0340 (  0.3%)    EarthToCKKSConversion
+    0.0106 (  0.1%)    UpscaleToMulcpConversion
+    0.0115 (  0.1%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0148 (  0.1%)    Canonicalizer
+    0.0227 (  0.2%)    MaterializePhysicalLevels
+    0.0119 (  0.1%)    CoalesceReductionRescales
+    0.0933 (  0.8%)    AssignPlacement
+    0.0299 (  0.2%)    MaterializeCommunication
+    0.0621 (  0.5%)    EstimateRuntimeMemory
+    0.0593 (  0.5%)    PlanRuntimeMemory
+    0.0481 (  0.4%)    EstimateRuntimeMemory
+    7.6067 ( 61.7%)    EmitRuntimePlan
+    0.4982 (  4.0%)  Output
+    0.0048 (  0.0%)  Rest
+   12.3254 (100.0%)  Total
+Estimated Latency: 1.927244e+01 (sec)
+Number of Bootstrapping: 18

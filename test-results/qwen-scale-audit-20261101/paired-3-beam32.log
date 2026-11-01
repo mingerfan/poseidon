@@ -1,0 +1,63 @@
+Number of Bootstrapping: 0
+[compile] input-parser begin total_s=0
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=1.155131e-03
+[compile] RemoveBootstrap begin total_s=1.177260e-03
+[compile] RemoveBootstrap end total_s=1.221863e-03
+[compile] OptimizePolynomialArithmetic begin total_s=1.235849e-03
+[compile] OptimizePolynomialArithmetic end total_s=1.280640e-03
+[compile] GreedyBootstrapPlacement begin total_s=1.293142e-03
+[compile] regional-greedy begin elapsed_s=1.139800e-05
+[compile] regional-build begin elapsed_s=5.585000e-06
+[compile] regional-build end elapsed_s=4.960200e-05
+[compile] regional-greedy end elapsed_s=3.489054e-02
+[compile] GreedyBootstrapPlacement end total_s=3.651797e-02
+[compile] EarlyModswitch begin total_s=3.653245e-02
+[compile] EarlyModswitch end total_s=3.660724e-02
+[compile] AbsorbCoefficientScale begin total_s=3.661871e-02
+[compile] AbsorbCoefficientScale end total_s=3.669562e-02
+[compile] mlir::detail::OpToOpPassAdaptor end total_s=3.672423e-02
+[compile] Canonicalizer begin total_s=3.673678e-02
+[compile] Canonicalizer end total_s=3.692204e-02
+[compile] CSE begin total_s=3.693521e-02
+[compile] CSE end total_s=3.700259e-02
+[compile] CSE begin total_s=3.701366e-02
+[compile] CSE end total_s=3.706382e-02
+[compile] Canonicalizer begin total_s=3.707478e-02
+[compile] Canonicalizer end total_s=3.720714e-02
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=3.722152e-02
+[compile] EarthToCKKSConversion begin total_s=3.723731e-02
+[compile] EarthToCKKSConversion end total_s=3.757654e-02
+[compile] UpscaleToMulcpConversion begin total_s=3.759101e-02
+[compile] UpscaleToMulcpConversion end total_s=3.767499e-02
+[compile] CSE begin total_s=3.768698e-02
+[compile] CSE end total_s=3.771738e-02
+[compile] Canonicalizer begin total_s=3.772926e-02
+[compile] Canonicalizer end total_s=3.784619e-02
+[compile] mlir::detail::OpToOpPassAdaptor end total_s=3.786465e-02
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 0.0380 seconds
+
+  ----Wall Time----  ----Name----
+    0.0006 (  1.5%)  Parser
+    0.0355 ( 93.5%)  'func.func' Pipeline
+    0.0001 (  0.1%)    RemoveBootstrap
+    0.0001 (  0.1%)    OptimizePolynomialArithmetic
+    0.0352 ( 92.7%)    GreedyBootstrapPlacement
+    0.0001 (  0.2%)    EarlyModswitch
+    0.0001 (  0.2%)    AbsorbCoefficientScale
+    0.0002 (  0.5%)  Canonicalizer
+    0.0001 (  0.2%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0001 (  0.2%)  CSE
+    0.0001 (  0.4%)  Canonicalizer
+    0.0006 (  1.6%)  'func.func' Pipeline
+    0.0003 (  0.9%)    EarthToCKKSConversion
+    0.0001 (  0.2%)    UpscaleToMulcpConversion
+    0.0000 (  0.1%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0001 (  0.3%)    Canonicalizer
+    0.0003 (  0.8%)  Output
+    0.0004 (  1.1%)  Rest
+    0.0380 (100.0%)  Total

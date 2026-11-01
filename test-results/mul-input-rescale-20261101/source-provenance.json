@@ -1,0 +1,9 @@
+{
+  "workspace": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon-regional-dacapo-20261101",
+  "files": {
+    "third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/RegionalScalePlanning.cpp": "332c96921dacf6ffbe6a807364b5327fb79021366d801669f5ea47eb940bb7e6",
+    "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-regional-scale.py": "965c7f1bc7ff9f52606cfe672cef4c2619fe8ae85c54dc5078d61835bcc21fa0",
+    "third_party/ckks-runtime/integrations/dacapo/README.md": "90730e49d5a97f649b1164b1fb81a9640f6808a7e2d9938f17c50c05d2d829e7"
+  },
+  "compiler_sha256": "ea8428be680dc3d113c5c02f030bcda6134aaf4a6fea6c35b85207c10d711e53"
+}

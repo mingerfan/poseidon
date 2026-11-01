@@ -1,0 +1,123 @@
+[
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":6:8)",
+    "node": 2,
+    "opid": -1,
+    "q": 22,
+    "s": 50.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":9:7)",
+    "node": 5,
+    "opid": -1,
+    "q": 20,
+    "s": 40.1
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":10:8)",
+    "node": 6,
+    "opid": -1,
+    "q": 19,
+    "s": 50.21767482312407
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":13:7)",
+    "node": 9,
+    "opid": -1,
+    "q": 17,
+    "s": 40.4
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":14:8)",
+    "node": 10,
+    "opid": -1,
+    "q": 16,
+    "s": 50.81874490633747
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":17:7)",
+    "node": 13,
+    "opid": -1,
+    "q": 14,
+    "s": 44.0
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":18:8)",
+    "node": 14,
+    "opid": -1,
+    "q": 13,
+    "s": 58.021021471948984
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":21:7)",
+    "node": 17,
+    "opid": -1,
+    "q": 10,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":22:8)",
+    "node": 18,
+    "opid": -1,
+    "q": 9,
+    "s": 50.02343587521911
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":25:7)",
+    "node": 21,
+    "opid": -1,
+    "q": 7,
+    "s": 40.1
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":26:8)",
+    "node": 22,
+    "opid": -1,
+    "q": 6,
+    "s": 50.22504772509885
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":29:7)",
+    "node": 25,
+    "opid": -1,
+    "q": 6,
+    "s": 120.0
+  },
+  {
+    "boot": [
+      {
+        "node": 25,
+        "q": 6,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":30:8)",
+    "node": 26,
+    "opid": -1,
+    "q": 22,
+    "s": 60.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":33:7)",
+    "node": 29,
+    "opid": -1,
+    "q": 19,
+    "s": 40.0
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":34:8)",
+    "node": 30,
+    "opid": -1,
+    "q": 18,
+    "s": 50.01803142934614
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/residual-8.mlir\":37:7)",
+    "node": 33,
+    "opid": -1,
+    "q": 15,
+    "s": 40.0
+  }
+]

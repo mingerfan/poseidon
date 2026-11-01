@@ -1,0 +1,21 @@
+{
+  "model": "resnet-after",
+  "compiler_sha256": "ea8428be680dc3d113c5c02f030bcda6134aaf4a6fea6c35b85207c10d711e53",
+  "started": 1793519144.568879,
+  "returncode": 0,
+  "seconds": 11.950182497967035,
+  "trace_boots": 0,
+  "regions": 456,
+  "last_state": {
+    "cp_depth": 3,
+    "input_q": 9,
+    "linear_nodes": 96,
+    "location": "loc(\"/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/python/poly/poly/MPCB.py\":597:0)",
+    "node": 213,
+    "opid": 11984,
+    "q": 5,
+    "s": 40.0,
+    "segment_from": 11704,
+    "segment_to": 11985
+  }
+}

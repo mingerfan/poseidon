@@ -1,0 +1,13 @@
+{
+  "fix": "Regional refreshable() delegates to shared canBootstrap() rather than unconditionally requiring fixed-scale alignment. With an unspecified input scale, the old target level remained -1 and converted to an unsigned level, rejecting every Boot checkpoint.",
+  "local_tests": {
+    "DacapoRegionalScale": "passed",
+    "DacapoRegionalOptimized": "passed",
+    "DacapoRegionalAllCandidates": "passed"
+  },
+  "remote_tests": {
+    "greedy": "25 numerical plan replays passed",
+    "optimized": "25 numerical plan replays passed"
+  },
+  "new_regression": "Long chain requires at least one Boot with unspecified input scale, input levels 4..49, output Q23/s45; arithmetic and scale/level replay checked."
+}

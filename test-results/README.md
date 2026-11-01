@@ -4,6 +4,7 @@
 
 | 目录 | 用途与结论 |
 | --- | --- |
+| [mul-input-rescale-20261101](mul-input-rescale-20261101/summary.json) | 188Server 编译验证：乘法输入 RS 修复使 Qwen Boot 10884→10561，ResNet20 保持 18；含归约修复前后对照、编译耗时与数值回放，不代表全模型加密 GPU 推理验收 |
 | [framework-server-validation-20261015](framework-server-validation-20261015/summary.json) | `6dc8cbfb` 在 188Server 四张 V100 上的 GPU API、Waterline、设备重排和 Prepare OOM 验证；五项检查通过，FP64 Tensor 路径跳过，不代表完整 Qwen 验收 |
 | [luhang-merge-cpu-188-20261014](luhang-merge-cpu-188-20261014/report.zh-CN.txt) | CPU 合并验证与父提交对照：17 项检查中 14 项通过、3 项失败；含 BGV 最小复现与原始日志 |
 | [luhang-merge-rebase-20261014](luhang-merge-rebase-20261014/report.zh-CN.txt) | 分支合并、rebase 与构建兼容验证；最终五项 CTest 中三项通过、两项失败，另有 CPU 复测记录 |
@@ -23,3 +24,5 @@ CPU 合并验证目录的 `logs.sha256` 校验入库的 41 份日志，不包括
 Nsight 原始报告及 SQLite 数据库由根 `.gitignore` 忽略，已有归档与恢复说明见 [raw-profile-artifacts.json](raw-profile-artifacts.json)。生成的 Qwen MLIR、计划和权重包由各实验目录的忽略规则管理；保留对应报告和复现入口。
 
 2026-10-18 的五组 Waterline 实验按目录忽略逐槽 `decoded.json`；最终批次还忽略生成的 `server-plans/`、传输源码包和本地工作状态。文件仍保留在本机，各目录的 `local-artifacts.json` 记录相对路径、字节数和 SHA-256；通过与失败报告、命令、输入指纹和日志都继续入库。恢复生成输入后再运行依赖这些输入的历史汇总脚本；最终批次的服务器计划副本保存在 `188Server:/home/xuming/poseidon-waterline-batch-20261018/server-plans/`。复现构建和测量还需要报告中指定的本地构建树、合成权重包及历史 profile。
+
+2026-11-01 的 regional/DaCapo 实验保留可读证据，生成的审计二进制、二进制计划和重复证据压缩包在删除临时 workspace 前归档到主工作区 `.codex/workspace-archives/`；清单、校验和与恢复说明见 [regional-dacapo-20261101-artifacts.json](regional-dacapo-20261101-artifacts.json)。历史命令中的临时 workspace 路径是运行时记录；当前源码位于主工作区及其嵌套子模块。

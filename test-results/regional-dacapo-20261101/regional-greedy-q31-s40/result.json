@@ -1,0 +1,8 @@
+{
+  "input_q": 31,
+  "final_scale_required": 40,
+  "strategy": "greedy",
+  "returncode": 0,
+  "seconds": 9.882061945972964,
+  "compiler_sha256": "c08574d25dc42373c42493ffa9d203355cbbf47d7c463b6ce5048481c49d2e1b"
+}

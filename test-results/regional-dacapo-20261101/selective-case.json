@@ -1,0 +1,15 @@
+{
+  "description": "Q9/s40 input, rotate and two plaintext multiplications, fourteen squares, plaintext multiplication, residual addition with original input. Actual manual Q50 primes, arithmetic floor Q5, fixed Boot Q6/s40 -> Q31/s40.",
+  "optimized": {
+    "boot_count": 1,
+    "linear_output_q": 6,
+    "shortcut_refreshed": false,
+    "output_q": 6,
+    "output_scale": 40
+  },
+  "greedy": {
+    "boot_count": 2
+  },
+  "test": "test/runtime-plan/check-regional-scale.py::residual-selective-boot",
+  "validation": "Full physical Q/scale and plaintext-semantics replay, not encrypted inference."
+}

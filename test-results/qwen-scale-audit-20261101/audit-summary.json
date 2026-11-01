@@ -1,0 +1,566 @@
+{
+  "scope": "Read-only analysis of saved full-Qwen precompile trace and new small probes on 188Server; compiler source unchanged.",
+  "full_qwen": {
+    "trace": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon-regional-dacapo-20261101/test-results/qwen-regional-dacapo-20261101/repair-targets/regional-greedy/scale-trace.json",
+    "trace_sha256": "52f1c89bbc1fb2ea2ad760c8d8a8431d09784ed52ee17111d6c07eaa57248cf1",
+    "historical_compiler_sha256": "469d7ceb256e3777442e66e4442cd9f6782c7acb8dcba0818c4afa41288cedfe",
+    "boot_count": 12315,
+    "boot_input_q": {
+      "5": 1776,
+      "6": 999,
+      "7": 52,
+      "8": 191,
+      "9": 698,
+      "11": 828,
+      "12": 110,
+      "14": 242,
+      "15": 457,
+      "16": 492,
+      "17": 1008,
+      "18": 56,
+      "21": 885,
+      "22": 4519,
+      "23": 2
+    },
+    "boot_input_scale": {
+      "40.0": 4033,
+      "60.017096": 1303,
+      "60.0": 858,
+      "80.0": 83,
+      "120.0": 4455,
+      "160.0": 252,
+      "100.0": 28,
+      "51.023436": 448,
+      "60.044099": 800,
+      "45.0": 55
+    },
+    "boot_producer_location": {
+      "input": 2,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":128:0)": 9,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":137:0)": 45,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":135:0)": 36,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/ops.py\":48:0)": 2818,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/ops.py\":41:0)": 2053,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":171:0)": 187,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":173:0)": 187,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":176:0)": 2517,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":177:0)": 572,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":228:0)": 448,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":233:0)": 448,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":235:0)": 1248,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":247:0)": 55,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":214:0)": 110,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":199:0)": 294,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":252:0)": 110,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":254:0)": 423,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":257:0)": 368,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":195:0)": 55,
+      "loc(\"/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/kernels/qwen_nonlinear.py\":198:0)": 330
+    },
+    "q21_or_higher_count": 5406,
+    "q21_or_higher_percent": 43.89768574908648,
+    "linear_regions": [
+      {
+        "cp_depth": 1,
+        "q_drop": 2,
+        "count": 33548
+      },
+      {
+        "cp_depth": 2,
+        "q_drop": 3,
+        "count": 1696
+      },
+      {
+        "cp_depth": 2,
+        "q_drop": 4,
+        "count": 448
+      },
+      {
+        "cp_depth": 3,
+        "q_drop": 5,
+        "count": 159
+      },
+      {
+        "cp_depth": 4,
+        "q_drop": 7,
+        "count": 9
+      }
+    ]
+  },
+  "micro_compiler_sha256": "469d7ceb256e3777442e66e4442cd9f6782c7acb8dcba0818c4afa41288cedfe",
+  "provenance_note": "Resolved the launcher to repair-targets/hecate-opt.real on 188Server: its SHA matches the historical full-Qwen binary. The previous apparent mismatch compared the launcher script hash to the ELF hash.",
+  "cerium": {
+    "repository": "https://github.com/CMU-CAOS/Cerium",
+    "commit": "6b487041f69bcd04fb2138b8be87635ddeb128d6",
+    "encrypted_program_output": "32-block hidden states; inspected DSL has no final norm or lm_head",
+    "reference_tail": "model.py injects decrypted block output then applies final norm and output projection in PyTorch"
+  },
+  "micro_results": [
+    {
+      "name": "residual-1-beam4",
+      "seconds": 0.029563897056505084,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "residual-1-beam32",
+      "seconds": 0.03506098804064095,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "residual-3-beam4",
+      "seconds": 0.03811387997120619,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "residual-3-beam32",
+      "seconds": 0.03245348506607115,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "residual-8-beam4",
+      "seconds": 0.031675545033067465,
+      "returncode": 0,
+      "boots": 1,
+      "boot_states": [
+        {
+          "node": 25,
+          "q": 6,
+          "s": 120.0
+        }
+      ]
+    },
+    {
+      "name": "residual-8-beam32",
+      "seconds": 0.033629826037213206,
+      "returncode": 0,
+      "boots": 1,
+      "boot_states": [
+        {
+          "node": 25,
+          "q": 6,
+          "s": 120.0
+        }
+      ]
+    },
+    {
+      "name": "paired-1-beam4",
+      "seconds": 0.02722610393539071,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "paired-1-beam32",
+      "seconds": 0.02395342499949038,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "paired-3-beam4",
+      "seconds": 0.030708214035257697,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "paired-3-beam32",
+      "seconds": 0.06081689288839698,
+      "returncode": 0,
+      "boots": 0,
+      "boot_states": []
+    },
+    {
+      "name": "paired-8-beam4",
+      "seconds": 1.8168376989196986,
+      "returncode": 0,
+      "boots": 6,
+      "boot_states": [
+        {
+          "node": 1,
+          "q": 23,
+          "s": 40.0
+        },
+        {
+          "node": 5,
+          "q": 22,
+          "s": 120.0
+        },
+        {
+          "node": 12,
+          "q": 22,
+          "s": 120.0
+        },
+        {
+          "node": 19,
+          "q": 22,
+          "s": 120.0
+        },
+        {
+          "node": 26,
+          "q": 22,
+          "s": 120.0
+        },
+        {
+          "node": 33,
+          "q": 22,
+          "s": 120.0
+        }
+      ]
+    },
+    {
+      "name": "paired-8-beam32",
+      "seconds": 1.8358650729060173,
+      "returncode": 0,
+      "boots": 2,
+      "boot_states": [
+        {
+          "node": 36,
+          "q": 6,
+          "s": 120.0
+        },
+        {
+          "node": 40,
+          "q": 6,
+          "s": 120.0
+        }
+      ]
+    }
+  ],
+  "linear_results": [
+    {
+      "name": "linear-64-beam4",
+      "seconds": 0.04946481389924884,
+      "returncode": 0,
+      "boots": 0,
+      "tail": [
+        {
+          "cp_depth": 1,
+          "input_q": 21,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-64.mlir\":224:10)",
+          "node": 159,
+          "opid": -1,
+          "q": 19,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 23,
+          "linear_nodes": 65,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-64.mlir\":322:10)",
+          "node": 224,
+          "opid": -1,
+          "q": 21,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 21,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-64.mlir\":415:10)",
+          "node": 286,
+          "opid": -1,
+          "q": 19,
+          "s": 40.0
+        }
+      ]
+    },
+    {
+      "name": "linear-64-beam32",
+      "seconds": 0.047443010844290257,
+      "returncode": 0,
+      "boots": 0,
+      "tail": [
+        {
+          "cp_depth": 1,
+          "input_q": 21,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-64.mlir\":224:10)",
+          "node": 159,
+          "opid": -1,
+          "q": 19,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 23,
+          "linear_nodes": 65,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-64.mlir\":322:10)",
+          "node": 224,
+          "opid": -1,
+          "q": 21,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 21,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-64.mlir\":415:10)",
+          "node": 286,
+          "opid": -1,
+          "q": 19,
+          "s": 40.0
+        }
+      ]
+    },
+    {
+      "name": "linear-256-beam4",
+      "seconds": 0.0910044158808887,
+      "returncode": 0,
+      "boots": 0,
+      "tail": [
+        {
+          "cp_depth": 1,
+          "input_q": 13,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-256.mlir\":1378:11)",
+          "node": 928,
+          "opid": -1,
+          "q": 11,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 11,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-256.mlir\":1474:11)",
+          "node": 992,
+          "opid": -1,
+          "q": 9,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 9,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-256.mlir\":1567:11)",
+          "node": 1054,
+          "opid": -1,
+          "q": 7,
+          "s": 40.0
+        }
+      ]
+    },
+    {
+      "name": "linear-256-beam32",
+      "seconds": 0.09563981415703893,
+      "returncode": 0,
+      "boots": 0,
+      "tail": [
+        {
+          "cp_depth": 1,
+          "input_q": 13,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-256.mlir\":1378:11)",
+          "node": 928,
+          "opid": -1,
+          "q": 11,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 11,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-256.mlir\":1474:11)",
+          "node": 992,
+          "opid": -1,
+          "q": 9,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 9,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-256.mlir\":1567:11)",
+          "node": 1054,
+          "opid": -1,
+          "q": 7,
+          "s": 40.0
+        }
+      ]
+    },
+    {
+      "name": "linear-1024-beam4",
+      "seconds": 0.2732749478891492,
+      "returncode": 0,
+      "boots": 7,
+      "tail": [
+        {
+          "cp_depth": 1,
+          "input_q": 19,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-1024.mlir\":5986:11)",
+          "node": 4000,
+          "opid": -1,
+          "q": 17,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 17,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-1024.mlir\":6082:11)",
+          "node": 4064,
+          "opid": -1,
+          "q": 15,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 15,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-1024.mlir\":6175:12)",
+          "node": 4126,
+          "opid": -1,
+          "q": 13,
+          "s": 40.0
+        }
+      ]
+    },
+    {
+      "name": "linear-1024-beam32",
+      "seconds": 0.22774644079618156,
+      "returncode": 0,
+      "boots": 7,
+      "tail": [
+        {
+          "cp_depth": 1,
+          "input_q": 19,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-1024.mlir\":5986:11)",
+          "node": 4000,
+          "opid": -1,
+          "q": 17,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 17,
+          "linear_nodes": 64,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-1024.mlir\":6082:11)",
+          "node": 4064,
+          "opid": -1,
+          "q": 15,
+          "s": 40.0
+        },
+        {
+          "cp_depth": 1,
+          "input_q": 15,
+          "linear_nodes": 62,
+          "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/linear-1024.mlir\":6175:12)",
+          "node": 4126,
+          "opid": -1,
+          "q": 13,
+          "s": 40.0
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "beam4": {
+      "ops": {
+        "transfer": 31,
+        "encode": 29,
+        "mul_cc": 24,
+        "relinearize": 24,
+        "mul_cp": 16,
+        "rescale": 51,
+        "add_cp": 16,
+        "boot": 6,
+        "mod_switch": 8
+      },
+      "expected": 0.479157423749955,
+      "actual": 0.47915742374995357,
+      "absolute_error": 1.4432899320127035e-15,
+      "output": {
+        "components": 2,
+        "context": "poseidon-ckks-gpu-16384-q50-estimated",
+        "id": "175",
+        "kind": "ciphertext",
+        "level": 7,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.00000000000014
+      },
+      "max_scale_error": 0.0
+    },
+    "beam32": {
+      "ops": {
+        "transfer": 34,
+        "encode": 32,
+        "mul_cc": 24,
+        "relinearize": 24,
+        "mul_cp": 16,
+        "rescale": 56,
+        "add_cp": 16,
+        "mod_switch": 9,
+        "boot": 2
+      },
+      "expected": 0.479157423749955,
+      "actual": 0.4791574237499446,
+      "absolute_error": 1.0436096431476471e-14,
+      "output": {
+        "components": 2,
+        "context": "poseidon-ckks-gpu-16384-q50-estimated",
+        "id": "180",
+        "kind": "ciphertext",
+        "level": 11,
+        "ntt": true,
+        "place": {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        },
+        "scale_log2": 40.000000000000085
+      },
+      "max_scale_error": 0.0
+    },
+    "linear_oracle": {
+      "input_q": 23,
+      "input_scale": 40,
+      "plaintext_scale": 59.96536335554083,
+      "product_scale": 99.96536335554083,
+      "output_q": 21,
+      "output_scale": 40.0,
+      "boots": 0,
+      "total_rescales_two_outputs": 4,
+      "scope": "Scale/level feasibility plus uniform scalar plaintext rounding; no encrypted execution",
+      "64": {
+        "max_uniform_input_error": 0.0,
+        "sum_abs_weights": [
+          1.04921875,
+          1.24921875
+        ]
+      },
+      "256": {
+        "max_uniform_input_error": 0.0,
+        "sum_abs_weights": [
+          1.0498046875,
+          1.2498046875
+        ]
+      },
+      "1024": {
+        "max_uniform_input_error": 0.0,
+        "sum_abs_weights": [
+          1.049951171875,
+          1.249951171875
+        ]
+      }
+    },
+    "limitations": "Boot is identity; full-slot constants are rounded, but ciphertext encryption, RS rounding and Boot approximation errors are not simulated."
+  },
+  "micro_launcher_sha256": "b56904684328c0bae8fc52dc17e724ac30b9981995d33fa92153819fe81cce7b"
+}

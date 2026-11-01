@@ -1,0 +1,140 @@
+[
+  {
+    "name": "residual-1-beam4",
+    "seconds": 0.029563897056505084,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "residual-1-beam32",
+    "seconds": 0.03506098804064095,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "residual-3-beam4",
+    "seconds": 0.03811387997120619,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "residual-3-beam32",
+    "seconds": 0.03245348506607115,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "residual-8-beam4",
+    "seconds": 0.031675545033067465,
+    "returncode": 0,
+    "boots": 1,
+    "boot_states": [
+      {
+        "node": 25,
+        "q": 6,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "name": "residual-8-beam32",
+    "seconds": 0.033629826037213206,
+    "returncode": 0,
+    "boots": 1,
+    "boot_states": [
+      {
+        "node": 25,
+        "q": 6,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "name": "paired-1-beam4",
+    "seconds": 0.02722610393539071,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "paired-1-beam32",
+    "seconds": 0.02395342499949038,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "paired-3-beam4",
+    "seconds": 0.030708214035257697,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "paired-3-beam32",
+    "seconds": 0.06081689288839698,
+    "returncode": 0,
+    "boots": 0,
+    "boot_states": []
+  },
+  {
+    "name": "paired-8-beam4",
+    "seconds": 1.8168376989196986,
+    "returncode": 0,
+    "boots": 6,
+    "boot_states": [
+      {
+        "node": 1,
+        "q": 23,
+        "s": 40.0
+      },
+      {
+        "node": 5,
+        "q": 22,
+        "s": 120.0
+      },
+      {
+        "node": 12,
+        "q": 22,
+        "s": 120.0
+      },
+      {
+        "node": 19,
+        "q": 22,
+        "s": 120.0
+      },
+      {
+        "node": 26,
+        "q": 22,
+        "s": 120.0
+      },
+      {
+        "node": 33,
+        "q": 22,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "name": "paired-8-beam32",
+    "seconds": 1.8358650729060173,
+    "returncode": 0,
+    "boots": 2,
+    "boot_states": [
+      {
+        "node": 36,
+        "q": 6,
+        "s": 120.0
+      },
+      {
+        "node": 40,
+        "q": 6,
+        "s": 120.0
+      }
+    ]
+  }
+]

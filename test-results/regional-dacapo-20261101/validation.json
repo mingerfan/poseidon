@@ -1,0 +1,24 @@
+{
+  "local_ctest_groups_passed": 22,
+  "local_ctest_log": "local-final-ctest.log",
+  "remote_test_groups_passed": 22,
+  "remote_suite_result": "remote-tests-result.json",
+  "remote_additional_tests": [
+    "DacapoModulusChain.log",
+    "DacapoRegionalAllCandidates.log"
+  ],
+  "regional_replays_per_mode": 24,
+  "regional_modes": [
+    "greedy",
+    "optimized",
+    "optimized --regional-all-boot-candidates"
+  ],
+  "full_plan_verifier_passed": [
+    "optimized-q31-fixed40-audit.jsonl",
+    "optimized-q34-fixed40-audit.jsonl"
+  ],
+  "same_payload_content_set_across_plans": true,
+  "original_workspace_clean": true,
+  "gpu_inference_run": false,
+  "million_instruction_evaluation": false
+}

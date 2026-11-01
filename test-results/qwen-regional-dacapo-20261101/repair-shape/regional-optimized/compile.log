@@ -1,0 +1,192 @@
+[compile] input-parser begin total_s=0
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=7.829082e+01
+[compile] RemoveBootstrap begin total_s=7.829088e+01
+[compile] RemoveBootstrap end total_s=8.581679e+01
+[compile] OptimizePolynomialArithmetic begin total_s=8.581684e+01
+[compile] OptimizePolynomialArithmetic end total_s=9.292504e+01
+[compile] BypassDetection begin total_s=9.292508e+01
+[compile] bypass-analysis begin elapsed_s=2.765900e-05
+[compile] regional-build begin elapsed_s=3.713100e-05
+[compile] regional-build end elapsed_s=8.529286e+00
+[compile] candidate-analysis begin elapsed_s=3.949100e-05
+[compile] candidate-analysis end elapsed_s=1.238212e+01
+[compile] regional-build begin elapsed_s=8.919000e-06
+[compile] regional-build end elapsed_s=9.323678e+00
+Regional DaCapo indexed values: 4688985, boundaries: 95846
+[compile] regional-build begin elapsed_s=1.290600e-05
+[compile] regional-build end elapsed_s=9.444184e+00
+[compile] bypass-analysis progress elapsed_s=4.443737e+01 completed=1/95846
+[compile] bypass-analysis progress elapsed_s=4.968047e+01 completed=190/95846
+[compile] bypass-analysis progress elapsed_s=5.468166e+01 completed=2823/95846
+[compile] bypass-analysis progress elapsed_s=5.997874e+01 completed=5969/95846
+[compile] bypass-analysis progress elapsed_s=6.499618e+01 completed=7822/95846
+[compile] bypass-analysis progress elapsed_s=6.999809e+01 completed=10840/95846
+[compile] bypass-analysis progress elapsed_s=7.499820e+01 completed=13677/95846
+[compile] bypass-analysis progress elapsed_s=7.999856e+01 completed=16323/95846
+[compile] bypass-analysis progress elapsed_s=8.499913e+01 completed=18841/95846
+[compile] bypass-analysis progress elapsed_s=9.000302e+01 completed=20815/95846
+[compile] bypass-analysis progress elapsed_s=9.501287e+01 completed=23323/95846
+[compile] bypass-analysis progress elapsed_s=1.000185e+02 completed=25582/95846
+[compile] bypass-analysis progress elapsed_s=1.050186e+02 completed=27251/95846
+[compile] bypass-analysis progress elapsed_s=1.100189e+02 completed=29530/95846
+[compile] bypass-analysis progress elapsed_s=1.150216e+02 completed=31757/95846
+[compile] bypass-analysis progress elapsed_s=1.200256e+02 completed=33213/95846
+[compile] bypass-analysis progress elapsed_s=1.250294e+02 completed=35354/95846
+[compile] bypass-analysis progress elapsed_s=1.300299e+02 completed=36910/95846
+[compile] bypass-analysis progress elapsed_s=1.350408e+02 completed=38944/95846
+[compile] bypass-analysis progress elapsed_s=1.400409e+02 completed=40578/95846
+[compile] bypass-analysis progress elapsed_s=1.450444e+02 completed=42206/95846
+[compile] bypass-analysis progress elapsed_s=1.500474e+02 completed=43910/95846
+[compile] bypass-analysis progress elapsed_s=1.550489e+02 completed=45422/95846
+[compile] bypass-analysis progress elapsed_s=1.600498e+02 completed=47055/95846
+[compile] bypass-analysis progress elapsed_s=1.650801e+02 completed=48483/95846
+[compile] bypass-analysis progress elapsed_s=1.700824e+02 completed=49991/95846
+[compile] bypass-analysis progress elapsed_s=1.750910e+02 completed=51509/95846
+[compile] bypass-analysis progress elapsed_s=1.800945e+02 completed=52680/95846
+[compile] bypass-analysis progress elapsed_s=1.851019e+02 completed=54454/95846
+[compile] bypass-analysis progress elapsed_s=1.901125e+02 completed=55419/95846
+[compile] bypass-analysis progress elapsed_s=1.951196e+02 completed=57290/95846
+[compile] bypass-analysis progress elapsed_s=2.001210e+02 completed=58202/95846
+[compile] bypass-analysis progress elapsed_s=2.051269e+02 completed=60029/95846
+[compile] bypass-analysis progress elapsed_s=2.101336e+02 completed=61022/95846
+[compile] bypass-analysis progress elapsed_s=2.151351e+02 completed=62381/95846
+[compile] bypass-analysis progress elapsed_s=2.201368e+02 completed=63771/95846
+[compile] bypass-analysis progress elapsed_s=2.251449e+02 completed=64648/95846
+[compile] bypass-analysis progress elapsed_s=2.301607e+02 completed=66423/95846
+[compile] bypass-analysis progress elapsed_s=2.351720e+02 completed=67319/95846
+[compile] bypass-analysis progress elapsed_s=2.401733e+02 completed=68728/95846
+[compile] bypass-analysis progress elapsed_s=2.451828e+02 completed=69917/95846
+[compile] bypass-analysis progress elapsed_s=2.501917e+02 completed=70772/95846
+[compile] bypass-analysis progress elapsed_s=2.552023e+02 completed=72540/95846
+[compile] bypass-analysis progress elapsed_s=2.602113e+02 completed=73360/95846
+[compile] bypass-analysis progress elapsed_s=2.652122e+02 completed=74433/95846
+[compile] bypass-analysis progress elapsed_s=2.702187e+02 completed=75839/95846
+[compile] bypass-analysis progress elapsed_s=2.752331e+02 completed=76628/95846
+[compile] bypass-analysis progress elapsed_s=2.802359e+02 completed=78084/95846
+[compile] bypass-analysis progress elapsed_s=2.852479e+02 completed=79094/95846
+[compile] bypass-analysis progress elapsed_s=2.902627e+02 completed=79816/95846
+[compile] bypass-analysis progress elapsed_s=2.952862e+02 completed=81489/95846
+[compile] bypass-analysis progress elapsed_s=3.003004e+02 completed=82280/95846
+[compile] bypass-analysis progress elapsed_s=3.053049e+02 completed=82992/95846
+[compile] bypass-analysis progress elapsed_s=3.103049e+02 completed=84651/95846
+[compile] bypass-analysis progress elapsed_s=3.153099e+02 completed=85426/95846
+[compile] bypass-analysis progress elapsed_s=3.203154e+02 completed=86203/95846
+[compile] bypass-analysis progress elapsed_s=3.253157e+02 completed=90567/95846
+[compile] bypass-analysis progress elapsed_s=3.303161e+02 completed=94400/95846
+[compile] bypass-analysis end elapsed_s=3.324209e+02
+[compile] BypassDetection end total_s=4.328686e+02
+[compile] CandidateSelection begin total_s=4.328687e+02
+[compile] CandidateSelection end total_s=4.479862e+02
+[compile] DaCapoPlanner begin total_s=4.479862e+02
+[compile] dacapo-search begin elapsed_s=9.195000e-06
+Regional DaCapo candidate set 1: 16319 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.053700e-05
+[compile] regional-build begin elapsed_s=9.428000e-06
+[compile] regional-build end elapsed_s=9.094441e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.095050e+00 completed=1/16319
+[compile] dacapo-candidate-cuts end elapsed_s=9.224029e+00
+Regional DaCapo candidate set 2: 35360 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.240000e-05
+[compile] regional-build begin elapsed_s=9.992000e-06
+[compile] regional-build end elapsed_s=9.156890e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.157641e+00 completed=1/35360
+[compile] dacapo-candidate-cuts end elapsed_s=9.955665e+00
+Regional DaCapo candidate set 3: 41907 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.204400e-05
+[compile] regional-build begin elapsed_s=1.045500e-05
+[compile] regional-build end elapsed_s=9.142066e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.142852e+00 completed=1/41907
+[compile] dacapo-candidate-cuts end elapsed_s=1.036710e+01
+Regional DaCapo candidate set 4: 56439 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.139700e-05
+[compile] regional-build begin elapsed_s=1.018700e-05
+[compile] regional-build end elapsed_s=9.218111e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.218969e+00 completed=1/56439
+[compile] dacapo-candidate-cuts end elapsed_s=1.124969e+01
+Regional DaCapo candidate set 5: 74697 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.146800e-05
+[compile] regional-build begin elapsed_s=1.007600e-05
+[compile] regional-build end elapsed_s=9.049831e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.050845e+00 completed=1/74697
+[compile] dacapo-candidate-cuts end elapsed_s=1.243856e+01
+Regional DaCapo candidate set 6: 79443 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.201400e-05
+[compile] regional-build begin elapsed_s=1.031200e-05
+[compile] regional-build end elapsed_s=9.246705e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.247670e+00 completed=1/79443
+[compile] dacapo-candidate-cuts end elapsed_s=1.302831e+01
+Regional DaCapo candidate set 7: 82185 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.226800e-05
+[compile] regional-build begin elapsed_s=1.076100e-05
+[compile] regional-build end elapsed_s=9.102730e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.103704e+00 completed=1/82185
+[compile] dacapo-candidate-cuts end elapsed_s=1.313981e+01
+Regional DaCapo candidate set 8: 84731 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.224400e-05
+[compile] regional-build begin elapsed_s=1.027400e-05
+[compile] regional-build end elapsed_s=9.197463e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.198443e+00 completed=1/84731
+[compile] dacapo-candidate-cuts end elapsed_s=1.347114e+01
+Regional DaCapo candidate set 9: 85793 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.150500e-05
+[compile] regional-build begin elapsed_s=1.023300e-05
+[compile] regional-build end elapsed_s=9.144078e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.145085e+00 completed=1/85793
+[compile] dacapo-candidate-cuts end elapsed_s=1.352878e+01
+Regional DaCapo candidate set 10: 86463 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.152100e-05
+[compile] regional-build begin elapsed_s=1.020200e-05
+[compile] regional-build end elapsed_s=9.187578e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.188565e+00 completed=1/86463
+[compile] dacapo-candidate-cuts end elapsed_s=1.357155e+01
+Regional DaCapo candidate set 11: 87133 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.135600e-05
+[compile] regional-build begin elapsed_s=1.037500e-05
+[compile] regional-build end elapsed_s=9.215358e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.216333e+00 completed=1/87133
+[compile] dacapo-candidate-cuts end elapsed_s=1.374016e+01
+Regional DaCapo candidate set 12: 87803 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.143100e-05
+[compile] regional-build begin elapsed_s=1.081000e-05
+[compile] regional-build end elapsed_s=9.077376e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.078370e+00 completed=1/87803
+[compile] dacapo-candidate-cuts end elapsed_s=1.365762e+01
+Regional DaCapo candidate set 13: 88307 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.147100e-05
+[compile] regional-build begin elapsed_s=1.143800e-05
+[compile] regional-build end elapsed_s=9.180430e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.181434e+00 completed=1/88307
+[compile] dacapo-candidate-cuts end elapsed_s=1.388759e+01
+Regional DaCapo candidate set 14: 88811 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.176800e-05
+[compile] regional-build begin elapsed_s=1.023700e-05
+[compile] regional-build end elapsed_s=9.005245e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.006230e+00 completed=1/88811
+[compile] dacapo-candidate-cuts end elapsed_s=1.375559e+01
+Regional DaCapo candidate set 15: 89315 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.133300e-05
+[compile] regional-build begin elapsed_s=1.049900e-05
+[compile] regional-build end elapsed_s=9.134762e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.135764e+00 completed=1/89315
+[compile] dacapo-candidate-cuts end elapsed_s=1.389358e+01
+Regional DaCapo candidate set 16: 89427 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.148400e-05
+[compile] regional-build begin elapsed_s=1.153800e-05
+[compile] regional-build end elapsed_s=9.150670e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.151692e+00 completed=1/89427
+[compile] dacapo-candidate-cuts end elapsed_s=1.401130e+01
+Regional DaCapo candidate set 17: 89539 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.146100e-05
+[compile] regional-build begin elapsed_s=1.050900e-05
+[compile] regional-build end elapsed_s=9.220759e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.221747e+00 completed=1/89539
+[compile] dacapo-candidate-cuts end elapsed_s=1.399423e+01
+Regional DaCapo candidate set 18: 89651 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.173100e-05
+[compile] regional-build begin elapsed_s=1.047400e-05
+[compile] regional-build end elapsed_s=9.164201e+00
+[compile] dacapo-candidate-cuts progress elapsed_s=9.165196e+00 completed=1/89651
+[compile] dacapo-candidate-cuts end elapsed_s=1.414792e+01
+Regional DaCapo candidate set 19: 89763 cuts
+[compile] dacapo-candidate-cuts begin elapsed_s=1.910800e-05
+[compile] regional-build begin elapsed_s=8.245000e-06

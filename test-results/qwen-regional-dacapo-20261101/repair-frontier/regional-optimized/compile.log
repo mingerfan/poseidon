@@ -1,0 +1,64 @@
+[compile] input-parser begin total_s=0
+[compile] mlir::detail::OpToOpPassAdaptor begin total_s=8.642094e+01
+[compile] RemoveBootstrap begin total_s=8.642099e+01
+[compile] RemoveBootstrap end total_s=9.473054e+01
+[compile] OptimizePolynomialArithmetic begin total_s=9.473063e+01
+[compile] OptimizePolynomialArithmetic end total_s=1.025007e+02
+[compile] BypassDetection begin total_s=1.025008e+02
+[compile] bypass-analysis begin elapsed_s=2.450800e-05
+[compile] regional-build begin elapsed_s=2.362000e-05
+[compile] regional-build end elapsed_s=9.180109e+00
+[compile] candidate-analysis begin elapsed_s=2.551400e-05
+[compile] candidate-analysis end elapsed_s=1.216341e+01
+[compile] regional-build begin elapsed_s=9.381000e-06
+[compile] regional-build end elapsed_s=9.314525e+00
+Regional DaCapo indexed values: 4688985, boundaries: 95846
+[compile] regional-build begin elapsed_s=1.005700e-05
+[compile] regional-build end elapsed_s=9.392089e+00
+[compile] regional-initial-stop region=11 node=48 linear_group=0 live=9
+[compile] regional-initial-coverage limit=59 first_cut=3 inputs=2
+[compile] bypass-analysis progress elapsed_s=4.515690e+01 completed=1/95846
+[compile] bypass-analysis progress elapsed_s=5.046629e+01 completed=190/95846
+[compile] bypass-analysis progress elapsed_s=5.546760e+01 completed=2812/95846
+[compile] bypass-analysis progress elapsed_s=6.083054e+01 completed=5969/95846
+[compile] bypass-analysis progress elapsed_s=6.583072e+01 completed=7799/95846
+[compile] bypass-analysis progress elapsed_s=7.083489e+01 completed=10840/95846
+[compile] bypass-analysis progress elapsed_s=7.583583e+01 completed=13633/95846
+[compile] bypass-analysis progress elapsed_s=8.083584e+01 completed=16259/95846
+[compile] bypass-analysis progress elapsed_s=8.585105e+01 completed=18645/95846
+[compile] bypass-analysis progress elapsed_s=9.085997e+01 completed=20720/95846
+[compile] bypass-analysis progress elapsed_s=9.586168e+01 completed=23231/95846
+[compile] bypass-analysis progress elapsed_s=1.008619e+02 completed=25481/95846
+[compile] bypass-analysis progress elapsed_s=1.058643e+02 completed=27034/95846
+[compile] bypass-analysis progress elapsed_s=1.108711e+02 completed=29409/95846
+[compile] bypass-analysis progress elapsed_s=1.158713e+02 completed=31271/95846
+[compile] bypass-analysis progress elapsed_s=1.208732e+02 completed=32944/95846
+[compile] bypass-analysis progress elapsed_s=1.258762e+02 completed=35059/95846
+[compile] bypass-analysis progress elapsed_s=1.308870e+02 completed=36551/95846
+[compile] bypass-analysis progress elapsed_s=1.358925e+02 completed=38668/95846
+[compile] bypass-analysis progress elapsed_s=1.408927e+02 completed=40045/95846
+[compile] bypass-analysis progress elapsed_s=1.459017e+02 completed=41995/95846
+[compile] bypass-analysis progress elapsed_s=1.509033e+02 completed=43414/95846
+[compile] bypass-analysis progress elapsed_s=1.559036e+02 completed=45215/95846
+[compile] bypass-analysis progress elapsed_s=1.609066e+02 completed=46549/95846
+[compile] bypass-analysis progress elapsed_s=1.659157e+02 completed=48286/95846
+[compile] bypass-analysis progress elapsed_s=1.709158e+02 completed=49513/95846
+[compile] bypass-analysis progress elapsed_s=1.759173e+02 completed=51316/95846
+[compile] bypass-analysis progress elapsed_s=1.809178e+02 completed=52334/95846
+[compile] bypass-analysis progress elapsed_s=1.859313e+02 completed=54260/95846
+[compile] bypass-analysis progress elapsed_s=1.909318e+02 completed=55238/95846
+[compile] bypass-analysis progress elapsed_s=1.959401e+02 completed=57114/95846
+[compile] bypass-analysis progress elapsed_s=2.009502e+02 completed=58095/95846
+[compile] bypass-analysis progress elapsed_s=2.059505e+02 completed=59664/95846
+[compile] bypass-analysis progress elapsed_s=2.109559e+02 completed=60841/95846
+[compile] bypass-analysis progress elapsed_s=2.159559e+02 completed=61933/95846
+[compile] bypass-analysis progress elapsed_s=2.209608e+02 completed=63587/95846
+[compile] bypass-analysis progress elapsed_s=2.259610e+02 completed=64536/95846
+[compile] bypass-analysis progress elapsed_s=2.309688e+02 completed=66316/95846
+[compile] bypass-analysis progress elapsed_s=2.359761e+02 completed=67215/95846
+[compile] bypass-analysis progress elapsed_s=2.409837e+02 completed=68311/95846
+[compile] bypass-analysis progress elapsed_s=2.459866e+02 completed=69809/95846
+[compile] bypass-analysis progress elapsed_s=2.510055e+02 completed=70665/95846
+[compile] bypass-analysis progress elapsed_s=2.560099e+02 completed=72402/95846
+[compile] bypass-analysis progress elapsed_s=2.610127e+02 completed=73194/95846
+[compile] bypass-analysis progress elapsed_s=2.660179e+02 completed=73977/95846

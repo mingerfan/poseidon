@@ -1,0 +1,46 @@
+Regional DaCapo boundaries: 5629 -> 439
+Regional DaCapo candidate set 1: 79 cuts
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=1.324350e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=8.941400e+04 MiB
+runtime memory _hecate_ResNet20 rank=0 device=-1 peak=5.100000e+01 MiB
+runtime memory _hecate_ResNet20 rank=0 device=0 peak=6.749250e+03 MiB
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 25.4668 seconds
+
+  ----Wall Time----  ----Name----
+    0.6986 (  2.7%)  Parser
+   15.6377 ( 61.4%)  'func.func' Pipeline
+    0.0124 (  0.0%)    RemoveBootstrap
+    0.0108 (  0.0%)    OptimizePolynomialArithmetic
+    9.0909 ( 35.7%)    BypassDetection
+    0.0739 (  0.3%)      (A) hecate::CandidateAnalysis
+    0.0238 (  0.1%)    CandidateSelection
+    6.4738 ( 25.4%)    DaCapoPlanner
+    0.0131 (  0.1%)    EarlyModswitch
+    0.0129 (  0.1%)    AbsorbCoefficientScale
+    0.0217 (  0.1%)  Canonicalizer
+    0.0251 (  0.1%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0113 (  0.0%)  CSE
+    0.0216 (  0.1%)  Canonicalizer
+    8.5278 ( 33.5%)  'func.func' Pipeline
+    0.0357 (  0.1%)    EarthToCKKSConversion
+    0.0104 (  0.0%)    UpscaleToMulcpConversion
+    0.0113 (  0.0%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    0.0146 (  0.1%)    Canonicalizer
+    0.0238 (  0.1%)    MaterializePhysicalLevels
+    0.0115 (  0.0%)    CoalesceReductionRescales
+    0.1121 (  0.4%)    AssignPlacement
+    0.0304 (  0.1%)    MaterializeCommunication
+    0.0648 (  0.3%)    EstimateRuntimeMemory
+    0.0671 (  0.3%)    PlanRuntimeMemory
+    0.0485 (  0.2%)    EstimateRuntimeMemory
+    8.0976 ( 31.8%)    EmitRuntimePlan
+    0.5166 (  2.0%)  Output
+    0.0045 (  0.0%)  Rest
+   25.4668 (100.0%)  Total
+Estimated Latency: 1.927244e+01 (sec)
+Number of Bootstrapping: 18

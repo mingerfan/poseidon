@@ -1,0 +1,129 @@
+{
+  "results": [
+    {
+      "strategy": "greedy",
+      "input_q": 31,
+      "boots": 19,
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "first_boot": {
+        "immediate_modswitch": null,
+        "input_q": 6,
+        "input_s": 39.999999999998224,
+        "output_q": 31,
+        "output_s": 40.0
+      },
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 456,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "compile_seconds": 9.882061945972964,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d"
+    },
+    {
+      "strategy": "greedy",
+      "input_q": 34,
+      "boots": 19,
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "first_boot": {
+        "immediate_modswitch": {
+          "after_q": 6,
+          "after_s": 39.999999999999936,
+          "before_q": 9,
+          "before_s": 39.999999999999936,
+          "discarded_q": 3
+        },
+        "input_q": 6,
+        "input_s": 39.999999999999936,
+        "output_q": 31,
+        "output_s": 40.0
+      },
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 458,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "compile_seconds": 10.472677899058908,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d"
+    },
+    {
+      "strategy": "optimized",
+      "input_q": 31,
+      "boots": 19,
+      "output_q": 26,
+      "output_s": 40.0000000000001,
+      "first_boot": {
+        "immediate_modswitch": null,
+        "input_q": 6,
+        "input_s": 39.999999999998224,
+        "output_q": 31,
+        "output_s": 40.0
+      },
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 19,
+        "mod_switch": 456,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1392,
+        "rotate": 1709
+      },
+      "compile_seconds": 32.52568233991042,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d"
+    },
+    {
+      "strategy": "optimized",
+      "input_q": 34,
+      "boots": 18,
+      "output_q": 5,
+      "output_s": 39.99999999999992,
+      "first_boot": {
+        "immediate_modswitch": null,
+        "input_q": 6,
+        "input_s": 39.99999999999993,
+        "output_q": 31,
+        "output_s": 40.0
+      },
+      "counts": {
+        "add_cc": 3677,
+        "add_cp": 229,
+        "boot": 18,
+        "mod_switch": 475,
+        "mul_cc": 513,
+        "mul_cp": 2877,
+        "negate": 76,
+        "relinearize": 513,
+        "rescale": 1391,
+        "rotate": 1709
+      },
+      "compile_seconds": 32.778281517094,
+      "content_set_sha256": "ac971e13831963bc2375c4ac04d67438b93d53067e6f5f64503ccce51216452d"
+    }
+  ],
+  "same_encoded_payload_content_set": true,
+  "measured_gpu_latency": false,
+  "encrypted_accuracy_validated": false,
+  "million_instruction_evaluation": false,
+  "boot_contract": "Q6/s40 -> Q31/s40",
+  "arithmetic_floor_q": 5,
+  "search": "DaCapo single-prefix estimated-latency DP using regional scale evaluation; not a global optimum guarantee"
+}

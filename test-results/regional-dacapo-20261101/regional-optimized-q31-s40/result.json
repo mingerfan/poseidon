@@ -1,0 +1,9 @@
+{
+  "input_q": 31,
+  "final_scale_required": 40,
+  "strategy": "optimized",
+  "returncode": 0,
+  "seconds": 32.52568233991042,
+  "timeout_seconds": 120.0,
+  "compiler_sha256": "d272c7a2e2be4ee60f3f13101f5d45d72376bd0db8213372fc745d669a2e86a8"
+}

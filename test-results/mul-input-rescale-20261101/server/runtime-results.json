@@ -1,0 +1,12 @@
+[
+  {
+    "name": "paired-8-runtime-beam4",
+    "returncode": 0,
+    "seconds": 0.39739865506999195
+  },
+  {
+    "name": "paired-8-runtime-beam32",
+    "returncode": 0,
+    "seconds": 2.3279044900555164
+  }
+]

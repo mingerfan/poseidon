@@ -1,0 +1,171 @@
+[
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":6:8)",
+    "node": 2,
+    "opid": -1,
+    "q": 22,
+    "s": 50.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":9:7)",
+    "node": 5,
+    "opid": -1,
+    "q": 22,
+    "s": 120.0
+  },
+  {
+    "boot": [
+      {
+        "node": 1,
+        "q": 23,
+        "s": 40.0
+      },
+      {
+        "node": 5,
+        "q": 22,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":13:8)",
+    "node": 9,
+    "opid": -1,
+    "q": 22,
+    "s": 60.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":16:7)",
+    "node": 12,
+    "opid": -1,
+    "q": 22,
+    "s": 120.0
+  },
+  {
+    "boot": [
+      {
+        "node": 12,
+        "q": 22,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":20:8)",
+    "node": 16,
+    "opid": -1,
+    "q": 22,
+    "s": 60.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":23:7)",
+    "node": 19,
+    "opid": -1,
+    "q": 22,
+    "s": 120.0
+  },
+  {
+    "boot": [
+      {
+        "node": 19,
+        "q": 22,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":27:8)",
+    "node": 23,
+    "opid": -1,
+    "q": 22,
+    "s": 60.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":30:7)",
+    "node": 26,
+    "opid": -1,
+    "q": 22,
+    "s": 120.0
+  },
+  {
+    "boot": [
+      {
+        "node": 26,
+        "q": 22,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":34:8)",
+    "node": 30,
+    "opid": -1,
+    "q": 22,
+    "s": 60.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":37:7)",
+    "node": 33,
+    "opid": -1,
+    "q": 22,
+    "s": 120.0
+  },
+  {
+    "boot": [
+      {
+        "node": 33,
+        "q": 22,
+        "s": 120.0
+      }
+    ]
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":40:7)",
+    "node": 36,
+    "opid": -1,
+    "q": 16,
+    "s": 120.0
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":41:8)",
+    "node": 37,
+    "opid": -1,
+    "q": 22,
+    "s": 60.01709552594657
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":44:7)",
+    "node": 40,
+    "opid": -1,
+    "q": 20,
+    "s": 60.0
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":48:8)",
+    "node": 44,
+    "opid": -1,
+    "q": 18,
+    "s": 60.03570625247002
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":51:7)",
+    "node": 47,
+    "opid": -1,
+    "q": 16,
+    "s": 40.2
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":55:8)",
+    "node": 51,
+    "opid": -1,
+    "q": 15,
+    "s": 50.41910177719415
+  },
+  {
+    "location": "loc(\"/home/xuming/poseidon-qwen-regional-20261101/scale-audit/paired-8.mlir\":61:7)",
+    "node": 57,
+    "opid": -1,
+    "q": 8,
+    "s": 40.0
+  }
+]
