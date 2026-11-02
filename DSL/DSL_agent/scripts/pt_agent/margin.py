@@ -1,8 +1,8 @@
 """r8-v9 calibration-only minimum domains, checked before execution."""
 
 
-def minimum_domain(lo, hi):
-    return (min(1.5*lo, lo/1.5), max(1.5*hi, hi/1.5))
+def minimum_domain(lo, hi, factor=1.5):
+    return (min(factor*lo, lo/factor), max(factor*hi, hi/factor))
 
 
 def contains(declared, required):

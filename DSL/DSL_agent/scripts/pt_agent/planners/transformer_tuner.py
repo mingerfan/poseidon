@@ -20,10 +20,21 @@ CONVERGENT_TUNE_RULE = 'v8-6.14'
 ACCURACY_TUNE_RULE = 'v8-6.17'
 MARGIN_TUNE_RULE = 'v8-6.19'
 STRICT_MARGIN_TUNE_RULE = 'v8-6.21'
+WIDE_MARGIN_TUNE_RULE = 'v8-6.22'
+REFIT_MARGIN_TUNE_RULE = 'v8-6.23'
+FLOOR_MARGIN_TUNE_RULE = 'v8-6.24'
 MARGIN_TARGET_U = 0.80
 MARGIN_ACCURACY_FACTOR = 0.5
 # §6.19 keeps half of the task logit limit; §6.21 keeps a quarter, with the same alignment.
-MARGIN_RULE_FACTORS = {MARGIN_TUNE_RULE: MARGIN_ACCURACY_FACTOR, STRICT_MARGIN_TUNE_RULE: 0.25}
+MARGIN_RULE_FACTORS = {MARGIN_TUNE_RULE: MARGIN_ACCURACY_FACTOR, STRICT_MARGIN_TUNE_RULE: 0.25,
+                       WIDE_MARGIN_TUNE_RULE: MARGIN_ACCURACY_FACTOR, REFIT_MARGIN_TUNE_RULE: MARGIN_ACCURACY_FACTOR,
+                       FLOOR_MARGIN_TUNE_RULE: MARGIN_ACCURACY_FACTOR}
+# §6.22 aligns to a 2x calibration margin; the others keep the 1.5x M.
+MARGIN_DOMAIN_FACTORS = {WIDE_MARGIN_TUNE_RULE: 2.0, REFIT_MARGIN_TUNE_RULE: 2.0, FLOOR_MARGIN_TUNE_RULE: 2.0}
+# §6.23 refits widened points to their original accuracy and judges alignment by accuracy only.
+REFIT_RULES = (REFIT_MARGIN_TUNE_RULE, FLOOR_MARGIN_TUNE_RULE)
+# §6.24 keeps each refit setting as the lower bound of later descent on that point.
+FLOOR_RULES = (FLOOR_MARGIN_TUNE_RULE,)
 _tune_rule = ContextVar('a1_tune_rule', default=DEFAULT_TUNE_RULE)
 
 
@@ -53,15 +64,17 @@ def move_accuracy_ok(result, ctx, rule):
     return error is not None and math.isfinite(error) and error <= move_logit_limit(ctx, rule)
 
 
-def margin_domain(lo, hi, *, log_scale, target=MARGIN_TARGET_U):
+def margin_domain(lo, hi, *, log_scale, target=MARGIN_TARGET_U, factor=1.5):
     """§6.19: hull of M and the interval that places calibration data at u <= target.
+
+    §6.22 passes factor=2 to widen M.
 
     The scale is the one the u criterion uses for the point: logarithmic for r8-v10
     calibrated inv/rsqrt points with lo > 0, linear otherwise.
     """
     import math
     from ..margin import minimum_domain
-    m = minimum_domain(lo, hi)
+    m = minimum_domain(lo, hi, factor)
     if log_scale and lo > 0:
         a, b = math.log(lo), math.log(hi)
         mid, half = (a+b)/2, (b-a)/2/target
@@ -70,6 +83,18 @@ def margin_domain(lo, hi, *, log_scale, target=MARGIN_TARGET_U):
         center, half = (lo+hi)/2, (hi-lo)/2/target
         t = (center-half, center+half)
     return (min(m[0], t[0]), max(m[1], t[1]))
+
+
+def refit_floor(record):
+    """§6.24: a refit setting (within or closest) bounds later descent; kept points have no floor."""
+    if record.get('status') in ('within', 'closest') and record.get('setting'):
+        return dict(record['setting'])
+    return None
+
+
+def below_floor(updates, floor):
+    """True when any floored component of the move goes below its refit value."""
+    return floor is not None and any(key in floor and value < floor[key] for key, value in updates.items())
 
 
 def validate_tune_rule(prompt_version, rule):
@@ -237,6 +262,8 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
     aligned=copy.deepcopy(current)
     names=point_names(aligned,ctx)
     alignment_errors=[]
+    refits=[]
+    candidate_floors={}
     for index,point in enumerate(points(aligned)):
         # Softmax domains use the registered calibration/analytical rules;
         # held-out observations are used only to judge coverage.
@@ -246,7 +273,8 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
         if lo is None or hi is None:continue
         if margin_rule(rule):
             domain = margin_domain(lo, hi, log_scale=getattr(ctx, 'prompt_version', None) == 'r8-v10'
-                                   and point.attrs['fn'] in ('inv', 'rsqrt'))
+                                   and point.attrs['fn'] in ('inv', 'rsqrt'),
+                                   factor=MARGIN_DOMAIN_FACTORS.get(rule, 1.5))
         elif getattr(ctx, 'prompt_version', None) in ('r8-v9','r8-v10'):
             from ..margin import minimum_domain
             domain = minimum_domain(lo, hi)
@@ -265,7 +293,17 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
                 alignment_errors.append(failure(KernelError('Calibration alignment produced a degenerate domain'),
                     **dict(point_fields(point),domain=domain)))
             continue
+        old_attrs=dict(point.attrs)
         point.update(dict(domain=domain))
+        if rule in REFIT_RULES and (domain[0]<old_attrs['domain'][0] or domain[1]>old_attrs['domain'][1]):
+            from .margin_refit import refit
+            setting,record=refit(old_attrs,domain)
+            point.update(setting)
+            refits.append(dict(record,line=point.op.lineno,role=point.role or 'act',fn=point.attrs['fn'],
+                               method=point.attrs['method'],old_setting={k:old_attrs.get(k) for k in setting}))
+            floor=refit_floor(record) if rule in FLOOR_RULES else None
+            if floor is not None:
+                candidate_floors[(point.op.id,point.prefix)]=dict(line=point.op.lineno,role=point.role or 'act',setting=floor)
     from ..margin import require_margin
     require_margin(aligned, ctx)
     from .approximation_failures import program_failures
@@ -276,9 +314,13 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
         aligned_result=measure(aligned,engine=engine);full+=1
         if v8:criteria.require_analytic_coverage(aligned_result)
         aligned_cost=cost(aligned)
-        accepted=accept(aligned_result) and (repair_initial or
+        accepted=accept(aligned_result) and (repair_initial or rule in REFIT_RULES or
                   aligned_cost['latency_pred_us']<=current_cost['latency_pred_us'])
     row=dict(phase='domain',accepted=accepted,roles=[p.role or 'act' for p in points(aligned)])
+    if refits:row['refits']=refits
+    # Floors bound descent only from the accepted aligned program.
+    floors={key:value['setting'] for key,value in candidate_floors.items()} if accepted else {}
+    if floors:row['floors']=list(candidate_floors.values())
     if errors:row['numerical_errors']=errors
     history.append(row)
     if accepted:current,current_result,current_cost=aligned,aligned_result,aligned_cost
@@ -342,6 +384,10 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
                 updates=setting['attrs']
                 if updates is None:
                     history.append(dict(phase='skip_search',role=point.role,search=setting['search']));continue
+                if below_floor(updates,floors.get(identity)):
+                    history.append(dict(phase='coarse',role=point.role or 'act',line=point.op.lineno,
+                                        attrs=updates,accepted=False,rejected='refit_floor'))
+                    continue
                 candidate=copy.deepcopy(current)
                 selected=(next(p for p in points(candidate) if (p.op.id,p.prefix)==identity)
                           if a1 else points(candidate)[index])

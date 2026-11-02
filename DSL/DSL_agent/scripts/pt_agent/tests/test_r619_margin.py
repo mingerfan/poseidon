@@ -42,6 +42,21 @@ class AlignmentTests(unittest.TestCase):
                 self.assertLessEqual(d[0], m[0])
                 self.assertGreaterEqual(d[1], m[1])
 
+    def test_wide_margin_rule(self):
+        # §6.22: Qwen line-25 rsqrt calibration; report minimum 208.9 is 0.64x the calibration minimum.
+        lo, hi = 217.6*1.5, 5065.4/1.5
+        self.assertEqual(minimum_domain(lo, hi, 2.0), (lo/2, 2*hi))
+        old = tuner.margin_domain(lo, hi, log_scale=True)
+        wide = tuner.margin_domain(lo, hi, log_scale=True, factor=2.0)
+        self.assertGreater(maximum_u([208.9], old, fn='rsqrt', version='r8-v10'), 1.0)
+        self.assertLess(maximum_u([208.9], wide, fn='rsqrt', version='r8-v10'), 0.90)
+        self.assertEqual(tuner.MARGIN_DOMAIN_FACTORS.get('v8-6.19', 1.5), 1.5)
+        self.assertEqual(tuner.MARGIN_DOMAIN_FACTORS['v8-6.22'], 2.0)
+        causal = ctx(dict(agreement_pct=99.0, logit_rel_err=1e-2))
+        self.assertEqual(tuner.move_logit_limit(causal, 'v8-6.22'), 5e-3)
+        self.assertTrue(tuner.margin_rule('v8-6.22') and tuner.convergent_rule('v8-6.22'))
+        self.assertEqual(tuner.validate_tune_rule('r8-v10', 'v8-6.22'), 'v8-6.22')
+
 
 class AccuracyTests(unittest.TestCase):
     def test_half_limit(self):
