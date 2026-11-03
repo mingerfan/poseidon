@@ -1,10 +1,12 @@
-# pt_agent 状态（最后更新：2026-11-02 / be558e42-dirty）
+# pt_agent 状态（最后更新：2026-11-02 / 73fc7284）
 
 A1 §6.24 已完成实现、测试、离线重放与验收（2026-11-02），结果标注"事后重评：r8-v10 判据，Agent 当时收到的是 r8-v9 反馈"。规则 v8-6.24 在 §6.23 的基础上，把对准重选的设置作为之后降阶的下限。R121 规则下两个模型首次都通过 report：
 - Qwen 冻结精调后的第 4 次，22146 自举。report100 为 100/100，误差 0.0014，校准 u 0.872，可行；比 R1（22721）少 2.5%，比 R0（38849）少 43%。
 - BERT 冻结精调后的第 35 次，7910 自举。report100 为 100/100，误差 6.5e-5，校准 u 0.773，可行；比 R1（9095）少 13%。
 
-两模型预测／compiler／managed 一致，完整 RuntimePlan 相同。用户已决定两个模型统一采用 v8-6.24 + a1-6.20（代码默认不变，需显式选择），上面两个程序就是当前的 A1 冻结程序。report100 在 §6.19–§6.23 的规则制定中参与过诊断，汇报时需写明。API 0，账本 244/450。详见末尾"A1 §6.24"一节。
+两模型预测／compiler／managed 一致，完整 RuntimePlan 相同。用户已决定两个模型统一采用 v8-6.24 + a1-6.20（代码默认不变，需显式选择），上面两个程序就是当前的 A1 冻结程序。report100 在 §6.19–§6.23 的规则制定中参与过诊断，汇报时需写明。API 0，账本 244/450。详见末尾"A1 §6.24"一节。§6.22–§6.24 已提交为 73fc7284 并推送到 origin/lhy-agent-dsl。
+
+论文证据表（2026-11-02，API 0）：[EVIDENCE.md](/home/lhohy/pt_agent_results/paper-evidence-20261102/EVIDENCE.md)，由同目录 `collect.py` 从原始记录生成。覆盖 DSL 语法对照、团队 188Server 的大模型编译负担、同一编译器下 R0/R1/Agent 的成本差、激活范围、编写成本、预测一致性和缺口。其中 M7 是新跑的同程序对照：A1 两个冻结程序只把 `--boot-placement` 换成 DaCapo 原有的 optimized，BERT、Qwen 都在 3600 s 上限内没有完成（depth-dp 下 10.0 s／15.2 s）。2026-11-03 的 M7b 对 R8e7 四个 CNN／MLP 冻结程序做同样对照：optimized 全部在 DaCapo 规划器内段错误（0.4–329 s），depth-dp 下 0.5–7.7 s 完成。详见末尾"论文证据表""A1 同程序 optimized 放置对照"和"CNN 同程序 optimized 放置对照"三节。
 
 历史（§6.23 至 D1）：A1 §6.23 已完成离线重放与验收（2026-10-31 运行，2026-11-02 接手补记），结果标注"事后重评：r8-v10 判据，Agent 当时收到的是 r8-v9 反馈"。R121 规则下，Qwen 冻结精调后的第 2 次（24226 自举）。report 一致率 99/100，logit_rel_err 0.0634 > 0.01，不通过；校准 u 0.872。BERT 冻结 7531，程序与 §6.22 逐字相同，report 100/100 通过。两模型预测／compiler／managed 一致，完整 RuntimePlan 相同。Qwen 的误差集中在 report 第 24、8 句。2026-11-02 用非 report 数据做了误差归因（D1）：冻结程序在 calibration 上有 3 句误差超过 0.01；尾部几乎全部来自对准之后的一步降阶，即第 6 行 `mul_4::rsqrt` 在放宽后的定义域上从 remez 31 降到 15。这一步只省 64 次自举，heldout20 没有暴露它。report 第 24、8 句是否同一原因尚未验证。同日补齐了 R121 下的 R0/R1 验收：Qwen R0（38849）和 R1（22721）report 都是 100/100、误差 0.0069，但都在第 25 行 `mul_10::rsqrt` 校准 u 1.026，不通过，与 §6.19 冻结程序同一点；BERT R0（12081）、R1（9095）通过。四个基线的三方编译均一致，完整 RuntimePlan 相同。待决事项见"阻塞"一栏。本节 API 0，账本 244/450。详见末尾"A1 §6.23""A1 R0/R1 基线验收"和"A1 D1 误差归因"三节。
 
@@ -71,7 +73,7 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
-| A1 | specs/A1-agent-transformer.md（§6.24） | 进行中 | §6.22–§6.24 未提交：margin.py、planners/transformer_tuner.py、planners/margin_refit.py（新）、experiments/a1_transformer_agent.py、tests/test_r619_margin.py、tests/test_r623_refit.py（新）、tests/test_r624_floor.py（新）、spec、STATUS；§6.19–§6.21 已提交到 be558e42 | §6.24：新增 6 项通过；全量 856 项中 25 项失败、5 项跳过，失败均与本轮无关（R121 默认构建旧快照 20、已知 1、Mock 批次 2、`_constant_objects` 1、运行顺序 1）；v8-6.24 下 Qwen 22146、BERT 7910 report100 均通过，三方一致，完整 RuntimePlan 相同。§6.23：修订后相关 31 项通过（输出未存档）；BERT 7531：report100 100/100，误差 0.0072；Qwen 24226：report 99/100，误差 0.0634，不通过；两模型三方一致，完整 RuntimePlan 相同；R121 下 R0/R1 四项验收完成（Qwen R0/R1 report 校准 u 1.026 不通过，BERT R0/R1 通过，三方均一致） | E₀ 比较带 1e-9 相对余量；refit 候选评估宽捕获异常；测试输出与驱动脚本当时未存档（脚本已于 2026-11-02 补存）；API0，累计 244/450 |
+| A1 | specs/A1-agent-transformer.md（§6.24） | 进行中 | §6.22–§6.24 已提交并推送（73fc7284）：margin.py、planners/transformer_tuner.py、planners/margin_refit.py（新）、experiments/a1_transformer_agent.py、tests/test_r619_margin.py、tests/test_r623_refit.py（新）、tests/test_r624_floor.py（新）、spec、STATUS；§6.19–§6.21 已提交到 be558e42 | §6.24：新增 6 项通过；全量 856 项中 25 项失败、5 项跳过，失败均与本轮无关（R121 默认构建旧快照 20、已知 1、Mock 批次 2、`_constant_objects` 1、运行顺序 1）；v8-6.24 下 Qwen 22146、BERT 7910 report100 均通过，三方一致，完整 RuntimePlan 相同。§6.23：修订后相关 31 项通过（输出未存档）；BERT 7531：report100 100/100，误差 0.0072；Qwen 24226：report 99/100，误差 0.0634，不通过；两模型三方一致，完整 RuntimePlan 相同；R121 下 R0/R1 四项验收完成（Qwen R0/R1 report 校准 u 1.026 不通过，BERT R0/R1 通过，三方均一致） | E₀ 比较带 1e-9 相对余量；refit 候选评估宽捕获异常；测试输出与驱动脚本当时未存档（脚本已于 2026-11-02 补存）；API0，累计 244/450 |
 | U4 | specs/U4-transformer-operators.md（含§7.10.5／§11.8） | 完成（U4a／U4b指定验收） | manage/{ir,greedy,earth_emit,mlir_read}.py；experiments/u4_relative_acceptance.py、u4_bert_managed.py；test_u4_management_memory.py；STATUS | 547唯一测试通过；3回归＋BERT完整Function相同；BERT15399/110、Qwen54752/138三方相同且完整计划／载荷相同 | Python峰值3353.70MiB；原限制、冻结DSL及旧包保持；API0、CKKS0；首次Agent输出0 |
 | U5 | specs/U5-nonlinear-fitting.md（含§6–§8） | 完成 | kernels/approx.py；DSL/lower/tensor/P2/tuner/r8-v6入口；U5实验/测试；STATUS | 545/545唯一测试；22程序及4模型兼容；拟合表、四模型小研究、双模式编译完成；[SUMMARY](/home/lhohy/pt_agent_results/u5-complete-20261026T110026006154/SUMMARY.json) | 同阶SiLU未满足精度条件、宽域低阶Newton误差放大均如实保留；自写修正见U5记录；API0 |
 | S1 | 原S1及用户2026-10-27共享载荷本机补跑 | 完成 | 既有manage/、toolchain、P2、S1实验/测试；U4共享载荷接续入口与STATUS | 既有S1测试和兼容保留；M20/20本机阶段0／管理IR／切点／完整RuntimePlan相同；最后ReLU/maxpool1122自举／95切点；[REPORT](/home/lhohy/pt_agent_results/u4-s1-complete20-20261027T055957409761/REPORT.json) | 原19结果直接复用；旧服务器作业和全部历史消费保留；CKKS0 |
@@ -143,8 +145,9 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 仍需决定的事项：
 2. report100 的使用口径。§6.24 的通过结果来自一个参与过 §6.19–§6.23 诊断的 report 集：继续沿用并写明开发历史，或由用户提供新句子作为最终报告集（新数据需审批）。
-3. §6.22–§6.24 的提交（需单独批准）。
+3. 已完成（2026-11-02，用户"提交""推送"）：§6.22–§6.24 提交为 73fc7284，已推送到 origin/lhy-agent-dsl。
 4. 后续方向：用剩余额度开新的 r8-v10 在线会话（Qwen 40/40 已用满，需新预算决定），或安排真实 CKKS。
+5. `toolchain.trusted_run` 的超时处理（2026-11-02 发现）：`subprocess.run(timeout=3600)` 只终止直接子进程 `/usr/bin/time`，包驱动和 hecate-opt 被 init 接管后继续运行，占用 CPU 和内存。修正（例如新进程组并在超时时终止整组）涉及 pt_agent 既有模块，需要 spec。详见末尾"A1 同程序 optimized 放置对照"一节。
 
 R0/R1 的第 25 行越界仍在，这是规则基线本身的属性，记录在 R0/R1 一节。
 
@@ -7686,8 +7689,74 @@ report 评测分别用时 520 秒和 611 秒，峰值 2639851520 字节和 12430
 
 **未完成。**
 - report100 的使用口径。
-- §6.22–§6.24 的提交。
 - §4 四行表中 Agent 首个可行程序一行、成本分解和 token 数。
 - CKKS。
 
 **预算与资源。** API 0，账本 244/450；BERT 38/40，Qwen 40/40。资源上限、容差、2400 秒搜索预算、3600 秒进程时限、3.8 GiB 精调停止条件和 Mock 批次 10 都没有改。
+
+### 论文证据表（Claude 于 2026-11-02 整理，用户决定"整理证据表"）
+
+**范围。** 只读现有记录：新运行 0、API 0、report 新读取 0，库与编译器未改。目录 `/home/lhohy/pt_agent_results/paper-evidence-20261102/`：`collect.py`（系统 python3，只用标准库）、`EVIDENCE.json`（全部取值及来源路径）、`EVIDENCE.md`（表格和读表要点）。
+
+**内容。**
+- M1 语法对照（源码核对）：Hecate 前端有 add、sub、mul、neg、rotate、Plain(scale)、bootstrap，没有 rescale／level；上游 `--dacapo` 第一步 RemoveBootstrap 删除用户写的自举；专家库的 HE_ReLU、HE_SiLU 没有阶数和定义域参数。PT-DSL 30 种算子，暴露近似、布局、算法、level 预算和自举提示，同样没有 rescale。A1 冻结程序为 `refresh="compiler"`，没有 refresh／region。
+- M2 团队 188Server 记录（手写 Qwen2.5-0.5B DSL，合成权重，不经过本 Agent）：上游 optimized 放置在一个 block 上先触发 600 CPU-s 的 SIGXCPU，重试在 900 s 墙钟处终止，停在 BypassDetection（修正前的 trace）；团队新增的 depth-dp 27 s、448 自举，greedy 4084；24 层 depth-dp 593 s、59.2 GiB、10835 自举；2 层 decode 真实 CPU CKKS 25.21 h、382 GiB，自举占运行时间 94%。
+- M3 同一编译器下的成本差：A1（R121）Qwen R0→Agent 自举 −43.0%，BERT −34.5%，主要省在 softmax（Qwen 30785→12929，BERT 6712→2462），norm 略增；ResNet20 R6c→R8e7 −41%（旧编译器 r1712）。R9a E1 设计空间的预测延迟跨 4.1–4.5 倍。
+- M4 激活范围、M5 编写成本、M6 旧流程一次生成 0/4、E1 预测一致性、E2 A1 编译规模，以及缺口清单。
+
+**更正 2026-11-02 对论文逻辑的口头评估。**
+- 当时说"编译耗时极长甚至失败"与实测相反，依据只是 A1 tiny 模型在 depth-dp 下的数字。团队记录显示，上游 optimized 放置在真实宽度 Qwen block 上没有完成，depth-dp 和 greedy 是团队移植补丁新增的放置；这一论点有证据，适用条件写在 M2。
+- 当时引用的 ResNet20"344→230"是 R121 下 r6b-127／r6b-63 两个测试快照的自举数；规则与 Agent 的对照应为 R6c 383 → R8e7 226（旧编译器）。
+
+**与 spec 不一致之处。** 本节没有对应 spec。`collect.py` 与 D1、R0/R1 验收的分析脚本一样放在结果目录，没有放进 pt_agent/。
+
+**未完成／缺口。** 见 EVIDENCE.md 末节：本项目程序的真实 CKKS 为 0；optimized 在 A1 程序上 3600 s 内未完成、在四个 CNN／MLP 程序上段错误（见后两节），两种放置的自举数在本项目程序上没有可比数据；其他编译器没有实测；R9b B1／B1+ 未运行；Transformer 主结果为事后重评；模型规模偏小；CNN 对照在旧编译器上。
+
+### A1 同程序 optimized 放置对照（Claude 于 2026-11-02 执行，用户决定"跑 optimized 对照"）
+
+**做法。** 目录 `/home/lhohy/pt_agent_results/A1-optimized-20261102/`，驱动 `driver.py`、`run.sh`。对 A1 两个冻结程序（A1-a624 的 BERT 7910、Qwen 22146）复制已导出的包，只把 `config/compile_argv.json` 中的 `--boot-placement=depth-dp` 换成 `--boot-placement=optimized`（DaCapo 原有的 BypassDetection → CandidateSelection → DaCapoPlanner），其余参数相同。编译器为默认 R121 构建。原 trace bytecode 已清理，用包内原脚本重新 trace。限制沿用可信运行器：6 GiB、单文件 8 GiB、单进程 3600 s；外层 nixrun 3900 s。API 0，report 0，库、编译器和 pt_agent 未改。registry 新增两行（`A1-bert-optimized-placement-20261102T155301-1dcf`、`A1-qwen-optimized-placement-20261102T165359-ad46`）。
+
+**结果。**
+
+| 模型 | 放置 | 结果 | compile s | 峰值 RSS | 自举 |
+|---|---|---|---|---|---|
+| BERT | depth-dp（A1 验收） | 完成 | 10.0 | 786 MiB | 7910 |
+| BERT | optimized | 3600 s 墙钟上限终止，未产出计划 | 3600 | ≥1448 MiB（ps 采样） | — |
+| Qwen | depth-dp（A1 验收） | 完成 | 15.2 | 892 MiB | 22146 |
+| Qwen | optimized | 3600 s 墙钟上限终止，未产出计划 | 3600 | ≥1635 MiB（ps 采样） | — |
+
+- 两次运行中 hecate-opt 都占满 2 核（约 193% CPU，3 个线程），内存平稳，没有接近 6 GiB。被终止时 `/usr/bin/time` 没有记录，峰值 RSS 取 ps 采样最大值。编译日志只有 pass pipeline 的打印，没有记录停在哪个 pass。
+- R0/R1 未跑：规则基线比 Agent 程序大，预先定为只在 optimized 能在 Agent 程序上完成时才跑。
+- 已写入论文证据表 M7，读表要点同步更新。
+
+**发现的问题。** `toolchain.trusted_run` 超时时只终止 `/usr/bin/time`。BERT 的包驱动和 hecate-opt 被 init 接管，在上限后又运行约 2.5 分钟，未完成，由 Claude 手动终止（采样见 `bert/Agent-orphan-samples.txt`）。这段时间与 Qwen 的 trace 和编译前约 2.5 分钟重叠，Qwen trace 26.8 s（A1 验收时 15.4 s）。Qwen 到上限后的遗留进程由清理脚本终止（`qwen/Agent-orphan-cleanup.txt`）。修正涉及 pt_agent 既有模块，列入"阻塞"第 5 项。
+
+**与 spec 不一致之处。** 本节没有对应 spec。驱动放在结果目录，没有放进 pt_agent/。
+
+**未完成。** optimized 的自举数对照仍缺：需要 optimized 能在上限内完成的较小程序（例如 CNN 开发模型）。CNN 已于 2026-11-03 补跑，见下一节。
+
+### CNN 同程序 optimized 放置对照（Claude 于 2026-11-03 执行，用户决定"跑 CNN 对照"）
+
+**做法。** 目录 `/home/lhohy/pt_agent_results/A1-optimized-20261102/cnn/`，驱动 `cnn_driver.py`、`run-cnn.sh`，诊断 `crash_diag.py`。程序为 R8e7 冻结的四个 Agent 程序原样（`r8e7-reconfirm-20261022T122558/models/<模型>/program.ptdsl`，连同 calibration.json）。depth-dp 一侧走当前 `run._inside` 的 check → export → compile 阶段；optimized 一侧复制同一导出包，只把 `config/compile_argv.json` 的 `--boot-placement=depth-dp` 换成 `--boot-placement=optimized`，经 `run._compile_export` 重新 trace 和编译。构建 R121，限制 6 GiB、单文件 8 GiB、单进程 3600 s。check 阶段只读 calibration 划分；API 0，report 0，库、编译器和 pt_agent 未改。registry 新增四行 `M7-<模型>-optimized-placement-20261103T…`。驱动在 Nix 结束后清理仍引用本次输出目录的进程（阻塞第 5 项），四次均为 0 个。
+
+**结果。**
+
+| 模型 | depth-dp（R121） | optimized |
+|---|---|---|
+| mlp | 0.5 s，115 MiB，13 次自举，1518 步 | 0.4 s 段错误（返回 245），无计划 |
+| cnn_plain | 1.1 s，301 MiB，40 次自举，4700 步 | 2.4 s 段错误，无计划 |
+| resnet20_silu | 7.7 s，1886 MiB，114 次自举，21671 步 | 328.9 s 段错误，峰值 2099 MiB，无计划 |
+| resnet20 | 7.0 s，1886 MiB，176 次自举，23432 步 | 64.6 s 段错误，峰值 1885 MiB，无计划 |
+
+- 四次崩溃的第 3 帧同为 0x4a04c8；addr2line 给出 `CoverageRecorderPass::runOnOperation`，由 `DaCapoPlannerPass::runOnOperation` 嵌套的 PassManager 调用。`CoverageRecorder.cpp`、`DaCapoPlanner.cpp`、`CandidateSelection.cpp`、`CandidateAnalysis.cpp` 与 `third_party/dacapo` 的上游源码相同。
+- resnet20_silu 和 resnet20 在崩溃前先报 `'earth.bootstrap' op inferred type(s) 'tensor<1x!earth.ci<43 * 0>>' are incompatible with return type(s) of operation 'tensor<1x!earth.ci<0 * 0>>'`；mlp、cnn_plain 没有报错行。
+- 同一份 mlp trace 交给 R121 和 r1712 两个 hecate-opt，都在约 0.45 s 段错误（`cnn/mlp-diag/REPORT.json`），与 R121 的自举段改动无关。
+- 项目内 optimized 此前只在玩具程序上跑过（r1712）：S0 P1 编译完成（0 次自举）；R2b c1／c2 规划完成（1／2 次自举），因未传 boot profile 在导出 RuntimePlan 时报错。
+- R121 下 depth-dp 的自举数低于 r1712 时的 R8e7 记录（24／72／160／226 → 13／40／114／176）。M3b 的 CNN 数字仍是 r1712 的，证据表已注明。
+- 已写入论文证据表 M7b，读表要点和缺口第 2、7 条同步更新。
+
+**规则调整。** 运行前定的是"一例 optimized 未完成就跳过更大的程序"，用于控制超时耗时。mlp 0.4 s 崩溃后，Claude 改为只有超时才跳过：崩溃只耗几秒，对更大程序的结果没有预示。没有一例超时。R6c 规则基线按事先规则只在 resnet20 用 optimized 编完时才跑，因此未跑。
+
+**与 spec 不一致之处。** 本节没有对应 spec。驱动放在结果目录，没有放进 pt_agent/。
+
+**未完成。** 本项目程序上 optimized 的自举数仍为空。若要取得，需要让上游规划器在这些程序上不崩溃，这涉及修改 DaCapo，按 AGENTS.md 需要单独批准的方案；本轮没有定位到具体的代码缺陷。
