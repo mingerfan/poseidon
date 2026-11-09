@@ -1,10 +1,10 @@
 """Deterministic activation tuning using held-out validation and predicted cost."""
 
 import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import time
 
-from ..cost import estimate, estimate_normalized
+from ..cost import estimate, estimate_normalized, estimate_fast, estimate_normalized_fast
 from ..dsl.ir import Program
 from ..dsl.printer import print_program
 from ..tensor_sim import cached_estimate
@@ -30,6 +30,11 @@ class TuneResult:
     seconds: float
     history: list[dict]
     feasible: bool
+    search: str = "sweep"
+    llm_calls: int = 0
+    llm_s: float = 0.0
+    estimates: int = 0
+    accepted_states: list[dict] = field(default_factory=list)
 
 
 def _strict(result):
@@ -86,21 +91,25 @@ def _new_settings(attrs):
 
 
 def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
-         engine: str = "tensor", cache: bool = True, engine_profile: str = "mock") -> TuneResult:
-    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10'):
+         engine: str = "tensor", cache: bool = True, engine_profile: str = "mock",
+         client=None, iteration=0) -> TuneResult:
+    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         from ..dsl.interface import require_interface
         require_interface(program, ctx.model_info)
     from ..transformer_lower import uses_transformer
     if uses_transformer(program):
         from .transformer_tuner import tune as token_tune
         return token_tune(program,ctx,budget_s=budget_s,max_sweeps=max_sweeps,engine=engine,
-                          cache=cache,engine_profile=engine_profile)
+                          cache=cache,engine_profile=engine_profile,
+                          **(dict(client=client,iteration=iteration) if getattr(ctx,'tune_search','sweep')=='llm-select' else {}))
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
     if engine_profile == "tensor":
         engine = "tensor"
     started = time.monotonic()
-    estimator = estimate_normalized if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10') else estimate
+    estimator = estimate_normalized if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11') else estimate
+    if getattr(ctx, 'placement', None):
+        estimator = estimate_normalized_fast if estimator is estimate_normalized else estimate_fast
     def cost_of(candidate):
         return cached_estimate(candidate, ctx.weights, ctx.profile, estimator, cache=cache)
 
@@ -113,6 +122,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
     cur = copy.deepcopy(program)
     before = cost_of(cur)
     history = []
+    accepted_states = []
     coarse_evals = full_evals = 0
 
     def full(candidate):
@@ -147,7 +157,8 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         record('result', candidate, after, result, feasible, feasible=feasible,
                boot_input_max_abs=result.get('boot_input_max_abs'), worst_acts=result.get('worst_acts', []))
         return TuneResult(candidate, print_program(candidate), _changes(program, candidate), before, after,
-                          coarse_evals, full_evals, time.monotonic()-started, history, feasible)
+                          coarse_evals, full_evals, time.monotonic()-started, history, feasible,
+                          accepted_states=accepted_states)
 
     initial = full(cur)
     if initial['diverged'] or not _exact_check(cur, ctx, **(dict(engine="tensor") if engine_profile == "tensor" else {}))['ok']:
@@ -272,6 +283,8 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
             current_cost = cost_of(cur)
             record('rollback', cur, current_cost, current_result, True,
                    kept=low, removed=len(accepted)-low, sweep=sweep)
+        if print_program(cur) != print_program(base):
+            accepted_states.append(dict(source=print_program(cur), cost=copy.deepcopy(current_cost), round=sweep+1))
         if not accepted or time.monotonic()-started >= budget_s:
             break
     return finish(cur, current_result, current_result['feasible'])

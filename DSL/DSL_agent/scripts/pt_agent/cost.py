@@ -8,7 +8,7 @@ from weakref import WeakSet
 
 from .backends import CountBackend, DagBackend, RefreshBackend
 from .lower import lower
-from .placement import depth_dp
+from .placement import depth_dp, PlacementError
 from .toolchain import BOOT_CONFIG_DIR
 
 
@@ -51,20 +51,38 @@ def load_latency(profile: str) -> dict:
     return {key.removeprefix("earth."): values for key, values in table.items()}
 
 
+def depth_dp_estimate(backend, profile: str = "qwen48"):
+    """The depth-dp placement the estimate uses, on a finished (and, for CostDag, finalized) DAG."""
+    config = PROFILES[profile]
+    return depth_dp(backend, last_boot_level=config['boot_out_level']-config['boot_in_level'],
+                    boot_in_level=config['boot_in_level'], boot_out_level=config['boot_out_level'],
+                    latency_table=load_latency(profile),
+                    boot_normalization_levels=config.get('boot_normalization_levels', 1))
+
+
 def estimate(program, weights, *, profile: str = "qwen48", placement_model=None,
-             frontend_normalize=None) -> dict:
+             frontend_normalize=None, verify_plan=True) -> dict:
     if frontend_normalize is None:
         from .transformer_lower import uses_transformer
         frontend_normalize = uses_transformer(program)
     config = PROFILES[profile]
     if placement_model is None:
-        placement_model = ('depth-dp' if program.header.refresh == 'compiler'
-                           and program.header.placement == 'depth-dp' else 'lazy')
-    if placement_model not in ('depth-dp', 'lazy'):
-        raise ValueError('placement_model must be depth-dp or lazy')
+        if program.header.refresh == 'agent' and program.header.placement in ('depth-dp-plan', 'program-plan'):
+            placement_model = program.header.placement
+        else:
+            placement_model = ('depth-dp' if program.header.refresh == 'compiler'
+                               and program.header.placement == 'depth-dp' else 'lazy')
+    if placement_model not in ('depth-dp', 'lazy', 'depth-dp-plan', 'program-plan'):
+        raise ValueError('placement_model must be depth-dp, depth-dp-plan, program-plan or lazy')
     table = load_latency(profile)
-    exact = placement_model == 'depth-dp' or program.header.refresh == 'agent'
-    if placement_model == 'depth-dp':
+    exact = placement_model in ('depth-dp', 'depth-dp-plan', 'program-plan') or program.header.refresh == 'agent'
+    if placement_model in ('depth-dp-plan', 'program-plan'):
+        # E5a: the agent places bootstraps with the same depth-dp, recorded by call number.
+        from .plan import plan_program, verify_program
+        plan, backend, placement = plan_program(program, weights, profile=profile,
+                                                frontend_normalize=frontend_normalize)
+        _estimate_backends.add(backend)
+    elif placement_model == 'depth-dp':
         if frontend_normalize:
             from .backends.cost_dag import CostDag
             backend = CostDag(program.header.slots)
@@ -74,10 +92,8 @@ def estimate(program, weights, *, profile: str = "qwen48", placement_model=None,
         lower(program, weights, backend)
         if frontend_normalize:
             backend.finalize()
-        placement = depth_dp(backend, last_boot_level=config['boot_out_level']-config['boot_in_level'],
-                             boot_in_level=config['boot_in_level'], boot_out_level=config['boot_out_level'],
-                             latency_table=table,
-                             boot_normalization_levels=config.get('boot_normalization_levels', 1))
+        placement = depth_dp_estimate(backend, profile)
+    if placement_model in ('depth-dp', 'depth-dp-plan', 'program-plan'):
         stats = backend.stats()
         counts = stats['counts']
         counts['boot'] = placement.boots
@@ -114,6 +130,27 @@ def estimate(program, weights, *, profile: str = "qwen48", placement_model=None,
         if uses_transformer(program):
             from .transformer_cost import details
             result.update(details(program,weights,backend,placement))
+        if placement_model in ('depth-dp-plan', 'program-plan'):
+            result['refresh_plan'] = dict(variant=plan['placement'], candidates=plan.get('candidates'),
+                                          calls=plan['calls'], substitutions=len(plan['substitutions']),
+                                          outputs=len(plan['outputs']),
+                                          dead_calls=sum(end-start for start, end in plan['dead']),
+                                          timing=plan['timing'])
+            if verify_plan:
+                result['refresh_plan']['replay'] = verify_program(program, weights, plan, profile=profile)
+            if placement_model == 'program-plan':
+                from .stage_plan import simulate, model_for
+                model = model_for(profile)
+                simulated = simulate(backend, placement.refreshed_uses, model)
+                if simulated is None:
+                    raise PlacementError('Selected program-plan failed level simulation')
+                level = simulated[0]
+                grouped = {}
+                for nid in placement.boot_nodes:
+                    grouped.setdefault(location(nid), []).append(level[nid] - model.boot_in_level)
+                result['refresh_plan']['levels_left_at_refresh'] = [
+                    dict(line=line, call_lines=list(call_lines), mean=sum(values)/len(values))
+                    for (line, call_lines), values in grouped.items()]
         return result
     inner = CountBackend(program.header.slots, boot_out_level=config["boot_out_level"])
     _estimate_backends.add(inner)
@@ -131,9 +168,18 @@ def estimate(program, weights, *, profile: str = "qwen48", placement_model=None,
                 if refresh['latency_us'] else 0.0)
 
 
-def estimate_normalized(program, weights, *, profile="qwen48", placement_model=None):
+def estimate_normalized(program, weights, *, profile="qwen48", placement_model=None, verify_plan=True):
     """r8-v7 selects the normalized graph even for an existing CNN program."""
-    return estimate(program,weights,profile=profile,placement_model=placement_model,frontend_normalize=True)
+    return estimate(program,weights,profile=profile,placement_model=placement_model,frontend_normalize=True,
+                    verify_plan=verify_plan)
+
+
+def estimate_fast(program, weights, *, profile="qwen48", **kwargs):
+    return estimate(program, weights, profile=profile, verify_plan=False, **kwargs)
+
+
+def estimate_normalized_fast(program, weights, *, profile="qwen48", **kwargs):
+    return estimate_normalized(program, weights, profile=profile, verify_plan=False, **kwargs)
 
 
 def plan_latency(plan_path, profile: str = "qwen48") -> dict:

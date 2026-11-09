@@ -203,9 +203,12 @@ def normalize(b, xs, layout, weight, bias, eps, a, *, rms=False, exact=False, ob
     result = []
     for t in range(layout.L):
         chunk = xs[t*len(blocks):(t+1)*len(blocks)]
+        b.stage('mean')
         mean = accumulate(scalar_sum(b, x, 0, block.size) for x, (_, _, block) in zip(chunk, blocks))*(1/layout.D)
+        b.stage('center')
         centered = chunk if rms else [x-broadcast(b, mean, block.size)
                                       for x, (_, _, block) in zip(chunk, blocks)]
+        b.stage('variance')
         variance = accumulate(scalar_sum(b, x*x, 0, block.size)
                               for x, (_, _, block) in zip(centered, blocks))*(1/layout.D)
         # Broadcast the positive variance before evaluating rsqrt: every slot
@@ -213,7 +216,9 @@ def normalize(b, xs, layout, weight, bias, eps, a, *, rms=False, exact=False, ob
         variance = broadcast(b, variance, b.slots)+eps
         if observe is not None:
             observe(variance, FlatLayout(b.slots, 1), a)
+        b.stage('rsqrt')
         inverse = apply(b, variance, a, exact=exact)
+        b.stage('scale')
         for x, (lo, hi, block) in zip(centered, blocks):
             value = x*inverse
             if weight is not None:
@@ -293,17 +298,21 @@ def matmul(b, left, ll, right, rl, *, transpose_b, heads, kv_heads, scale=None, 
 
 def _square_normalize(b, probabilities, widths, steps, step_inv, exact, observe, final_inv=None):
     for index in range(steps):
+        b.stage(f'round{index}.square')
         squares = [p*p for p in probabilities]
+        b.stage(f'round{index}.sum')
         total = accumulate(scalar_sum(b, q, 0, width) for q, width in zip(squares, widths))
         total = broadcast(b, total, b.slots)
         last = final_inv is not None and index == steps-1
         attrs = final_inv if last else step_inv
         if observe is not None:
             observe('final_inv' if last else f'step_inv[{index}]', total, FlatLayout(b.slots, 1), attrs, None)
+        b.stage(f'round{index}.inverse')
         inverse = apply(b, total, attrs, exact=exact)
         inverse_result = getattr(observe, 'inverse_result', None)
         if inverse_result is not None:
             inverse_result('final_inv' if last else f'step_inv[{index}]', total, inverse)
+        b.stage(f'round{index}.normalize')
         probabilities = [q*inverse for q in squares]
     return probabilities
 
@@ -317,6 +326,7 @@ def softmax(b, xs, layout, exp, inv, *, keep='all', mask=None, mask_layout=None,
         for i in range(layout.L):
             exponentials = []
             active = min(layout.D, i+1) if keep == 'causal' else layout.D
+            b.stage('exp')
             for c, (lo, hi, block) in enumerate(blocks):
                 width = max(0, min(hi, active)-lo)
                 x = xs[i*len(blocks)+c]
@@ -331,6 +341,7 @@ def softmax(b, xs, layout, exp, inv, *, keep='all', mask=None, mask_layout=None,
                     observe('exp', x, FlatLayout(b.slots, width), exp, key)
                 e = apply(b, x, exp, exact=exact)*plain(b, width)
                 exponentials.append(e if key is None else e*key)
+            b.stage('sum')
             total = accumulate(scalar_sum(b, e, 0, block.size)
                                for e, (_, _, block) in zip(exponentials, blocks))
             total = broadcast(b, total, b.slots)
@@ -338,12 +349,14 @@ def softmax(b, xs, layout, exp, inv, *, keep='all', mask=None, mask_layout=None,
                 total = total*(1/inv_scale)
             if observe is not None:
                 observe('inv', total, FlatLayout(b.slots, 1), inv, None)
+            b.stage('inverse')
             inverse = apply(b, total, inv, exact=exact)
             inverse_result = getattr(observe, 'inverse_result', None)
             if inverse_result is not None:
                 inverse_result('inv', total, inverse)
             if inv_scale != 1:
                 inverse = inverse*(1/inv_scale)
+            b.stage('normalize')
             probabilities = [e*inverse for e in exponentials]
             if steps:
                 probabilities = _square_normalize(b, probabilities,
@@ -363,6 +376,7 @@ def softmax(b, xs, layout, exp, inv, *, keep='all', mask=None, mask_layout=None,
         terms = []
         for h in range(heads):
             active = min(width, i+1) if keep == 'causal' else width
+            b.stage('exp')
             if steps:
                 # Fold the public 2^-k into the existing head mask multiply.
                 segment = (xs[i].rotate(h*width)-shift)*plain(b, active, coefficient=2.0**-steps)
@@ -375,22 +389,26 @@ def softmax(b, xs, layout, exp, inv, *, keep='all', mask=None, mask_layout=None,
             e = apply(b, segment, exp, exact=exact)*plain(b, active)
             if key is not None:
                 e = e*key
+            b.stage('sum')
             total = scalar_sum(b, e, 0, active)
             total = broadcast(b, total, b.slots)
             if inv_scale != 1:
                 total = total*(1/inv_scale)
             if observe is not None:
                 observe('inv', total, FlatLayout(b.slots, 1), inv, None)
+            b.stage('inverse')
             inverse = apply(b, total, inv, exact=exact)
             inverse_result = getattr(observe, 'inverse_result', None)
             if inverse_result is not None:
                 inverse_result('inv', total, inverse)
             if inv_scale != 1:
                 inverse = inverse*(1/inv_scale)
+            b.stage('normalize')
             probability = e*inverse
             if steps:
                 probability = _square_normalize(b, [probability], [active],
                     steps, step_inv, exact, observe, final_inv)[0]
+            b.stage('combine')
             terms.append(probability.rotate(-h*width))
         result.append(accumulate(terms))
     return result, layout

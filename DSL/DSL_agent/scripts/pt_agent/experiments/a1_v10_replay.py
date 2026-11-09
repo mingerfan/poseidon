@@ -3,6 +3,7 @@
 import copy
 import json
 from pathlib import Path
+import time
 
 from .. import domain_criteria as criteria
 from ..dsl.parser import parse
@@ -166,10 +167,14 @@ def regrade(args):
 
 
 def replay_step(args):
+    started = time.monotonic()
     from ..planners.agent import new_agent_state, agent_step, agent_result
     from ..planners.transformer_session import load_state, save_state, write_session_result
     from ..cost import release_estimate_caches
     ctx = context(args.model_dir)
+    ctx.placement = getattr(args, 'placement', None)
+    from ..tensor_sim import reset_timing, timing_snapshot
+    reset_timing()
     original = Path(args.resume_session)
     review = read(args.response_file)
     cases = [row for row in review['cases'] if row['session'] == str(original)]
@@ -181,6 +186,10 @@ def replay_step(args):
     state = load_state(checkpoint) if checkpoint.exists() else new_agent_state(ctx,max_iters=len(cases),
         engine_profile='tensor',tune_rule=getattr(args,'tune_rule',None) or 'v8-6.17')
     state.update(retrospective=True,label=LABEL,original_session=str(original))
+    if ctx.placement:
+        if state.get('placement', ctx.placement) != ctx.placement:
+            raise ValueError('Session placement differs from the requested placement')
+        state['placement'] = ctx.placement
     state['model_call_offset'] = cases[0]['call']-1
     phase = state['phase']
     if phase == 'done':
@@ -211,7 +220,58 @@ def replay_step(args):
     return dict(complete=True,label=LABEL,llm_calls=0,report_images=0,step=phase,
                 next_step=state['phase'],iteration=state['iteration'],replayed_calls=state['calls'],
                 original_session=str(original),state=str(checkpoint),agent=record,
-                tune_rule=state['tune_rule'],retrospective=True)
+                tune_rule=state['tune_rule'],retrospective=True,
+                **(dict(placement=ctx.placement, timing=dict(timing_snapshot(),
+                    total_s=time.monotonic()-started)) if ctx.placement else {}))
+
+
+def recost(args):
+    """E5c: preserve saved validation and recompute only placement cost and resources."""
+    from ..cost import PROFILES, estimate_normalized_fast, release_estimate_caches
+    from ..planners.agent_tools import apply_placement, cost_feedback
+    from ..tensor_sim import reset_timing, timing_snapshot
+    ctx = context(args.model_dir)
+    ctx.placement = args.placement
+    if ctx.placement != 'program-plan':
+        raise ValueError('log-recost requires placement=program-plan')
+    assert PROFILES[ctx.profile]['boot_input_bound'] is None
+    original = read(args.response_file)
+    result = copy.deepcopy(original)
+    result.update(placement=ctx.placement, api_calls=0, source_reevaluation=str(args.response_file),
+                  label='事后回放：LLM 输出固定，代价改用 program-plan')
+    reset_timing()
+    changes = []
+    for case in result['cases']:
+        feedback = copy.deepcopy(read(Path(case['feedback'])))
+        before = dict(feedback.get('cost') or {})
+        began = time.monotonic()
+        snapshot = timing_snapshot()
+        if feedback['stage'] == 'complete':
+            text = apply_placement(Path(case['source']).read_text(), ctx)
+            program = parse(text)
+            lines = text.splitlines()
+            cost, feedback['cost'] = cost_feedback(program, ctx, estimate_normalized_fast,
+                lambda n: lines[n-1].strip() if n and 1 <= n <= len(lines) else '')
+            errors = [dict(code='E_RESOURCE', limit=name, value=cost[name], max=limit)
+                      for name, limit in PROFILES[ctx.profile]['limits'].items()
+                      if limit is not None and cost[name] > limit]
+            if errors:
+                feedback.update(stage='resources', feasible=False, errors=errors)
+            release_estimate_caches()
+        path = args.out/f"call-{case['call']:03d}-feedback.json"
+        _write(path, json_safe(feedback))
+        case['feedback'] = str(path)
+        timing = {key: value-snapshot[key] for key, value in timing_snapshot().items()}
+        timing['total_s'] = time.monotonic()-began
+        changes.append(dict(call=case['call'], session=case['session'], stage=feedback['stage'],
+            old={key:before.get(key) for key in ('boots_pred','latency_pred_us')},
+            new={key:(feedback.get('cost') or {}).get(key) for key in ('boots_pred','latency_pred_us')},
+            timing=timing))
+        print(f"RECOST call={case['call']} stage={feedback['stage']} old={changes[-1]['old']} new={changes[-1]['new']}", flush=True)
+    result.update(complete=True, cost_changes=changes, timing=timing_snapshot())
+    _write(args.out/'REEVALUATION.json', json_safe(result))
+    return json_safe(dict(complete=True, cases=len(result['cases']), cost_changes=changes,
+                         placement=ctx.placement, timing=timing_snapshot(), llm_calls=0, report_images=0))
 
 
 def baseline_reuse(args):

@@ -115,14 +115,14 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None,
         return tuple(weights[name])
 
     def emit(code, op, msg):
-        if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+        if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
             from .constraints import explanation
             msg += ' '+explanation(code, op.kind)
         diags.append(Diag(code, "warning" if code.startswith("W_") else "error", op.lineno, op.id, msg,
                           op.call_lines, op.macro_stack))
 
     for op in program.ops:
-        if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+        if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
             from .methods import approximation_roles, supported_methods
             for role, fn, method in approximation_roles(op):
                 supported = supported_methods(fn)
@@ -136,7 +136,7 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None,
         for index, vid in enumerate(op.inputs):
             if vid in plain and not (op.kind in ("add", "sub", "mul") and index == 1):
                 emit("E_KIND", op, "Plain parameters apply only to the second add/sub/mul input")
-            if (prompt_version in ('r8-v8','r8-v9','r8-v10') and vid in masks
+            if (prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11') and vid in masks
                     and not (op.kind == 'pack' or op.kind in ('softmax', 'select') and index == 1)):
                 emit('E_KIND', op, 'A packed Mask is used only as softmax mask= or the select mask')
         tags = [layouts[vid] for vid in op.inputs]
@@ -197,7 +197,7 @@ def check(program: Program, weights: Mapping[str, Sequence[int]], *, graph=None,
                 emit("W_REFRESH_COMPILER", op, "Compiler refresh mode lowers this refresh to identity")
     if graph is not None:
         diags.extend(weight_usage_diags(program, graph))
-    if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+    if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         # Header and post-pass diagnostics do not pass through emit().
         from .constraints import explanation
         diags = [Diag(d.code, d.severity, d.lineno, d.op_id,

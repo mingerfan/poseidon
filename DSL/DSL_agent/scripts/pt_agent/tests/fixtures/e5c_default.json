@@ -1,0 +1,313 @@
+{
+  "feedback": {
+    "stage": "complete",
+    "feasible": true,
+    "exact": {
+      "ok": true,
+      "logit_max_diff": 0.0,
+      "first_mismatch": null,
+      "act_count": [
+        1,
+        1
+      ]
+    },
+    "cost": {
+      "latency_pred_us": 1032765,
+      "boots_pred": 4,
+      "max_depth": 10,
+      "ops_total": 59,
+      "rot_keys": 2,
+      "placement_model": "depth-dp",
+      "placement_exact": true,
+      "barriers": 2,
+      "boot_share": 0.9826785377118705,
+      "hotspots": [
+        {
+          "line": 10,
+          "call_lines": [
+            5
+          ],
+          "latency_share": 0.995,
+          "boots": 4,
+          "line_text": "y = act(x, fn=\"relu\", method=\"cheb\", deg=15, domain=(-8.0, 8.0))",
+          "call_texts": [
+            "h = activate(h)"
+          ]
+        },
+        {
+          "line": 4,
+          "call_lines": [],
+          "latency_share": 0.003,
+          "boots": 0,
+          "line_text": "h = linear(x, w=W[\"identity\"], algo=\"bsgs\")",
+          "call_texts": []
+        },
+        {
+          "line": 6,
+          "call_lines": [],
+          "latency_share": 0.002,
+          "boots": 0,
+          "line_text": "out = linear(h, w=W[\"identity\"], algo=\"bsgs\")",
+          "call_texts": []
+        }
+      ]
+    },
+    "validation": {
+      "agree": 4,
+      "total": 4,
+      "diverged": false,
+      "n_diverged": 0,
+      "diverged_indices": [],
+      "images_done": 4,
+      "worst_acts": [
+        {
+          "program_line": 10,
+          "graph_tensor": "hidden",
+          "max_u": 0.25,
+          "obs_min": -2.0,
+          "obs_max": 2.0,
+          "deg": 15,
+          "method": "cheb",
+          "degrees": null,
+          "domain": [
+            -8.0,
+            8.0
+          ]
+        }
+      ],
+      "max_u": 0.25,
+      "boot_input_max_abs": 1.9119327696979362,
+      "boot_input_bound": null,
+      "top1": 100.0,
+      "exact_top1": 100.0,
+      "acc_drop_pp": 0.0
+    }
+  },
+  "tune": {
+    "source": "@fhe.program(slots=16384, refresh=\"compiler\", placement=\"depth-dp\")\ndef toy(v: Cipher[1, 2]):\n    v0 = pack(v, layout=\"flat\", gap=1)\n    v1 = linear(v0, w=W[\"identity\"], algo=\"bsgs\")\n    v2 = act(v1, fn=\"relu\", method=\"cheb\", deg=7, domain=(-2.5, 2.5))\n    v3 = linear(v2, w=W[\"identity\"], algo=\"bsgs\")\n    return v3\n",
+    "changes": [
+      {
+        "line": 10,
+        "call_lines": [
+          5
+        ],
+        "kind": "domain",
+        "old": [
+          -8.0,
+          8.0
+        ],
+        "new": [
+          -2.5,
+          2.5
+        ]
+      },
+      {
+        "line": 10,
+        "call_lines": [
+          5
+        ],
+        "kind": "deg",
+        "old": 15,
+        "new": 7
+      }
+    ],
+    "cost_before": {
+      "counts": {
+        "add": 23,
+        "sub": 4,
+        "neg": 0,
+        "mul_cc": 7,
+        "mul_cp": 17,
+        "rot": 4,
+        "boot": 4
+      },
+      "ops_total": 59,
+      "max_depth": 10,
+      "rot_keys": 2,
+      "distinct_consts": 21,
+      "const_bytes": 2752512,
+      "boots_pred": 4,
+      "latency_pred_us": 1032765,
+      "level_hist": {},
+      "placement_model": "depth-dp",
+      "placement_exact": true,
+      "barriers": 2,
+      "boot_nodes": [
+        7,
+        19,
+        33,
+        47
+      ],
+      "hotspots": [
+        {
+          "line": 10,
+          "call_lines": [
+            5
+          ],
+          "latency_share": 0.995,
+          "boots": 4
+        },
+        {
+          "line": 4,
+          "call_lines": [],
+          "latency_share": 0.003,
+          "boots": 0
+        },
+        {
+          "line": 6,
+          "call_lines": [],
+          "latency_share": 0.002,
+          "boots": 0
+        }
+      ],
+      "boot_share": 0.9826785377118705
+    },
+    "cost_after": {
+      "counts": {
+        "add": 14,
+        "sub": 3,
+        "neg": 0,
+        "mul_cc": 4,
+        "mul_cp": 11,
+        "rot": 4,
+        "boot": 2
+      },
+      "ops_total": 38,
+      "max_depth": 9,
+      "rot_keys": 2,
+      "distinct_consts": 13,
+      "const_bytes": 1703936,
+      "boots_pred": 2,
+      "latency_pred_us": 519468,
+      "level_hist": {},
+      "placement_model": "depth-dp",
+      "placement_exact": true,
+      "barriers": 2,
+      "boot_nodes": [
+        7,
+        33
+      ],
+      "hotspots": [
+        {
+          "line": 10,
+          "call_lines": [
+            5
+          ],
+          "latency_share": 0.502,
+          "boots": 1
+        },
+        {
+          "line": 6,
+          "call_lines": [],
+          "latency_share": 0.492,
+          "boots": 1
+        },
+        {
+          "line": 4,
+          "call_lines": [],
+          "latency_share": 0.005,
+          "boots": 0
+        }
+      ],
+      "boot_share": 0.9768416918847744
+    },
+    "coarse_evals": 1,
+    "full_evals": 3,
+    "history": [
+      {
+        "phase": "domain",
+        "latency_pred_us": 1032765,
+        "agree": 4,
+        "total": 4,
+        "max_u": 0.8,
+        "top1": 100.0,
+        "exact_top1": 100.0,
+        "acc_drop_pp": 0.0,
+        "accepted": true,
+        "changes": [
+          {
+            "line": 10,
+            "call_lines": [
+              5
+            ],
+            "kind": "domain",
+            "old": [
+              -8.0,
+              8.0
+            ],
+            "new": [
+              -2.5,
+              2.5
+            ]
+          }
+        ]
+      },
+      {
+        "phase": "coarse",
+        "latency_pred_us": 519468,
+        "agree": 4,
+        "total": 4,
+        "max_u": 0.8,
+        "top1": 100.0,
+        "exact_top1": 100.0,
+        "acc_drop_pp": 0.0,
+        "accepted": true,
+        "act": 2,
+        "line": 10,
+        "call_lines": [
+          5
+        ],
+        "kind": "deg",
+        "old": 15,
+        "new": 7,
+        "sweep": 0
+      },
+      {
+        "phase": "confirm",
+        "latency_pred_us": 519468,
+        "agree": 4,
+        "total": 4,
+        "max_u": 0.8,
+        "top1": 100.0,
+        "exact_top1": 100.0,
+        "acc_drop_pp": 0.0,
+        "accepted": true,
+        "sweep": 0
+      },
+      {
+        "phase": "result",
+        "latency_pred_us": 519468,
+        "agree": 4,
+        "total": 4,
+        "max_u": 0.8,
+        "top1": 100.0,
+        "exact_top1": 100.0,
+        "acc_drop_pp": 0.0,
+        "accepted": true,
+        "feasible": true,
+        "boot_input_max_abs": 2.0035880363625,
+        "worst_acts": [
+          {
+            "program_line": 10,
+            "graph_tensor": "hidden",
+            "max_u": 0.8,
+            "obs_min": -2.0,
+            "obs_max": 2.0,
+            "deg": 7,
+            "method": "cheb",
+            "degrees": null,
+            "domain": [
+              -2.5,
+              2.5
+            ]
+          }
+        ]
+      }
+    ],
+    "feasible": true,
+    "search": "sweep",
+    "llm_calls": 0,
+    "llm_s": 0.0,
+    "estimates": 0
+  }
+}

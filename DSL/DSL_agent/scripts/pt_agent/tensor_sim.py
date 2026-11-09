@@ -9,7 +9,9 @@ from collections import Counter, OrderedDict, defaultdict
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import lru_cache
+from functools import wraps
 import resource
+import time
 import weakref
 
 import numpy as np
@@ -38,6 +40,44 @@ _prefix = OrderedDict()
 _prefix_bytes = 0
 _prefix_limit = DEFAULT_PREFIX_BYTES
 _counts = {}
+_timing = dict(estimate_s=0.0, validation_s=0.0, plan_s=0.0)
+_estimate_calls = 0
+
+
+def estimate_calls():
+    """Monotonic count of actual estimates, including cache-disabled calls."""
+    return _estimate_calls
+
+
+def timing_snapshot():
+    return dict(_timing)
+
+
+def reset_timing():
+    for name in _timing:
+        _timing[name] = 0.0
+
+
+def timed(name):
+    def decorate(function):
+        @wraps(function)
+        def measured(*args, **kwargs):
+            started = time.monotonic()
+            try:
+                return function(*args, **kwargs)
+            finally:
+                _timing[name] += time.monotonic()-started
+        return measured
+    return decorate
+
+
+@timed('estimate_s')
+def _measure_estimate(program, weights, profile, estimator):
+    global _estimate_calls
+    _estimate_calls += 1
+    result = estimator(program, weights, profile=profile)
+    _timing['plan_s'] += sum(result.get('refresh_plan', {}).get('timing', {}).values())
+    return result
 
 
 def _prefix_capacity():
@@ -145,7 +185,7 @@ def result_cache_put(key, value):
 
 def cached_estimate(program, weights, profile, estimator, *, cache=True):
     if not cache:
-        return estimator(program, weights, profile=profile)
+        return _measure_estimate(program, weights, profile, estimator)
     from .cost import PROFILES
     configuration = PROFILES[profile] if isinstance(profile, str) else profile
     # Hotspot locations are consumed by the tuner's ordering even when the
@@ -157,7 +197,7 @@ def cached_estimate(program, weights, profile, estimator, *, cache=True):
         _count("estimate", "hits")
         return deepcopy(_estimates[key])
     _count("estimate", "misses")
-    result = estimator(program, weights, profile=profile)
+    result = _measure_estimate(program, weights, profile, estimator)
     _estimates[key] = deepcopy(result)
     return result
 

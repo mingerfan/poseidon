@@ -1,6 +1,6 @@
 """The specified depth-dp boundaries and full-level bootstrap simulation."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .backends.dag import DagBackend
 
@@ -14,6 +14,9 @@ class Placement:
     boot_nodes: list[int]
     node_latency: dict[int, float]
     max_depth: int
+    # E5a: for each bootstrapped node, the users (node ids; len(dag.kind) for the outputs) that the
+    # simulation below served with the refreshed value.
+    refreshed_uses: dict[int, list[int]] = field(default_factory=dict)
 
 
 class PlacementError(Exception):
@@ -88,6 +91,7 @@ def depth_dp(dag: DagBackend, *, last_boot_level: int, boot_in_level: int, boot_
     live = {nid: None for nid, kind in enumerate(dag.kind) if kind == 'input' and users[nid]}
     nxt = barriers = 0
     boot_nodes, node_latency = [], {}
+    booted, refreshed = set(), {}
     for nid in sorted(range(n+1), key=depth.__getitem__):
         if nid != ret and dag.kind[nid] == 'input':
             continue
@@ -101,11 +105,18 @@ def depth_dp(dag: DagBackend, *, last_boot_level: int, boot_in_level: int, boot_
                 if levels[value] > safe:
                     levels[value] = 0
                     boot_nodes.append(value)
+                    booted.add(value)
                     node_latency[value] = node_latency.get(value, 0)+latency_table['bootstrap_single'][boot_in_level]
             nxt += 1
         if nid == ret:
+            for value in dag._outputs or []:
+                if value.nid in booted:
+                    refreshed.setdefault(value.nid, set()).add(ret)
             continue
         args, kind = dag.args[nid], dag.kind[nid]
+        for arg in args:
+            if arg in booted:
+                refreshed.setdefault(arg, set()).add(nid)
         level = max((levels[arg] for arg in args), default=0)
         table_level = boot_out_level-level
         if kind in ('mul_cc', 'mul_cp'):
@@ -126,4 +137,5 @@ def depth_dp(dag: DagBackend, *, last_boot_level: int, boot_in_level: int, boot_
                 live.pop(arg, None)
         if remaining[nid] > 0:
             live[nid] = None
-    return Placement(cuts, barriers, len(boot_nodes), sum(node_latency.values()), boot_nodes, node_latency, maxd)
+    return Placement(cuts, barriers, len(boot_nodes), sum(node_latency.values()), boot_nodes, node_latency, maxd,
+                     {value: sorted(users) for value, users in refreshed.items()})

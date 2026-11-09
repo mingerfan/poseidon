@@ -58,6 +58,8 @@ class CostDag(DagBackend):
                 pending.extend(self.args[nid])
         keep = [nid for nid in range(len(self.kind)) if nid in live]
         remap = {old:new for new,old in enumerate(keep)}
+        # E5a: refresh plans recorded before finalize translate their node ids through this map.
+        self.remap = remap
         before = Counter(self.prog_op)
         reachable = Counter(self.prog_op[nid] for nid in keep)
         self.normalization = dict(value_numbered_nodes=len(self.kind),live_nodes=len(keep),

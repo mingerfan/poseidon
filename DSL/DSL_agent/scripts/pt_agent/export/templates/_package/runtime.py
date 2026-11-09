@@ -75,10 +75,23 @@ def unpack_arrays(arrays, interface=None):
     return outputs
 
 
-def invoke(backend, weights):
+def refresh_plan():
+    """The recorded agent placement (E5a), or None when the compiler or the lazy policy places bootstraps."""
+    config = read_config()[0]
+    if config["refresh"] != "agent" or config.get("placement") not in ("depth-dp-plan", "program-plan"):
+        return None
+    return json.loads((ROOT/"config/refresh_plan.json").read_text(encoding="utf-8"))
+
+
+def invoke(backend, weights, *, active=None):
     config, approximations, interface = read_config()
-    active = (RefreshBackend(backend, **{key: config[key] for key in
-              ("input_level", "boot_in_level", "boot_out_level")}) if config["refresh"] == "agent" else backend)
+    if active is None and config["refresh"] == "agent":
+        plan = refresh_plan()
+        active = RefreshBackend(backend, **{key: config[key] for key in
+                 ("input_level", "boot_in_level", "boot_out_level")},
+                 **(dict(policy="plan", plan=plan) if plan is not None else {}))
+    elif active is None:
+        active = backend
     inputs, index = [], 0
     for item in interface['inputs']:
         count = len(layout_blocks(layout(item)))

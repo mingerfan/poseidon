@@ -1,0 +1,359 @@
+{
+  "softmax": {
+    "result": {
+      "source": "@fhe.program(slots=1024, refresh=\"compiler\", placement=\"depth-dp\")\ndef sm(x: Cipher[1, 3, 7], m: Mask[1, 7]):\n    v0 = pack(x, layout=\"token\", gap=1)\n    v1 = pack(m, layout=\"flat\", gap=1)\n    v2 = softmax(v0, axis=-1, keep=\"all\", mask=v1, shift=0.7, inv_scale=3.0, steps=2, step_inv_method=\"newton\", step_inv_domain=(0.01, 1.5), step_inv_deg0=15, step_inv_iters=2, exp_method=\"remez\", exp_domain=(-2.0, 2.0), exp_deg=7, inv_method=\"newton\", inv_domain=(0.01, 100.0), inv_deg0=7, inv_iters=2)\n    return v2\n",
+      "changes": [
+        {
+          "line": 5,
+          "call_lines": [],
+          "role": "softmax",
+          "old": {
+            "axis": -1,
+            "keep": "all",
+            "mask": {
+              "name": "am"
+            },
+            "shift": 0.7,
+            "inv_scale": 3.0,
+            "steps": 2,
+            "step_inv_method": "newton",
+            "step_inv_domain": [
+              0.01,
+              1.5
+            ],
+            "step_inv_deg": null,
+            "step_inv_degrees": null,
+            "step_inv_eps": null,
+            "step_inv_deg0": 15,
+            "step_inv_iters": 2,
+            "step_inv_fit": null,
+            "final_inv_method": null,
+            "final_inv_domain": null,
+            "final_inv_deg": null,
+            "final_inv_degrees": null,
+            "final_inv_eps": null,
+            "final_inv_deg0": null,
+            "final_inv_iters": null,
+            "final_inv_fit": null,
+            "inv_budget": null,
+            "exp_method": "remez",
+            "exp_domain": [
+              -2.0,
+              2.0
+            ],
+            "exp_deg": 15,
+            "exp_degrees": null,
+            "exp_eps": null,
+            "exp_deg0": null,
+            "exp_iters": null,
+            "exp_fit": null,
+            "inv_method": "newton",
+            "inv_domain": [
+              0.01,
+              100.0
+            ],
+            "inv_deg": null,
+            "inv_degrees": null,
+            "inv_eps": null,
+            "inv_deg0": 7,
+            "inv_iters": 2,
+            "inv_fit": null
+          },
+          "new": {
+            "axis": -1,
+            "keep": "all",
+            "mask": {
+              "name": "am"
+            },
+            "shift": 0.7,
+            "inv_scale": 3.0,
+            "steps": 2,
+            "step_inv_method": "newton",
+            "step_inv_domain": [
+              0.01,
+              1.5
+            ],
+            "step_inv_deg": null,
+            "step_inv_degrees": null,
+            "step_inv_eps": null,
+            "step_inv_deg0": 15,
+            "step_inv_iters": 2,
+            "step_inv_fit": null,
+            "final_inv_method": null,
+            "final_inv_domain": null,
+            "final_inv_deg": null,
+            "final_inv_degrees": null,
+            "final_inv_eps": null,
+            "final_inv_deg0": null,
+            "final_inv_iters": null,
+            "final_inv_fit": null,
+            "inv_budget": null,
+            "exp_method": "remez",
+            "exp_domain": [
+              -2.0,
+              2.0
+            ],
+            "exp_deg": 7,
+            "exp_degrees": null,
+            "exp_eps": null,
+            "exp_deg0": null,
+            "exp_iters": null,
+            "exp_fit": null,
+            "inv_method": "newton",
+            "inv_domain": [
+              0.01,
+              100.0
+            ],
+            "inv_deg": null,
+            "inv_degrees": null,
+            "inv_eps": null,
+            "inv_deg0": 7,
+            "inv_iters": 2,
+            "inv_fit": null
+          },
+          "move": {
+            "kind": "approximation",
+            "role": "exp"
+          }
+        }
+      ],
+      "cost_before": {
+        "latency_pred_us": 15,
+        "boots_pred": 1
+      },
+      "cost_after": {
+        "latency_pred_us": 7,
+        "boots_pred": 1
+      },
+      "coarse_evals": 1,
+      "full_evals": 3,
+      "seconds": 0.0,
+      "history": [
+        {
+          "phase": "domain",
+          "accepted": true,
+          "roles": [
+            "exp",
+            "inv",
+            "step_inv[0]",
+            "step_inv[1]"
+          ]
+        },
+        {
+          "phase": "softmax",
+          "sweep": 0,
+          "line": 5,
+          "move": {
+            "kind": "approximation",
+            "role": "exp"
+          },
+          "accepted": true,
+          "latency_pred_us": 7,
+          "coarse": {
+            "feasible": true,
+            "diverged": false,
+            "agree": 6,
+            "total": 6,
+            "agreement_pct": 100.0,
+            "max_u": 0.5,
+            "max_u_calibrated": 0.5,
+            "max_u_analytic": 0.0,
+            "analytic_domain_violation": false,
+            "worst_acts": []
+          },
+          "full": {
+            "feasible": true,
+            "diverged": false,
+            "agree": 6,
+            "total": 6,
+            "agreement_pct": 100.0,
+            "max_u": 0.5,
+            "max_u_calibrated": 0.5,
+            "max_u_analytic": 0.0,
+            "analytic_domain_violation": false,
+            "worst_acts": []
+          }
+        },
+        {
+          "phase": "sweep",
+          "sweeps": 1,
+          "converged": false,
+          "accepted_changes": 1,
+          "budget_exhausted": false
+        },
+        {
+          "phase": "sweep",
+          "sweeps": 2,
+          "converged": true,
+          "accepted_changes": 0,
+          "budget_exhausted": false
+        },
+        {
+          "phase": "result",
+          "accepted": true,
+          "feasible": true,
+          "latency_pred_us": 7,
+          "agree": 6,
+          "total": 6,
+          "max_u": 0.5,
+          "max_u_calibrated": 0.5,
+          "max_u_analytic": 0.0,
+          "worst_acts": [],
+          "sweeps": 2,
+          "converged": true
+        }
+      ],
+      "feasible": true,
+      "sweeps": 2,
+      "converged": true,
+      "program_text": "@fhe.program(slots=1024, refresh=\"compiler\", placement=\"depth-dp\")\ndef sm(x: Cipher[1, 3, 7], m: Mask[1, 7]):\n    v0 = pack(x, layout=\"token\", gap=1)\n    v1 = pack(m, layout=\"flat\", gap=1)\n    v2 = softmax(v0, axis=-1, keep=\"all\", mask=v1, shift=0.7, inv_scale=3.0, steps=2, step_inv_method=\"newton\", step_inv_domain=(0.01, 1.5), step_inv_deg0=15, step_inv_iters=2, exp_method=\"remez\", exp_domain=(-2.0, 2.0), exp_deg=7, inv_method=\"newton\", inv_domain=(0.01, 100.0), inv_deg0=7, inv_iters=2)\n    return v2\n"
+    },
+    "costs": [
+      15,
+      15,
+      7
+    ]
+  },
+  "floor": {
+    "result": {
+      "source": "@fhe.program(slots=1024, refresh=\"compiler\", placement=\"depth-dp\")\ndef token_rule(x: Cipher[1, 1, 2]):\n    v0 = pack(x, layout=\"token\", gap=1)\n    v1 = act(v0, fn=\"tanh\", method=\"cheb\", deg=31, domain=(-1.8, 1.8))\n    v2 = act(v1, fn=\"tanh\", method=\"cheb\", deg=31, domain=(-1.8, 1.8))\n    return v2\n",
+      "changes": [],
+      "cost_before": {
+        "latency_pred_us": 190,
+        "boots_pred": 1
+      },
+      "cost_after": {
+        "latency_pred_us": 180,
+        "boots_pred": 1
+      },
+      "coarse_evals": 0,
+      "full_evals": 2,
+      "seconds": 0.0,
+      "history": [
+        {
+          "phase": "domain",
+          "accepted": true,
+          "roles": [
+            "act",
+            "act"
+          ],
+          "refits": [
+            {
+              "old_domain": [
+                -1.0,
+                1.0
+              ],
+              "new_domain": [
+                -1.8,
+                1.8
+              ],
+              "target": 3.100947165712853e-09,
+              "status": "within",
+              "setting": {
+                "deg": 31
+              },
+              "error": 1.4061862785297308e-11,
+              "depth": 7,
+              "line": 4,
+              "role": "act",
+              "fn": "tanh",
+              "method": "cheb",
+              "old_setting": {
+                "deg": 15
+              }
+            },
+            {
+              "old_domain": [
+                -1.0,
+                1.0
+              ],
+              "new_domain": [
+                -1.8,
+                1.8
+              ],
+              "target": 3.100947165712853e-09,
+              "status": "within",
+              "setting": {
+                "deg": 31
+              },
+              "error": 1.4061862785297308e-11,
+              "depth": 7,
+              "line": 5,
+              "role": "act",
+              "fn": "tanh",
+              "method": "cheb",
+              "old_setting": {
+                "deg": 15
+              }
+            }
+          ],
+          "floors": [
+            {
+              "line": 4,
+              "role": "act",
+              "setting": {
+                "deg": 31
+              }
+            },
+            {
+              "line": 5,
+              "role": "act",
+              "setting": {
+                "deg": 31
+              }
+            }
+          ]
+        },
+        {
+          "phase": "coarse",
+          "role": "act",
+          "line": 4,
+          "attrs": {
+            "deg": 15
+          },
+          "accepted": false,
+          "rejected": "refit_floor"
+        },
+        {
+          "phase": "coarse",
+          "role": "act",
+          "line": 5,
+          "attrs": {
+            "deg": 15
+          },
+          "accepted": false,
+          "rejected": "refit_floor"
+        },
+        {
+          "phase": "sweep",
+          "sweeps": 1,
+          "converged": true,
+          "accepted_changes": 0,
+          "budget_exhausted": false
+        },
+        {
+          "phase": "result",
+          "accepted": true,
+          "feasible": true,
+          "latency_pred_us": 180,
+          "agree": 6,
+          "total": 6,
+          "max_u": 0.5,
+          "max_u_calibrated": 0.5,
+          "max_u_analytic": 0.0,
+          "worst_acts": [],
+          "sweeps": 1,
+          "converged": true
+        }
+      ],
+      "feasible": true,
+      "sweeps": 1,
+      "converged": true,
+      "program_text": "@fhe.program(slots=1024, refresh=\"compiler\", placement=\"depth-dp\")\ndef token_rule(x: Cipher[1, 1, 2]):\n    v0 = pack(x, layout=\"token\", gap=1)\n    v1 = act(v0, fn=\"tanh\", method=\"cheb\", deg=31, domain=(-1.8, 1.8))\n    v2 = act(v1, fn=\"tanh\", method=\"cheb\", deg=31, domain=(-1.8, 1.8))\n    return v2\n"
+    },
+    "costs": [
+      "@fhe.program(slots=1024, refresh=\"compiler\", placement=\"depth-dp\")\ndef token_rule(x: Cipher[1, 1, 2]):\n    v0 = pack(x, layout=\"token\", gap=1)\n    v1 = act(v0, fn=\"tanh\", method=\"cheb\", deg=15, domain=(-1.0, 1.0))\n    v2 = act(v1, fn=\"tanh\", method=\"cheb\", deg=15, domain=(-1.0, 1.0))\n    return v2\n",
+      "@fhe.program(slots=1024, refresh=\"compiler\", placement=\"depth-dp\")\ndef token_rule(x: Cipher[1, 1, 2]):\n    v0 = pack(x, layout=\"token\", gap=1)\n    v1 = act(v0, fn=\"tanh\", method=\"cheb\", deg=31, domain=(-1.8, 1.8))\n    v2 = act(v1, fn=\"tanh\", method=\"cheb\", deg=31, domain=(-1.8, 1.8))\n    return v2\n"
+    ]
+  }
+}

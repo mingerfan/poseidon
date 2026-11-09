@@ -12,17 +12,32 @@ from ..llm import LLMError
 OUTPUT_TOKENS = {'r8-v7': 32768, 'r8-v8': 65536}
 
 
+
+def validate_tune_search(ctx):
+    search=getattr(ctx,'tune_search','sweep')
+    if search not in ('sweep','llm-select'):
+        raise ValueError('Unknown tune_search: '+str(search))
+    if search=='llm-select' and (getattr(ctx,'prompt_version',None)!='r8-v11'
+                                or getattr(ctx,'placement',None)!='program-plan'):
+        raise ValueError('llm-select requires r8-v11 and placement=program-plan')
+    return search
+
+
 def output_tokens(version):
     # r8-v9 aliases v8's unchanged provider settings.
-    return OUTPUT_TOKENS['r8-v8' if version == 'r8-v9' else version]
+    return OUTPUT_TOKENS['r8-v8' if version in ('r8-v9', 'r8-v10', 'r8-v11') else version]
 
 
 def model_call_offset(model, version):
     return 34 if version == 'r8-v9' and model == 'bert' else 0
 
 
-def model_calls(directory, model, version):
-    return model_call_offset(model, version)+len(list((Path(directory)/model/version).glob('call-*.request.json')))
+def model_calls(directory, model, version,label=None):
+    path=Path(directory)/model/version
+    if label is not None:path=path/label
+    if (path/'provider-policy.json').exists():
+        return model_call_offset(model, version)+len(list((path/'attempts').glob('*.record.json')))
+    return model_call_offset(model, version)+len(list(path.glob('call-*.request.json')))
 
 
 
@@ -41,14 +56,19 @@ class ModelBudgetClient:
     parses it; neither a failed request nor a new session resets the allowance.
     The global provider ledger is passed explicitly by the outer process.
     """
-    def __init__(self,client,directory,*,limit=40,model=None,prompt_version='r8-v7'):
+    def __init__(self,client,directory,*,limit=40,model=None,prompt_version='r8-v7',label=None):
         if not 0<=limit<=40:raise ValueError('A1 model call limit must be in 0..40')
-        if prompt_version not in (*OUTPUT_TOKENS, 'r8-v9'):raise ValueError('Unknown token prompt version')
-        if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+        if prompt_version not in (*OUTPUT_TOKENS, 'r8-v9', 'r8-v10', 'r8-v11','t1'):raise ValueError('Unknown token prompt version')
+        if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11','t1'):
             if not model:raise ValueError('r8-v8 budget requires the model identity')
             directory=Path(directory)/model/prompt_version
+        if label is not None:
+            if not isinstance(label,str) or not label or Path(label).name!=label or label in ('.','..'):
+                raise ValueError('Invalid session label')
+            directory=Path(directory)/label
         self.offset = model_call_offset(model, prompt_version)
         self.client,self.directory,self.limit=client,Path(directory),limit
+        if prompt_version=='r8-v11':self.limit=min(self.limit,10)
         self.directory.mkdir(parents=True,exist_ok=True)
 
     @property
@@ -72,20 +92,23 @@ class ModelBudgetClient:
 
 def run_session(info,calibration,samples,client,directory,*,max_iters=8,tuner=True,
                 tuner_budget_s=2400,tune_policy='new_best',prompt_version='r8-v7',
-                tune_rule=None):
+                tune_rule=None,placement=None,confirm_rule='c1'):
     from ..planners.agent_tools import build_context
     from .agent import run_agent
     from ..run import _write
-    if not 1<=max_iters<=8:raise ValueError('A1 session requires max_iters in 1..8')
+    if not 1<=max_iters<=(10 if prompt_version=='r8-v11' else 8):
+        raise ValueError('A1 session iteration limit exceeded')
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
     ctx=build_context(info,calibration,samples=samples)
-    if prompt_version not in (*OUTPUT_TOKENS, 'r8-v9'):raise ValueError('Unknown token prompt version')
+    if prompt_version not in (*OUTPUT_TOKENS, 'r8-v9', 'r8-v10', 'r8-v11'):raise ValueError('Unknown token prompt version')
     ctx.prompt_version=prompt_version
+    if placement is not None:ctx.placement=placement
     if prompt_version == 'r8-v9':
         ctx.a1_model_call_offset = getattr(client, 'offset', 0)
     result=run_agent(ctx,client,max_iters=max_iters,trace_path=directory/'agent_trace.jsonl',
                      tuner=tuner,tuner_budget_s=tuner_budget_s,tune_policy=tune_policy,
-                     engine_profile='tensor',tune_rule=tune_rule)
+                     engine_profile='tensor',tune_rule=tune_rule,confirm_rule=confirm_rule)
+    if placement is not None:result['placement']=placement
     return write_session_result(result,directory,prompt_version=prompt_version,tune_policy=tune_policy)
 
 
@@ -94,7 +117,7 @@ def write_session_result(result,directory,*,prompt_version='r8-v8',tune_policy='
     directory=Path(directory)
     selected=result['confirm']['selected']
     record=dict(result,confirm=dict(result['confirm'],selected=asdict(selected) if selected is not None else None))
-    if prompt_version in ('r8-v8','r8-v9','r8-v10'):record['prompt_version']=prompt_version
+    if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):record['prompt_version']=prompt_version
     _write(directory/'AGENT.json',json_safe(record))
     if selected is not None:
         path=directory/'program.ptdsl'
@@ -103,7 +126,8 @@ def write_session_result(result,directory,*,prompt_version='r8-v8',tune_policy='
         _write(directory/'FROZEN.json',dict(program=str(path),origin=selected.origin,
               iteration=selected.iteration,confirm=record['confirm'],prompt_version=prompt_version,
               engine_profile='tensor',tune_policy=tune_policy,
-              **(dict(tune_rule=record.get('tune_rule','v8-pre-6.11')) if prompt_version in ('r8-v8','r8-v9','r8-v10') else {}),
+              confirm_rule=record.get('confirm_rule', 'c1'),
+              **(dict(tune_rule=record.get('tune_rule','v8-pre-6.11')) if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {}),
               **(dict(split_version=record['split_version']) if 'split_version' in record else {})))
     return json_safe(record)
 
@@ -140,11 +164,13 @@ def save_state(path,state):
 
 def load_state(path):
     state=_state_value(json.loads(Path(path).read_text()),restore=True)
+    if 'prompt_version' in state:
+        state.setdefault('confirm_rule', 'c1')
     if state.get('prompt_version')=='r8-v8':state.setdefault('tune_rule','v8-pre-6.11')
     return state
 
 
-def session_step(ctx,directory,*,client=None,reply=None,max_iters=8,tune_rule=None):
+def session_step(ctx,directory,*,client=None,reply=None,max_iters=8,tune_rule=None,tune_client=None,label=None,confirm_rule='c1'):
     """One process owns one step. The outer orchestrator reads only its status."""
     from .agent import new_agent_state,agent_step,agent_result
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
@@ -152,7 +178,13 @@ def session_step(ctx,directory,*,client=None,reply=None,max_iters=8,tune_rule=No
     from .transformer_tuner import validate_tune_rule
     tune_rule=validate_tune_rule(ctx.prompt_version,tune_rule)
     state=load_state(path) if path.exists() else new_agent_state(ctx,max_iters=max_iters,
-        engine_profile='tensor',tune_rule=tune_rule)
+        engine_profile='tensor',tune_rule=tune_rule,confirm_rule=confirm_rule)
+    from .confirm import confirmation_rule
+    if state.get('confirm_rule', 'c1') != confirmation_rule(ctx, confirm_rule):
+        raise ValueError('Session confirm_rule changed')
+    if label is not None:
+        if state.get('session_label',label)!=label:raise ValueError('Session label changed')
+        state['session_label']=label
     from ..data.samples import split_version
     if state.get('split_version','split-v1')!=split_version(getattr(ctx,'model_info',None)):
         raise ValueError('Session and model use different sample partitions')
@@ -161,11 +193,14 @@ def session_step(ctx,directory,*,client=None,reply=None,max_iters=8,tune_rule=No
                             model_call_offset(ctx.model_name, ctx.prompt_version)))
     before=state['phase']
     if before=='done':raise RuntimeError('Session already finalized')
-    agent_step(ctx,state,trace_path=directory/'agent_trace.jsonl',client=client,reply=reply)
+    agent_step(ctx,state,trace_path=directory/'agent_trace.jsonl',client=client,reply=reply,tune_client=tune_client)
     save_state(path,state)
     record=None
     if state['phase']=='done':
-        record=write_session_result(agent_result(state),directory,prompt_version=state['prompt_version'],
+        result=agent_result(state)
+        if label is not None:result['session_label']=label
+        if state.get('placement'):result['placement']=state['placement']
+        record=write_session_result(result,directory,prompt_version=state['prompt_version'],
                                     tune_policy=state['tune_policy'])
     return dict(complete=True,step=before,next_step=state['phase'],iteration=state['iteration'],
                 session_calls=state['calls'],state=str(path),agent=record,tune_rule=state['tune_rule'])

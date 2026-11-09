@@ -64,11 +64,11 @@ def inside(args):
                 program=parse(source)
             elif stage=='check':
                 program=program or parse((out/'program.ptdsl').read_text())
-                if version in ('r8-v8','r8-v9','r8-v10'):
+                if version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
                     from .dsl.interface import require_interface
                     report['interface']=require_interface(program,info)
                 checked=check(program,{k:v.shape for k,v in graph.weights.items()},
-                              **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10') else {}))
+                              **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {}))
                 report['check']=dict(ok=checked.ok,diags=[asdict(d) for d in checked.diags])
                 if not checked.ok:raise RuntimeError('token DSL typecheck failed')
             elif stage=='mock':
@@ -88,13 +88,13 @@ def inside(args):
             elif stage=='export':
                 from .export import export_package
                 package=export_package((out/'program.ptdsl').read_text(),program,graph.weights,out/'export',
-                    **(dict(model_info=info,prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10') else {}))
+                    **(dict(model_info=info,prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {}))
                 report['export']=dict(package=str(package),weights=str(out/'export/weights'/(program.name+'.npz')))
             elif stage=='compile':
                 if getattr(args,'planner','rule')=='agent':
                     from .experiments.a1_transformer_agent import native_stage
                     report['native']=native_stage(Path(args.model_info).parent,out/'program.ptdsl',out,
-                        **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10') else {}))
+                        **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {}))
                     _write(out/'REPORT.json',report)
                     continue
                 from .run import _compile_export

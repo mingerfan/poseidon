@@ -171,8 +171,11 @@ class _Parser:
             _fail("E_HEADER", decorator, "refresh must be compiler or agent")
         if values.get("manage", "compiler") not in ("compiler", "dsl"):
             _fail("E_HEADER", decorator, "manage must be compiler or dsl")
-        if values.get("placement", "depth-dp") not in ("depth-dp", "optimized", "greedy"):
+        if values.get("placement", "depth-dp") not in ("depth-dp", "optimized", "greedy", "depth-dp-plan",
+                                                        "program-plan"):
             _fail("E_HEADER", decorator, "Unsupported placement")
+        if values.get("placement") in ("depth-dp-plan", "program-plan") and values.get("refresh") != "agent":
+            _fail("E_HEADER", decorator, f'placement="{values["placement"]}" requires refresh="agent"')
         for key in ("l_max", "boot_out_level"):
             if key in values and (not _integer(values[key]) or not 1 <= values[key] <= 64):
                 _fail("E_HEADER", decorator, f"{key} must be in [1,64]")

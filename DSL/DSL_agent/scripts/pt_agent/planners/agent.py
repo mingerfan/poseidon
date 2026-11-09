@@ -9,27 +9,55 @@ import time
 from ..llm import LLMError
 from ..dsl.parser import parse
 from ..dsl.printer import print_program
-from .agent_tools import AgentContext, evaluate
-from .confirm import Candidate, confirm_select
+from .agent_tools import AgentContext, evaluate, apply_placement
+from .confirm import Candidate, confirm_select, confirmation_rule
 from .prompts import build_system_prompt, feedback_message, initial_message
 from .tuner import tune
 from .transformer_tuner import (DEFAULT_TUNE_RULE, PRE_TUNE_RULE, CONVERGENT_TUNE_RULE, convergent_rule,
                                validate_tune_rule, tune_rule_scope)
 
 
+def _add_intermediate_states(pool, records, result, iteration, source, *, serialized=False):
+    lines = sum(bool(line.strip()) for line in source.splitlines())
+    for item in getattr(result, 'accepted_states', []):
+        origin = 'tuned-r'+str(item['round'])
+        cost = item['cost']
+        candidate = Candidate(item['source'], origin, iteration, cost['latency_pred_us'], cost['boots_pred'])
+        pool.append(asdict(candidate) if serialized else candidate)
+        records[(iteration, origin, candidate.source)] = (dict(cost, iteration=iteration, source=origin), lines)
+
+
+def _selected_record(records, selected, confirmation):
+    record, lines = records[(selected.iteration, selected.origin, selected.source)]
+    if selected.origin.startswith('tuned-r'):
+        record = dict(record)
+        measured = next(row for row in confirmation['evals'] if row['iteration'] == selected.iteration
+                        and row['origin'] == selected.origin)
+        record.update({key: measured[key] for key in ('agree', 'max_u', 'max_u_calibrated',
+                       'max_u_analytic', 'worst_acts') if key in measured})
+    return record, lines
+
+
 def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path,
               tuner: bool = True, tuner_budget_s: float = 2400,
               tune_policy: str = "new_best", engine_profile: str = "mock",
-              tune_rule: str | None = None) -> dict:
+              tune_rule: str | None = None, confirm_rule: str = 'c1') -> dict:
+    requested_confirm_rule = confirm_rule
+    confirm_rule = confirmation_rule(ctx, confirm_rule)
     tune_rule = validate_tune_rule(getattr(ctx, 'prompt_version', 'r8-v4'), tune_rule)
     if tune_policy not in ("new_best", "all"):
         raise ValueError('tune_policy must be "new_best" or "all"')
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
-    if engine_profile == "tensor" and getattr(ctx, 'prompt_version', 'r8-v4') not in ('r8-v5','r8-v6','r8-v7','r8-v8','r8-v9','r8-v10'):
+    if engine_profile == "tensor" and getattr(ctx, 'prompt_version', 'r8-v4') not in ('r8-v5','r8-v6','r8-v7','r8-v8','r8-v9','r8-v10','r8-v11'):
         raise ValueError('engine_profile="tensor" requires r8-v5, r8-v6, r8-v7 or r8-v8')
-    v8 = getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10')
+    v8 = getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10','r8-v11')
     rule_record = dict(tune_rule=tune_rule) if v8 else {}
+    rule_record['confirm_rule'] = confirm_rule
+    if requested_confirm_rule != confirm_rule:
+        rule_record['confirm_rule_applicability'] = 'not_applicable'
+    if getattr(ctx, 'placement', None):
+        rule_record['placement'] = ctx.placement
     profile_args = dict(engine_profile="tensor") if engine_profile == "tensor" else {}
     started = time.monotonic()
     messages = [dict(role="system", content=build_system_prompt(ctx)), dict(role="user", content=initial_message(ctx))]
@@ -73,11 +101,12 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                 fb = dict(stage='length', feasible=False, output_limit=65536,
                           error='The previous response reached the output limit (65536 tokens) before writing a program. Shorten the reasoning and output the complete program directly.')
         else:
-            if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10'):
+            if getattr(ctx, 'placement', None) or getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11'):
                 # Retain parsed response source before any internal tool runs.
                 response_path=trace_path.parent/'sources'/f'iteration-{iteration}.ptdsl'
                 response_path.parent.mkdir(parents=True,exist_ok=True)
                 with response_path.open('x') as stream:stream.write(source)
+            source = apply_placement(source, ctx)
             fb = evaluate(source, ctx, **(dict(engine="tensor", **profile_args) if profile_args else {}))
             if v8 and not source.strip() and reply.get('finish_reason') == 'length':
                 fb = dict(stage='length', feasible=False, output_limit=65536,
@@ -128,6 +157,8 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                 row['tuned'].update(sweeps=result.sweeps,converged=result.converged)
             if result.feasible:
                 candidates.append((result.source, result.cost_after, confirmation, 'tuned'))
+            if confirm_rule == 'c2':
+                _add_intermediate_states(pool, records, result, iteration, source)
         row.update(has_tuned=has_tuned, new_llm_best=new_llm_best, llm_min=llm_min,
                    tuned_reused_from=tuned_reused_from)
         for candidate, candidate_cost, confirmed, origin in candidates:
@@ -151,7 +182,7 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                             boot_input_max_abs=confirmed.get('boot_input_max_abs'),
                             worst_acts=confirmed.get('worst_acts', []))
         history.append(row)
-        token_agent=getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10')
+        token_agent=getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11')
         from .transformer_session import json_safe
         shown_fb,shown_tuned=(json_safe(fb),json_safe(tuned)) if token_agent else (fb,tuned)
         added = [dict(role="assistant", content=reply["content"]),
@@ -171,13 +202,14 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
             if stale >= 2:
                 break
     confirmation = (dict(selected=None,evals=[],deduplicated=dict(before=len(pool),after=0),duplicates=[])
-                    if v8 and failed else confirm_select(pool, ctx, **profile_args))
+                    if v8 and failed else confirm_select(pool, ctx, **profile_args,
+                        **(dict(confirm_rule=confirm_rule) if confirm_rule != 'c1' else {})))
     selected = confirmation['selected']
     if selected is None:
         best_program = best_iteration = best = best_llm_lines = None
     else:
         best_program, best_iteration = selected.source, selected.iteration
-        best, best_llm_lines = records[(selected.iteration, selected.origin, selected.source)]
+        best, best_llm_lines = _selected_record(records, selected, confirmation)
     return dict(status="error" if failed else "feasible" if selected is not None else "confirm_failed",
                 best_program=best_program, best_iteration=best_iteration, first_feasible_iteration=first_feasible,
                 best=best, best_source=best['source'] if best else None, llm_source_lines=best_llm_lines,
@@ -188,27 +220,33 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
 
 
 def new_agent_state(ctx, *, max_iters=6, tuner=True, tuner_budget_s=2400,
-                    tune_policy='new_best', engine_profile='mock', tune_rule=None):
+                    tune_policy='new_best', engine_profile='mock', tune_rule=None, confirm_rule='c1'):
     """The frozen loop's locals, with an explicit process boundary at each tool."""
     if tune_policy not in ('new_best', 'all'):
         raise ValueError('tune_policy must be "new_best" or "all"')
     if engine_profile not in ('mock', 'tensor'):
         raise ValueError('engine_profile must be "mock" or "tensor"')
     version = getattr(ctx, 'prompt_version', 'r8-v4')
+    from .transformer_tuner import validate_tune_search
+    search=validate_tune_search(ctx)
     tune_rule = validate_tune_rule(version, tune_rule)
-    if version not in ('r8-v8','r8-v9','r8-v10'):
+    if version not in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         raise ValueError('Resumable steps require r8-v8')
     split=getattr(getattr(ctx,'model_info',None),'split',{})
+    effective_confirm_rule = confirmation_rule(ctx, confirm_rule)
     return dict(phase='evaluate', iteration=1, max_iters=max_iters, tuner=tuner,
         tuner_budget_s=tuner_budget_s, tune_policy=tune_policy, engine_profile=engine_profile,
-        prompt_version=version, tune_rule=tune_rule,
+        prompt_version=version, tune_rule=tune_rule, tune_search=search,
+        confirm_rule=effective_confirm_rule,
+        **(dict(confirm_rule_applicability='not_applicable') if effective_confirm_rule != confirm_rule else {}),
+        **(dict(placement=ctx.placement) if getattr(ctx, 'placement', None) else {}),
         messages=[dict(role='system', content=build_system_prompt(ctx)),
                   dict(role='user', content=initial_message(ctx))],
         best_program=None, best_iteration=None, first_feasible=None, best=None,
         best_llm_lines=None, llm_min=None, has_tuned=False, tune_cache={},
         history=[], pool=[], records={}, calls=0, prompt_tokens=0,
         completion_tokens=0, stale=0, failed=None, elapsed_s=0., pending=None,
-        **(dict(model_call_offset=getattr(ctx, 'a1_model_call_offset', 0)) if version in ('r8-v9','r8-v10') else {}),
+        **(dict(model_call_offset=getattr(ctx, 'a1_model_call_offset', 0)) if version in ('r8-v9','r8-v10','r8-v11') else {}),
         **(dict(split_version=split['version']) if 'version' in split else {}))
 
 
@@ -244,10 +282,13 @@ def _finish_iteration(state, trace_path):
         stream.write(json.dumps(dict(iteration=iteration, messages=added, fb=shown_fb,
             usage=pending['usage'], seconds=reply['seconds'], tuned=shown_tuned,
             tuned_reused_from=pending['tuned_reused_from'], tune_policy=state['tune_policy'],
+            confirm_rule=state.get('confirm_rule', 'c1'),
             tune_rule=state.get('tune_rule', PRE_TUNE_RULE),
+            **(dict(tune_search=state.get('tune_search','sweep')) if state['prompt_version']=='r8-v11' else {}),
+            **(dict(placement=state['placement']) if state.get('placement') else {}),
             **(dict(prompt_version=state['prompt_version'],
                     model_call=state.get('model_call_offset', 0)+state['calls'])
-               if state['prompt_version'] in ('r8-v9','r8-v10') else {}),
+               if state['prompt_version'] in ('r8-v9','r8-v10','r8-v11') else {}),
             **(dict(split_version=state['split_version']) if 'split_version' in state else {})),
             allow_nan=False)+'\n')
     print(f"AGENT iteration={iteration} stage={fb['stage']} feasible={fb.get('feasible', False)}", flush=True)
@@ -282,6 +323,9 @@ def _finish_tune(state, result, trace_path, *, reused_from=None, tune_source=Non
         pending['row']['tuned'].update(sweeps=result.sweeps,converged=result.converged)
     if result.feasible:
         pending['candidates'].append((result.source, result.cost_after, confirmation, 'tuned'))
+    if state.get('confirm_rule', 'c1') == 'c2':
+        _add_intermediate_states(state['pool'], state['records'], result, pending['iteration'],
+                                 pending['source'], serialized=True)
     pending.update(tuned=tuned, tuned_reused_from=reused_from)
     _finish_iteration(state, trace_path)
 
@@ -301,7 +345,10 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
         with Path(trace_path).open('a') as stream:
             stream.write(json.dumps(dict(iteration=iteration, messages=[], fb=fb, usage={}, seconds=0,
                 tuned=None, tune_policy=state['tune_policy'],
+                confirm_rule=state.get('confirm_rule', 'c1'),
                 tune_rule=state.get('tune_rule', PRE_TUNE_RULE),
+                **(dict(tune_search=state.get('tune_search','sweep')) if state['prompt_version']=='r8-v11' else {}),
+                **(dict(placement=state['placement']) if state.get('placement') else {}),
                 **(dict(split_version=state['split_version']) if 'split_version' in state else {})))+'\n')
         state['phase'] = 'confirm'
         return
@@ -324,6 +371,7 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
         response_path.parent.mkdir(parents=True, exist_ok=True)
         with response_path.open('x') as stream:
             stream.write(source)
+        source = apply_placement(source, ctx)
         profile_args = dict(engine_profile='tensor') if state['engine_profile'] == 'tensor' else {}
         fb = feedback if feedback is not None else evaluate(source, ctx,
             **(dict(engine='tensor', **profile_args) if profile_args else {}))
@@ -374,9 +422,12 @@ def saved_tune_result(result):
     return dict(record, program_text=print_program(result.program))
 
 
-def agent_step(ctx, state, *, trace_path, client=None, reply=None, feedback=None, tune_result=None):
+def agent_step(ctx, state, *, trace_path, client=None, reply=None, feedback=None, tune_result=None,tune_client=None):
     """Run exactly one LLM/evaluate, tune, or confirm step; no decision in the caller."""
     started = time.monotonic()
+    from .transformer_tuner import validate_tune_search
+    if validate_tune_search(ctx)!=state.get('tune_search','sweep'):
+        raise ValueError('Session tune_search differs from context')
     validate_tune_rule(getattr(ctx, 'prompt_version', 'r8-v4'), state.get('tune_rule', PRE_TUNE_RULE))
     trace_path = Path(trace_path)
     trace_path.parent.mkdir(parents=True, exist_ok=True)
@@ -389,7 +440,9 @@ def agent_step(ctx, state, *, trace_path, client=None, reply=None, feedback=None
         with tune_rule_scope(state.get('tune_rule', PRE_TUNE_RULE)):
             result = tune_result if tune_result is not None else tune(parsed, ctx,
                 budget_s=state['tuner_budget_s'],
-                max_sweeps=8 if convergent_rule(state.get('tune_rule')) else 1, **profile_args)
+                max_sweeps=8 if convergent_rule(state.get('tune_rule')) else 1, **profile_args,
+                **(dict(client=tune_client,iteration=pending['iteration'])
+                   if state.get('tune_search')=='llm-select' else {}))
         state['tune_cache'][print_program(parsed)] = (
             saved_tune_result(result), pending['iteration'], pending['source'])
         if convergent_rule(state.get('tune_rule')) and getattr(result,'converged',False):
@@ -399,14 +452,14 @@ def agent_step(ctx, state, *, trace_path, client=None, reply=None, feedback=None
     elif state['phase'] == 'confirm':
         confirmation = (dict(selected=None, evals=[], deduplicated=dict(before=len(state['pool']), after=0),
                              duplicates=[]) if state['failed'] else
-                        confirm_select([Candidate(**item) for item in state['pool']], ctx, **profile_args))
+                        confirm_select([Candidate(**item) for item in state['pool']], ctx, **profile_args,
+                            **(dict(confirm_rule=state['confirm_rule']) if state.get('confirm_rule', 'c1') != 'c1' else {})))
         selected = confirmation['selected']
         if selected is None:
             state.update(best_program=None, best_iteration=None, best=None, best_llm_lines=None)
         else:
             state.update(best_program=selected.source, best_iteration=selected.iteration)
-            state['best'], state['best_llm_lines'] = state['records'][
-                (selected.iteration, selected.origin, selected.source)]
+            state['best'], state['best_llm_lines'] = _selected_record(state['records'], selected, confirmation)
         state['confirmation'] = dict(confirmation, selected=asdict(selected) if selected is not None else None)
         state['phase'] = 'done'
     else:
@@ -430,20 +483,27 @@ def agent_result(state):
         iterations=len(state['history']), llm_calls=state['calls'], prompt_tokens=state['prompt_tokens'],
         completion_tokens=state['completion_tokens'], seconds=state['elapsed_s'], history=state['history'],
         error=state['failed'], confirm=confirmation, pool_size=len(state['pool']), tune_policy=state['tune_policy'],
+        confirm_rule=state.get('confirm_rule', 'c1'),
+        **(dict(confirm_rule_applicability=state['confirm_rule_applicability']) if 'confirm_rule_applicability' in state else {}),
         tune_rule=state.get('tune_rule', PRE_TUNE_RULE),
+        **(dict(tune_search=state.get('tune_search','sweep')) if state['prompt_version']=='r8-v11' else {}),
         **(dict(split_version=state['split_version']) if 'split_version' in state else {}))
 
 
 def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path,
               tuner: bool = True, tuner_budget_s: float = 2400,
               tune_policy: str = 'new_best', engine_profile: str = 'mock',
-              tune_rule: str | None = None) -> dict:
+              tune_rule: str | None = None, confirm_rule: str = 'c1') -> dict:
+    from .transformer_session import validate_tune_search
+    validate_tune_search(ctx)
     tune_rule = validate_tune_rule(getattr(ctx, 'prompt_version', 'r8-v4'), tune_rule)
-    if getattr(ctx, 'prompt_version', 'r8-v4') not in ('r8-v8','r8-v9','r8-v10'):
+    if getattr(ctx, 'prompt_version', 'r8-v4') not in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         return _run_agent_once(ctx, client, max_iters=max_iters, trace_path=trace_path, tuner=tuner,
-            tuner_budget_s=tuner_budget_s, tune_policy=tune_policy, engine_profile=engine_profile)
+            tuner_budget_s=tuner_budget_s, tune_policy=tune_policy, engine_profile=engine_profile,
+            confirm_rule=confirm_rule)
     state = new_agent_state(ctx, max_iters=max_iters, tuner=tuner, tuner_budget_s=tuner_budget_s,
-                            tune_policy=tune_policy, engine_profile=engine_profile, tune_rule=tune_rule)
+                            tune_policy=tune_policy, engine_profile=engine_profile, tune_rule=tune_rule,
+                            confirm_rule=confirm_rule)
     while state['phase'] != 'done':
         agent_step(ctx, state, trace_path=trace_path, client=client)
     return agent_result(state)

@@ -13,7 +13,7 @@ def contains(declared, required):
 def check_margin(program, ctx):
     from .transformer_validation import points, point_names
     errors = []
-    if getattr(ctx, 'prompt_version', None) not in ('r8-v9','r8-v10'):
+    if getattr(ctx, 'prompt_version', None) not in ('r8-v9','r8-v10','r8-v11'):
         return dict(ok=True, errors=errors)
     for point, name in zip(points(program), point_names(program, ctx)):
         # Inverse roles retain the registered analytical-domain rules.

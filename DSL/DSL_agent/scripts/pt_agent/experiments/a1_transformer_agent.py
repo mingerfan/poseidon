@@ -66,7 +66,7 @@ def evaluate_frozen(info,calibration,samples,program_path,directory,*,frozen,pro
     if Path(marker['program']).read_text()!=Path(program_path).read_text():
         raise ValueError('Report requires the unchanged frozen program')
     program=parse(Path(program_path).read_text())
-    if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+    if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         from ..dsl.interface import require_interface
         require_interface(program,info)
     _write(path,dict(complete=False,program=str(program_path),frozen=str(frozen),stage='loading-report'))
@@ -103,7 +103,7 @@ def evaluate_frozen(info,calibration,samples,program_path,directory,*,frozen,pro
         measured.setdefault('agreement_pct',100*measured.get('agree',0)/measured['total'])
         result['engines'][engine]=measured
         _write(path,json_safe(result))
-        if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+        if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
             from ..domain_criteria import require_analytic_coverage
             require_analytic_coverage(measured)
     left,right=outputs['tensor'],outputs['mock']
@@ -151,8 +151,8 @@ def native_stage(model_dir,program,root,*,prompt_version='r8-v7'):
     return result
 
 
-def account_calls(budget,directory,*,model,prompt_version='r8-v7',split_version=None):
-    """Outer/system Python only: retain one registry row per completed call."""
+def account_calls(budget,directory,*,model,prompt_version='r8-v7',split_version=None,label=None,experiment_round=None):
+    """Outer/system Python only: retain one registry row per completed call; `experiment_round` (E8 onward) replaces the label-based round."""
     from ..registry import append,git_rev,load,new_run_id
     from .r8g_mlp_rerun import _calls
     budget=Path(budget);directory=Path(directory)
@@ -161,13 +161,16 @@ def account_calls(budget,directory,*,model,prompt_version='r8-v7',split_version=
     if calls is None:return
     before=read(markers)['api_before'] if markers.exists() else len(calls)
     recorded={row['metrics'].get('global_call') for row in load() if row['mode']=='llm-call'}
+    call_round=experiment_round or (('E7' if label in ('q1','q2') else 'E6r2' if label in ('E6r2-a','p1','p2') else 'E6r' if label in ('E6r-a','r1','r2') else 'E6') if label is not None else 'E5d' if prompt_version=='r8-v11' else 'A1')
     for number,call in enumerate(calls,1):
         if number<=before or number in recorded:continue
-        append(dict(run_id=new_run_id('A1',model,'api-'+str(number)),round='A1',model=model,
+        namespace=[model,'t1' if call.get('purpose','').startswith('tune-select-') else prompt_version]
+        if label is not None:namespace.append(label)
+        append(dict(run_id=new_run_id(call_round,model,'api-'+str(number)),round=call_round,model=model,
                     mode='llm-call',git_rev=git_rev(),metrics=dict(call,global_call=number,
                         **(dict(split_version=split_version) if split_version is not None else {}),
-                        **(dict(prompt_version=prompt_version,budget_namespace=[model,prompt_version])
-                           if prompt_version in ('r8-v8','r8-v9','r8-v10') else {})),
+                        **(dict(prompt_version=prompt_version,budget_namespace=namespace)
+                           if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {})),
                     artifacts_dir=str(directory),ts=call['ts']))
 
 
@@ -293,22 +296,56 @@ def prepare_split_v2(args):
         calibration_changes=str(args.out/'CALIBRATION_CHANGES.json'),request=str(args.out/'first-request.pretty.json'))
 
 
+def call_limit(version):
+    return 10 if version=='r8-v11' else 40
+
+
+def session_iterations(version,used):
+    remaining=call_limit(version)-used
+    if remaining<=0:raise ValueError('Model call allowance exhausted')
+    return min(10 if version=='r8-v11' else 8,remaining)
+
+
+def check_session_placement(args):
+    placement=getattr(args,'placement',None)
+    if (args.prompt_version=='r8-v11' and placement!='program-plan'
+            or args.prompt_version!='r8-v11' and placement is not None):
+        raise ValueError('Real r8-v11 sessions require --placement program-plan; other versions omit it')
+    from ..planners.transformer_session import validate_tune_search
+    validate_tune_search(SimpleNamespace(prompt_version=args.prompt_version,placement=placement,
+                                        tune_search=getattr(args,'tune_search','sweep')))
+    if getattr(args,'tune_search','sweep')=='llm-select' and not getattr(args,'session_label',None):
+        raise ValueError('llm-select requires a separate session label')
+
+
+def ledger_cap(args,default):
+    """Global ledger cap for a session-step client; the round driver passes its approved ceiling (E8 onward)."""
+    cap=getattr(args,'ledger_cap',None)
+    return default if cap is None else cap
+
+
+def round_of(args,default):
+    """Registry round of a session; `--experiment-round` (E8 onward) replaces the label-based default."""
+    return getattr(args,'experiment_round',None) or default
+
+
 def session(args):
+    check_session_placement(args)
     from ..models.info import ModelInfo
     from ..llm import LLMClient
     from ..planners.transformer_session import ModelBudgetClient,run_session,output_tokens
     info=ModelInfo.load(args.model_dir)
     client=ModelBudgetClient(LLMClient(args.budget_path,model='deepseek-flash',reasoning_effort='high',
                 max_tokens=output_tokens(args.prompt_version),max_total_calls=450),args.call_dir,
-                model=args.model,prompt_version=args.prompt_version)
+                model=args.model,prompt_version=args.prompt_version,limit=call_limit(args.prompt_version))
     result=run_session(info,read(args.model_dir/'calibration.json'),samples_for(args.model_dir,info),
-                       client,args.out,max_iters=min(8,max(1,40-client.calls)),prompt_version=args.prompt_version,
-                       tune_rule=args.tune_rule)
-    return dict(complete=result['status']!='error' if args.prompt_version in ('r8-v8','r8-v9','r8-v10') else True,
+                       client,args.out,max_iters=session_iterations(args.prompt_version,client.calls),prompt_version=args.prompt_version,
+                       tune_rule=args.tune_rule,placement=getattr(args,'placement',None))
+    return dict(complete=result['status']!='error' if args.prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11') else True,
                 agent=result,llm_calls=client.calls,report_images=0,
                 **(dict(prompt_version=args.prompt_version,budget_namespace=[args.model,args.prompt_version],
-                        call_dir=str(client.directory),tune_rule=args.tune_rule) if args.prompt_version in ('r8-v8','r8-v9','r8-v10') else {}),
-                frozen=result['status']=='feasible',remaining_calls=40-client.calls)
+                        call_dir=str(client.directory),tune_rule=args.tune_rule) if args.prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {}),
+                frozen=result['status']=='feasible',remaining_calls=call_limit(args.prompt_version)-client.calls)
 
 
 def session_step(args):
@@ -320,10 +357,15 @@ def session_step(args):
     info=ModelInfo.load(args.model_dir)
     ctx=build_context(info,read(args.model_dir/'calibration.json'),samples=samples_for(args.model_dir,info))
     ctx.prompt_version=args.prompt_version
+    check_session_placement(args)
+    if args.prompt_version=='r8-v11':ctx.placement=args.placement
+    ctx.tune_search=getattr(args,'tune_search','sweep')
+    label=getattr(args,'session_label',None)
     ctx.a1_model_call_offset=model_call_offset(args.model,args.prompt_version)
-    if ctx.prompt_version not in ('r8-v8','r8-v9','r8-v10'):raise ValueError('Split orchestration requires r8-v8')
+    if ctx.prompt_version not in ('r8-v8','r8-v9','r8-v10','r8-v11'):raise ValueError('Split orchestration requires r8-v8')
     calls_dir=args.call_dir/args.model/args.prompt_version
-    used=model_calls(args.call_dir,args.model,args.prompt_version)
+    if label is not None:calls_dir=calls_dir/label
+    used=model_calls(args.call_dir,args.model,args.prompt_version,label)
     if args.step=='recover':
         if args.tune_rule=='v8-6.17':
             from ..planners.transformer_session import recover_pending_tune
@@ -341,7 +383,11 @@ def session_step(args):
         state=load_state(state_path) if state_path.exists() else None
         phase=state['phase'] if state is not None else 'evaluate'
         if phase!=args.step:raise ValueError('Requested step differs from checkpoint: '+phase)
-        client=None
+        client=None;tune_client=None
+        budget_client=ModelBudgetClient;retry_options={}
+        if getattr(args,'provider_state',None) is not None:
+            from ..planners.provider_retry import RetryingBudgetClient
+            budget_client=RetryingBudgetClient;retry_options=dict(provider_state=args.provider_state)
         saved=read(args.response_file) if args.response_file is not None else None
         replay14=bool(saved is not None and state is not None
                       and state.get('recovery',{}).get('section')=='6.9')
@@ -355,14 +401,23 @@ def session_step(args):
                 raise RuntimeError('Recovered call-21 request context differs')
         if phase=='evaluate' and saved is None:
             from ..llm import LLMClient
-            client=ModelBudgetClient(LLMClient(args.budget_path,model='deepseek-flash',reasoning_effort='high',
-                max_tokens=output_tokens(args.prompt_version),max_total_calls=450),args.call_dir,
-                model=args.model,prompt_version=args.prompt_version)
+            client=budget_client(LLMClient(args.budget_path,model='deepseek-flash',reasoning_effort='high',
+                max_tokens=output_tokens(args.prompt_version),max_total_calls=ledger_cap(args,403 if ctx.tune_search=='llm-select' else 450)),args.call_dir,
+                model=args.model,prompt_version=args.prompt_version,limit=call_limit(args.prompt_version),
+                **(dict(label=label) if label is not None else {}),**retry_options)
+        if phase=='tune' and ctx.tune_search=='llm-select':
+            from ..llm import LLMClient
+            tune_client=budget_client(LLMClient(args.budget_path,model='deepseek-flash',reasoning_effort='high',
+                max_tokens=output_tokens('r8-v11'),max_total_calls=ledger_cap(args,403)),args.call_dir,model=args.model,prompt_version='t1',
+                label=label,limit=getattr(args,'tune_call_limit',20),**retry_options)
         scan_marker=calls_dir/'first-v8-6.14-convergent-scan.json'
         first_convergent_tune=(args.model=='qwen' and phase=='tune' and args.tune_rule=='v8-6.14'
                               and first_convergent_scan(state,scan_marker))
-        result=advance(ctx,args.root,client=client,reply=saved,max_iters=min(8,max(1,40-used)),
-                       tune_rule=args.tune_rule)
+        result=advance(ctx,args.root,client=client,reply=saved,
+                       max_iters=state['max_iters'] if state is not None else
+                           getattr(args,'session_iters',None) or session_iterations(args.prompt_version,used),
+                       tune_rule=args.tune_rule,confirm_rule=getattr(args,'confirm_rule','c1'),
+                       **(dict(tune_client=tune_client,label=label) if ctx.tune_search=='llm-select' else {}))
         if args.model=='qwen' and phase=='tune' and args.tune_rule=='v8-6.14':
             result['first_convergent_tune']=first_convergent_tune
             if first_convergent_tune:
@@ -382,13 +437,20 @@ def session_step(args):
             if not comparison['complete']:raise RuntimeError('Recovered call-14 feedback differs')
     if args.model=='qwen' and args.step=='tune' and args.tune_rule=='v8-6.17':
         result['qwen_s617_tune']=True
-    result.update(llm_calls=model_calls(args.call_dir,args.model,args.prompt_version),report_images=0,
-                  prompt_version=args.prompt_version,budget_namespace=[args.model,args.prompt_version])
+    if args.prompt_version=='r8-v11':
+        from ..tensor_sim import timing_snapshot
+        result.update(placement=args.placement,timing=timing_snapshot())
+    result.update(llm_calls=model_calls(args.call_dir,args.model,args.prompt_version,label),report_images=0,
+                  prompt_version=args.prompt_version,budget_namespace=[args.model,args.prompt_version]+([label] if label else []),
+                  tune_search=ctx.tune_search)
+    if ctx.tune_search=='llm-select':
+        result.update(tuning_calls=model_calls(args.call_dir,args.model,'t1',label),session_label=label)
     return result
 
 
 def split_session(args):
     """Outer process only connects bounded processes and accounts for calls."""
+    check_session_placement(args)
     root=args.root or args.out
     root.mkdir(parents=True,exist_ok=True)
     state_path=root/'SESSION.json'
@@ -410,7 +472,15 @@ def split_session(args):
             '--step',phase,'--out',str(step_dir),'--root',str(root),'--model',args.model,
             '--prompt-version',args.prompt_version,'--model-dir',str(args.model_dir),
             '--call-dir',str(args.call_dir),'--budget-path',str(args.budget_path),
-            '--tune-rule',state.get('tune_rule','v8-pre-6.11') if state is not None else args.tune_rule]
+            '--tune-rule',state.get('tune_rule','v8-pre-6.11') if state is not None else args.tune_rule,
+            '--confirm-rule',getattr(args,'confirm_rule','c1')]
+        if getattr(args,'placement',None):command.extend(['--placement',args.placement])
+        if getattr(args,'tune_search','sweep')=='llm-select':
+            command.extend(['--tune-search','llm-select','--session-label',args.session_label,
+                            '--tune-call-limit',str(args.tune_call_limit)])
+            if args.session_iters:command.extend(['--session-iters',str(args.session_iters)])
+        if getattr(args,'provider_state',None) is not None:command.extend(['--provider-state',str(args.provider_state)])
+        if getattr(args,'ledger_cap',None) is not None:command.extend(['--ledger-cap',str(args.ledger_cap)])
         if phase=='recover':command.extend(['--resume-session',str(args.resume_session)])
         saved_call=None
         if state is not None and recovery and phase=='evaluate':
@@ -422,32 +492,46 @@ def split_session(args):
             if not saved.exists():raise FileNotFoundError(saved)
             command.extend(['--response-file',str(saved)])
         print('SESSION_STEP='+phase+' OUT='+str(step_dir),flush=True)
+        from .r8g_mlp_rerun import _calls
+        ledger_before=len(_calls(args.budget_path)) if args.prompt_version=='r8-v11' else None
         started=time.monotonic()
         with (step_dir/'run.log').open('w') as log:
             process=subprocess.Popen(command,stdout=log,stderr=subprocess.STDOUT)
             while True:
                 try:code=process.wait(timeout=2);break
                 except subprocess.TimeoutExpired:
-                    account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version,split_version=version)
-        account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version,split_version=version)
+                    account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version,split_version=version,experiment_round=getattr(args,'experiment_round',None),**(dict(label=args.session_label) if getattr(args,'session_label',None) else {}))
+        account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version,split_version=version,experiment_round=getattr(args,'experiment_round',None),**(dict(label=args.session_label) if getattr(args,'session_label',None) else {}))
         path=step_dir/'REPORT.json'
         result=read(path) if path.exists() else dict(complete=False,error='Step did not finish')
         result.update(exit=code,seconds=time.monotonic()-started)
+        if args.prompt_version=='r8-v11':
+            result.update(api_before=ledger_before,api_after=len(_calls(args.budget_path)),placement=args.placement)
+            saved_state=read(state_path) if state_path.exists() else {}
+            last=saved_state.get('history',[])[-1:]
+            if last and last[0].get('stage')=='llm':
+                result.update(complete=False,error=saved_state.get('failed'),failure_class='provider')
         _write(path,result)
         steps.append(dict(step=phase,report=str(path),exit=code,complete=result['complete']))
         _write(args.out/'STEPS.json',dict(steps=steps,state=str(state_path)))
         if code or not result['complete']:
             return dict(complete=False,steps=steps,state=str(state_path),error=result.get('error'),
-                        report_images=0,seconds=time.monotonic()-began)
+                        report_images=0,seconds=time.monotonic()-began,
+                        failure_class=result.get('failure_class','resource' if code in (124,137) or
+                            '3.8 GiB' in str(result.get('error')) else 'code'))
     agent=read(root/'AGENT.json')
     from ..planners.transformer_session import model_calls
-    used=model_calls(args.call_dir,args.model,args.prompt_version)
+    used=model_calls(args.call_dir,args.model,args.prompt_version,getattr(args,'session_label',None))
     return dict(complete=agent['status']!='error',agent=agent,llm_calls=used,report_images=0,
-        prompt_version=args.prompt_version,budget_namespace=[args.model,args.prompt_version],
-        tune_rule=agent.get('tune_rule',args.tune_rule),tune_rule_migration=state.get('tune_rule_migration'),
+        prompt_version=args.prompt_version,budget_namespace=[args.model,args.prompt_version]+
+            ([args.session_label] if getattr(args,'session_label',None) else []),
+        tune_search=getattr(args,'tune_search','sweep'),
+        **(dict(session_label=args.session_label,tuning_calls=model_calls(args.call_dir,args.model,'t1',args.session_label))
+           if getattr(args,'session_label',None) else {}),
+        tune_rule=agent.get('tune_rule',args.tune_rule),confirm_rule=agent.get('confirm_rule','c1'),tune_rule_migration=state.get('tune_rule_migration'),
         convergent_rule_migration=state.get('convergent_rule_migration'),
         call_dir=str(args.call_dir/args.model/args.prompt_version),frozen=agent['status']=='feasible',
-        remaining_calls=40-used,steps=steps,state=str(state_path),seconds=time.monotonic()-began)
+        remaining_calls=call_limit(args.prompt_version)-used,steps=steps,state=str(state_path),seconds=time.monotonic()-began)
 
 
 def evaluate(args):
@@ -657,6 +741,9 @@ def first_convergent_scan(state,marker=None):
 
 
 def tuning_peak_error(report):
+    if (report.get('prompt_version')=='r8-v11' and report.get('step')=='tune'
+            and report['peak_rss_bytes']>3.8*(1<<30)):
+        return 'E5d tuning peak exceeds 3.8 GiB'
     if report.get('qwen_s617_tune') and report['peak_rss_bytes']>3.8*(1<<30):
         return 'A1 §6.17 Qwen tuning peak exceeds 3.8 GiB'
     if (report.get('first_convergent_tune') and report.get('tune_rule')=='v8-6.14'
@@ -728,15 +815,24 @@ def main():
                                          'mock-case20','mock-estimate20','mock-case10','mock-release20','alignment-diagnostic',
                                          'mock-memory','mock-memory-unit','mock-before',
                                          'mock-equivalence','mock-release-check','frozen-metrics','margin-audit','margin-requests',
-                                         'log-requests','log-regrade','log-step','log-baseline-reuse','log-depths','log-observe-rejection'),required=True)
+                                         'log-requests','log-regrade','log-recost','log-step','log-baseline-reuse','log-depths','log-observe-rejection'),required=True)
     parser.add_argument('--inside',action='store_true')
     parser.add_argument('--out',type=Path)
     parser.add_argument('--model',choices=('bert','qwen'),default='bert')
-    parser.add_argument('--prompt-version',choices=('r8-v7','r8-v8','r8-v9','r8-v10'),default='r8-v7')
+    parser.add_argument('--prompt-version',choices=('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11'),default='r8-v7')
     parser.add_argument('--legacy-sessions',type=Path,nargs='+',default=())
     parser.add_argument('--step',choices=('recover','evaluate','tune','confirm','migrate'))
-    parser.add_argument('--tune-rule',choices=('v8-pre-6.11','v8-6.11','v8-6.14','v8-6.17','v8-6.19','v8-6.21','v8-6.22','v8-6.23','v8-6.24'))
+    parser.add_argument('--tune-rule',choices=('v8-pre-6.11','v8-6.11','v8-6.14','v8-6.17','v8-6.19','v8-6.21','v8-6.22','v8-6.23','v8-6.24','v8-6.25'))
     parser.add_argument('--max-sweeps',type=int,choices=(1,8),default=1)
+    parser.add_argument('--placement', choices=('program-plan',))
+    parser.add_argument('--tune-search',choices=('sweep','llm-select'),default='sweep')
+    parser.add_argument('--session-label')
+    parser.add_argument('--provider-state',type=Path)
+    parser.add_argument('--confirm-rule',choices=('c1','c2'),default='c1')
+    parser.add_argument('--tune-call-limit',type=int,choices=(8,9,12,14,16,20),default=20)
+    parser.add_argument('--session-iters',type=int,choices=range(1,11))
+    parser.add_argument('--ledger-cap',type=int,help='global ledger ceiling approved for this round (default: the earlier fixed caps)')
+    parser.add_argument('--experiment-round',choices=('E8',),help='registry round; default derives it from the session label')
     for key in ('model_dir','r0_program','program','frozen','budget_path','call_dir','root','resume_session','response_file','mock_report'):
         parser.add_argument('--'+key.replace('_','-'),type=Path)
     args=parser.parse_args()
@@ -768,10 +864,10 @@ def main():
                 elif args.part in ('margin-audit','margin-requests'):
                     from . import a1_v9_margin
                     report=getattr(a1_v9_margin,'audit' if args.part=='margin-audit' else 'requests')(args)
-                elif args.part in ('log-requests','log-regrade','log-step','log-baseline-reuse','log-depths','log-observe-rejection'):
+                elif args.part in ('log-requests','log-regrade','log-recost','log-step','log-baseline-reuse','log-depths','log-observe-rejection'):
                     from . import a1_v10_replay
                     report=getattr(a1_v10_replay,{'log-requests':'requests','log-regrade':'regrade',
-                                                'log-step':'replay_step','log-baseline-reuse':'baseline_reuse',
+                                                'log-recost':'recost','log-step':'replay_step','log-baseline-reuse':'baseline_reuse',
                                                 'log-depths':'depths','log-observe-rejection':'observe_rejection'}[args.part])(args)
                 elif args.part in ('replay','tune-diagnostic','baselines','requests'):
                     from . import a1_v8_replay
@@ -785,7 +881,9 @@ def main():
                 traceback.print_exc()
                 failed=True
                 report.update(error=f'{type(exc).__name__}: {exc}',peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024)
-            if args.prompt_version in ('r8-v8','r8-v9','r8-v10'):
+                from ..llm import LLMError
+                if isinstance(exc,LLMError):report['failure_class']='provider'
+            if args.prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
                 report.setdefault('domain_violations',json_safe(violations))
         report.setdefault('peak_rss_bytes',resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024)
         peak_error=tuning_peak_error(report)
@@ -800,7 +898,7 @@ def main():
         return 0 if report['complete'] else 1
     os.environ['PT_RESULTS']=str(RESULTS_DIR)
     from ..registry import append,git_rev,new_run_id
-    run_id=new_run_id('A1',args.model,args.part)
+    run_id=new_run_id(round_of(args,('E7' if args.session_label in ('q1','q2') else 'E6r2' if args.session_label in ('E6r2-a','p1','p2') else 'E6r' if args.session_label in ('E6r-a','r1','r2') else 'E6') if args.tune_search=='llm-select' else 'E5d' if args.prompt_version=='r8-v11' else 'E5c' if args.placement else 'A1'),args.model,args.part)
     args.out=args.out or RESULTS_DIR/run_id
     args.out.mkdir(parents=True,exist_ok=False)
     print('RUN='+str(args.out),flush=True)
@@ -808,21 +906,31 @@ def main():
         from .r8g_mlp_rerun import _calls
         if args.budget_path is None:args.budget_path=RESULTS_DIR/'llm_calls.jsonl'
         _write(args.out/'api-accounting.json',dict(api_before=len(_calls(args.budget_path))))
-    if args.part=='session' and args.prompt_version in ('r8-v8','r8-v9','r8-v10'):
+    if args.part=='session' and args.prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         began=time.monotonic()
         report=split_session(args)
         report.setdefault('split_version',read(args.model_dir/'model_info.json')['split'].get('version','split-v1'))
-        report.update(round='A1',exit=0 if report['complete'] else 1,seconds=time.monotonic()-began)
+        experiment_round=round_of(args,('E7' if args.session_label in ('q1','q2') else 'E6r2' if args.session_label in ('E6r2-a','p1','p2') else 'E6r' if args.session_label in ('E6r-a','r1','r2') else 'E6') if args.tune_search=='llm-select' else 'E5d' if args.prompt_version=='r8-v11' else 'A1')
+        report.update(round=experiment_round,exit=0 if report['complete'] else 1,seconds=time.monotonic()-began)
         _write(args.out/'REPORT.json',report)
-        append(dict(run_id=run_id,round='A1',model=args.model,mode=args.part,git_rev=git_rev(),
+        append(dict(run_id=run_id,round=experiment_round,model=args.model,mode=args.part,git_rev=git_rev(),
                     metrics=report,artifacts_dir=str(args.out),ts=datetime.now(timezone.utc).isoformat()))
         print('REPORT='+str(args.out/'REPORT.json'),flush=True)
         return report['exit']
     seconds=1200 if args.part=='unit' else 3600
     command=[sys.executable,'-B','-m','pt_agent.tools.nixrun','--seconds',str(seconds),'--',
              '-m','pt_agent.experiments.a1_transformer_agent','--inside','--part',args.part,'--out',str(args.out),'--model',args.model,
-             '--prompt-version',args.prompt_version,'--tune-rule',args.tune_rule]
+             '--prompt-version',args.prompt_version,'--tune-rule',args.tune_rule,
+             '--confirm-rule',args.confirm_rule]
     command.extend(['--max-sweeps',str(args.max_sweeps)])
+    if args.placement:
+        command.extend(['--placement', args.placement])
+    if args.tune_search=='llm-select':
+        command.extend(['--tune-search',args.tune_search,'--session-label',args.session_label,
+                        '--tune-call-limit',str(args.tune_call_limit)])
+        if args.session_iters:command.extend(['--session-iters',str(args.session_iters)])
+    if args.provider_state is not None:command.extend(['--provider-state',str(args.provider_state)])
+    if args.ledger_cap is not None:command.extend(['--ledger-cap',str(args.ledger_cap)])
     if args.step is not None:command.extend(['--step',args.step])
     for key in ('model_dir','r0_program','program','frozen','budget_path','call_dir','root','resume_session','response_file','mock_report'):
         if getattr(args,key) is not None:command.extend(['--'+key.replace('_','-'),str(getattr(args,key))])
@@ -837,17 +945,18 @@ def main():
                     code=process.wait(timeout=2)
                     break
                 except subprocess.TimeoutExpired:
-                    account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version)
+                    account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version,experiment_round=args.experiment_round)
             status=SimpleNamespace(returncode=code)
         else:status=subprocess.run(command,stdout=log,stderr=subprocess.STDOUT)
     path=args.out/'REPORT.json'
     report=json.loads(path.read_text()) if path.exists() else dict(complete=False)
-    report.update(round='A1',exit=status.returncode,seconds=time.monotonic()-began)
+    experiment_round = round_of(args,('E7' if args.session_label in ('q1','q2') else 'E6r2' if args.session_label in ('E6r2-a','p1','p2') else 'E6r' if args.session_label in ('E6r-a','r1','r2') else 'E6') if args.tune_search=='llm-select' else 'E5d' if args.prompt_version=='r8-v11' else 'E5c' if args.placement else 'A1')
+    report.update(round=experiment_round,exit=status.returncode,seconds=time.monotonic()-began)
     report.setdefault('llm_calls',0);report.setdefault('report_images',0)
     _write(path,report)
     os.environ['PT_RESULTS']=str(RESULTS_DIR)
-    if args.part=='session':account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version)
-    append(dict(run_id=run_id,round='A1',model=args.model,mode=args.part,git_rev=git_rev(),
+    if args.part=='session':account_calls(args.budget_path,args.out,model=args.model,prompt_version=args.prompt_version,experiment_round=args.experiment_round)
+    append(dict(run_id=run_id,round=experiment_round,model=args.model,mode=args.part,git_rev=git_rev(),
                 metrics=report,artifacts_dir=str(args.out),ts=datetime.now(timezone.utc).isoformat()))
     print('REPORT='+str(path),flush=True)
     return 0 if report['complete'] else 1

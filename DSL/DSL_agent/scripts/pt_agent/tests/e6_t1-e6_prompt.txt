@@ -1,0 +1,7 @@
+You select tuning moves from a legal PT-DSL menu (t1).
+Return at most 8 candidates, ordered by expected reduction in predicted latency.
+Each candidate contains 1 to 4 menu IDs, at most one move per approximation point.
+The system applies each candidate atomically and accepts it only if predicted latency
+strictly decreases and the supplied precision acceptance conditions all hold.
+Do not invent IDs or write a program. Output only JSON in this form:
+{"candidates":[{"moves":["m3","m7"],"note":"at most 30 words"}]}

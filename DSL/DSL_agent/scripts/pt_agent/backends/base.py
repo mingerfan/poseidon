@@ -117,6 +117,9 @@ class Backend:
         self._constant_objects = {}
         self._outputs = None
 
+    def stage(self, name: str) -> None:
+        """E5b: a kernel names the stage it enters; arithmetic backends ignore it."""
+
     def input(self, index: int):
         if type(index) is not int or index != len(self._inputs):
             raise BackendError("Input indices must be consecutive integers starting at 0")

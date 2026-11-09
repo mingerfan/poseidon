@@ -1,4 +1,26 @@
-# pt_agent 状态（最后更新：2026-11-02 / 73fc7284）
+# pt_agent 状态（最后更新：2026-11-08 / facb3910-dirty）
+
+**当前 E8（2026-11-08，Claude 执行；E8a、E8b 完成）：** v8-6.25（R0 记录原因、R1 分阶段 refit、R2 逐点回退）与 18 项新测试通过。E8a：10 个被拒输入中 6 个 Qwen 输入在 v8-6.25 下对齐被接受，3 个回放全部冻结且 report100 100/100（p1 24096、q1 20992、q2 21056 编译自举）；26 个输入回归，17 个相同、9 个不同，v8-6.24 重跑与原记录全部一致。E8b r1 冻结 20800 编译自举，report100 100/100、logit 0.002061，比 R0 38849 少 46.5%，为当前有效 Qwen 最好结果；r2 第 3 次调用被会话入口写死的账本上限 403 拒绝，用户批准后上限改为由驱动传入，以 r2b 重跑，冻结 21536 编译自举，report100 100/100、logit 0.001966。API 389→415/450，新增 26/38；残留 0。详见 [E8.md](/home/lhohy/pt_agent_results/E8-align-fallback-20261108/E8.md)、[FINAL_CHECKS.json](/home/lhohy/pt_agent_results/E8-align-fallback-20261108/FINAL_CHECKS.json)。
+
+**历史 E7（2026-11-08，完成实现与有限实验）：** c2与209项离线通过；E7a全程API0完成，15份尾部检查14份通过、14个历史池重新确认、3次精调重放得到8个中间状态，12个原选择保持，Qwen p1/p2均未冻结。E7b q1主4/精调9、q2主3/精调8，分别确认6个独立候选，校准u约0.946–0.948／0.94394均超过原0.90，两个会话未冻结、尾部检查0次。API365→389/450，新增24/38，错误/重试0；账本一致、最后残留0。新增report/编译/真实CKKS0。详见 [E7.md](/home/lhohy/pt_agent_results/E7-confirm-tail-20261108/E7.md)、[最终核对](/home/lhohy/pt_agent_results/E7-confirm-tail-20261108/FINAL_REVIEW.json)。
+
+**当前 E6r2（2026-11-07，执行与汇总已完成）：** provider重试/熔断/冷却接线完成，调用前179项相关测试覆盖通过；收尾14项通过，唯一合计180项。回放BERT/Qwen均完成验收；4个新会话中BERT p1/p2通过，Qwen p1确认失败，Qwen p2已冻结并编译、报告误差0.01718046超过0.01，故冻结后验收2/4。API291→365/450，新增74/112（含1次超时重试、等待300秒），熔断0、冷却0、残留0；原始结果保持。详见 [E6r2.md](/home/lhohy/pt_agent_results/E6r2-resume-20261107/E6r2.md)、[最终核对](/home/lhohy/pt_agent_results/E6r2-resume-20261107/FINAL_REVIEW.json)。真实CKKS0。
+
+**历史 E5d（2026-11-06，完成）：** 三处修正与相关129/129离线测试通过后，按BERT→Qwen完成两个r8-v11新会话；API7＋8＝15次，账本244→259/450，失败重试0。BERT选中LLM第5次、Qwen选中tuned第8次；report100的tensor与Mock均100/100，误差约0.002025／0.001385；预测／导出／真实pars编译自举数分别7175／21857，三方相同，已prune。registry24条、最后残留进程0。本轮真实CKKS0。首个LLM响应两模型均approximation失败；最终冻结来源、头部格式规范化及逐轮反馈使用均分开报告。详见 `/home/lhohy/pt_agent_results/E5d-agent-sessions-20261106/E5d.md` 与 `FINAL_REVIEW.json`。
+
+**历史 E5c（2026-11-06，完成）：** A/C 固定响应回放与验收完成，B代码和离线测试完成、真实会话0。最终相关124/124测试通过；BERT/Qwen冻结来源为第35/4次的精调程序，预测／导出／pars编译自举分别7218/21793，三方相同。report100的tensor与Mock均100/100、feasible=true，误差约6.71e-5/0.001376。registry23条，API新增0、账本244/450，最后原生任务0；结果 `/home/lhohy/pt_agent_results/E5c-agent-loop-placement-20261106/E5c.md`。本轮为已存响应的开发回放，新增独立生成0、真实CKKS0。
+
+**历史 E5a 复核（2026-11-06，Codex）：当时因规格接续停止。** 工作区已包含 Claude 的 E5a 和后续 E5b 实现，保留这些改动，复用六份 E5a REPORT；六模型预测／导出／编译自举数为 13/40/114/176/7910/22146。源码核对发现 E5a §1.3 的返回统计尚未取自 Count 重放，§1.4 的计划来源和 compiler 包内容也与原规格有差异；现有测试明确断言了部分现实现行为。具体代码位置、旧断言迁移与未完成项见“阻塞”栏的历史核对。本次核对只更新 STATUS，新增测试／编译／API 均为 0；下文 Claude 的完成记录作为历史保留。
+
+E5b（Claude 实现，2026-11-06）已完成：程序头改为 `refresh="agent", placement="program-plan"`，计划器在 depth-dp、depth-dp+修剪、stage-cut、stage-cut+修剪中取预测延迟最低者，经 pars 编译。6 个冻结程序编译后自举 11/34/104/161/7466/21409（编译器 depth-dp 为 13/40/114/176/7910/22146，少 15.4%/15.0%/8.8%/8.5%/5.6%/3.3%），预测=导出=编译全部相等，RuntimePlan 延迟同步下降；计划总用时 0.1–19.3 秒。规则基线在同一放置下：BERT R0/R1 11656/8685、Qwen R0/R1 38048/22432、ResNet-20 R6c 209（depth-dp 344）。前缀小程序上 optimized 在 DaCapoPlannerPass 段错误。API0，报告集读取0。详见末尾 E5b 节和 `/home/lhohy/pt_agent_results/E5b-program-placement-20261106/E5b.md`。
+
+E5a（Claude 实现，2026-11-06）已完成：6 个冻结程序只改程序头为 `refresh="agent", placement="depth-dp-plan"`，Agent 端用代价模型的 depth-dp 算出放置，按调用序号写成替换表放进导出包，编译只走 pars。mlp/cnn_plain/resnet20_silu/resnet20/BERT/Qwen 的预测、导出、编译自举数分别为 13/40/114/176/7910/22146，三者全部相等，也等于编译器 depth-dp；计划延迟与 depth-dp 相同；2 个校准样本上 Mock 逐位相同。pars 编译 0.4/0.89/4.82/5.16/8.6/12.73 秒，计划用时 0.05–14.5 秒。API0，报告集读取0。详见末尾 E5a 节和 `/home/lhohy/pt_agent_results/E5a-agent-placement-20261106/E5a.md`。
+
+E4c 指定采集与汇总已完成：MLP两种编译通过（自举0/0）；ResNet取得depth-dp/optimized的Earth快照自举85/19、放置时间0.0132/43.0743秒，两者RuntimePlan导出因缺boot-profile记export_failed。SqueezeNet编译disk，AlexNet trace内存分配失败，VGG16 trace触及8GiB文件限制；MobileNet只引用E4b。TRACE6/COMPILE12、registry10/10、汇总30行/散点23行齐全；服务器作业4份仅导出，最终残留0。/proc采样及MLP常量省略打印均已验证，API0、账本244/450。详见末尾E4c节。
+
+E4b 驱动和记录采集已收尾，真实编译受磁盘阻塞：MLP/ResNet/MobileNet 的 trace 成功（457/10089/45673 Earth op），后续3个trace及这3个模型的编译均在10GiB磁盘检查处记为disk；真实编译0。已导出6份服务器作业、复用E4六份SIZE；TRACE6、COMPILE12、registry9/9、汇总30行/散点21行齐全，最终残留0。原E4及初次停止证据保留，未重试；按规则清理大IR后空闲恢复约14.12GB。API0，账本244/450。详见末尾E4b节。
+
+E4 本轮采集与汇总已完成：结果目录 `/home/lhohy/pt_agent_results/E4-compile-burden-20261105/`，6 份 TRACE、12 份 COMPILE（含 10 份 trace 失败后跳过）、6 份 SIZE 齐全；E4.json、E4.md、POINTS.csv 已生成，30 行汇总、17 个带规模的散点，registry 14/14、最终残留进程 0。专家 MLP trace 成功，其余 5 个缺 einops；MLP 两种编译在 RuntimePlan 导出时非零退出，均已按 spec 保留失败、不重试。六个 PT-DSL 规模统计全部成功。库、编译器、提示词及历史结果保持；API0，账本244/450。详见末尾 E4 节。
 
 A1 §6.24 已完成实现、测试、离线重放与验收（2026-11-02），结果标注"事后重评：r8-v10 判据，Agent 当时收到的是 r8-v9 反馈"。规则 v8-6.24 在 §6.23 的基础上，把对准重选的设置作为之后降阶的下限。R121 规则下两个模型首次都通过 report：
 - Qwen 冻结精调后的第 4 次，22146 自举。report100 为 100/100，误差 0.0014，校准 u 0.872，可行；比 R1（22721）少 2.5%，比 R0（38849）少 43%。
@@ -73,6 +95,19 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 
 | 轮 | spec | 状态(未开始/进行中/完成/阻塞/返工) | 改动文件 | 测试结果 | 与 spec 不一致之处 |
 |---|---|---|---|---|---|
+| E8 | specs/E8-align-refit-fallback.md | 完成（E8a 完成；E8b r1 冻结；r2 被写死的上限中止，以 r2b 重跑并冻结） | planners/margin_refit.py、transformer_tuner.py；experiments/a1_transformer_agent.py、e8_align_fallback.py（新）；tests/test_e8_align.py（新）、test_e8_rerun.py（新）、test_e6_tuning.py；STATUS | 新增 26 项（18+8）；相关 94 项、重跑前 42 项通过；广泛 393 项中 5 失败 1 错误为既有无关项 | 执行顺序调整；新增 align_points 参数；被拒输入 10 个（spec 写 11）；首个 worker 中止后移入 e8a/aborted；r2 因写死的上限 403 中止，以 r2b 重跑；被拒请求单独计数；单次调用的 registry 行 round 为 E6/E6r（代码已修正，已有行保留） |
+| E7 | specs/E7-confirm-tail-check.md | 完成 | planners/confirm.py、agent.py、tuner.py、transformer_tuner.py、transformer_session.py、tune_replay.py（新）；实验入口/驱动、tests/test_e7_*.py、STATUS | 209项通过；E7a 15份尾部/14池/3重放完成；E7b冻结0/2；24次调用，389/450，残留0 | 实现与有限实验收尾；两个新会话均因原校准u条件确认失败，结果保留；未新增report/编译/CKKS |
+| E6r2 | specs/E6r2-resume-after-outage.md | 完成（执行收尾；新会话验收2/4） | planners/provider_retry.py（新）、transformer_session.py；experiments/a1_transformer_agent.py、e6r2_resume_after_outage.py（新）；tests/test_e6r2_*.py；STATUS | 调用前179项覆盖通过；收尾14项0.775s通过，唯一180项；API74，365/450 | 回放2/2；新冻结3/4、报告及编译验收2/4；重试1/等待300秒/熔断0；余38次未消费；残留0 |
+| E6r | specs/E6r-llm-select-fix.md | 阻塞（provider；有限批次已收尾） | planners/transformer_tuner.py、prompts.py；experiments/a1_transformer_agent.py、e6r_llm_select_fix.py；tests/test_e6r_*.py、test_e6_tuning.py及快照；STATUS | 调用前163项通过；收尾14项（新增3）通过；Qwen s1三方22272；E6r-a 0/2冻结、E6r-b 0/4冻结；API8、291/450、残留0 | 2次完整响应、4次HTTP500、2次invalid_response；失败不重试，原120次额度余112；实际结果见E6r最终节 |
+| E6 | specs/E6-llm-select-tuning.md | 阻塞（磁盘准入；代码与已启动批次已收尾） | planners/agent_tools.py、agent.py、transformer_session.py、transformer_tuner.py、tuner.py、prompts.py；tensor_sim.py；experiments/a1_transformer_agent.py、e6_llm_select_tuning.py（新）；tests/test_e6_tuning.py、test_e6_driver.py 与快照；STATUS | 调用前145项通过；收尾新增4项汇总测试通过（同组6项）；E6a 2/2完成；E6b BERT s1三方6808，Qwen s1报告通过/编译准入停止，两s2未启动；API24、283/450、残留0 | 保留全部消费与原产物；无重试/资源扩额；E5d历史cache miss未保存，明确单列入口次数；详见E6最终节 |
+| E5d | specs/E5d-agent-sessions-v11.md | 完成 | cost、prompts、transformer_session、a1入口、e5d实验入口及本轮测试、STATUS | 129/129；两新会话、双引擎report100、成本重放、pars三方均通过 | BERT7/Qwen8调用；244→259；来源LLM5/tuned8；CKKS0，残留0 |
+| E5c | specs/E5c-agent-loop-placement.md | 完成（A/C运行；B代码与离线） | cost.py、tensor_sim.py、Agent/精调/提示词/回放入口；r8-v11机械兼容文件；experiments/e5c_agent_loop_placement.py；tests/test_e5c_placement.py及夹具；STATUS | 124/124；反馈重算44/44验证保持；两模型report100双引擎通过，三方自举7218/21793；registry23、API0、残留0 | 自写夹具序列化、计时漏接／原文保存补漏与版本兼容逐项见E5c节；旧断言与数值规则保持 |
+| E5a 复核 | specs/E5a-agent-placement.md | 阻塞（规格接续；既有实现和结果保留） | STATUS.md；本次源码改动0 | 只读核对六份 REPORT，complete／three_way_equal／export_plan_equal 均为6/6；历史 test_e5a_plan 9/9 直接引用，未重跑；新增编译0、API0、残留原生任务0 | Count 重放统计未接到返回值、计划接口与导出来源、compiler 包内容、组合检查阶段及 Transformer Mock 单测等差异，见阻塞栏；旧断言迁移待明确 |
+| E5b | specs/E5b-program-placement.md | 完成（Claude 实现） | backends/base.py、backends/refresh.py、kernels/transformer.py、stage_plan.py（新）、plan.py、cost.py、dsl/parser.py、export/package.py、export/templates/_package/runtime.py、tests/test_e5b_placement.py（新）、tests/test_e5a_plan.py；结果目录的 driver.py、micro.py、run.sh、rerun.sh、collect.py；STATUS | test_e5b_placement 8/8、test_e5a_plan 9/9；相关既有 87 项中 2 项失败，均为已记录问题（test_p2_export 的 /proc/self/status、test_s1_manage 切点）；6 个程序预测=导出=编译，Mock 逐位相同，调用数与 E5a 相同；registry 18 条（含 5 条保留的修正前记录）、残留 0 | 见 E5b 节"与 spec 不一致之处" |
+| E5a | specs/E5a-agent-placement.md | 完成（Claude 实现） | backends/refresh.py、placement.py、backends/cost_dag.py、plan.py（新）、cost.py、dsl/parser.py、export/package.py、export/templates/_package/runtime.py、tests/test_e5a_plan.py（新）；结果目录的 driver.py、run.sh、collect.py；STATUS | test_e5a_plan 9/9；相关既有 57 项中 4 项失败，均为已记录的既有问题（R121 快照 383/288 两项、test_s1_manage 切点、test_p2_export 的 /proc/self/status）；6 个程序预测=导出=编译，Mock 逐位相同；registry 9 条（含 3 条保留的失败尝试）、残留 0 | 见 E5a 节"与 spec 不一致之处" |
+| E4c | specs/E4c-compile-per-model.md | 完成（指定采集；导出/资源失败保留） | 新结果目录的 run.sh、driver.py、launcher.py、collect.py；STATUS | 计数4/4及离线检查通过；MLP两种编译通过，ResNet快照85/19、放置0.0132/43.0743s、export_failed；其余按资源/引用规则记录；registry10/10、服务器作业4、残留0 | 无；AlexNet保持既定crash分类，依据内存分配错误按E4§1.5补导出服务器作业；原始报告/台账保持 |
+| E4b | specs/E4b-compile-burden-rework.md | 阻塞（磁盘；驱动和采集记录已收尾） | 新结果目录的 run.sh、driver.py、launcher.py、collect.py；STATUS | 计数4/4、5类编译记录、trace磁盘与无重试接续检查通过；trace3成功/3disk，编译3disk/9跳过；SIZE复用6、服务器作业6、registry9/9、残留0 | 自写trace分支漏接§4磁盘规则，已修正并复用原拒绝记录接续；初始报告与台账保留，零重试、API0 |
+| E4 | specs/E4-compile-burden.md | 完成（采集流程；有效专家编译数据缺口保留） | 结果目录的 run.sh、driver.py、launcher.py、collect.py；STATUS | 计数4/4及离线检查通过；TRACE6、COMPILE12、SIZE6；6个PT-DSL规模成功，registry14/14，残留0；专家trace1成功/5导入失败，MLP两种编译均在RuntimePlan导出失败 | 本轮自写计时解析曾混入Parser/Pipeline/analysis，已仅从原日志修正，初始COMPILE与原台账保留；无新增native重跑 |
 | A1 | specs/A1-agent-transformer.md（§6.24） | 进行中 | §6.22–§6.24 已提交并推送（73fc7284）：margin.py、planners/transformer_tuner.py、planners/margin_refit.py（新）、experiments/a1_transformer_agent.py、tests/test_r619_margin.py、tests/test_r623_refit.py（新）、tests/test_r624_floor.py（新）、spec、STATUS；§6.19–§6.21 已提交到 be558e42 | §6.24：新增 6 项通过；全量 856 项中 25 项失败、5 项跳过，失败均与本轮无关（R121 默认构建旧快照 20、已知 1、Mock 批次 2、`_constant_objects` 1、运行顺序 1）；v8-6.24 下 Qwen 22146、BERT 7910 report100 均通过，三方一致，完整 RuntimePlan 相同。§6.23：修订后相关 31 项通过（输出未存档）；BERT 7531：report100 100/100，误差 0.0072；Qwen 24226：report 99/100，误差 0.0634，不通过；两模型三方一致，完整 RuntimePlan 相同；R121 下 R0/R1 四项验收完成（Qwen R0/R1 report 校准 u 1.026 不通过，BERT R0/R1 通过，三方均一致） | E₀ 比较带 1e-9 相对余量；refit 候选评估宽捕获异常；测试输出与驱动脚本当时未存档（脚本已于 2026-11-02 补存）；API0，累计 244/450 |
 | U4 | specs/U4-transformer-operators.md（含§7.10.5／§11.8） | 完成（U4a／U4b指定验收） | manage/{ir,greedy,earth_emit,mlir_read}.py；experiments/u4_relative_acceptance.py、u4_bert_managed.py；test_u4_management_memory.py；STATUS | 547唯一测试通过；3回归＋BERT完整Function相同；BERT15399/110、Qwen54752/138三方相同且完整计划／载荷相同 | Python峰值3353.70MiB；原限制、冻结DSL及旧包保持；API0、CKKS0；首次Agent输出0 |
 | U5 | specs/U5-nonlinear-fitting.md（含§6–§8） | 完成 | kernels/approx.py；DSL/lower/tensor/P2/tuner/r8-v6入口；U5实验/测试；STATUS | 545/545唯一测试；22程序及4模型兼容；拟合表、四模型小研究、双模式编译完成；[SUMMARY](/home/lhohy/pt_agent_results/u5-complete-20261026T110026006154/SUMMARY.json) | 同阶SiLU未满足精度条件、宽域低阶Newton误差放大均如实保留；自写修正见U5记录；API0 |
@@ -139,6 +174,36 @@ U1历史§1.1首次解析（已获用户批准接续）：新增独立intake环�
 数学容差：`1e-12+1e-12*abs(ref)`；CKKS：`1e-5+1e-4*abs(ref)`。本轮为保留候选的重新确认、原样真实编译及Mock报告评测，未新增首次独立生成或整网真实CKKS证据。
 
 ## 阻塞（需要用户或 Claude 决定的问题）
+
+**当前 E8：无执行阻塞。** r2 第 3 次主循环调用曾在本地被写死的账本上限 403 拒绝；用户批准后上限改为由驱动传入（427），以 r2b 重跑并冻结。E8b 已批准 38 次，用 26 次。未提交、未推送。
+
+**历史 E7：无执行阻塞，有限批次已收尾，两个新Qwen会话均未冻结。** 209项离线通过；E7a完整执行，12个原选择保持，Qwen p2及中间状态尾部失败、原31745一致率121/123失败，Qwen p1校准u约0.94394。E7b q1/q2各确认6个独立候选，校准u分别0.94644–0.94784／0.94393–0.94394，超过原0.90；均在原确认检查处拒绝，尾部检查0、未冻结，报告及编译跳过。API新增24、累计389/450，provider错误/重试/熔断/冷却0，最后残留0。后续Qwen改善依新spec推进，原程序、候选和消费保持。
+
+**当前 E6r2：无执行阻塞，按有限范围完成并保留失败结果。** 两模型回放验收2/2；四个新会话运行完成、冻结3/4、冻结后验收2/4。Qwen p1两候选确认集校准max_u约0.94394，超过0.90；Qwen p2报告集logit_rel_err约0.01718，超过任务0.01，三方自举20705及报告100/100一致另列。上述结果未回传Agent，没有重跑或追加消费。API365/450，本轮74/112，余38次未消费；1次timeout经300秒等待重试后成功、熔断0、冷却0、残留0。后续若要改善Qwen结果，依用户指定新spec进行；真实CKKS本轮0。
+
+**当前 E6r：provider故障，有限批次已按规则收尾。** 代码四处修正与调用前163项离线通过，§3 Qwen s1补编译三方22272。按BERT/Qwen回放、BERT r1→Qwen r1→BERT r2→Qwen r2执行全部6个会话尝试，均因provider错误停止且未重试；共8请求=2完整响应+6错误（HTTP500四次、invalid_response两次），API283→291/450，余112次未消费。新冻结0/4，E6r-a完整精调0；BERT前两轮局部接受只记诊断。8条llm registry/global_call284–291与命名空间、账本相符，残留0。无代码/资源/编译器失败证据；完整有效三种精调比较及新会话冻结验收仍缺，完整性能比较仍待有效结果。见 [最终报告](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6r.md)、[核对](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/FINAL_REVIEW.json)。
+
+**当前E5d：无待用户决定的阻塞，已收尾。** 两模型确认、report100双引擎、成本重放和真实pars编译均完成，三方自举一致。初次自动审批拦截在外发0时发生；用户随后明确批准具体载荷与DeepSeek目的地，继续执行并保留APPROVAL_STOP.json。原文响应／sources及历史记录保留；既有入口将BERT7份程序头统一引号格式，参数改写0，Qwen文本变化0，此项单列于最终报告。真实CKKS在本轮执行范围外，新增0。
+
+**当前 E5c：无新增阻塞（2026-11-06）。** A/C与B离线均收尾，实际API0、编译2次成功。B真实新会话按本轮范围未执行，后续依新spec和单独授权安排。下方E5a核对及E4/A1事项保留其历史结论。
+
+**历史 E5a：既有实现与原规格的核对（2026-11-06，Codex 只读核对；当前由用户指定 E5c 接续）。** 此段保留当时的核对和停止结论；用户在 E5c 指令中已明确复用 Claude 的 E5a/E5b 工作区实现，本轮依 E5c 执行。原核对未应用新源码补丁、未读取 E5b spec、未启动实验。复用 `/home/lhohy/pt_agent_results/E5a-agent-placement-20261106/{mlp,cnn_plain,resnet20_silu,resnet20,bert,qwen}/REPORT.json`：六份均 complete=true，计划／导出／编译分别 13/40/114/176/7910/22146，three_way_equal 与 export_plan_equal 均为 true。历史 E5a 单测 9/9 沿用原记录；相关既有测试失败的历史记录保留，当时测试执行数为 0。
+
+已核实的规格差异与代码位置：
+
+1. **§1.3 的 Count 重放统计尚未作为返回结果。** `scripts/pt_agent/cost.py:96–139` 从 DAG／Placement 生成 counts、自举数和延迟，`level_hist` 在第119行写成 `{}`；之后的 `verify_program` 只附加 replay。`plan.py:177–189` 的 Count 重放只返回 boots、calls、min_level、apply_s 和 inner_boots，未返回重放的延迟和层级直方图。自举数一致已有证据；原规格要求的实际重放统计仍待接线。
+2. **§1.2／§1.4 的入口契约和计划来源。** 当前 `plan_program`（`plan.py:140`）返回 tuple，时间字段位于 timing；没有规定的 `plan_refresh(...) -> dict` 入口及顶层 plan_s/lower_s/dp_s。`export/package.py:397–400` 对 depth-dp-plan 调用 `plan_package`，在包自己的 forward 上另算放置（`plan.py:216–261`）。旧测试 `tests/test_e5a_plan.py:177` 明确断言 source 为 `package.runtime.invoke`。按 E5a 原计划来源修正会涉及该断言含义，需在 spec 中明确迁移。
+3. **§1.4 的 compiler 包逐字节保持要求尚未满足。** `export/package.py:263` 对所有模式读取当前 CORE_SOURCES，并复制改过的 refresh.py、runtime.py；原 E5a 历史记录第5项已确认 compiler 包内容变化。需补充新导出时保留旧模式源码的具体规则，或修订兼容要求；现有历史包原样保留。本次未执行哈希或字节完整性校验。
+4. **§1.1 的检查阶段与旧断言。** 组合限制位于 parser.py:177–178，typecheck 未实现这项规则；旧测试 `tests/test_e5a_plan.py:73–77` 要求 parse 时直接抛错。若按原规格迁至 typecheck，需明确这项旧测试的迁移口径。
+5. **其余尚缺的验收内容。** Placement 新字段只有 refreshed_uses（`placement.py:17–19`），尚无每个 boot 节点对应切点的字段。Transformer softmax 单测在 `test_e5a_plan.py:181–185` 只做 estimate／replay，Mock 被跳过；六模型实验的 Mock 记录与 toy Mock 记录保留。全量测试通过条件仍有历史既有失败，尚待规格明确接续范围。
+
+停止依据：AGENTS.md 当前主线要求“改变断言含义、期望数值或算法的修改，仍然必须停下”，并要求遇到设计选择时等待新 spec。下一步需补充旧断言迁移、compiler 包兼容实现口径及当前 E5b 兼容范围；其余 E5a 缺口沿原规格补齐。仅把这些差异列入历史说明，尚不足以完成本次原规格验收。本次文档以外改动0，registry新增0、报告集读取0、API新增0，现有账本244/450与所有消费保留；最后检查 nix/nix-shell/hecate-opt 任务0，空闲13,202,907,136字节。
+
+**E4c 收尾后的缺口（2026-11-05）。** 指定采集已正常收尾，MLP完整编译与计划自举一致；ResNet两种放置的时间和快照自举数已有证据，但EmitRuntimePlan因缺少 `--boot-profile` 失败，当前未自行补参。SqueezeNet的4,427,485,991字节输入使编译前空闲9,695,342,592字节，小于10GiB；AlexNet trace的1GiB内存分配请求失败；VGG16 trace达到8GiB单文件限制；MobileNet按spec只引用E4b。后4模型已导出服务器作业、未执行；没有扩大限制或重试。若需完整计划或更大模型的有效编译曲线，需后续spec明确boot-profile与服务器/资源接续。此前E4b的执行顺序和采样问题已按E4c修订，历史记录保留。
+
+**当前 E4b（2026-11-05）磁盘接续待新 spec。** 已复用既有 einops 0.6.1，MLP/ResNet/MobileNet trace 成功；原样输入 IR 分别1,401,825／1,570,843,452／8,077,579,096字节。按六个trace后再编译的顺序，SqueezeNet启动前空闲仅约4.48GB，小于10GiB；后三个trace及前三个模型的编译均按§4记录disk、导出服务器作业，未重试。6个作业只导出未运行。按每模型收尾规则清理大IR后空闲恢复约14.12GB，已失败步骤保留。RuntimePlan补参、快照与分段时间代码已实现并通过离线检查，真实编译0，尚无有效编译时间与自举数据；后续需明确磁盘/执行顺序的接续口径。当前记录文件齐全、残留进程0，资源限制未改。
+
+**E4 测量缺口（2026-11-05）。** 本轮驱动、数据采集与汇总已完成，按 spec 记录失败并继续其余步骤。专家 ResNet/MobileNet/SqueezeNet/AlexNet/VGG16 均因 `ModuleNotFoundError: No module named 'einops'` 在 trace 导入阶段退出；MLP trace 成功（457 Earth op），两种放置命令均在 `EmitRuntimePlan` 报缺 prefix、target-id、operator-spec-id、operator-spec-sha256、context-id 后退出1。未安装依赖、未更换命令、未重试。若需补齐专家程序的有效编译曲线，需后续 spec 明确依赖及命令接续口径；本轮未调整这些边界。六个 PT-DSL 规模与旧 M7/M7b 已关联，E4.md 保留失败、来源与缺口。
 
 **当前（2026-11-02，§6.24 之后）待用户决定。** 用户选择"重选设置作下限"，写成 §6.24（v8-6.24）。重放后两个模型的冻结程序都通过 report，详见末尾"A1 §6.24"一节。
 1. 已决定（2026-11-02，用户"定为统一规则"）：两个模型统一采用 v8-6.24 + a1-6.20，取代此前的 v8-6.19 + a1-6.20；代码默认不变，v8-6.24 需显式选择。
@@ -536,6 +601,27 @@ R2b 实现及六组合运行已完成；以下两组编译失败保留原结果�
 
 ## API 已用 / 450
 
+E7（2026-11-08，完成有限实验）：365→389/450，新增24/38；E7a API0；E7b q1主4/10、精调9/9，q2主3/10、精调8/9。24个请求/完整响应、24条llm registry，global_call366–389连续，逐命名空间与账本一致；错误、重试、熔断、等待和冷却均0。剩余14次未消费，保留全部既有消费；没有额外探测、安装或下载。[FINAL_REVIEW](/home/lhohy/pt_agent_results/E7-confirm-tail-20261108/FINAL_REVIEW.json)。
+
+E6r2（2026-11-07，完成）：API291→365/450，新增74/112；回放精调BERT6/8、Qwen13/16（12个逻辑请求＋1次重试）；新会话BERT p1主5/10、精调12/12，Qwen p1主8/10、精调4/12，BERT p2主7/10、精调8/12，Qwen p2主3/10、精调8/12。73逻辑请求、74实际尝试＝73完整响应＋1超时错误；74条llm registry/global_call292–365连续，逐命名空间相同。重试1次等待300秒，熔断0、会话冷却0；无额外探测，剩余38次未使用。原已消费额度保留。
+
+E6r（2026-11-07，provider失败后收尾）：API283→291/450，新增8/120；回放精调BERT3/8、Qwen1/16；四个新会话各主1/10、精调0/14。8请求、2完整响应、6错误、8条llm registry；global_call284–291连续，命名空间逐项相符。112次额度保留、无消费重置/转移、失败不重试。具体载荷在用户明确批准后执行；原审批停止记录保留。
+
+E6（2026-11-07，磁盘停止）：API259→283/450，新增24/144；E6a主0/精调7（BERT3、Qwen4）；E6b BERT s1主5/精调4、Qwen s1主5/精调3；两个s2均0。24个请求、24个响应、24条llm registry，global_call260–283逐项相符；各命名空间均在原上限内。失败不重试，已消费额度保持；原自动审批拦截在用户明确批准后已解除，原记录保留。
+
+E5d（2026-11-06，完成）：API244→259/450，新增15（BERT7、Qwen8），两命名空间均≤10、合计≤20；provider错误0、重试0、额外连通性调用0。24条E5d registry含15条llm-call，与账本增量相同。未消费5次保持未消费，不转移、不重置。
+
+E5c（2026-11-06）：API新增0，244/450保持；BERT回放3次保存响应、Qwen回放6次，均使用原响应文件。B真实会话0、独立新生成0。registry新增23条（含汇总），真实编译2次、CKKS0。
+
+E5b（2026-11-06）：API0，账本244/450；registry新增18条，其中5条为修正前记录（BERT 及 4 个 Transformer 基线，neg/源值合并前），报告集读取0。
+E5a（2026-11-06）：API0，账本244/450；registry新增9条，其中3条为保留的失败尝试（mlp 模型目录错误、Qwen 计划映射、Qwen Mock 内存），报告集读取0。
+
+E4c（2026-11-05）：API0，账本244/450；registry新增10条（5个本机trace步骤、4次真实编译、1次编译磁盘拒绝）；MobileNet新trace/编译0，PT-DSL新trace0，服务器执行0，报告集读取0，重试0。
+
+E4b（2026-11-05）：API0，账本244/450。新增registry9条（6个trace步骤、3个编译磁盘拒绝步骤），其中实际第三方trace3次；真实编译0、服务器执行0、报告集读取0。保留SqueezeNet首次包装进程失败的原始台账，当前TRACE注明disk分类修正；没有回退消费或重试。
+
+E4（2026-11-05）：API0，真实调用账本仍244/450；新增registry14条，全部为E4 trace/编译/规模统计；没有读取报告集或执行CKKS。
+
 当前（2026-11-02）：§6.19–§6.24 的离线重放、R0/R1 验收和 D1 诊断均为 API0。真实账本 244/450，最后一次调用在 2026-10-29；BERT 38/40，Qwen 40/40，无在途请求。新的在线会话需用户另行决定。
 
 §6.18当时：新增0，累计按真实账本保持244/450；BERT38/40、Qwen40/40。spec的236为较早计数，保留最后8次已消费调用，不回退额度。本轮首请求均只保存，后续精调／确认全用已有响应。
@@ -721,6 +807,133 @@ R9a API0，累计45/300、剩余255；305项测试通过，全部87条registry�
 历史R8e7时pt_agent：45 / 300，剩余255次。R8e7 API0、重新生成0、重新精调0、训练0、下载0、真实CKKS0；4模型trace／真实编译各4次，2固定基线复用既有计划。4模型共8次确认，2基线各1次；全部6份程序完成8000图Mock报告。全部历史调用与82条registry记录保留。[REPORT](/home/lhohy/pt_agent_results/r8e7-reconfirm-20261022T122558/REPORT.json)。
 
 ## 最近 5 次运行（run_id、模型、结论）
+
+本轮E7最后5条记录（先前记录保留）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E7-all-final-reviewed-20261107T211546-8636 | all | 18项收尾核对通过；24/38调用，389/450，最后残留0 |
+| E7-all-summary-20261107T211345-7d06 | all | E7a完整回溯、E7b两个会话均确认失败，结果和四表齐全 |
+| E7-qwen-session-20261107T202615-7d56 | qwen q2 | 主3/精调8，9候选去重6；原校准u约0.94394，未冻结 |
+| E7-qwen-api-389-20261107T211323-017a | qwen q2 | 第3次主响应完整；该程序内部不可行，原响应保留 |
+| E7-qwen-api-388-20261107T210841-666d | qwen q2 | 第8次精调响应完整，错误/重试0 |
+
+本轮E6r2最后5条记录（先前记录保留）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E6r2-all-summary-reviewed-20261107T174710-1b46 | all | 74/112调用，365/450；新冻结3/4、冻结后验收2/4，账本相符、残留0 |
+| E6r2-all-summary-20261107T161627-3019 | all | 预定顺序收尾；原始汇总保存在initial-collection |
+| E6r2-qwen-e6r2-b-p2-pars-20261107T161626-ebf1 | qwen p2 | 预测/导出/真实编译20705，已prune；报告失败单列 |
+| E6r2-qwen-e6r2-b-p2-cost-20261107T161410-3b3e | qwen p2 | 冻结tuned第1份，20705自举，预测5397949331us |
+| E6r2-qwen-e6r2-b-p2-evaluate-20261107T161334-1f92 | qwen p2 | 双引擎100/100，logit_rel_err约0.01718046，feasible=false |
+
+本次E6r最终最新记录（先前表格保留历史）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E6r-all-summary-review-20261107T071355-dddb | all | 8/120调用、291/450；provider失败6、新冻结0/4、残留0 |
+| E6r-all-summary-20261107T070906-883b | all | 按序尝试收尾；各会话provider失败详见报告 |
+| E6r-qwen-session-20261107T070848-b45e | qwen | http_error |
+| E6r-qwen-api-291-20261107T070905-e846 | qwen | http_error |
+| E6r-bert-session-20261107T070735-f7f1 | bert | invalid_response |
+
+本次E6r最新记录（先前表格保留历史）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E6r-all-approval-stop-20261107T064940-3648 | all | 具体外发自动审批停止；API0，累计283/450 |
+| E6r-all-requests-ready-20261107T064940-6916 | all | 四份首请求已保存；两模型主请求与E6相同 |
+| E6r-all-offline-20261107T064940-6583 | all | 相关回归及新增测试通过，唯一测试163 |
+| E6r-qwen-e6-qwen-s1-compile-20261107T064903-654b | qwen | 预测/导出/真实编译均22272；已prune |
+| E6-all-summary-review-20261107T055805-0f92 | all | summary-review |
+
+本次E6最终记录：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E6-all-summary-review-20261107T055805-0f92 | all | 磁盘资源停止复核；API24/144、累计283/450、两s2未启动、残留0 |
+| E6-all-summary-20261107T051344-4546 | all | 整轮按资源失败收尾；E6a完成，E6b 1完整/1编译阻塞/2未开始 |
+| E6-qwen-e6b-s1-pars-20261107T051344-8b17 | qwen | trace成功；编译前10GiB准入未通过；原trace已按规则prune |
+| E6-qwen-e6b-s1-cost-20261107T051137-4058 | qwen | 冻结程序预测22272自举，成本重放通过 |
+| E6-qwen-e6b-s1-evaluate-20261107T051058-b822 | qwen | 冻结程序report100 tensor/Mock均100/100 |
+
+以下为先前阶段记录，保留历史：
+
+
+本次 E6（无真实外发）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E6-all-approval-stop-20261107T023721-ae98 | all | 具体载荷/目的地被自动审批拦截；API0、259/450、残留0 |
+| E6-all-request-prepare-20261107T023721-3d90 | all | BERT/Qwen请求准备完成；菜单70/111项；主请求与E5d相同 |
+| E6-all-offline-20261107T023721-0281 | all | 145项离线通过，27.699秒；API0 |
+| E5d-all-summary-20261106T185132-0abf | all | 两模型全部收尾，API15、259/450 |
+| E5d-qwen-pars-20261106T185131-6144 | qwen | 预测／导出／pars均21857自举，已prune |
+
+历史 E5d：
+
+
+本次E5d收尾：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E5d-all-summary-20261106T185132-0abf | all | 两模型全部收尾，129离线通过；API15、259/450、残留0 |
+| E5d-qwen-pars-20261106T185131-6144 | qwen | 预测／导出／pars均21857自举，已prune |
+| E5d-qwen-cost-20261106T184840-d6f5 | qwen | 冻结程序21857自举，重放核对通过 |
+| E5d-qwen-evaluate-20261106T183839-a23f | qwen | report100 tensor／Mock均100/100，误差约0.001385 |
+| E5d-qwen-session-20261106T162620-2c3a | qwen | 8次调用，确认选中tuned第8次 |
+
+历史E5c收尾：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E5c-all-summary-20261106T144620-a5ac | all | 124项通过，两模型三方与report通过，API0、残留0 |
+| E5c-bert-pars-20261106T121402-9142 | bert | pars7218自举，预测／导出／编译相同 |
+| E5c-bert-cost-20261106T121158-bb91 | bert | 冻结程序program-plan完整重放核对通过，预测7218 |
+| E5c-bert-evaluate-20261106T115829-e807 | bert | report100双引擎100/100、feasible=true |
+| E5c-bert-log-step-20261106T115826-be2c | bert | 确认冻结第35次的精调程序 |
+
+E5c收尾前的最近运行快照（保留）：
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E5b-bert-prefix-three-placements-20261106T065617-6686 | bert 前缀 | depth-dp 360 = program-plan 360；optimized 段错误 |
+| E5b-bert-agent-program-plan-20261106T064300-1da4 | bert | stage-cut+修剪，预测=导出=编译 7466（depth-dp 7910） |
+| E5b-qwen-agent-program-plan-20261106T062609-31a5 | qwen | depth-dp+修剪，预测=导出=编译 21409（depth-dp 22146） |
+| E5b-resnet20-agent-program-plan-20261106T062007-c6c8 | resnet20 | stage-cut+修剪，161（depth-dp 176） |
+| E5b-resnet20-R6c-agent-program-plan-plan-only-20261106T063814-4da6 | resnet20 R6c | 只做计划，209（depth-dp 344） |
+| E5a-qwen-agent-depth-dp-plan-20261106T060317-1374 | qwen | 预测=导出=编译 22146，pars 编译 12.73 秒 |
+| E5a-bert-agent-depth-dp-plan-20261106T053105-5675 | bert | 预测=导出=编译 7910，pars 编译 8.6 秒 |
+| E5a-resnet20-agent-depth-dp-plan-20261106T052851-25d5 | resnet20 | 预测=导出=编译 176，pars 编译 5.16 秒 |
+| E5a-resnet20_silu-agent-depth-dp-plan-20261106T052832-68a5 | resnet20_silu | 预测=导出=编译 114，pars 编译 4.82 秒 |
+| E5a-cnn_plain-agent-depth-dp-plan-20261106T052815-ed3d | cnn_plain | 预测=导出=编译 40，pars 编译 0.89 秒 |
+| E4c-VGG16-dacapo-expert-trace-20261105T141959-9378 | VGG16 | trace达到8GiB文件限制，服务器作业已导出，残留IR已清理 |
+| E4c-AlexNet-dacapo-expert-trace-20261105T141854-dbc3 | AlexNet | trace内存分配失败，原crash分类保留，服务器作业已导出 |
+| E4c-SqueezeNet-dacapo-expert-depth-dp-20261105T141813-b36f | SqueezeNet | 编译磁盘预检拒绝，disk；服务器作业已导出 |
+| E4c-SqueezeNet-dacapo-expert-trace-20261105T141812-066f | SqueezeNet | trace成功，21424 Earth op、输入4427485991字节 |
+| E4c-ResNet-dacapo-expert-optimized-20261105T141746-768e | ResNet | Earth快照自举19，放置43.0743秒；RuntimePlan缺boot-profile，export_failed |
+
+E4c 开跑前最近运行快照（保留）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E4b-MobileNet-dacapo-expert-depth-dp-20261105T090152-42cf | MobileNet | 磁盘启动前拒绝，disk；服务器作业已导出 |
+| E4b-ResNet-dacapo-expert-depth-dp-20261105T090151-7ff5 | ResNet | 磁盘启动前拒绝，disk；服务器作业已导出 |
+| E4b-MLP-dacapo-expert-depth-dp-20261105T090149-2835 | MLP | 磁盘启动前拒绝，disk；服务器作业已导出 |
+| E4b-VGG16-dacapo-expert-trace-20261105T090148-3d2c | VGG16 | 磁盘启动前拒绝，disk；服务器作业已导出 |
+| E4b-AlexNet-dacapo-expert-trace-20261105T090146-aa93 | AlexNet | 磁盘启动前拒绝，disk；服务器作业已导出 |
+
+E4b 开跑前最近运行快照（保留）：
+
+| run_id | 模型 | 结论 |
+|---|---|---|
+| E4-resnet20-ptdsl-size-trace-20261105T075252-bc59 | resnet20 | Earth op 18113；trace与打印成功，IR已清理 |
+| E4-resnet20_silu-ptdsl-size-trace-20261105T075245-2a35 | resnet20_silu | Earth op 16962；trace与打印成功，IR已清理 |
+| E4-cnn_plain-ptdsl-size-trace-20261105T075239-7cef | cnn_plain | Earth op 3668；trace与打印成功，IR已清理 |
+| E4-mlp-ptdsl-size-trace-20261105T075236-21f0 | mlp | Earth op 1109；trace与打印成功，IR已清理 |
+| E4-qwen-ptdsl-size-trace-20261105T075234-4b3e | qwen | Earth op 523598；trace与打印成功，IR已清理 |
+
+E4 开跑前最近运行快照（保留）：
 
 | run_id | 模型 | 结论 |
 |---|---|---|
@@ -7760,3 +7973,680 @@ report 评测分别用时 520 秒和 611 秒，峰值 2639851520 字节和 12430
 **与 spec 不一致之处。** 本节没有对应 spec。驱动放在结果目录，没有放进 pt_agent/。
 
 **未完成。** 本项目程序上 optimized 的自举数仍为空。若要取得，需要让上游规划器在这些程序上不崩溃，这涉及修改 DaCapo，按 AGENTS.md 需要单独批准的方案；本轮没有定位到具体的代码缺陷。
+
+
+### E4：现有编译器端到端优化的编译负担（2026-11-05）
+
+**改动文件。** 按 `specs/E4-compile-burden.md` 仅新增结果目录 `/home/lhohy/pt_agent_results/E4-compile-burden-20261105/` 的 `run.sh`、`driver.py`、`launcher.py`、`collect.py`，仓库只更新 STATUS。入口以 setsid nohup 启动，按计数自检、6 个专家 trace、规模排序后的编译、6 个 PT-DSL 规模、collect 的顺序串行收尾。没有改动 pt_agent 库、上游脚本、前端、编译器、提示词或数值判据；原工作区变更保留。
+
+**测试输出与运行结果。**
+- 规定的 4 行计数自检 4/4；3 个 Python 文件语法、shell 语法、流式 Earth/CKKS 计数、线程计时的墙钟列、不可解析计时保留原文、4 种退出分类检查通过。最终补测只保留 pass 计时、排除 Parser/Rest、流水线分组及 analysis 条目，通过。见 `SELF_CHECK.json`、`OFFLINE_CHECKS.json`。
+- 6 份 TRACE、12 份 COMPILE（其中 10 份注明 trace 失败未执行）、6 份 SIZE 均存在；汇总 30 行，POINTS.csv 17 行数据；registry 实际14条与预期14条相同，重复0；最终残留进程0，无需杀进程。见 `E4.json`、`FINAL_PROCESSES.json`。
+- 专家 MLP trace 1.48 s、203.89 MiB，457 个 Earth op、手写 bootstrap 0。其余 5 个模型全部在上游 poly/MPCB.py 导入 einops 时退出1，保留各自 log_tail；MLP trace 成功，因此 §1.1 的 MLP 与 ResNet 同时导入失败停止条件未触发。按 spec 继续，不安装、不修改、不重试。
+- MLP 的 depth-dp/optimized 各执行1次，退出均为1，分别0.03 s/11.49 MiB、0.17 s/14.35 MiB；报错为 RuntimePlan export 缺 prefix、target-id、operator-spec-id、operator-spec-sha256 和 context-id。原编译命令保留，完整输出未产出，表中自举数为空，结果按规定归类 crash。没有优化超时，未触发按规模跳过规则；没有内存超限，服务器作业0。
+
+| PT-DSL 程序 | Earth op | trace 秒 | bytecode 字节 |
+|---|---:|---:|---:|
+| bert | 350951 | 14.21 | 242025263 |
+| qwen | 523598 | 22.17 | 179047852 |
+| mlp | 1109 | 1.07 | 36195190 |
+| cnn_plain | 3668 | 1.53 | 99802080 |
+| resnet20_silu | 16962 | 4.31 | 490080960 |
+| resnet20 | 18113 | 4.62 | 490102281 |
+
+B 部分六例均只 trace 和无 pass 文本打印；bytecode 与 generic 文本均已删除并记录 PRUNED.txt。编译耗时、RSS、自举及失败结论直接复用既有 M7/M7b，不重跑其编译。团队 M2 与论文自报值单独标明来源和不同硬件/配置。旧 M7 超时报告缺 RSS 的字段保持空值，没有补造测量值。
+
+**来源核对。** 已执行 spec 要求的两组 diff -rq，并把完整输出写入 E4.md/E4.json。R121 构建的 BypassDetection、CandidateAnalysis、CandidateSelection、DaCapoPlanner、CoverageRecorder 五个源文件均与上游相同；整体构建仍注明为已批准13文件补丁加R121，并未另建原版编译器。
+
+**与 spec 不一致之处。** 最终范围、命令、顺序和资源与 spec 一致。本轮自写实现修正1项：初次 top_passes 解析混入了 Parser/Rest、Pipeline 和 analysis 计时；验证后修正筛选，仅重析两份已存日志。初始 COMPILE 保存为各自 `COMPILE.initial.json`，原 registry 行原样保留；更新后的 COMPILE 注明来源，native/API 重跑0。汇总 notes 补充原日志中的导入/导出错误，便于区分失败阶段。
+
+**未完成项。** 专家程序有效编译的规模—时间数据缺口仍在：5例缺依赖、MLP的指定README命令在现有构建上导出失败。后续修正依赖或接续编译命令需要新的 spec，本轮不扩大范围。论文图由 Claude 另画；本轮已交付 E4.md、E4.json、POINTS.csv。该轮没有 Agent 新生成、数值验收或真实CKKS结论。
+
+**预算与资源。** 6 次专家 trace、2 次专家编译、6 次 PT-DSL 规模步骤，共14次Nix串行调用；所有原消费保留，零重试。6 GiB/8 GiB/3600秒/10GiB限制保持，最终磁盘空闲约14.13 GB。API0、报告集读取0、安装/下载0、库修改0、commit/push0；调用账本244/450。
+
+
+### E4b：编译负担返工（2026-11-05，驱动与采集收尾，真实编译磁盘阻塞）
+
+**改动文件。** 结果目录 `/home/lhohy/pt_agent_results/E4b-compile-burden-20261105/` 从E4复制四份驱动 `run.sh`、`driver.py`、`launcher.py`、`collect.py`；仓库只更新STATUS。
+- trace与服务器作业的PYTHONPATH追加已批准的既有einops 0.6.1目录；开跑前只检查 `einops/__init__.py` 存在。没有安装、下载、复制依赖或执行校验器。
+- `expert_argv`按spec提取 `toolchain.hecate_command(dacapo=True)` 的runtime-plan参数，增加debug快照，输出改为 `lowered.mlir`。
+- 新增Earth快照计数、唯一RuntimePlan函数名读取及plan_stats、两种自举数差异notes、placement/export/optimize分段时间、export_failed及disk记录；先统计后按规定prune。
+- 六个PT-DSL SIZE直接引用E4原文件；collect增加规定字段，M7/M7b/M2/论文数值沿用；E4b.md写明einops既有0.6.1与上游要求0.7.0的差异。
+
+**测试输出。**
+- 规定计数自检4/4；Python/shell语法、依赖路径存在、命令参数检查通过。
+- 用临时结构夹具覆盖complete、snapshot/plan不一致、export_failed、disk、crash五个编译记录分支，验证分段时间、快照/计划计数与计数后清理；没有执行真实编译。
+- 补充trace磁盘分支测试及接续时跳过全部已有终态记录测试，通过。见 `OFFLINE_CHECKS.json`、`SELF_CHECK.json`。
+- 最终6份TRACE、12份COMPILE、6个复用SIZE引用、6份服务器作业（bash语法检查通过）齐全；汇总30行、POINTS.csv为21行数据并含placement_s；registry9/9，重复0；最终残留0。逐项核对旧M7/M7b/M2/论文的规模、耗时、RSS、自举及结论数值保持。
+
+**实际运行。**
+
+| 专家程序 | trace结果 | 秒 | 峰值MiB | Earth op | 手写自举 | IR字节 |
+|---|---|---:|---:|---:|---:|---:|
+| MLP | 成功 | 0.80 | 204.55 | 457 | 0 | 1401825 |
+| ResNet | 成功 | 9.71 | 1058.71 | 10089 | 19 | 1570843452 |
+| MobileNet | 成功 | 46.68 | 4644.28 | 45673 | 27 | 8077579096 |
+| SqueezeNet | disk，未启动第三方程序 | — | — | — | — | — |
+| AlexNet | disk，未启动第三方程序 | — | — | — | — | — |
+| VGG16 | disk，未启动第三方程序 | — | — | — | — | — |
+
+MobileNet峰值在可信6GiB限制内。前3个trace的IR同时保留时，磁盘空闲降至约4.48GB；SqueezeNet起的trace预检失败。按§4继续未消费步骤、导出服务器作业：MLP/ResNet/MobileNet的depth-dp也分别在4,474,986,496／4,474,867,712／6,045,593,600字节空闲时被拒，记disk，同模型optimized注明此前磁盘失败而跳过；其余3模型的两种编译因trace未完成而跳过。因此实际可信第三方trace3次、真实编译0；COMPILE为3个disk和9个有理由的跳过记录，分段时间、boots_snapshot及boots_plan为空。没有触发optimized超时跳过，没有内存超限。
+
+按每模型两次编译终态收尾后，删除超过50MiB的大trace，保留计数、字节数、日志和PRUNED；最后空闲恢复到14,122,774,528字节。未利用恢复后的空间重试已失败模型。6个服务器作业只导出，没有执行。
+
+**与 spec 不一致之处／自写错误修正。**
+1. 本轮最初只在编译分支接入了§4磁盘规则，trace分支漏接，导致SqueezeNet的预检拒绝被外层记为launch_failed并停止。按自写错误例外补齐trace分支；已有的3份成功trace及SqueezeNet拒绝记录直接复用，仅执行未消费步骤。
+2. 接续不重置任何记录或调用：原STOP、RUN、初始汇总、SqueezeNet TRACE及修正前驱动保存到 `initial-stop/`（另保留 `STOP.initial.json`）；原registry行不改。当前SqueezeNet TRACE说明disk分类修正并引用初始报告。增加只跳过已有终态记录的接续编排，离线证明接续没有重跑既有步骤，`CONTINUATION.json`记native重试0。
+3. 最终参数、资源、顺序和失败处理沿用spec；未修改上游脚本、poly、前端、编译器或pt_agent库。E4历史目录保持。
+
+**未完成项／阻塞。** 当前 `E4b.json` 的complete表示规定记录齐全；真实编译0，RuntimePlan补参与分段时间尚未取得真实编译结果。需要后续spec明确磁盘与执行顺序接续，才能补有效专家编译曲线。当前未扩大资源、未重试、未运行服务器作业。新记录与旧证据一起输出到 `E4b.json`、`E4b.md`、`POINTS.csv`。
+
+**预算与资源。** 9个Nix步骤，实际第三方trace3次、磁盘拒绝6次；零重试、API0，账本244/450；B部分新trace0、真实编译0、服务器执行0、报告集读取0、CKKS0、安装/下载/依赖复制0、库修改0、commit/push0。可信6GiB、单文件8GiB、3600秒和10GiB启动前检查保持，最终残留进程0。
+
+
+### E4c：逐模型 trace／编译收尾（2026-11-05）
+
+**改动文件。** 在 `/home/lhohy/pt_agent_results/E4c-compile-burden-20261105/` 从E4b复制 `run.sh`、`driver.py`、`launcher.py`、`collect.py`，仓库只更新STATUS。按MLP→ResNet→SqueezeNet→AlexNet→VGG16执行每模型trace、depth-dp、optimized和清理。MobileNet引用E4b的45673 Earth op与8077579096字节输入，不在本机重新trace/编译，按规定写两份跳过记录并导出E4c-MobileNet服务器作业。
+
+编译增加 `--mlir-elide-elementsattrs-if-larger=16`；统计Earth快照与RuntimePlan后prune，先保留traced输入直到同模型两种编译终态。RSS采样改为读取/proc的comm、cmdline和VmRSS；进程退出时跳过，线程异常记录sampler_error而不打断编译。
+
+**测试输出。**
+- 规定计数自检4/4；Python/shell语法、argv中打印选项位置检查通过。
+- 临时/proc夹具覆盖命令/工作目录过滤、退出进程、VmRSS读取和采样异常记录；编译记录夹具验证快照/计划、elision缺失只写notes、采样错误保留且编译继续；trace文件大小失败分支通过。
+- 逐模型顺序、下一模型前清理、按Earth op比较的超时跳过、MobileNet只引用的离线检查通过。见 `OFFLINE_CHECKS.json`、`SELF_CHECK.json`。
+- 6份TRACE、12份COMPILE齐全；汇总30行、POINTS.csv为23行数据，包含placement_s和snapshot_bytes；registry10/10、重复0；服务器作业4份bash语法通过，只导出未执行；最终残留0。E4六份SIZE直接引用，M7/M7b/M2/论文旧数值逐项保持。见 `E4c.json`、`FINAL_CHECKS.json`、`FINAL_PROCESSES.json`、`SERVER_JOBS.json`。
+
+**真实编译结果。**
+
+| 模型 | 放置 | outcome | compile_s | placement_s | export_s | optimize_s | 快照自举 | plan自举 | snapshot_bytes |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| MLP | depth-dp | complete | 0.03 | 0.0006 | 0.0136 | 0.0164 | 0 | 0 | 73545 |
+| MLP | optimized | complete | 0.16 | 0.1402 | 0.0124 | 0.1476 | 0 | 0 | 76221 |
+| ResNet | depth-dp | export_failed | 9.42 | 0.0132 | 6.6616 | 2.7584 | 85 | — | 1710260 |
+| ResNet | optimized | export_failed | 50.85 | 43.0743 | 4.9219 | 45.9281 | 19 | — | 2224357 |
+
+MLP输出字节数分别74717／64224，两份快照都有__elided__，计划自举与快照一致。ResNet两种放置都已执行并产生Earth快照；EmitRuntimePlan随后报 `RuntimePlan Boot requires --boot-profile`，按spec记export_failed，未自行添加boot参数。表中compile_s包含导出耗时，placement_s按规定pass相加，optimize_s为compile_s减export_s。ResNet没有完整计划，未计为完整编译成功。
+
+可信编译峰值RSS：MLP 12.18／14.97 MiB，ResNet 2271.98／2405.36 MiB。四次真实编译的sampler_error均为空；ResNet optimized的/proc样本有效，采样最大2405.36 MiB。此次没有编译超时，未实际触发按规模跳过optimized的分支，离线测试已覆盖。
+
+**trace与资源结果。**
+- MLP：457 Earth op，trace0.81秒／204.74MiB，输入1401825字节。
+- ResNet：10089 Earth op，trace9.08秒／1057.75MiB，输入1570843452字节；编译省略大常量后Earth快照仅约1.7–2.2MB。
+- SqueezeNet：trace成功，21424 Earth op、18个手写自举，21.39秒／1568.34MiB；输入4427485991字节，编译启动前空闲9695342592字节，小于10GiB，depth-dp记disk、optimized跳过，导出服务器作业后清理大trace。
+- AlexNet：trace退出1，39.51秒／5759.59MiB；DefaultCPUAllocator请求1073741824字节时Error code 12 (Cannot allocate memory)，没有输入IR。保留既定crash分类与原始TRACE/registry；依据继承的E4§1.5，收尾时补导出E4c-AlexNet服务器作业，SERVER_JOBS.json记明诊断依据，未扩展原错误分类词表。
+- VGG16：trace退出1，51.99秒／5408.76MiB；文件达到8589934592字节，日志为File too large，按新规则导出服务器作业并删除残留IR。TRACE保存的37850 Earth op为截断文件的部分计数，未作为完整程序规模放入散点。
+- MobileNet：只引用E4b，当前本机trace/编译0。四个服务器作业仅导出，未执行。两次trace失败和资源拒绝均没有重试，资源限制保持。
+
+两种编译终态后按规则清理当前模型超过50MiB的trace；快照、lowered输出和bundle在统计后prune，日志、计划JSON、计数和PRUNED保留。原E4、E4b与其他历史结果未删除或改写。
+
+**与 spec 不一致之处。** 无。AlexNet的后处理只执行E4§1.5规定的内存失败服务器作业导出，原分类、原报告与原台账保持；没有新增真实调用、反馈或数值判据。
+
+**未完成项／可用范围。** 已取得MLP完整编译和ResNet规划阶段的两种放置对照。ResNet完整RuntimePlan仍缺boot-profile；SqueezeNet未进入真实编译，AlexNet/VGG16失败发生在trace，MobileNet未在本轮运行。较大模型的前端资源失败单独报告，后续编译负担图须区分这些阶段。若需完整计划或大模型编译曲线，需后续spec明确boot参数与服务器/资源接续；本轮不重试、不提高限制。论文图由Claude另画，现已交付E4c.md、E4c.json、POINTS.csv。
+
+**预算与资源。** Nix串行10步骤：本机trace5次、真实编译4次（2 complete、2 export_failed）、编译磁盘预检拒绝1次；12份COMPILE合计2 complete、2 export_failed、1 disk、7 skipped。B部分新trace0、MobileNet新trace/编译0、服务器执行0、API0、报告集读取0、CKKS0、安装/下载/依赖复制0、库修改0、commit/push0。账本244/450，所有历史消费保留，重试0，最终残留进程0。
+
+## E5a：Agent 放置自举，pars 编译（2026-11-06，Claude 实现；Codex 暂不可用）
+
+结果目录 `/home/lhohy/pt_agent_results/E5a-agent-placement-20261106/`（E5a.md、E5a.json、各模型 REPORT.json、driver.py、run.sh、collect.py，
+pars 源码对照 pars_upstream.txt / pars_build.txt）。编译器 depth-dp 与 optimized 两列引用 A1-optimized-20261102，本轮未重跑。
+
+| 模型 | Earth op | 编译器 depth-dp：自举 / 编译 s | 编译器 optimized | Agent 计划：plan_s / 自举 | 导出 / 编译自举 | pars 编译 s / RSS MiB |
+|---|---:|---|---|---|---|---|
+| mlp | 1,109 | 13 / 0.45 | crash 0.4 s | 0.05 / 13 | 13 / 13 | 0.4 / 81 |
+| cnn_plain | 3,668 | 40 / 1.14 | crash 2.4 s | 0.14 / 40 | 40 / 40 | 0.89 / 207 |
+| resnet20_silu | 16,962 | 114 / 7.68 | crash 328.9 s | 0.65 / 114 | 114 / 114 | 4.82 / 977 |
+| resnet20 | 18,113 | 176 / 7.02 | crash 64.6 s | 0.66 / 176 | 176 / 176 | 5.16 / 978 |
+| bert | 350,951 | 7,910 / 10.04 | timeout 3600 s | 9.74 / 7,910 | 7,910 / 7,910 | 8.6 / 785 |
+| qwen | 523,598 | 22,146 / 15.17 | timeout 3600 s | 14.50 / 22,146 | 22,146 / 22,146 | 12.73 / 888 |
+
+计划延迟（RuntimePlan，现有延迟表）与编译器 depth-dp 逐模型相同。BERT 计划用时 9.74 秒中 lowering 8.94、depth-dp 0.63、映射 0.17；
+Qwen 14.50 秒中 lowering 占主要部分。pars 流水线的 scale 管理 pass 与上游相同，构建只在 UpscaleToMulcp 后多一次 CSE，并把末尾的
+RemoveLevel、ReuseBuffer、EmitHEVM 换成 RuntimePlan 导出（E5a.md 附源码 diff）。
+
+与 spec 不一致之处：
+1. 导出包的计划由 `plan.plan_package` 在导出包自己的 forward 上计算（与 trace 运行同一份代码），并在 CountBackend 上重放核对；
+   代价模型的计划由 `plan.plan_program` 在 pt_agent 的 lowering 上计算。spec 写的是导出时直接用 pt_agent lowering 的计划
+   （`plan_refresh`）。两者的自举数在 6 个程序上相同（REPORT.json 的 export_plan_equal）。函数名与 spec 不同：`plan_program`、
+   `plan_package`、`express`、`verify`；计划的时间字段在 `timing`（lower_s、dp_s、map_s）。
+2. CostDag 会把 `sub` 拆成 `neg + add` 并按值编号共用 neg。Qwen 有 96 个被自举的 neg 不对应任何调用的操作数，第一次运行在
+   计划映射处停止（保留为 `qwen.attempt1-neg-mapping`）。修正：这类 neg 改为自举该次减法的右操作数，缓存键仍是 neg 节点；
+   取负不改 level，自举数与 DAG 相同。新增单元测试 test_shared_frontend_negation。CNN 没有这种节点，BERT 当时的计划已完整
+   覆盖，二者未重跑。
+3. plan 策略原来一直缓存自举后的值，Qwen 的 Mock 比对超出 6 GiB 地址空间（保留为 `qwen.attempt2-mock-memory`）。修正：
+   按替换表中每个节点最后一次使用的调用释放缓存。CNN 与 BERT 的包用的是修正前的 refresh.py，行为相同，只有内存不同。
+4. 第一次 mlp 运行用了 `/home/lhohy/pt_agent_results/models`，与 R8e7 使用的 `models-v2` 不同，Mock 出现溢出（保留为
+   `mlp.attempt1-wrong-models-dir`，registry 中的 artifacts_dir 仍写 `mlp`）。之后 4 个 CNN 程序都用 models-v2。A1-optimized
+   的 CNN 记录用的是 `models`；自举数只取决于程序结构，与权重值无关。
+5. spec §1.4 要求 compiler 模式的包逐字节不变。导出包会复制 refresh.py 和 runtime.py，这两个文件内容变了，所有包的这两个文件
+   因此不同；compiler 模式的 trace 行为不变（相关导出测试照常通过）。
+6. 另外两处实现上的补充：RefreshBackend 把 op_context 转给内层后端（Transformer 代价归属需要）；CostDag.finalize 保存 remap。
+   计划里记录前端规范化后不可达的调用（dead），重放时这些调用不检查 level；值编号合并的重复调用共用同一次自举。
+7. token softmax 的单元测试只核对估计和重放，没有做 Mock 比对：该解析器夹具的定义域没有按数据拟合，Mock 会溢出；
+   CostDag 路径的 Mock 一致性由 toy 测试覆盖。
+
+未完成项：无。下一轮 E5b（specs/E5b-program-placement.md）在此基础上更换放置算法。
+
+## E5b：按语句和阶段放置自举（2026-11-06，Claude 实现；Codex 暂不可用）
+
+结果目录 `/home/lhohy/pt_agent_results/E5b-program-placement-20261106/`（E5b.md、E5b.json、各程序 REPORT.json、前缀对照
+prefix-bert/、prefix-qwen/）。每格为"自举数 / 预测延迟 s"。
+
+| 程序 | depth-dp | depth-dp+修剪 | stage-cut | stage-cut+修剪 | 选中 | 编译后自举 / pars 编译 s | RuntimePlan 延迟 s：E5b / E5a | 计划用时 s |
+|---|---|---|---|---|---|---|---|---:|
+| mlp | 13 / 3.5 | 11 / 3.0 | 15 / 4.0 | 11 / 3.0 | depth-dp+修剪 | 11 / 0.41 | 2.9 / 3.5 | 0.1 |
+| cnn_plain | 40 / 10.8 | 34 / 9.3 | 46 / 12.3 | 34 / 9.3 | depth-dp+修剪 | 34 / 0.88 | 9.3 / 10.8 | 0.2 |
+| resnet20_silu | 114 / 32.6 | 104 / 30.1 | 113 / 32.4 | 104 / 30.1 | stage-cut+修剪 | 104 / 6.0 | 29.8 / 32.3 | 0.7 |
+| resnet20 | 176 / 48.6 | 161 / 44.8 | 176 / 48.6 | 161 / 44.8 | stage-cut+修剪 | 161 / 5.54 | 44.3 / 48.1 | 0.8 |
+| bert | 7,910 / 2101.0 | 7,547 / 2008.8 | 8,041 / 2135.7 | 7,471 / 1991.0 | stage-cut+修剪 | 7466 / 10.16 | 1985.7 / 2097.6 | 13.4 |
+| qwen | 22,146 / 5767.7 | 21,409 / 5580.7 | 24,354 / 6329.0 | 23,233 / 6044.5 | depth-dp+修剪 | 21409 / 12.69 | 5574.9 / 5761.8 | 19.3 |
+
+规则基线（只做计划，选中放置下的自举）：BERT R0 11656、R1 8685；Qwen R0 38048、R1 22432；ResNet-20 R6c 209（depth-dp 344，
+stage-cut+修剪少 39%）。Agent 程序在同一放置下比 R1 少 14.0%（BERT）、4.6%（Qwen），比 R6c 少 23.0%（ResNet-20）。
+单独的 stage-cut（每个切点自举全部用过的活跃值）在 Transformer 上比 depth-dp 多，Qwen 多 10%；跳过修剪在两种计划上都有效。
+前缀小程序（BERT 到第一个 layernorm、Qwen 到第一个 rmsnorm）：编译器 depth-dp 360/256，optimized 均在
+`DaCapoPlannerPass::runOnOperation` 段错误（M7b 的 CNN 崩在其中嵌套的 CoverageRecorderPass），program-plan 选中 depth-dp，360/256。
+
+与 spec 不一致之处：
+1. 计划由 pt_agent 的 lowering 计算（语句序号来自 lowering 设置的 op_context，导出包的 forward 不设置它），导出前核对导出包的
+   调用序列与 pt_agent 逐项相同（calls 与输出节点），再在 CountBackend 上重放。核对前在 6 个程序上确认过两边调用序列和 DAG 逐项相同。
+2. approx.newton 的迭代没有单独标阶段：同一语句内多次求逆会出现同名阶段，序号会错位；阶段内深度已经把迭代分开。
+   softmax 的"平移与缩放"并入 `exp` 阶段，另加了多头合并的 `combine` 阶段。
+3. 修剪按"读取自举值的使用者个数"从少到多尝试，受影响区域超过 50,000 个节点时按不可行处理；修剪对任何计划都用同一套精确模拟。
+4. BERT 第一次运行预测 7471、编译 7466：有 5 个被自举的 neg 的源值本身也被自举，两者都以 bootstrap(源值) 发出，被编译器 CSE
+   合并。修正：计划把这类 neg 的缓存键并到源值上，并相应扣减预测（新增测试 test_refreshed_negation_and_source_share_one_bootstrap）。
+   BERT 和 4 个 Transformer 基线已重跑，修正前的目录保留为 `*.attempt1-merge`；四个候选的汇总数字是合并前的值（BERT stage-cut+修剪 7471）。
+5. stage-cut 要求输入 level 等于 boot_out_level、自举后归一化层数为 0（本项目配置成立），否则该候选报错跳过。
+6. 导出包复制的 transformer 内核源码多了 `b.stage` 调用，所有包的这部分源码因此不同；6 个程序的调用数与 E5a 相同，trace 行为不变。
+7. §5.3 只导出前缀用到的权重，未做 r8-v10 的接口核对（前缀的输出与模型输出不同）。
+
+未完成项：无。E5c（反馈和精调使用新放置、按语句缓存、新会话）尚未写 spec。
+
+## E5c：Agent 循环使用程序层放置（2026-11-06；下列先保留执行快照，最终收尾见后）
+
+本轮范围为 E5c A/C 实现和运行、B 代码和离线测试；API0。用户明确沿用 Claude 已实现的 E5a/E5b，计划算法、内核和工作区历史改动保持。结果目录 `/home/lhohy/pt_agent_results/E5c-agent-loop-placement-20261106`；固定响应回放沿用 r8-v10、v8-6.24、a1-6.20。Qwen 按原五个会话顺序，冻结即停，再回放 BERT；每步单进程、Nix 串行，搜索2400秒、进程3600秒，精调3.8GiB检查保持。B 新会话执行0。
+
+### 实现与已有验证
+
+- `planners/agent_tools.py:61` 的 apply_placement 仅改唯一装饰器行，保留正文和行号，重复应用相同；Agent 两种循环先保存原响应，再将改写程序送入工具／候选池／精调。SESSION 与启用开关的 trace 记录 placement。
+- `cost.py:176/180` 的两个 fast 入口具有固定函数身份；关闭 verify_plan 仅省略 refresh_plan.replay，导出和最终 cost 仍默认重放。evaluate、Mock 验证取 boot_nodes、两个精调器在启用 placement 时选择 fast。
+- `tensor_sim.py:46/50` 提供 timing_snapshot/reset_timing，未命中的估计累加 estimate_s；agent_tools.validate 和 Transformer 精调器直接使用的验证入口均计入 validation_s。plan_s 为各次计划 lower_s/dp_s/candidates_s/map_s 之和；保留每步总耗时及精调内部分解。
+- 新 `experiments/e5c_agent_loop_placement.py` 编排重算、原响应回放、冻结后 report100/cost/pars；原生验收使用 E5b driver 的 export→字节码trace→pars编译→plan_stats→prune 流程与既有资源配置。preflight/managed 记为跳过，原因是编译器放置专用。
+- r8-v11 通过 r8-v10 的提示快照只替换装饰器约定、增加放置反馈说明；cost 反馈增加 placement_variant 和热点 levels_left_at_refresh（选中计划模拟的平均剩余层数）。r8-v10 提示快照保持。能力注册表保持。
+- 本轮单元11项＋E5a9项＋E5b8项＋既有反馈7项，首批35/35；随后加入惰性刷新、原会话编排、精调触发／收敛／对数u／余量／§6.24下限的相关回归，114/114。原输出 `/tmp/e5c-tests.log`；最终收尾时保存到结果目录，并对最后的耗时补漏做对应复核。
+- BERT重算4/4、Qwen40/40。真实保存反馈的 validation、exact 和原非complete拒绝记录逐项相同：`REPLAY_INPUT_CHECKS.json`，44/44。BERT第35/36次预测8606→7990，第37/38次7058→6770。Qwen16份complete反馈重算成本、其余24份原结论保留；重算阶段无新增验证和报告访问。
+
+### 与 spec 不一致之处／机械兼容与自写补漏
+
+1. 本轮新测试最初3项把保存的 JSON 列表与内存 tuple 直接比较，现统一为 JSON 表示后比较，数值和断言含义保持；未修改旧测试。
+2. 耗时接线复核时发现 Transformer 精调器直接导入 token validate，已在该入口补同一计时包装；没有改验证计算、候选顺序和接受规则。另补启用 placement 的旧版循环原文保存及错误 trace placement 字段。
+3. r8-v11 的机械版本兼容：`domain_criteria.py:20/182/216` 沿用 v10 的对数u与来源判断；`margin.py:16` 沿用余量；`dsl/typecheck.py:118/125/139/200` 沿用输入与方法检查；`planners/confirm.py:88` 沿用确认逻辑；`planners/transformer_session.py:47/97/106` 沿用会话／冻结记录字段；`export/package.py:245/251` 沿用接口检查；`transformer_run.py:67/71/91/97` 沿用 token 入口。Agent、两个精调器和 agent_tools 的版本分派同步包含 v11；r8-v4–v10 的分支、默认值与旧断言保持。
+4. 默认路径比较排除 TuneResult.seconds 这一墙钟字段，其余反馈、程序、改动、统计、历史逐项比较；固定提示文本直接与改动前保存的文本对照。未引入哈希校验。
+
+### 收尾前执行快照（保留）
+
+Qwen第一会话第1次保存输出为近似阶段拒绝；第2次已按新反馈进入精调。后续 Qwen 冻结／report100／pars、BERT 回放与验收、最终耗时表、registry与残留检查尚待完成。已有114项离线证据、两份重算清单与原会话记录均保留；实际 API账本244/450。B部分真实运行保持0，编译器和运行库改动0，commit/push0。
+
+### E5c Qwen 第一会话第2次输出精调收尾
+
+第2次输出精调完成，留出20/20、feasible=true，预测23937次自举、6229779255微秒；1遍扫描、converged=false。外层耗时2604.955781秒，估计累计2423.929395秒、验证170.516253秒、计划2388.352289秒，峰值3245522944字节（3.02GiB）。第3次为同代价原文，按原规则未精调；第4次原文成为新的LLM最低代价，已进入精调。上述为候选开发结果，尚未确认冻结；API新增0。证据：`E5c-agent-loop-placement-20261106/qwen/replay-session-01/steps/003-tune/REPORT.json`。
+
+### E5c Qwen 冻结、报告和 pars 验收完成
+
+第一原会话回放6次保存响应，确认选中第4次的精调程序。两次精调分别1遍／3遍、均converged=false，外层耗时2604.956／2542.994秒，峰值3245522944／3163140096字节。report100：tensor与Mock均100/100、feasible=true，logit_rel_err分别0.0013762100035250864／0.0013762100035208387，校准u约0.871647。预测／导出／编译自举21793/21793/21793，pars通过；preflight/managed按spec跳过。对照A1-a624的depth-dp为22146，同一旧程序E5b为21409；E5c比前者少353、比后者多384，保留该结果。原始报告及冻结文件保留在本轮qwen/replay-session-01与qwen/acceptance。API新增0；BERT已进入第35次保存输出的精调。
+
+### E5c BERT 精调与确认冻结完成
+
+BERT回放3次保存响应，确认选中第35次（会话iteration=1）的精调程序。预测7218次自举、1927040083微秒，留出20/20、feasible=true；4遍扫描、converged=false。外层耗时2568.934764秒，代价估计2388.027986秒、验证168.437723秒、计划2346.989769秒，峰值1902874624字节（约1.77GiB）。已进入冻结后report100，随后按原流程做cost和pars；API新增0。
+
+### E5c 最终收尾（2026-11-06 / facb3910-dirty）
+
+A/C运行完成，B仅代码与离线测试。结果：`E5c.md`、`E5c.json`、`REPLAY_INPUT_CHECKS.json`、`OFFLINE_TESTS.json`／日志、`FINAL_CHECKS.json`、`FINAL_REVIEW.json`。初次汇总与初次测试日志另存，不覆盖模型原REPORT、SESSION、响应或程序。
+
+| 模型 | A1-a624 depth-dp自举 | 同一旧程序E5b自举 | E5c预测／导出／pars自举 | report100 tensor／Mock | logit_rel_err tensor／Mock | pars秒／RSS MiB | 冻结来源 |
+|---|---:|---:|---|---|---|---|---|
+| bert | 7910 | 7466 | 7218/7218/7218 | 100/100、100/100，均feasible=true | 6.711590237e-05／6.711590237e-05 | 11.93／787.57 | tuned，第35次 |
+| qwen | 22146 | 21409 | 21793/21793/21793 | 100/100、100/100，均feasible=true | 0.001376210004／0.001376210004 | 15.9／896.35 | tuned，第4次 |
+
+BERT比同一旧程序E5b少248次自举；Qwen多384次，保留该结果。冻结程序相对A1-a624的语句字段变化分别2处／1处，详见E5c.json的statement_changes与changed_lines；没有基于report选择另一程序。
+
+| 模型 | 全量反馈重算／实际消费数 | 原LLM秒（引用旧记录） | 反馈估计秒（全部／消费子集） | 精调秒 | 精调内估计／验证秒 | 全部计划秒 | 确认秒 | pars秒 |
+|---|---|---:|---|---:|---|---:|---:|---:|
+| bert | 4／3 | 388.15 | 80.28／63.08 | 2566.93 | 2388.03／168.44 | 2425.72 | 0.75 | 11.93 |
+| qwen | 40／6 | 1382.89 | 780.09／272.07 | 5143.71 | 4821.27／304.59 | 5513.66 | 0.62 | 15.90 |
+
+计划秒包含在代价估计中，精调内估计／验证包含在精调秒中；消费子集为已回放请求对应的反馈重算之和。报告评测、最终cost和导出／trace另有原REPORT耗时，不计入Agent内部循环。E4c的放置时间和M7的3600秒未完成记录只引用已有证据，未重跑。
+
+最终测试输出：`Ran 124 tests in 3.504s`、`OK`。覆盖本轮11项、E5a9项、E5b8项及相关旧反馈、惰性刷新、会话、精调、对数u、余量、§6.24与旧通用提示回归；旧测试改动0。最后计时及r8-v4/v7原文保存、r8-v10/v11分步路径补漏也已纳入本次复核。
+
+registry E5c为23条，汇总run_id `E5c-all-summary-20261106T144620-a5ac`；API244→244，原生残留0，prune完成，最后空闲12571934720字节。编译器／运行库改动0，下载／安装0，commit/push0。
+
+与spec不一致之处及兼容适配：前述自写夹具tuple/list比较、Transformer验证计时遗漏、启用placement的旧版原文保存／错误trace漏项均已修正；只处理本轮新写内容。r8-v11的机械分派沿用v10判据，具体文件与行号列在本节前文；没有修改旧断言、v8-6.24、a1-6.20或r8-v10文本。汇总补了消费请求子集耗时及语句字段清单，均来自已完成记录，不新增运行。
+
+未完成项：本轮要求均完成。B的新LLM会话按用户范围未执行；真实CKKS不在本轮执行范围，新增0。
+
+## E5d r8-v11 真实会话（2026-11-06，进行中）
+
+范围：仅本轮 spec。E5a/b/c 既有工作区代码复用；v8-6.24、a1-6.20、r8-v10 及更早提示保持。调用命名空间为[model,r8-v11]，每模型10、总20，账本244起计。先完成三处修正与离线测试，再顺序执行两个新会话及冻结后验收；无新增CKKS。
+
+E5d §1已完成：自举剩余层数扣除 boot_in_level，toy 用尽层数报0；仅v11精确替换两处放置说明、每处原文出现数须为1，v10冻结快照保持；真实逐步入口支持v11、65536输出、program-plan绑定、命名空间10次额度，SESSION／trace／AGENT携带placement，逐步记账。r8-v8至v10仍为40次总额／每会话至多8次。相关129项全部通过，日志 `E5d-agent-sessions-20261106/OFFLINE_TESTS-verified.log`。首次新增夹具在evaluate后过早读取最终trace，已改为读取pending反馈；机械替换误加到旧account_calls的参数也已撤回。旧E5c的v11提示快照按本轮§1.2授权同步，v10快照未动。
+
+E5d 真实调用接续：首次启动被自动审批拦截，理由为需要对具体载荷与目的地作明确确认，外发0。用户随后批准两份请求和后续反馈发往 https://api.deepseek.com/chat/completions；已按既有额度继续，BERT首请求运行中，Qwen尚未开始。原拦截记录保留，额度未重置。
+
+E5d运行快照：BERT第1次在approximation阶段因exp Remez未收敛拒绝，第2–3次margin拒绝，第4次complete／feasible=true、heldout20/20、logit_rel_err=0.00143427124；program-plan选择stage-cut+prune，预测10705自举，进入v8-6.24精调。已完成4次，账本248/450，Qwen0；尚未冻结／读取report／编译。
+
+E5d运行快照续：第4次精调3遍、converged=true、coarse10/full12，1763.214秒，预测7707自举，进程峰值1923.16MiB；第5次原文complete／feasible=true、heldout20/20、7175自举，进入下一次精调。账本249/450，Qwen0，仍未冻结和读取report。
+
+E5d BERT会话已冻结：7次调用，LLM第5次（非精调输出），确认选中7175自举／1917256946us候选；tokens输入375643、输出106611。第5次精调1遍收敛、coarse0/full2、779.694秒，输出仍7707；第6次u>1不满足判据，第7次重复7175候选后正常结束。report100双引擎验收已启动，结果不回传Agent；账本251/450，Qwen0。
+
+E5d BERT外部验收完成：report100 tensor／Mock均100/100、feasible=true，logit_rel_err分别0.0020251754351863775／0.002025175435186743；cost带重放通过；预测／导出／pars真实编译7175/7175/7175，编译10.37秒，选中stage-cut+prune，已prune。相对E5b7466少291，相对E5c7218少43。Qwen已启动首请求，各10次额度独立，BERT未用3次不转移。当前已完成API7、累计251/450，Qwen第1次请求进行中。
+
+E5d Qwen运行快照：第1次approximation拒绝（3处rsqrt Remez未收敛），第2次typecheck拒绝（inv/rsqrt不支持cheb），第3次validation发散20/20。第4次complete／feasible=true：heldout20/20、logit_rel_err=4.1661932738291294e-5、校准u0.8633974593／解析u0.9911484858，depth-dp+prune预测40032自举，已进入精调。BERT7＋Qwen4＝新增11次，账本255/450。
+
+E5d Qwen第4次精调完成：2581.954秒，sweeps=2、converged=false、coarse4/full6、feasible=true，40032→24224自举。原2400秒搜索预算与3600秒进程时限保持，耗时包含最终Mock复核。第5次LLM调用已开始；此前11次完成，账本255/450，第5次额度占用。
+
+E5d Qwen第5次原文complete／feasible=true，预测22784自举，已进入精调。相对第4次改变5处rsqrt迭代与2处softmax配置；两条softmax均命中上轮热点（各latency_share=0.39、平均unused levels≈0.29448），只做描述性统计。当前新增12次（BERT7/Qwen5），账本256/450。Qwen第4次精调峰值3.07539GiB、未触发3.8GiB检查。
+
+E5d Qwen第5次精调完成：2534.056秒，sweeps=4、converged=false、coarse9/full11、feasible=true，22784→22112自举。第6次调用已开始；仍为同一会话，最多10次，尚未冻结／读取report。
+
+E5d Qwen第6次原文complete／feasible=true，heldout20/20、logit_rel_err=0.00022250497433658458，预测20928自举／5455350735us，已进入精调。该原始候选估计比E5c21793少865，外部三方核对仍待冻结后执行。当前新增13次（BERT7/Qwen6），账本257/450。
+
+E5d Qwen第6次精调完成：988.116秒，sweeps=1、converged=true、coarse0/full2、feasible=true，精调输出22112自举，进程峰值2.77716GiB；原始LLM第6次20928候选仍保留。第7次20320自举候选complete但feasible=false，第8次调用进行中。已完成新增14次，账本258/450。
+
+E5d Qwen第8次原文complete／feasible=true，heldout20/20、logit_rel_err=0.0002540153298122076、校准u0.8633963145／解析u0.9912461313，预测20768自举，按新最佳触发精调。新增15次（BERT7/Qwen8），账本259/450，Qwen剩2次；仍为原单个会话。
+
+E5d Qwen会话已冻结：共8次，确认选中tuned第8次，预测21857自举／5695686135us，tokens输入1245041、输出124204；未用的2次保持未消费。第8次精调1遍收敛，985.928秒、coarse0/full2；20768为其原始候选内部估计，最终冻结程序为21857。开始report100外部验收，结果不回传Agent。BERT7＋Qwen8＝15次，账本259/450。
+
+## E5d 最终收尾（2026-11-06 / facb3910-dirty）
+
+实现与离线：`cost.py:143`在剩余层数统计中减去boot_in_level，toy用尽层数报0；`planners/prompts.py:93`仅在v11派生中各替换两处原串一次，并更新unused说明；`planners/transformer_session.py:15`与`experiments/a1_transformer_agent.py:297`接入v11、65536、program-plan绑定、命名空间10次上限、逐步持久化与账本，旧v8–v10保持40次总额／8次会话规模。v10的65536别名与budget版本允许列表按新接线机械补齐。新增`experiments/e5d_agent_sessions_v11.py`串行会话、冻结后report/cost/pars和§4汇总；结果目录中的driver.py为此次运行的留存副本。无库、编译器或能力注册表修改。
+
+测试输出：`Ran 129 tests in 22.801s`、`OK`；包含E5d新5项、E5c11项、E5a9项、E5b8项及相关既有反馈／刷新／会话／精调／对数u／余量／§6.24／通用提示测试。首个真实请求前已全过。三个阶段的离线日志（初次、修正、最终核对）均保留。
+
+| 模型 | A1-a624 depth-dp | E5b | E5c | E5d预测／导出／编译 | report100 tensor／Mock | logit_rel_err tensor／Mock | 冻结来源 | 调用 | tokens输入／输出 |
+|---|---:|---:|---:|---|---|---|---|---:|---|
+| BERT | 7910 | 7466 | 7218 | 7175/7175/7175 | 100/100、100/100，feasible=true | 0.0020251754351863775／0.002025175435186743 | llm，第5次 | 7 | 375643／106611 |
+| Qwen | 22146 | 21409 | 21793 | 21857/21857/21857 | 100/100、100/100，feasible=true | 0.0013850211805667221／0.001385021180563227 | tuned，第8次 | 8 | 1245041／124204 |
+
+BERT预测延迟1917256946us，pars10.37秒；Qwen预测延迟5695686135us，pars14.19秒。相对E5c，BERT少43次自举，Qwen多64次；相对E5b分别少291、多448。BERT的logit误差高于E5c，保留该取舍。Qwen原文第8次20768和第6次20928候选在确认集calibrated_u=0.9438763131，按原判据未通过；tuned第8次calibrated_u=0.8628729840，通过后冻结。确认／报告／编译结果均未回传Agent。
+
+| 模型 | LLM秒 | 反馈估计秒 | 反馈验证秒 | 精调进程秒 | 精调内估计／验证秒 | 总计划秒 | 确认秒 | pars秒 |
+|---|---:|---:|---:|---:|---|---:|---:|---:|
+| BERT | 589.47 | 73.44 | 0.84 | 2548.17 | 2172.16／357.25 | 2207.00 | 2.48 | 10.37 |
+| Qwen | 644.14 | 167.16 | 1.13 | 7100.41 | 6526.89／533.78 | 6584.83 | 3.03 | 14.19 |
+
+计划秒含于估计秒，精调内估计／验证含于精调进程秒。精调进程秒含启动和收尾；下表为tuner自身墙钟。最终导出计划另为BERT13.43／Qwen21.63秒，未重复计入内部循环。
+
+| 模型／调用 | sweeps | converged | coarse/full | tuner秒 |
+|---|---:|---|---|---:|
+| BERT/4 | 3 | true | 10/12 | 1763.21 |
+| BERT/5 | 1 | true | 0/2 | 779.69 |
+| Qwen/4 | 2 | false | 4/6 | 2581.95 |
+| Qwen/5 | 4 | false | 9/11 | 2534.06 |
+| Qwen/6 | 1 | true | 0/2 | 988.12 |
+| Qwen/8 | 1 | true | 0/2 | 985.93 |
+
+复用精调0。精调最高RSS：BERT2016579584字节（约1.878GiB），Qwen3302178816字节（约3.075GiB），均通过原3.8GiB检查。2400秒搜索预算、3600秒每步进程、4/6GiB、8GiB单文件、10GiB磁盘准入与单编译并发保持。末次空闲11933470720字节。
+
+§4.3逐轮描述统计全部写入E5d.json/E5d.md：BERT 4→5、5→6、6→7；Qwen 4→5、5→6、6→7、7→8。BERT 4→5改变两条softmax，其中一条为上轮53.7%热点，unused约0.340；Qwen 4→5改变5处rsqrt及两条softmax，两条均为上轮39%热点，unused约0.294。记录仅用于报告。statement_changes按函数／变量名匹配：BERT74项含变量重命名对应的增删，Qwen9项，完整字段保留。
+
+原样与来源：两模型首个LLM响应均在approximation阶段未通过，首次内部可行均为第4次；最终冻结来源分别为LLM第5次和tuned第8次。程序头参数需改写0/0；既有apply_placement对BERT7份头部做引号格式规范化，Qwen8份原已规范，文本变化0；报告将参数与文本格式统计分列。原响应／sources保持，未把tuned输出记为原始LLM输出。
+
+与spec不一致之处及自写修正：
+- 新测试`tests/test_e5d_sessions.py:125`初次在evaluate后读尚未生成的最终trace，改读已提交pending反馈；预期数值和断言含义保持。
+- `experiments/a1_transformer_agent.py:884`、`:894`机械接线误加给旧account_calls的limit参数在最终129项测试前撤回；未进入真实运行。
+- 新外层汇总改用系统Python可用的标准库读取／报告，移除NumPy模块依赖；模块--help初次cwd笔误，改从scripts目录运行后通过。运行目录driver与仓库e5d实验入口保留同一编排，数值判据和选择逻辑保持。
+- `tests/test_e5c_placement.py:160`的v11提示快照按§1.2同步两处替换；v10冻结快照与其余旧断言保持。BERT头部文本引号规范化为既有入口行为，实际7次，已与参数改写0次分列。
+
+最终复核：FINAL_REVIEW.complete=true；API244→259、命名空间7+8、registry的15条llm-call一致；E5d registry共24条；宿主残留Nix／编译／本轮worker0。两次真实pars编译完成后均prune；安装／下载／新权重／commit／push0。E5d.md、E5d.json、OFFLINE_TESTS.json与日志、FINAL_CHECKS.json、FINAL_REVIEW.json、两模型原始响应／SESSION／trace／FROZEN／报告／RuntimePlan和编译日志均保留。
+
+未完成项：本轮执行项均收尾。真实CKKS执行0，密态数值目标保持后续验收范围；本轮结论为冻结程序的tensor／Mock报告与真实编译通过。历史M1及其他轮次状态保持。
+
+
+## E6 LLM 选步精调（2026-11-07 / facb3910-dirty）
+
+本轮仅执行 E6 spec。已核对 aarch64／lhy-agent-dsl／facb3910-dirty，宿主 Nix 与编译任务0；保留全部工作区改动。先保存改动前默认 sweep 对照（tests/e6_sweep_snapshot.json），再新增 llm-select 菜单和原子多步评估、t1 提示、独立标签命名空间与实际代价估计计数。§2 验证通过前 API 新增0。
+
+顺序及预算：E6a BERT→Qwen，主循环复用 E5d 已存7／8份响应，精调各≤12次；无代码错误后执行 E6b BERT s1→Qwen s1→BERT s2→Qwen s2，每会话主循环≤10、精调≤20。合计≤144，累计≤403/450。失败不重试；默认 sweep、r8-v11 主提示、v8-6.24 对齐／refit／floor／接受规则保持。报告和真实 pars 编译只在冻结后执行，结果不回传 Agent；不运行 CKKS。
+
+与 spec 不一致之处：待最终列出本轮自写实现修正与机械兼容适配；暂无范围变更。未完成：§2 离线测试、E6a／E6b 实验及冻结后验收、E6.md／E6.json、registry 和最终计数核对。
+
+### E6 §2 离线验收（2026-11-07）
+
+[OFFLINE_TESTS.log](/home/lhohy/pt_agent_results/E6-llm-select-20261107/OFFLINE_TESTS.log)：`Ran 145 tests in 27.699s / OK`。覆盖 E6 12项、E5a–E5d 和相关精调／会话／提示回归。两个主请求的 JSON 与 E5d 完全相同；首份 t1 菜单 BERT70、Qwen111项。完整外发请求与预算见 [manifest](/home/lhohy/pt_agent_results/E6-llm-select-20261107/network-review/manifest.json)。当前 API259/450，新增0。
+
+与 spec 不一致之处（本轮实现修正，签名／算法／接受规则保持）：初次自写缓存测试返回了未计算密文、验证调用的断言漏计 ctx 参数，均修正夹具；新增 `tune_search` 记录曾造成旧一次性／分步输出不一致，已将新增对外记录限定于 r8-v11，原旧断言全过；临时生成新测试时工作目录路径重复，未生成文件，已更正。机械兼容：tests/fixtures/e5c_default.json 仅新增 TuneResult 的 search=sweep、llm_calls=0、llm_s=0、estimates=0 四项中性字段，原数值与测试断言保持。
+
+历史数据说明：E5d 各精调保留了86／32／58／92／35／35条代价入口记录，合计338；原记录没有 cache miss 计数，汇总将分别注明历史入口数和 E6 的实际 miss 数，历史文件不补写。
+
+### E6 当前停止记录（2026-11-07）
+
+[APPROVAL_STOP.json](/home/lhohy/pt_agent_results/E6-llm-select-20261107/APPROVAL_STOP.json)：自动审批在创建进程前拒绝真实启动，理由为“该具体载荷发送至该目的地”的明确外发授权不足。无绕行、无重试；实际API0，账本259/450、命名空间请求0、RUN.json未创建。已生成 [E6.md](/home/lhohy/pt_agent_results/E6-llm-select-20261107/E6.md)、[E6.json](/home/lhohy/pt_agent_results/E6-llm-select-20261107/E6.json) 的未运行状态与历史对照；三条E6 registry仅记录离线通过、请求准备、审批停止。[FINAL_CHECKS.json](/home/lhohy/pt_agent_results/E6-llm-select-20261107/FINAL_CHECKS.json)：Nix/编译残留0，空闲11,918,336,000字节。
+
+代码与结果：tune_search、t1菜单/选择/原子评估、三轮与调用/时间预算、cache miss计数、标签命名空间、E6a固定响应/E6b顺序编排与冻结后验收入口均已实现。新增代码只在pt_agent，文档只改STATUS；库／编译器／主提示／接受规则未改，commit/push/下载/安装/CKKS均0。
+
+新增自写脚本修正：最终外层registry记录首次漏设PT_RESULTS，在首条写入前报错，补设后仅追加原待写的三条，未消费API、未重复实验。机械兼容位置：tests/fixtures/e5c_default.json:308–311，仅补四个新记录字段的中性值；旧数值和断言未改。其余自写修正已列于§2离线记录。
+
+未完成：具体外发确认、E6a两模型、E6b四会话、对应冻结后report100/cost/pars与实际逐轮选择质量统计。当前结果不计模型首次原样交付成功。
+
+### E6 具体外发批准后接续
+
+用户明确回答“批准该组具体外发并继续 E6”。[APPROVAL_RESUMED.json](/home/lhohy/pt_agent_results/E6-llm-select-20261107/APPROVAL_RESUMED.json)记录范围和目的地，原APPROVAL_STOP保持。真实启动沿用同一145项通过代码与有限预算，不新增连通性请求；当前开始E6a BERT。
+
+### E6a BERT 阶段完成
+
+两次精调触发为第4／5份保存响应，与E5d相同；主循环API0、t1调用3。第4次494.534秒、实际estimate miss3、自举8841（E5d1763.214秒、自举7707）；第5次506.144秒、miss10、自举7707（E5d779.694秒、自举7707）。第4次接受1个双点候选、7个stale；第二轮length记0候选不重试；第5次8个候选均cost拒绝。最终确认选llm第5份，7175自举；report100 tensor/Mock均100/100，预测/导出/pars均7175并已prune。冻结验收见 [BERT](/home/lhohy/pt_agent_results/E6-llm-select-20261107/e6a/bert/E6a/acceptance)。此为开发回放，E6a Qwen接续中；累计262/450。
+
+### E6a Qwen 会话完成、冻结后验收中
+
+精调触发4／5／6／8，与E5d相同；主循环API0、t1调用4，累计266/450。四次分别473.681／336.91／431.18／553.00秒，实际estimate miss2／2／6／10，结果自举40992／23968／22112／21857。第4次length后0候选；第5次6个duplicate_point及1个unknown_id；第6次4个duplicate_point、4个cost；全部按spec处理不重试。确认已选择tuned第8份，21857自举，report100/cost/pars正在接续。当前E6a没有代码错误，待全部冻结验收完成后进入E6b。
+
+### E6a 全部验收完成，E6b BERT s1 开始
+
+BERT 7175／Qwen 21857 预测、导出、pars 编译三方相同，两模型 report100 tensor/Mock 均100/100且feasible=true；两编译目录均已prune。E6a无代码错误，真实主循环API0、精调API7（BERT3、Qwen4），累计266/450；原E5d命名空间和响应保持。第8次Qwen精调553.00秒、estimate miss10、21857自举。E6b按BERT s1→Qwen s1→BERT s2→Qwen s2接续，各主≤10、精调≤20，失败不重试；当前BERT s1已启动。
+
+## E6 最终收尾：磁盘阻塞（2026-11-07 / facb3910-dirty）
+
+实现范围：新增llm-select精调、t1菜单与提示、原子候选评估、三轮/时间/调用预算、cache miss计数、主/精调标签命名空间、E6a保存响应回放与E6b四会话编排；默认sweep决策、r8-v11主提示、v8-6.24对齐/refit/floor/接受规则保持。编译器、库、原模型、原响应、源码、程序包和原证据保持；commit/push/下载/安装/真实CKKS均0。
+
+测试输出：[调用前离线](/home/lhohy/pt_agent_results/E6-llm-select-20261107/OFFLINE_TESTS.log) `Ran 145 tests in 27.699s / OK`。收尾仅调整汇总，新增4项报告回归，与原2项编排合计[6项](/home/lhohy/pt_agent_results/E6-llm-select-20261107/REPORTING_TESTS.log) `Ran 6 tests in 0.013s / OK`；唯一测试合计149。没有因汇总修正重跑任何模型、API、trace或编译。
+
+| 部分 | 模型/会话 | 冻结来源 | 预测/导出/编译自举 | report100一致数（tensor/Mock，各100） | 结论 |
+|---|---|---|---|---|---|
+| E6a开发回放 | BERT | llm第5份 | 7175/7175/7175 | 100/100 | 完整验收通过 |
+| E6a开发回放 | Qwen | tuned第8份 | 21857/21857/21857 | 100/100 | 完整验收通过 |
+| E6b新会话 | BERT s1 | llm第4份 | 6808/6808/6808 | 100/100 | 完整验收通过；主5/精调4 |
+| E6b新会话 | Qwen s1 | tuned第3份 | 22272/22272/待执行 | 100/100 | trace成功，编译前磁盘准入阻塞；主5/精调3 |
+| E6b新会话 | BERT s2 | — | 待执行 | 待执行 | 未启动；主0/精调0 |
+| E6b新会话 | Qwen s2 | — | 待执行 | 待执行 | 未启动；主0/精调0 |
+
+[E6.md](/home/lhohy/pt_agent_results/E6-llm-select-20261107/E6.md) 与 [E6.json](/home/lhohy/pt_agent_results/E6-llm-select-20261107/E6.json) 含六次固定起点精调对比、E5d/新会话对照、时长拆分及每轮选择质量。E6a两模型冻结结果与E5d的自举、延迟和report100相同；后续保存响应原本看过E5d sweep反馈，因此只记开发回放。E6b已启动2/4，完整验收1/4、资源阻塞1/4、未开始2/4；没有移出分母。
+
+实际磁盘证据：[原pars报告](/home/lhohy/pt_agent_results/E6-llm-select-20261107/e6b/qwen/s1/acceptance/pars/REPORT.json) 保留了trace退出0、183,261,959字节bytecode、编译前10GiB错误和finally prune记录。原通用子进程fallback写作code，最终汇总根据明确错误标为resource；原报告未改。仅做了[只读盘点](/home/lhohy/pt_agent_results/E6-llm-select-20261107/DISK_INVENTORY.json)，没有额外清理或扩大限制。compile缺口保持，不以trace成功替代编译通过。
+
+与spec不一致之处及本轮自写修正：
+
+1. 机械兼容：tests/fixtures/e5c_default.json:308–311仅给旧快照补TuneResult新增的4个中性记录字段，原数值和断言保持。新e6_sweep_snapshot明确比较原字段，新增统计另测。
+2. 自写实现/夹具：局部Count的TokenLayout构造参数按现有签名更正；缓存测试改为返回已计算密文；验证桩断言补计ctx参数；导入旧TestCase改为测试内导入，避免额外发现；外层检查复用纯会话模块，避免引入重依赖；tune_search对外记录限定r8-v11，旧一次性/分步断言保持。初次失败日志保留，最终145项通过。
+3. 自写操作脚本：新测试路径重复工作目录、最终registry漏设PT_RESULTS，均在无API和无原产物改写时更正；registry只追加原待写三条。
+4. 自写汇总：保留部分native的预测/导出计数和明确的resource分类；按实际调用文件计tokens/LLM秒，E6a保存响应的历史LLM秒单列；pars编译与整套验收计时分开，E5d字段实际为tune_s；压缩Markdown为表格，原完整采集保存在initial-collection。期间发现并修正旧计时键误读，记录在REPORTING_COLLECTION_STOP.json；新4项回归通过，生成/选择/接受与预算规则保持。
+5. 历史数据限制：E5d没有cache miss字段，报告明确保留86/32/58/92/35/35条入口记录（共338），E6列实际miss；没有补写旧历史，也没有为取数重跑旧集合。
+
+未完成：Qwen s1真实pars编译与三方计数最后一项、BERT s2和Qwen s2会话及各自冻结后验收。当前E6完成条件尚未达到，状态为磁盘资源阻塞；按AGENTS.md等待新的磁盘接续spec。已有调用与原144上限/403累计上限保持，不重置、不转移额度；不因当前空闲回升自动重试。
+
+
+## E6r LLM选步修正（2026-11-07 / facb3910-dirty）
+
+仅执行E6r spec；aarch64／lhy-agent-dsl，宿主已有Nix/编译/Python实验0，保留E5a–E6工作区改动。D1输出65536；D2同轮备选先全部估计、按成本验证及最多3次合并；D3按字段/角色冲突并在结构步后重新枚举角色合法性；D4连续两轮无接受或4轮停止。旧t1保存为t1-e6，主r8-v11及sweep快照保持。
+
+首批24项离线通过（2.636s），新增API0。待完成驱动与相关回归后，按§3→§4 BERT/Qwen→§5 BERT r1/Qwen r1/BERT r2/Qwen r2执行，报告与编译不回传Agent，真实CKKS0。
+
+与spec不一致之处：E6旧测试中的stale、duplicate_point、16384、三轮/一轮无接受期望按§2明确改为not_reached、conflict、65536、四轮/连续两轮；原sweep快照和旧数值断言保持。新增驱动仅复用既有E5d native入口，原E6目录不覆盖。最终逐项补充。
+
+未完成：完整离线、Qwen s1补编译、E6r-a与E6r-b、E6r汇总和账本/残留检查。
+
+### E6r §2 离线验收完成
+
+调用前相关回归161项（27.617s）全过；审读补齐“较早独立验证失败的备选也参与后续合并”，新增单测后，受影响E6r/E6组29项（2.734s）通过，唯一测试合计162。默认sweep结果与旧快照逐项相同；r8-v11主提示不改。测试日志位于 [本轮目录](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107)。
+
+本轮自写修正：两阶段实现中首次漏遍历前面验证失败的备选，已按§2.3在合并阶段重新遍历全部其余备选；专门单测通过。算法/接受条件按spec，API仍0，账本283/450。旧t1文本在tests/e6_t1-e6_prompt.txt及prompts.TUNE_TEMPLATES["t1-e6"]保留。
+
+### E6r 本次收尾：具体外发待批准
+
+改动文件：planners/transformer_tuner.py（D2/D3/D4及结构后合法性）、planners/prompts.py（新t1与t1-e6）、experiments/a1_transformer_agent.py（D1、8/14/16调用配置及E6r registry标签）、experiments/e6r_llm_select_fix.py（新增串行驱动及三表汇总）、tests/test_e6r_tuning.py（新增9项）、tests/test_e6r_driver.py（新增5项）、tests/test_e6_tuning.py（按§2迁移原llm-select测试）、tests/e6_t1_prompt.txt与新增e6_t1-e6_prompt.txt、STATUS.md。主循环r8-v11、sweep、v8-6.24、a1-6.20、能力注册表、编译器和上游脚本保持。
+
+测试输出：[161项相关回归](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/OFFLINE_TESTS-initial.log) 27.617s，修正后[E6r/E6组29项](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/OFFLINE_TESTS-final.log) 2.734s，最后新增复用单测后[纯驱动5项](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/OFFLINE_TESTS-driver-final.log) 0.029s；全部OK，唯一测试163。sweep旧快照通过；两模型main首请求JSON相同，t1输出65536、high，旧t1-e6保存。
+
+§3结果：[Qwen s1 REPORT](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/e6-qwen-s1-compile/REPORT.json) complete=true，三方22272，trace18.68s/1053.72MiB、compile14.41s/887.73MiB，整套139.001s；编译后按原规则prune，保留RuntimePlan/日志/报告。原program.ptdsl和原E6.md/json未改；新版本为 [E6-updated.md](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6-updated.md)、[E6-updated.json](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6-updated.json)。
+
+与spec不一致之处及自写修正：
+
+1. 按§2明确迁移原E6测试：test_e6_tuning.py:108的duplicate_point/stale改conflict/not_reached；125、134、137、144的空轮/轮次/预算期望按连续两轮与4轮规则更新；195的16384改65536。对应D1–D4，原sweep快照、其他旧算法和数值断言不改。t1默认快照更新，原文本另存t1-e6。
+2. 本轮自写实现遗漏：D2首版仅向后遍历合并，现改为从全部其余备选中尝试，包含前面独立验证失败者；新增单测通过。
+3. 自动审批拒绝组合启动后，仅执行已授权零API §3；本轮驱动新增“已完成编译直接复用、失败记录停止”的接续检查，避免随后批准时重复编译。新增单测通过，无失败重试。
+4. 写新增复用测试时首次工作目录前缀重复，文件打开失败、实现文件未变；更正路径后5项通过，未改旧断言。
+5. 汇总的“通过验证”统计按候选被接受记录计数，合并接受另列；不改变生成/估计/接受逻辑。E5d未保存cache miss，继续分别列历史入口与E6/E6r实际miss，无补写历史或重跑取数。
+
+自动审批原因：[APPROVAL_STOP.json](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/APPROVAL_STOP.json)。工具在创建真实进程前拒绝向https://api.deepseek.com/chat/completions发送新E6r载荷，要求用户针对该清单与目的地明确批准；没有绕行。目的载荷为BERT/Qwen结构、形状、参数名、校准/留出派生统计、生成DSL、内部反馈及合法精调菜单/候选结果；使用原密钥可能产生API费用。批准后直接接续既有120次预算，不新增连通性请求、不重试。
+
+未完成：§4 E6r-a两模型、§5四个新会话及其冻结后report/cost/pars、§6的实际选步质量与端到端比较；均以未执行保留在 [E6r.md](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6r.md)、[E6r.json](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6r.json)。[最终核对](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/FINAL_CHECKS.json)：283→283、API0、命名空间请求0/响应0/llm registry0、残留0。真实CKKS0；下载/安装/commit/push0。
+
+### E6r 具体外发批准后接续
+
+用户明确批准本组载荷与DeepSeek目的地。原APPROVAL_STOP.json与审批停止汇总保留在approval-collection；APPROVAL_RESUMED.json记录本次授权，§3已成功编译直接复用，不重跑。真实调用从283/450起，预算与163项离线通过代码保持，先执行E6r-a BERT。
+
+### E6r-a BERT：provider失败，按spec转Qwen
+
+第4份主程序精调前两轮收到完整响应：首轮8提案/7估计/1接受，第二轮8估计/1接受；第3个精调请求以HTTP200、received_bytes=4报LLMError invalid_response（37.023s）。原error、STOP、response和请求均保留，失败不重试。前两轮请求上下文中的内部候选自举7694只作局部诊断；本次没有finish/最终Mock收尾、confirm或冻结，不记为正式精调通过或交付通过。
+
+会话645.412s，BERT精调消费3/8，主循环API0；本轮新增3，累计286/450。按§4“代码错误（非provider）才整轮停止”，当前继续Qwen保存响应回放，没有启动E6r-b。
+
+## E6r 最终收尾：provider失败（2026-11-07 / facb3910-dirty）
+
+完成的开发工作：D1精调65536、D2同轮统一基准估计/排序/合并、D3结构后角色重选与字段冲突、D4连续两轮无接受/最多4轮、t1及t1-e6、独立调用预算/registry接线、串行驱动和三部分汇总。主r8-v11、sweep、v8-6.24和a1-6.20保持。调用前163项通过，收尾仅完善provider失败汇总并新增3项测试，与既有驱动合计14项0.034s全过，唯一测试总166。[收尾测试](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/REPORTING_TESTS.log)。没有因汇总修正新增API、重评、编译或模型运行。
+
+§3已成功补齐原E6 Qwen s1：预测/导出/真实pars编译均22272，trace18.68s/1053.72MiB、compile14.41s/887.73MiB，整套139.001s；原程序与原E6汇总保留，续跑复用本次结果。编译产物按规则prune，RuntimePlan/日志/报告保留。
+
+| 部分 | 会话 | 主/精调调用 | 返回/失败 | 冻结与验收 |
+|---|---|---|---|---|
+| E6r-a开发回放 | BERT | 0/3 | 前2轮完整响应；第3轮invalid_response（HTTP200/4字节） | 第4起点精调未收尾，未确认、未冻结 |
+| E6r-a开发回放 | Qwen | 0/1 | 首个精调请求HTTP500 | 未完成精调，未确认、未冻结 |
+| E6r-b新会话 | BERT r1 | 1/0 | 主请求HTTP500 | 未冻结，report/cost/编译未执行 |
+| E6r-b新会话 | Qwen r1 | 1/0 | 主请求HTTP500 | 未冻结，report/cost/编译未执行 |
+| E6r-b新会话 | BERT r2 | 1/0 | 主请求invalid_response（HTTP200/4字节） | 未冻结，report/cost/编译未执行 |
+| E6r-b新会话 | Qwen r2 | 1/0 | 主请求HTTP500 | 未冻结，report/cost/编译未执行 |
+
+BERT第4起点的前两轮共16提案、15估计、2个局部接受、合并接受0、not_reached13、conflict1，截断0；第三份请求context中内部候选7694自举。该结果尚无finish/最终Mock，仅记局部开发诊断。局部轮次只由下一份已保存请求的previous_rounds恢复；record_source明确，实际cache miss和最终自举缺失保持，未补算。两组回放和四个新会话各自失败来源均可查，未移出分母。
+
+[完整E6r.md](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6r.md)、[E6r.json](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/E6r.json) 包含§6三表、六次冻结起点的三方精调列、E5d/E6旧会话/本轮四会话对照、逐轮选步质量及错误。原始自动汇总保存在initial-collection，审批停止汇总在approval-collection；原REPORT、SESSION、响应、源码和程序包不改。complete/protocol_complete只表示预定尝试已收尾；experiment_outcome=provider_blocked、新冻结0/4、冻结后新验收0/4单列。
+
+调用与资源：[FINAL_REVIEW.json](/home/lhohy/pt_agent_results/E6r-llm-select-fix-20261107/FINAL_REVIEW.json)为283→291、新增8/120、余112；8请求=2响应+6错误=8条llm registry/global_call284–291，与命名空间一致。provider invalid_response两次、http_error四次；失败不重试、额外连通性0、真实CKKS0。最后宿主Nix/编译/Python实验残留0，空闲60,344,197,120字节。内存/时限/磁盘准入/串行限制保持。
+
+本次新增的与spec不一致之处/自写修正（前面的§2迁移及修正仍保留）：
+
+1. 收尾汇总原先只读成功trace，provider中断使已完成轮次漏列；新增selector_rounds只读保存请求的previous_rounds并标明来源，失败轮单列。新增3项纯报告测试证明恢复记录不计为正式精调、不覆盖完整trace。
+2. 失败步骤缺step字段，按保留目录名识别tune并记录整步时间；LLM时间包含error诊断的实测秒数，tokens只统计返回的usage，缺失次数单列。原报告不补写，缺失的内部计时/估计次数不伪造。
+3. 报告补丁首次f-string引号冲突导致py_compile失败，已更正；首次新增报告测试路径重复工作目录、未创建文件，修正后14项通过。原失败测试日志另存REPORTING_TESTS-initial.log。以上只影响收尾汇总，期间API0。
+4. 最终表格按实际BERT r1→Qwen r1→BERT r2→Qwen r2排序，并明确编排无异常与provider错误分别列出。生成、精调、接受和冻结决策没有变更。
+
+未获得的成果：完整E6r-a三方法精调效果/速度比较、四个新会话的有效冻结及其report/cost/pars验收。所有6个尝试均因provider故障结束，按失败不重试收尾；没有擅自续跑或消耗剩余112次。真实首次原样交付新增通过0，复杂整网/未见模型本轮无新增成功证据。代码/离线与Qwen s1补编译已完成，后续若需重新尝试由用户指定新任务。
+
+
+## E6r2 provider故障接续（2026-11-07 / facb3910-dirty）
+
+仅执行E6r2 spec，aarch64／lhy-agent-dsl；宿主Nix/编译/Python实验0。旧E5a–E6r工作区改动与291条消费保持。新增opt-in RetryingBudgetClient与ProviderState，在主循环/精调共用；重试300秒、每请求最多2次重试，HTTP5xx/429、明确连接/超时、短正文invalid_response可重试；400/完整响应/length保留原处理。共享连续3次可重试错误熔断，记录时间窗；冷却600秒由外层串行执行，等待按最多30秒分段。
+
+8项核心桩测试通过（0.088s）；新增驱动桩前12项通过，1项接线测试因系统Python无numpy，转现有Nix环境完整运行，不安装。API新增0。与spec不一致/自写修正：首次写测试脚本时相对目录前缀重复，未写到源文件；更正绝对写入位置后继续，原失败日志保留。算法、阈值和旧断言不改。
+
+未完成：完整离线、具体请求清单、E6r2-a/E6r2-b、汇总与最终账本/残留核对。
+
+### E6r2 §2 离线验收与首请求复用
+
+相关179项首次178项通过，新增test_e6r2_driver的Stub漏导入导致1项NameError；补导入后受影响13项0.700s全部通过，其余166项代码/断言保持。新8项provider桩测试覆盖500恢复、短响应、400/length不重试、连续3次熔断、跨会话计数、到额停止和错误记录保留；5项驱动测试覆盖冷却、顺序、熔断后不进入后续部分、尝试计数和主/精调共用客户端。日志在 [本轮目录](/home/lhohy/pt_agent_results/E6r2-resume-20261107)。
+
+新manifest复用E6r已批准的BERT/Qwen四份首次请求，JSON逐项相同，未重新计算或改写模型和提示；仅新命名空间E6r2-a/p1/p2、预算291→至多403及重试2次/300秒、熔断3次、会话冷却600秒。API新增0。
+
+本轮自写修正补充：新接线测试漏导入Stub，补齐后通过；精调报告中的LLM秒数按每次尝试记录汇总，等待秒另列，不改变tuner决策。初次系统Python缺numpy的测试已改用原Nix环境，未安装包。
+
+### E6r2 真实执行启动
+
+已按用户授权启动同一manifest的实际请求流程。E6r已批准的四份首请求正文逐项相同，沿用DeepSeek目的地与原密钥加载器；本轮仅新增已批准provider处理，不另发连通性探测。E6r2-a BERT从第1份主响应开始回放，旧中断的BERT局部轮次不复用、不拼接。
+
+### E6r2-a 两模型冻结后验收完成
+
+BERT保存响应回放完成：第4起点1470.700s／4次选步请求／34次实际估计，精调7467自举（E5d sweep1763.214s／7707）；第5起点702.498s／2次请求／18次估计，精调7707。最终冻结llm第5份，report100 tensor/Mock均100/100，三方7175，编译后prune。
+
+Qwen回放完成：第4起点1570.548s／30估计／22496自举（sweep2581.954s／24224）；第5起点1431.393s／31估计／22112；第6起点684.743s／14估计／22112；第8起点1710.036s／17估计／21857。最终冻结tuned第8份，report100双引擎均100/100，三方21857，编译后prune。上述为固定响应的开发回放，各次实际尝试/重试/等待由attempts与provider-state记录，最终汇总单列。
+
+两模型回放真实主调用0，精调BERT6、Qwen13（Qwen12个逻辑请求，其中1次错误按300秒等待重试后恢复），熔断未触发。当前开始BERT p1新会话；尚不记新会话验收通过。
+
+### E6r2-b p1 收尾，p2 接续
+
+BERT p1：主5／精调12次，冻结llm第4份原文；report100 tensor/Mock均100/100、feasible=true，logit_rel_err分别0.0010148564625423523／0.0010148564625429373。预测／导出／真实pars编译均7141自举，预测延迟1909133890us；编译后prune。循环4459.295s，报告、成本和编译结果不回传Agent。
+
+Qwen p1：主8／精调4次，流程正常收尾、confirm_failed。两份候选确认未通过，未冻结，未启动report/cost/pars；候选、响应和确认记录保留在e6r2-b/qwen/p1/session，不重跑或追加额度。两项p1均无provider错误或重试。当前BERT p2接续中，累计353/450；Qwen p2尚未开始。
+
+### E6r2-b BERT p2 验收完成，Qwen p2 开始
+
+BERT p2：主7／精调8次，冻结llm第6份原文；report100 tensor/Mock均100/100、feasible=true，logit_rel_err分别0.0031060760755246405／0.0031060760755244454；预测6977自举，真实pars已完成，三方及清理记录见acceptance/pars/REPORT.json。当前已启动最后一项Qwen p2；累计354/450，无新增provider错误或重试。Qwen p1确认的两候选校准max_u分别0.9439379053247594／0.9439315533624648，超过0.90，故未冻结；不根据确认结果调整或重跑。
+
+## E6r2 最终收尾（2026-11-07 / facb3910-dirty）
+
+改动文件：新增 [provider_retry.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/planners/provider_retry.py) 与串行驱动 [e6r2_resume_after_outage.py](/home/lhohy/Code/Poseidon/DSL/DSL_agent/scripts/pt_agent/experiments/e6r2_resume_after_outage.py)；transformer_session.py按opt-in标记计实际尝试，a1_transformer_agent.py为主/精调共用provider状态与E6r2标签；新增test_e6r2_provider.py、test_e6r2_driver.py，以及本STATUS。E6r的llm-select、v8-6.24、a1-6.20、主r8-v11提示、sweep、编译器、库及旧工作区改动保持。
+
+测试输出：首次179项178项通过，新增Stub漏导入修正后受影响13项0.700s全过；调用前唯一179项覆盖通过。收尾明确区分流程完成与报告失败，新增1项回归，provider/driver合计 [14项0.775s全过](/home/lhohy/pt_agent_results/E6r2-resume-20261107/REPORTING_TESTS.log)，唯一测试共180项。旧测试断言保持，未重复完整套件。
+
+| 部分 | 模型/会话 | 冻结来源 | 预测/导出/真实pars自举 | report100 tensor/Mock（各100条） | 判定 |
+|---|---|---|---|---|---|
+| 固定响应开发回放 | BERT | llm第5份 | 7175/7175/7175 | 100/100，双feasible=true | 验收通过 |
+| 固定响应开发回放 | Qwen | tuned第8份 | 21857/21857/21857 | 100/100，双feasible=true | 验收通过 |
+| 新会话 | BERT p1 | llm第4份 | 7141/7141/7141 | 100/100，双feasible=true | 验收通过 |
+| 新会话 | Qwen p1 | 未冻结 | 未执行 | 未执行 | confirm_failed，两候选校准u约0.94394>0.90 |
+| 新会话 | BERT p2 | llm第6份 | 6977/6977/6977 | 100/100，双feasible=true | 验收通过 |
+| 新会话 | Qwen p2 | tuned第1份 | 20705/20705/20705 | 100/100，双feasible=false | report_failed，logit_rel_err约0.01718046>0.01 |
+
+Qwen p2报告双引擎的logit_rel_err分别0.017180462806104066／0.017180462806107022；校准max_u约0.8715983、解析max_u约0.9989616，发散0。报告失败按原判据保留，未根据报告重新选择或重跑。新冻结3/4、冻结后完整验收2/4；所有4个新会话保留分母。5份已冻结程序的真实编译均完成三方核对并prune，RuntimePlan/日志/报告保持。真实CKKS本轮0，新增首次输出的完整密态交付证据仍缺。
+
+[完整E6r2.md](/home/lhohy/pt_agent_results/E6r2-resume-20261107/E6r2.md) 与 [E6r2.json](/home/lhohy/pt_agent_results/E6r2-resume-20261107/E6r2.json) 包含六个固定起点与E5d sweep/E6a并列、E5d/E6 s1/四个新会话端到端、耗时分解、逐轮选步质量、逐会话/逐次精调重试与等待。回放BERT第4起点1470.700s、34次估计、7467自举（sweep1763.214s、7707）；Qwen第4起点1570.548s、30次估计、22496自举（sweep2581.954s、24224）。后续保存主响应曾接收sweep反馈，此列属于开发回放。E5d无cache miss字段，保留原入口记录，不补写历史。
+
+资源与消费：[FINAL_REVIEW.json](/home/lhohy/pt_agent_results/E6r2-resume-20261107/FINAL_REVIEW.json) 的10项核对全部通过。291→365，新增74/112；73逻辑请求与74次尝试分别计数，73完整响应＋1超时，74条llm registry逐命名空间一致，global_call292–365连续。Qwen回放第8起点的一次transport_timeout用时600.079961s，等待300秒后同一逻辑请求恢复；旧error和新response分开保留，调用上限包含重试。熔断0、故障时间窗null、会话冷却0；额外探测/下载/安装/commit/push均0。剩余38次不使用、不重置。最后原生/Nix/Python实验残留0，磁盘空闲58,959,319,040字节；Nix与编译全程串行，资源限制保持。
+
+与spec不一致之处及本轮自写修正：
+
+1. 新测试脚本首次目录前缀重复、初次系统Python缺numpy，转原Nix环境运行；新增接线测试Stub漏导入已补齐。原失败日志保留，旧测试、算法、期望值与断言保持。
+2. 本轮汇总首版沿用执行状态complete展示，Qwen p2实际post_freeze_acceptance_passed=false；现report_status明确标report_failed，并列确认候选数值。新增报告测试通过。原始汇总在initial-collection保留，追加summary-reviewed registry；原REPORT、SESSION、trace、程序和响应未改。无模型/API/编译重跑。
+3. 审阅记录脚本首次漏设外层PT_RESULTS，在registry写入前被配置检查拒绝；补显式路径后追加成功，账本保持365。内层Nix仍不读registry或配置。
+4. 精调LLM秒数按实际attempt记录汇总，含失败尝试；等待秒单列。Qwen第8起点的LLM总775.362s与300秒等待分别报告，不使用仅含成功响应的175.282s替代实际尝试时长。
+5. E7 §2.4附带修正：BERT回放第6次迭代后按agent.py的stale规则转入确认，第7份保存回复未使用；E5d第7份回复对应程序同为7175。E6r2.json的replayed_responses现按各会话AGENT.json的llm_calls取BERT6、Qwen8，原REPORT/trace保持，修正前汇总另存E7目录。
+
+未完成成果：Qwen p1的确认通过和Qwen p2的报告通过仍缺，按本轮有限协议结束并保留证据；未额外调用、调整程序、容差或选择条件。真实CKKS不在本spec运行范围，本轮0。当前spec指定实现、测试、六个运行目录、汇总、registry、账本与残留核对均已完成；后续改善依新的用户spec推进。
+
+## E7 确认尾部检查（2026-11-08 / facb3910-dirty）
+
+已核对主目录、分支与残留，未改编译器、前端、运行库或历史响应。新增c2非report上下文，固定calibration→heldout→confirm；先原确认检查，再只按任务指标和发散判定尾部结果。TuneResult记录每个有接受的轮次，c2只将中间状态入确认池，不更新循环best/stale/反馈。默认c1保持。
+
+当前测试中的本轮自写补漏：新提示词桩覆盖状态初始化；代价桩补boot_nodes=[]；普通TuneResult夹具显式使用v8-6.11规则。首两次13项新测试分别出现2个、1个夹具错误，保持原算法和断言含义修正。旧测试机械适配：test_e6_tuning与test_e5c_placement按§2.5在冻结快照比较中排除新增accepted_states；test_a1_agent_rule的trace字段集合补confirm_rule。具体行号及最终输出收尾时列出。
+
+未完成：完整离线；E6r2汇总附带重写与BERT第7回复未使用补记；E7a三步回溯、必要精调重放及新选中程序验收；E7b两个新会话；最终三表、registry/账本与残留核对。
+
+### E7 §2 离线要求通过，准备执行E7a
+
+新增13项0.075s通过；E5a–E6r2及相关191项23.066s全过；历史c1逐项对照及驱动5项0.891s通过，驱动接续调整后受影响3项再通过。唯一测试209项，API新增0、累计365/450。实际BERT p1和Qwen p2的c1确认结果与原AGENT逐项相同；新元数据只入记录，提示与反馈保持。清单为15份冻结程序、14个历史候选池；E7a将先完成尾部检查、再重新确认、必要精调重放、最后验收。
+
+E6r2附带计数修正已单独记入该节，原json保存在E7/E6r2-summary-before.json，未改历史会话。新夹具额外修正：普通TuneResult显式v8-6.11、c1/c2各用独立sources目录。
+
+### E7a C1尾部检查及历史池重新确认完成
+
+15份冻结程序均有123样本尾部检查，14份通过、E6r2 Qwen p2失败（误差0.011327072182191977；122/123一致；最大样本calibration:60）。14个已有池重新确认完成，12个原选择保持，Qwen p1与p2未选中。Qwen p2的31745原始候选虽尾部误差0.009547974192473377≤0.01，但仅121/123一致（98.37398%<99%），因此同样拒绝；20416原文在原确认集logit误差0.01119508已被拒。正按§3.3重放适用tuned候选；不读取report参与选择，不发API，365/450保持。
+
+### E7a 精调重放进度
+
+Qwen p1第6次精调重放946.945s、峰值2861453312字节，4份请求逐项相同，最终正文与原21568自举tuned相同；记录round1/3/4三个状态（23264/22784/21568），完整c2仍未选中，四份独立候选的校准u约0.94394，原判据保持。Qwen p2第1次精调重放已完成，正在第2次；API新增0，累计365/450。
+
+### E7a 完成，E7b按授权接续
+
+15份冻结程序均完成尾部检查，14/15通过；14份历史池均按C1重新确认。12个既有冻结选择保持并复用原验收，Qwen p1/p2均未选中。按§3.3完成Qwen p1第6次、Qwen p2第1/2次共3个精调重放，12份请求逐项相同，3份最终正文均与原tuned相同，峰值2861453312／2962796544／2946551808字节，均在原限制内。总8个中间状态（p1:3；p2:5），完整c2仍未冻结这两会话；无新选择，新增报告评测与编译0。Qwen p2完整c2评估6份达到原MAX_CONFIRM_EVALS=6，中间状态尾部误差0.01128537–0.01165608，末尾20705误差0.01132707；原31745一致率121/123不达99%。不改原判据、程序或候选池历史。
+
+E7a全程API0，365/450；无代码错误，E7a-COMPLETE.json已写入。接续已批准E7b：Qwen q1→q2，r8-v11/v8-6.24/program-plan/llm-select/c2，主10/精调9（含重试），最多38次、累计≤403。首请求清单复用E6r2已批Qwen载荷，确认/尾部结果不回传Agent。
+
+### E7b q1精调与中间状态接线
+
+q1第2份程序精调完成：1477.674s、4次llm-select调用、峰值2779045888字节，中间状态已随c2加入候选池，循环继续。第3份程序内部评测可行，按原触发进入精调；当前已记账372/450，q1主3、精调已完成4次（第5次等待响应），q2未启动。provider错误/重试0。确认与报告尚未执行，暂不记冻结或验收通过。
+
+### E7b q1结束，q2接续
+
+q1主4/精调9共13次，累计378/450；循环3559.517s，11个候选去重为6个（含5个精调中间状态）。6个候选均在原确认检查的calibrated_u约0.94644–0.94784处失败，尾部检查执行0次，max_evals_reached=true，未冻结；report/cost/pars按未冻结跳过。三次精调步骤分别1479.946／1304.185／440.624秒，步骤峰值2779045888／2750095360／2609090560字节，均在原限制内。q2已按顺序启动，provider错误/重试/熔断0；q1结果保持，不追加或重跑。
+
+### E7b q2首轮精调完成
+
+q2第1份程序内部可行，精调1344.213s、4次选步调用，步骤峰值2735554560字节，记录3个中间状态；第2份程序内部可行，已进入精调。当前累计384/450，q2主2、精调已完成4次（第5次等待响应）；q1维持确认失败，provider错误/重试0。q2仍未确认，暂不记验收通过。
+
+### E7改动文件、测试与兼容适配
+
+实现文件：planners/confirm.py（c1/c2、非report上下文与尾部记录）、tuner.py与transformer_tuner.py（accepted_states）、agent.py与transformer_session.py（只入确认池、规则元数据）、新planners/tune_replay.py（请求逐项比较后读取保存响应）；experiments/a1_transformer_agent.py（入口、q1/q2命名空间与9次精调上限）、e6r2_resume_after_outage.py（回放数读取实际AGENT）、新e7_confirm_tail_check.py（E7a/E7b串行驱动与四张汇总表）。测试新增test_e7_confirm.py、test_e7_driver.py，兼容适配test_e6_tuning.py、test_e5c_placement.py、test_a1_agent_rule.py；文档仅本STATUS，共15个文件。
+
+测试输出：新增核心13项0.075s OK；E5a–E6r2及相关191项23.066s OK；真实历史c1对照与驱动5项0.891s OK；驱动接续调整后受影响3项再通过。唯一209项在E7a与真实API前通过，日志分别为OFFLINE-new-final.log、OFFLINE-regression.log、OFFLINE-history-driver.log和OFFLINE-driver-final.log（均在本轮结果目录）。实际BERT p1/Qwen p2的c1确认与原记录逐项相同；重放客户端的不同请求只记录并停止，不联网。
+
+与spec不一致之处及本轮自写修正：
+
+1. 按§2.5排除新增字段：tests/test_e6_tuning.py:92、test_e5c_placement.py:53在冻结快照对照中排除accepted_states；按§2.1在test_a1_agent_rule.py:132的trace字段集合补confirm_rule。其余旧断言和数值保持。
+2. 新tests/test_e7_confirm.py:153为代价桩补boot_nodes=[]，:165将提示词桩覆盖状态初始化，:169给普通TuneResult夹具显式v8-6.11，:182让c1/c2各用独立sources父目录。最初两轮13项测试的2个/1个夹具错误及首次完整回归中的目录冲突均保留记录；修正后通过，算法和断言含义保持。
+3. §2.4明确授权的旧汇总修正：仅将E6r2.json的BERT回放数7改为实际6，Qwen8保持；修改前副本保存在本轮目录。原REPORT、SESSION、trace、响应和程序保持。
+
+### E7最终收尾
+
+§2实现和调用前209项离线通过后，按顺序执行E7a、Qwen q1、Qwen q2。驱动退出0，E7.json的complete=true表示本spec的有限执行与记录齐全；新会话冻结0/2，分别保留confirm_failed结果。[完整E7.md](/home/lhohy/pt_agent_results/E7-confirm-tail-20261108/E7.md)、[E7.json](/home/lhohy/pt_agent_results/E7-confirm-tail-20261108/E7.json)含§5四张表，所有报告结果仅作描述。
+
+E7a：15份冻结程序各用123个非report样本检查，14份通过；E6r2-b Qwen p2的最大相对误差0.011327072182191977，最坏calibration:60，一致122/123。14个历史候选池按C1重新确认，12个选择保持并复用原报告/成本/编译；Qwen p1/p2未冻结。3个适用精调重放产生8个中间状态，12份请求逐项相同、3份最终程序与原tuned相同，API0。完整c2下Qwen p1仍在原校准u处拒绝；Qwen p2的中间状态尾部误差0.01128537–0.01165608，原31745自举候选一致率121/123=98.37398%，均未通过；评估6份达到原上限。新选中程序0，新增报告、trace与编译0；历史验收保持。
+
+| E7b会话 | 主/精调调用 | 池/去重后/中间状态 | 确认结果 | 会话墙钟 | report100/编译 |
+|---|---|---|---|---|---|
+| Qwen q1 | 4/9 | 11/6/5 | 6份校准u=0.94644035–0.94783687，均未通过；尾部检查0，未冻结 | 3577.743s | 按未冻结跳过 |
+| Qwen q2 | 3/8 | 9/6/5 | 6份校准u=0.94393388–0.94394396，均未通过；尾部检查0，未冻结 | 2850.087s | 按未冻结跳过 |
+
+q2第1/2次精调分别1344.213/1184.440秒，均4轮；后者收敛，两个步骤峰值2735554560/2700304384字节。q1三次步骤峰值见前节。两会话所有已评确认候选均由原确认检查拒绝，max_evals_reached=true；C1尾部检查保持“原检查通过后执行”的顺序。10个新中间状态已实际入池并被去重，best/反馈/stale与精调触发继续只使用最终程序。Qwen q1首次响应在approximation阶段失败；q2首次响应内部可行，末尾确认未通过，均未形成首次完整交付成功。
+
+账本与资源：[FINAL_REVIEW.json](/home/lhohy/pt_agent_results/E7-confirm-tail-20261108/FINAL_REVIEW.json)的18项收尾核对通过；365→389，新增24/38，24个完整响应、错误0、重试0、等待/熔断/冷却0，global_call366–389连续，24条llm registry与4个命名空间一致。q1主/精调tokens=483189/604750，q2=398130/602021；详表分别保留prompt与completion。剩余14次未消费，原有额度与历史消费保持。最后宿主Python实验/Nix/hecate-opt残留0；全程串行、内存/时间/磁盘限制保持，下载、安装、提交和推送均0。
+
+未完成成果：两次新Qwen会话均未通过确认，尚无本轮新冻结程序及其report100/真实编译验收；历史Qwen p1/p2在c2下也未选出替代程序。真实CKKS本轮0，新增首次原样输出的完整密态通过证据0。当前spec指定的实现、测试、15份尾部检查、14池回溯、适用重放、两个新会话目录、四表、registry及最终核对已完成；这些失败结果保留，后续改善由新的用户spec指定。
+
+## E8 定义域对齐：refit 扩展与逐点回退（2026-11-08 / facb3910-dirty，Claude 执行）
+
+spec：specs/E8-align-refit-fallback.md。结果目录 `/home/lhohy/pt_agent_results/E8-align-fallback-20261108/`，[E8.md](/home/lhohy/pt_agent_results/E8-align-fallback-20261108/E8.md) 与 E8.json 由驱动汇总生成。registry 中驱动、会话与汇总行的 round 为 E8；单次 API 调用行与验收步骤行为 E6/E6r（见不一致之处 7）。
+
+实现：v8-6.25 在 v8-6.24 上只加 R1、R2，R0 只加记录。
+- R0：对齐行记录 `reasons`（infeasible、diverged、domain、accuracy、cost、alignment_error、numerical_failure）和 `metrics`；`accept` 拆成返回未通过项的函数，决策不变。
+- R1：refit 分三阶段。阶段 0 为 v8-6.24 的选择；阶段 1 为同一方法、阶数至多 255；阶段 2 换方法（inv/rsqrt 为 remez↔newton，其他为 remez↔cheb）。下限只保留数值字段 deg/deg0/iters。
+- R2：整体对齐被拒且初始程序可行时，按程序顺序逐点放宽，保留通过的点。
+- 改动文件：planners/margin_refit.py、planners/transformer_tuner.py、experiments/a1_transformer_agent.py（--tune-rule 增加 v8-6.25）、新 experiments/e8_align_fallback.py、新 tests/test_e8_align.py、tests/test_e6_tuning.py:92（快照比较前去掉 reasons/metrics 两个不影响决策的字段）；r2 重跑前另改 experiments/a1_transformer_agent.py、e8_align_fallback.py，新 tests/test_e8_rerun.py（见不一致之处 5、6）。
+
+测试（API 0，[OFFLINE_TESTS.json](/home/lhohy/pt_agent_results/E8-align-fallback-20261108/OFFLINE_TESTS.json)）：新增 18 项通过；相关 10 个模块 94 项通过；广泛回归 393 项中 5 个失败、1 个错误，均为既有无关项（test_a1_budget、test_a1_single_batch 的新增状态字段，test_r6b_cost 的旧代价数值，test_r8e7_criterion 的批大小），日志 OFFLINE-regression.log。重跑前（API 0，[RERUN_TESTS.json](/home/lhohy/pt_agent_results/E8-align-fallback-20261108/RERUN_TESTS.json)）：新增 7 项（tests/test_e8_rerun.py），与 E8、E7 驱动和 E6r2 测试共 42 项在 Nix 中通过，73.5 s。
+
+### E8a（API 0）
+
+被拒原因（v8-6.24 重跑，10 个输入，重跑与原记录全部一致）：
+- Qwen 6 个（E6r2-b p1 第 6 次、E7b q1 第 2–4 次、q2 第 1–2 次）只因 accuracy 被拒，对齐后 logit 0.005527–0.006882，上限 0.005；单独放宽时被拒的是第 27/28 行和第 32 行。
+- Qwen p1 第 5 次：accuracy，单独放宽时 7 行被拒。
+- BERT p1 第 1 次、p2 第 1 次：infeasible+domain+accuracy，p2 第 1 次对齐后校准 u 27.9；BERT p2 第 5 次：accuracy，8 行单独放宽都被拒。
+
+v8-6.25 对齐：上述 6 个 Qwen 输入被整体接受，refit 在阶段 2 把第 27/28、53/54 行换为 cheb，把 E7b 输入的第 32、51、58 行（其中 3 个输入还有第 25 行）换为 newton，q1 第 2 次的第 6 行用到阶段 1。对齐后自举比输入多 1.4–3.0%（如 20608→20992），确认集校准 u 0.8629，尾部检查通过。其余 4 个仍被拒：Qwen p1 第 5 次、BERT p1 第 1 次、BERT p2 第 1 次的初始程序不可行，回退未运行；BERT p2 第 5 次回退测量 8 次、接受 0 个。
+
+回放（§3.4，c2，均冻结并通过验收）：
+
+| 回放 | 冻结 | 预测/导出/编译自举 | report100 tensor/mock | 会话秒 |
+|---|---|---|---|---|
+| E6r2-b Qwen p1 | tuned-r1/第 6 次 | 24096/24096/24096 | 100/100，logit 0.001255 | 3117.68 |
+| E7b Qwen q1 | tuned-r1/第 4 次 | 20992/20992/20992 | 100/100，logit 0.001007 | 5244.61 |
+| E7b Qwen q2 | tuned-r3/第 1 次 | 21056/21056/21056 | 100/100，logit 0.001148 | 4235.79 |
+
+回归（§3.3）：去重后 26 个输入都在两种规则下运行，17 个相同、9 个不同。6 个是上面的 Qwen 输入（被拒→接受）；另 3 个是 BERT p1 第 2–4 次，两种规则都接受，差别来自第 18、32 行：v8-6.24 的 refit 为 closest，v8-6.25 在阶段 1 达到 within，对齐后自举 8905→8856、7944→8108、7511→7756。
+
+用时：v8-6.25 对齐 121.9–406.4 s；E7b Qwen 输入的 refit 合计 68.0–124.4 s，其余输入不到 6 s。
+
+### E8b（用户已批准，至多 38 次）
+
+| 会话 | 主/精调调用 | 结果 | 预测/导出/编译自举 | report100 tensor/mock | 循环秒 |
+|---|---|---|---|---|---|
+| Qwen r1 | 3/9 | 冻结 tuned-r4/第 2 次；第 2、3 次相对最好结果的改进都不到 5%，循环结束 | 20800/20800/20800 | 100/100，logit 0.002061 | 3901.21 |
+| Qwen r2 | 2 次完成，第 3 次被拒 | 未完成，`budget_exhausted`（上限 403） | — | — | 412.31 |
+| Qwen r2b（r2 重跑） | 6/6 | 冻结 tuned-r4/第 2 次；第 5、6 次没有新的最好结果，循环结束 | 21536/21536/21536 | 100/100，logit 0.001966 | 2791.58 |
+
+r1 比 R0 的 38849 少 46.5%，比 E8 之前的有效最好结果 21409 少 2.8%，比 E8a 回放 q1 的 20992 少 0.9%。r2b 比 R0 少 44.6%，比 r1 多 3.5%；有效 Qwen 最好结果仍为 r1 的 20800。
+
+r2：2026-11-08 10:11:10 第 3 次主循环调用在本地被拒，用时 8e-5 s，请求未发出。原因是 `experiments/a1_transformer_agent.py:394,400` 在 `tune_search == 'llm-select'` 时把 `max_total_calls` 写死为 403（E7 的账本上限），账本此时已有 403 行。驱动按会话 REPORT 的 failure_class=provider 记为 provider_failed，并在 provider-state.json 写了 cooldown_pending；实际属于代码错误。按 spec §6 只按 E6r2 §2 重试，当时没有重跑；r2 目录与调用记录保留。
+
+r2b（用户批准修正上限后重跑，账本 403 起）：第 1 次调用在账本 403 处发出并返回 200，上限修正生效。第 1 次在 approximation 阶段不可行；第 2 次 LLM 程序可行（预测 26785），精调得 21536；第 3、5 次不可行（max_u 1.0117、1.1720）；第 4 次 LLM 程序可行（预测 20001，新的 LLM 最好），精调收敛到与第 2 次相同的 21536；第 6 次可行（20161），没有新的最好结果。c2 确认按预测时延依次评估：第 4、6 次 LLM 程序在确认集上第 32 行 rsqrt 校准 u 0.9439，超过 0.9，未通过；tuned-r4/第 2 次通过（校准 u 0.8629、logit 0.000644）并冻结。会话 REPORT 的 round 为 E8，provider-state.json 的 cooldown_pending 已清空。
+
+账本：389→415，新增 26 次（r1 主 3、精调 9；r2 主 2；r2b 主 6、精调 6），r2b 的 12 行均为 200，within_limits=true。r2 被拒的 call-003 有请求文件、无账本行，汇总现单独记为 refused=1，accounting_equal=true。E8.md 首行列出 r2 的 budget_exhausted 与 1 个被拒请求。重跑前的 E8.md、E8b.json、FINAL_CHECKS.json 保存在 before-rerun-r2/（其中 accounting_equal=false，首行为“异常：无”）。最后残留进程检查：实验/Nix/hecate 进程 0。
+
+与 spec 不一致之处：
+
+1. 执行顺序：先在被拒输入上做 §3.1/§3.2 和 §3.4 回放，满足开始条件后跑 E8b，再做 §3.1 的归因与 §3.3 回归（`experiments/e8_align_fallback.py` 主函数注释）。
+2. 为归因新增 `align_points` 参数（`planners/transformer_tuner.py`），默认 None 时行为与整体对齐相同。
+3. §3.1 写 11 个被拒输入；实际 10 个，E7b q2 只有 2 次精调。
+4. 首个 worker 因我用 pkill 误杀驱动 shell 而中止，部分结果移入 `e8a/aborted/E6r2-b-qwen-p1-it5-align-0311`，日志 `e8a/aborted/runner-0303.log`；随后按新顺序重启，未计入结果。
+5. E8b r2 被写死的上限 403 中止（见上）。修正：`experiments/a1_transformer_agent.py` 新增 `--ledger-cap`（会话步骤的全局上限，不传时沿用 403/450）和 `--experiment-round E8`；`experiments/e8_align_fallback.py` 传入 427，把会话结果分为 frozen/not_frozen/budget_exhausted/provider_failed，新增 `--rerun-b r2`。spec 未规定重跑标签，用新标签 r2b；r2 的目录与调用记录保留，E8b.json 的 r2 条目为 r2b 的结果，并在 first_attempt 中记录 r2。
+6. 命名空间计数：被账本上限拒绝、未发出的请求单独计为 refused，不计入 calls。
+7. registry：驱动、会话与汇总行为 E8。单次 API 调用行的 round 仍由会话标签推出（`experiments/a1_transformer_agent.py:166` 没有用 `--experiment-round`），r1/r2 为 E6r（14 行），r2b 为 E6（12 行）；E8a 回放与 E8b 验收的步骤行（evaluate/cost/pars/confirm/tune）为 E6。已有行保留未改。2026-11-09 修正（用户批准）：`account_calls` 新增 `experiment_round` 参数，a1 中四处调用传入 `--experiment-round`，之后的运行中单次 API 调用行与会话行同一轮次，不传时仍按标签推出；tests/test_e8_rerun.py 新增 1 项，与 test_e7_driver、test_e6r_driver、test_e5d_sessions 共 21 项在 Nix 中通过，18.9 s。验收步骤行的 round 由 `experiments/e6_llm_select_tuning.py:28` 写死为 E6，未改。
+8. r1 与 r2 的会话 REPORT 和 registry 会话行为 E6r（修正前运行），保留未改。
+
+未完成：E8 已有 registry 行保留原 round；验收步骤行的 round 仍写死为 E6。未提交、未推送。

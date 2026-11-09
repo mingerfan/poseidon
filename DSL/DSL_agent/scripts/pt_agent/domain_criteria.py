@@ -17,7 +17,7 @@ def maximum_u(values, domain, *, fn=None, domain_source='calibrated', version='r
     import numpy as np
     data = np.asarray(values)
     lo, hi = domain
-    if version == 'r8-v10' and domain_source == 'calibrated' and fn in ('inv', 'rsqrt') and lo > 0:
+    if version in ('r8-v10','r8-v11') and domain_source == 'calibrated' and fn in ('inv', 'rsqrt') and lo > 0:
         if not np.isfinite(data).all() or np.any(data <= 0):
             return float('inf')
         return float(np.max(np.abs(2*(np.log(data)-math.log(lo))/(math.log(hi)-math.log(lo))-1)))
@@ -179,7 +179,7 @@ class ViolationOrder:
 
 
 def enabled(ctx):
-    return getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10')
+    return getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10','r8-v11')
 
 
 def analytic_domain(point, input_shape):
@@ -213,7 +213,7 @@ def provenance(program, ctx, descriptors):
         analytic = bound is not None and contains_analytic_domain((lo, hi), bound)
         result.append(dict(domain_source='analytic' if analytic else 'calibrated',
                            analytic_domain=bound, u_limit=1.0 if analytic else 0.90))
-        if getattr(ctx, 'prompt_version', None) == 'r8-v10':
+        if getattr(ctx, 'prompt_version', None) in ('r8-v10','r8-v11'):
             fn = point.attrs.get('fn')
             if not analytic and fn in ('inv', 'rsqrt') and lo > 0:
                 result[-1].update(fn=fn, u_scale='log')

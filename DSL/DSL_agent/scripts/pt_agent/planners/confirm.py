@@ -1,6 +1,7 @@
 """Confirm frozen candidates after the internal generation loop has ended."""
 
 from dataclasses import dataclass, replace
+import time
 
 import numpy as np
 
@@ -13,6 +14,78 @@ from .agent_tools import AgentContext, MAX_ACC_DROP_PP, VAL_BATCH, validate
 
 
 MAX_CONFIRM_EVALS = 6
+
+
+def confirmation_rule(ctx, rule):
+    if rule not in ('c1', 'c2'):
+        raise ValueError('confirm_rule must be c1 or c2')
+    info = getattr(ctx, 'model_info', None)
+    applicable = info is not None and getattr(info, 'split', {}).get('kind') != 'legacy_cifar'
+    return rule if applicable else 'c1'
+
+
+def build_non_report_context(ctx, *, splits=('calibration', 'heldout', 'confirm')):
+    if tuple(splits) != ('calibration', 'heldout', 'confirm'):
+        raise ValueError('Tail context requires calibration, heldout, confirm in that order; report is forbidden')
+    if confirmation_rule(ctx, 'c2') != 'c2':
+        raise ValueError('Non-report tail context is not applicable to the CIFAR path')
+    parts = [ctx.samples.get(name) for name in splits]
+    inputs = {name: np.concatenate([arrays[name] for arrays, _ in parts]) for name in ctx.graph.inputs}
+    label_parts = [labels for _, labels in parts]
+    if all(labels is None for labels in label_parts):
+        labels = None
+    elif any(labels is None for labels in label_parts):
+        raise ValueError('Non-report partitions have inconsistent labels')
+    else:
+        labels = np.concatenate(label_parts)
+    positions = [dict(partition=name, index=i) for name, (arrays, _) in zip(splits, parts)
+                 for i in range(len(arrays[ctx.graph.inputs[0]]))]
+    logits = []
+    count = len(positions)
+    for start in range(0, count, VAL_BATCH):
+        values = reference_forward(ctx.graph, {name: value[start:start+VAL_BATCH] for name, value in inputs.items()})
+        logits.append(values[ctx.graph.outputs[0]].copy())
+    exact = np.concatenate(logits)
+    result = replace(ctx, val_images=inputs[ctx.graph.inputs[0]], val_inputs=inputs,
+        val_labels=labels, val_exact_logits=exact, val_split='non_report',
+        val_exact_top1=float(100*np.mean(exact.argmax(axis=1) == labels)) if labels is not None else None)
+    result.tail_sample_positions = positions
+    return result
+
+
+def _metric_outputs(ctx, values):
+    if ctx.model_info.task != 'causal_lm':
+        return values
+    count = len(values)
+    selected = ctx.model_info.input_handling.get('single_lm_head', False)
+    indices = (np.zeros(count, dtype=int) if selected else
+               ctx.val_inputs['attention_mask'][:count].sum(1).astype(int)-1)
+    return values[np.arange(count), indices]
+
+
+def tail_check(source, ctx, *, engine_profile='mock'):
+    if engine_profile not in ('mock', 'tensor'):
+        raise ValueError('engine_profile must be mock or tensor')
+    started = time.monotonic()
+    outputs = []
+    result = validate(parse(source), ctx, stop_on_divergence=False, output_callback=outputs.append,
+                      **(dict(engine='tensor') if engine_profile == 'tensor' else {}))
+    exact = _metric_outputs(ctx, ctx.val_exact_logits)
+    actual = _metric_outputs(ctx, outputs[0])
+    denominator = float(np.max(np.abs(exact)))
+    with np.errstate(invalid='ignore', over='ignore'):
+        errors = np.max(np.abs(exact-actual).reshape(len(exact), -1), axis=1)
+    errors = np.where(np.isfinite(errors), errors, np.inf)
+    worst = []
+    for index in sorted(range(len(errors)), key=lambda i: (-errors[i], i))[:5]:
+        ratio = float(errors[index])/denominator if denominator else (0. if errors[index] == 0 else None)
+        worst.append(dict(ctx.tail_sample_positions[index], relative_error=ratio))
+    return dict(total=result['total'], agree=result.get('agree'),
+        agreement_pct=result.get('agreement_pct'), logit_rel_err=result.get('logit_rel_err'),
+        n_diverged=result['n_diverged'], diverged=result['diverged'],
+        passed=bool(passes(result, ctx.model_info.threshold) and not result['diverged']),
+        seconds=time.monotonic()-started, worst_samples=worst,
+        metrics={key: result.get(key) for key in ctx.model_info.threshold})
 
 
 @dataclass
@@ -48,9 +121,11 @@ def build_confirm_context(ctx) -> AgentContext:
 
 
 def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EVALS,
-                   engine_profile: str = "mock") -> dict:
+                   engine_profile: str = "mock", confirm_rule: str = 'c1') -> dict:
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
+    requested_rule = confirm_rule
+    confirm_rule = confirmation_rule(ctx, confirm_rule)
     from .. import domain_criteria as criteria
     v8=criteria.enabled(ctx)
     if v8:
@@ -74,6 +149,7 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
                      key=lambda c: (c.latency_pred_us, c.iteration, c.origin))
     selected, evals = None, []
     confirm_ctx = None
+    tail_ctx = None
     for candidate in ordered:
         if len(evals) >= max_evals:
             break
@@ -85,7 +161,7 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
                    or result["boot_input_max_abs"] <= result["boot_input_bound"])
         info = getattr(ctx, 'model_info', None)
         passed = passes(result, info.threshold if info is not None else {'acc_drop_pp': MAX_ACC_DROP_PP}) and boot_ok
-        token_agent=getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10')
+        token_agent=getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11')
         if token_agent:
             if v8:criteria.require_analytic_coverage(result)
             passed=passed and result['feasible'] and not result['diverged'] and (
@@ -100,11 +176,24 @@ def confirm_select(candidates: list[Candidate], ctx, *, max_evals=MAX_CONFIRM_EV
                              if key in result})
         if v8:
             evals[-1].update({key:result[key] for key in ('max_u_calibrated','max_u_analytic','worst_acts')})
+        if confirm_rule == 'c2' and passed:
+            if tail_ctx is None:
+                tail_ctx = build_non_report_context(ctx)
+            checked = tail_check(candidate.source, tail_ctx, engine_profile=engine_profile)
+            evals[-1]['tail'] = checked
+            passed = passed and checked['passed']
+            evals[-1]['passed'] = passed
         print(f"CONFIRM iteration={candidate.iteration} origin={candidate.origin} "
               f"passed={passed} metrics={ {key: result[key] for key in metric_keys} } "
               f"n_diverged={result['n_diverged']} max_u={result['max_u']}", flush=True)
         if passed:
             selected = candidate
             break
-    return dict(selected=selected, evals=evals,
-                deduplicated=dict(before=len(candidates), after=len(kept)), duplicates=duplicates)
+    record = dict(selected=selected, evals=evals,
+                  deduplicated=dict(before=len(candidates), after=len(kept)), duplicates=duplicates)
+    if requested_rule == 'c2':
+        record.update(confirm_rule=confirm_rule, applicable=confirm_rule == 'c2',
+                      max_evals_reached=selected is None and len(evals) >= max_evals,
+                      tail_evals=sum('tail' in row for row in evals),
+                      tail_seconds=sum(row.get('tail', {}).get('seconds', 0.) for row in evals))
+    return record

@@ -1,6 +1,7 @@
 """Build generic prompts from lowering capabilities and structural examples."""
 
 import json
+import copy
 from pathlib import Path
 
 from ..capabilities import render_capabilities
@@ -9,7 +10,11 @@ from ..intake.patterns import annotate
 from .agent_tools import FEASIBLE_MAX_U
 
 PROMPT_VERSION = "r8-v4"
-PROMPT_VERSIONS = ("r8-v4", "r8-v5", "r8-v6", 'r8-v7', 'r8-v8', 'r8-v9', 'r8-v10')
+PROMPT_VERSIONS = ("r8-v4", "r8-v5", "r8-v6", 'r8-v7', 'r8-v8', 'r8-v9', 'r8-v10', 'r8-v11')
+
+PLACEMENT_EXPLANATION = ('\nProgram-level bootstrap placement is planned before compilation; the compiler performs scale management. '
+    'Cost feedback adds placement_variant (the selected plan), and each hotspot adds levels_left_at_refresh '
+    '(the average number of levels still unused when values produced on that line are refreshed; null if none).\n')
 
 LINEAR_U_EXPLANATION = '(u maps the declared domain to [-1,1])'
 LOG_U_EXPLANATION = ('(for calibrated inv/rsqrt points with domain lo>0, '
@@ -62,6 +67,41 @@ Examples (other, small networks; they show the syntax and the patterns):
 
 EXAMPLES_DIR = Path(__file__).with_name("examples")
 
+TUNE_TEMPLATE_E6 = '''You select tuning moves from a legal PT-DSL menu (t1).
+Return at most 8 candidates, ordered by expected reduction in predicted latency.
+Each candidate contains 1 to 4 menu IDs, at most one move per approximation point.
+The system applies each candidate atomically and accepts it only if predicted latency
+strictly decreases and the supplied precision acceptance conditions all hold.
+Do not invent IDs or write a program. Output only JSON in this form:
+{"candidates":[{"moves":["m3","m7"],"note":"at most 30 words"}]}'''
+
+
+TUNE_TEMPLATE = '''You select tuning moves from a legal PT-DSL menu (t1).
+Return at most 8 candidates, ordered by expected reduction in predicted latency.
+Each candidate contains 1 to 4 menu IDs. Moves conflict when their changed fields
+on the same operation overlap, or when they select the same approximation role on that operation.
+Different softmax roles can be combined. One structural move (steps or inv_budget)
+can be combined with role moves on that operation: structure is applied first,
+then the role settings must still occur in its rebuilt legal menu. Two structural
+moves on the same operation conflict.
+Candidates in one round are alternatives on the same starting program. The system
+estimates all legal candidates, accepts the lowest predicted latency that passes
+precision checks, then attempts up to 3 nonconflicting merges with other candidates.
+Every accepted program must strictly reduce predicted latency and satisfy all
+supplied precision acceptance conditions. The next round includes each previous
+candidate's predicted latency and rejection reason.
+Do not invent IDs or write a program. Output only JSON in this form:
+{"candidates":[{"moves":["m3","m7"],"note":"at most 30 words"}]}'''
+TUNE_TEMPLATES = {'t1': TUNE_TEMPLATE, 't1-e6': TUNE_TEMPLATE_E6}
+
+
+def build_tune_prompt(context, menu, previous, *, version="t1"):
+    """Separate t1 selector prompt; the main Agent prompt is unchanged."""
+    from .transformer_session import json_safe
+    return [dict(role='system', content=TUNE_TEMPLATES[version]),
+            dict(role='user', content=json.dumps(json_safe(dict(context=context,
+                menu=menu, previous_rounds=previous)), ensure_ascii=False, sort_keys=True))]
+
 
 def target_features(graph, patterns) -> set:
     features = {node.op for node in graph.nodes} | {group["pattern"] for group in patterns}
@@ -85,6 +125,19 @@ def select_examples(features: set, model_name: str, k: int = 2) -> list[str]:
 
 def build_system_prompt(ctx, *, version=None) -> str:
     version = version or getattr(ctx, "prompt_version", PROMPT_VERSION)
+    if version == 'r8-v11':
+        base = build_system_prompt(ctx, version='r8-v10')
+        for old, new in (
+            ('an unmodified compiler then inserts\nrescale/modswitch/bootstrap.',
+             'a placement planner inserts bootstraps and\nan unmodified compiler then inserts rescale/modswitch.'),
+            ('bootstraps, computed with the same bootstrap placement as the compiler, and',
+             'bootstraps, computed with the program-level placement used for compilation, and'),
+        ):
+            if base.count(old) != 1:
+                raise ValueError('r8-v11 placement prompt requires exactly one occurrence: ' + old)
+            base = base.replace(old, new)
+        return base.replace('@fhe.program(slots=16384, refresh="compiler", placement="depth-dp")',
+            '@fhe.program(slots=16384, refresh="agent", placement="program-plan", l_max=5, boot_out_level=5)') + PLACEMENT_EXPLANATION
     patterns = annotate(ctx.graph)
     chosen = select_examples(target_features(ctx.graph, patterns), ctx.model_name)
     index = {entry["name"]: entry for entry in json.loads((EXAMPLES_DIR / "index.json").read_text())}
@@ -133,6 +186,12 @@ def build_system_prompt(ctx, *, version=None) -> str:
 
 
 def initial_message(ctx) -> str:
+    if getattr(ctx, 'prompt_version', None) == 'r8-v11':
+        old = copy.copy(ctx)
+        old.prompt_version = 'r8-v10'
+        message = json.loads(initial_message(old))
+        message['target']['placement'] = 'program-plan'
+        return json.dumps(message)
     graph = ctx.graph
     version = getattr(ctx, 'prompt_version', PROMPT_VERSION)
     patterns = annotate(graph)

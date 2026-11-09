@@ -242,13 +242,13 @@ trace 和 compile 均要求新的输出目录。多个输入或输出使用按�
 
 def export_package(program_text, program, weights, out_dir, *, run_info=None,
                    model_info=None, prompt_version=None) -> Path:
-    if prompt_version in ('r8-v8','r8-v9','r8-v10') and model_info is None:
+    if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11') and model_info is None:
         raise ValueError('r8-v8 export requires the original ModelInfo for its interface check')
     if model_info is not None:
         from ..dsl.interface import require_interface
         require_interface(program, model_info)
     checked = None
-    if prompt_version in ('r8-v8','r8-v9','r8-v10'):
+    if prompt_version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         checked = check(program, {name: value.shape for name, value in weights.items()},
                         prompt_version=prompt_version)
         if not checked.ok:
@@ -394,5 +394,9 @@ def export_package(program_text, program, weights, out_dir, *, run_info=None,
     (package/"README.md").write_text(_readme(program, interface, approximations, config["validation"]))
     weights_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez(weights_path, **{name: np.asarray(weights[name], dtype=np.float64) for name in schema})
+    if program.header.placement in ("depth-dp-plan", "program-plan"):
+        # E5a/E5b: the plan the package's own forward replays, written before the manifest lists files.
+        from ..plan import plan_package
+        _dump(package/"config/refresh_plan.json", plan_package(package, weights_path, program, weights=weights))
     write_manifest(package)
     return package

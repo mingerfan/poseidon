@@ -1,13 +1,15 @@
 """Held-out structural, arithmetic and cost feedback for the LLM planner."""
 
 from dataclasses import dataclass
+import ast
 import gc
+import re
 
 import numpy as np
 
 from ..analyzer import reference_forward, approximation_points, approximation_values
 from ..backends import BackendError, MockBackend
-from ..cost import PROFILES, estimate, estimate_normalized
+from ..cost import PROFILES, estimate, estimate_normalized, estimate_fast, estimate_normalized_fast
 from ..data.cifar import heldout_set, MEAN, STD
 from ..dsl.errors import PTDSLError
 from ..dsl.parser import parse
@@ -22,7 +24,7 @@ from ..kernels.layout import MultiMuxLayout, MultiFlatLayout, unpack_multi
 from ..lower import LoweringError, decode_outputs, lower, pack_inputs
 from ..placement import PlacementError
 from ..tensor_sim import (cached_estimate, identity_token, result_cache_get,
-                          result_cache_put, run_tensor)
+                          result_cache_put, run_tensor, timed, timing_snapshot, reset_timing)
 
 
 FEASIBLE_MAX_U = 0.90
@@ -53,6 +55,51 @@ class AgentContext:
     samples: object = None
     val_inputs: object = None
     prompt_version: str = "r8-v4"
+    placement: str | None = None
+    tune_search: str = "sweep"
+
+
+def apply_placement(source, ctx) -> str:
+    if getattr(ctx, 'placement', None) is None:
+        return source
+    lines = source.splitlines(keepends=True)
+    headers = [i for i, line in enumerate(lines) if re.match(r'^\s*@fhe\.program\(', line)]
+    if len(headers) != 1:
+        return source
+    index = headers[0]
+    line = lines[index]
+    try:
+        call = ast.parse(line.strip()[1:], mode='eval').body
+        if not isinstance(call, ast.Call) or call.args or any(k.arg is None for k in call.keywords):
+            return source
+        if len({k.arg for k in call.keywords}) != len(call.keywords):
+            return source
+        values = dict(refresh='agent', placement=ctx.placement, l_max=5, boot_out_level=5)
+        for keyword in call.keywords:
+            if keyword.arg in values:
+                keyword.value = ast.Constant(values.pop(keyword.arg))
+        call.keywords.extend(ast.keyword(arg=name, value=ast.Constant(value)) for name, value in values.items())
+        ending = '\r\n' if line.endswith('\r\n') else '\n' if line.endswith('\n') else ''
+        lines[index] = line[:len(line)-len(line.lstrip())]+'@'+ast.unparse(call)+ending
+    except (SyntaxError, ValueError, TypeError):
+        return source
+    return ''.join(lines)
+
+
+def cost_feedback(program, ctx, estimator, line_text):
+    cost = cached_estimate(program, ctx.weights, ctx.profile, estimator, cache=False)
+    feedback = {key: cost[key] for key in ('latency_pred_us', 'boots_pred', 'max_depth', 'ops_total', 'rot_keys',
+                                         'placement_model', 'placement_exact', 'barriers', 'boot_share')}
+    feedback['hotspots'] = [dict(row, line_text=line_text(row['line']),
+                               call_texts=[line_text(line) for line in row['call_lines']])
+                            for row in cost['hotspots']]
+    if getattr(ctx, 'prompt_version', None) == 'r8-v11':
+        feedback['placement_variant'] = cost.get('refresh_plan', {}).get('variant')
+        remaining = {(row['line'], tuple(row['call_lines'])): row['mean']
+                     for row in cost.get('refresh_plan', {}).get('levels_left_at_refresh', [])}
+        for row in feedback['hotspots']:
+            row['levels_left_at_refresh'] = remaining.get((row['line'], tuple(row['call_lines'])))
+    return cost, feedback
 
 
 def build_context(graph, calibration, n_val=1000, *, samples=None, normalization=(MEAN, STD)) -> AgentContext:
@@ -158,11 +205,12 @@ def _exact_check(program, ctx, *, engine="mock"):
     return result
 
 
+@timed('validation_s')
 def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
              stop_on_divergence=True, engine: str = "mock", cache: bool = True,
              output_callback=None) -> dict:
     """Apply validation checks to the first n held-out images (all by default)."""
-    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10'):
+    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         from ..dsl.interface import require_interface
         require_interface(program, ctx.model_info)
     from ..transformer_lower import uses_transformer
@@ -184,14 +232,16 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
         image_id = (identity_token(ctx.val_images), identity_token(ctx.weights))
         result_identity = (image_id, identity_token(ctx.val_exact_logits), identity_token(ctx.val_labels),
                            ctx.profile, tuple(ctx.act_tensors), tuple(op.lineno for op in ops))
-        if getattr(ctx, 'prompt_version', None) == 'r8-v10':
+        if getattr(ctx, 'prompt_version', None) in ('r8-v10','r8-v11'):
             result_identity += ('r8-v10',)
         result_key = (print_program(program), result_identity, len(images), stop_on_divergence, engine)
         hit, saved = result_cache_get(result_key)
         if hit:
             return saved
     if engine == "mock" and boot_nodes is None:
-        estimator = estimate_normalized if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10') else estimate
+        estimator = estimate_normalized if getattr(ctx,'prompt_version','r8-v4') in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11') else estimate
+        if getattr(ctx, 'placement', None):
+            estimator = estimate_normalized_fast if estimator is estimate_normalized else estimate_fast
         boot_nodes = cached_estimate(program, ctx.weights, ctx.profile, estimator, cache=cache)['boot_nodes']
     rows = [dict(program_line=op.lineno, graph_tensor=ctx.act_tensors[index], max_u=0.0,
                  obs_min=None, obs_max=None,
@@ -323,7 +373,7 @@ def validate(program, ctx, n: int | None = None, *, boot_nodes=None,
                               and passes(validation, threshold)
                               and (validation['boot_input_bound'] is None
                                    or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
-    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10'):
+    if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         from ..domain_criteria import summarize
         for row in rows:
             row.update(domain_source='calibrated', analytic_domain=None, u_limit=FEASIBLE_MAX_U)
@@ -358,7 +408,7 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
     except PTDSLError as exc:
         return dict(fb, error=str(exc))
     version = getattr(ctx, 'prompt_version', 'r8-v4')
-    if version in ('r8-v8','r8-v9','r8-v10'):
+    if version in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         from ..dsl.interface import check_interface
         interface = check_interface(program, ctx.model_info)
         if not interface['ok']:
@@ -366,7 +416,7 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
     fb["stage"] = "typecheck"
     weight_usage = engine_profile == "tensor" or getattr(ctx, "prompt_version", "r8-v4") in ("r8-v5","r8-v6")
     checked = check(program, ctx.weight_shapes, **(dict(graph=ctx.graph) if weight_usage else {}),
-                    **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10') else {}))
+                    **(dict(prompt_version=version) if version in ('r8-v8','r8-v9','r8-v10','r8-v11') else {}))
     if not checked.ok:
         errors = [diag for diag in checked.diags if diag.severity == "error"]
         shown = errors[:20]
@@ -374,12 +424,12 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
             shown += [diag for diag in errors[20:] if diag.code == "E_WEIGHT_UNUSED"]
         return dict(fb, errors=[error_record(diag.code, diag.lineno, diag.call_lines, diag.msg)
                                for diag in shown])
-    if version in ('r8-v9','r8-v10'):
+    if version in ('r8-v9','r8-v10','r8-v11'):
         from ..margin import check_margin
         margin = check_margin(program, ctx)
         if not margin['ok']:
             return dict(fb, stage='margin', margin=margin, errors=margin['errors'])
-    if version in ('r8-v7','r8-v8','r8-v9','r8-v10'):
+    if version in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11'):
         from .approximation_failures import program_failures
         numerical=program_failures(program)
         if numerical:
@@ -397,13 +447,10 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
         return fb
     fb["stage"] = "cost"
     try:
-        estimator = estimate_normalized if version in ('r8-v7','r8-v8','r8-v9','r8-v10') else estimate
-        cost = estimator(program, ctx.weights, profile=ctx.profile)
-        fb["cost"] = {key: cost[key] for key in ("latency_pred_us", "boots_pred", "max_depth", "ops_total", "rot_keys",
-                                               "placement_model", "placement_exact", "barriers", "boot_share")}
-        fb["cost"]["hotspots"] = [dict(row, line_text=line_text(row['line']),
-                                        call_texts=[line_text(line) for line in row['call_lines']])
-                                    for row in cost['hotspots']]
+        estimator = estimate_normalized if version in ('r8-v7','r8-v8','r8-v9','r8-v10','r8-v11') else estimate
+        if getattr(ctx, 'placement', None):
+            estimator = estimate_normalized_fast if estimator is estimate_normalized else estimate_fast
+        cost, fb['cost'] = cost_feedback(program, ctx, estimator, line_text)
     except LoweringError as exc:
         return lower_failure(exc)
     except (BackendError, PlacementError) as exc:
@@ -418,7 +465,7 @@ def evaluate(source: str, ctx: AgentContext, *, engine: str = "mock", cache: boo
     validation = validate(program, ctx, boot_nodes=cost['boot_nodes'], engine=engine, cache=cache)
     fb["validation"] = {key: value for key, value in validation.items() if key not in ("rows", "feasible", "error")}
     fb["feasible"] = fb["exact"]["ok"] and validation["feasible"]
-    if version in ('r8-v8','r8-v9','r8-v10') and validation.get('analytic_domain_violation'):
+    if version in ('r8-v8','r8-v9','r8-v10','r8-v11') and validation.get('analytic_domain_violation'):
         fb['stop'] = 'analytic_domain_violation'
     if "error" in validation:
         fb["error"] = validation["error"]

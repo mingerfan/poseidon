@@ -1,6 +1,7 @@
 """A1 §6.23: refit a widened calibrated point so it keeps its original accuracy."""
 
 import math
+import time
 
 import numpy as np
 
@@ -66,28 +67,90 @@ def settings(attrs):
     return []
 
 
-def refit(old_attrs, domain):
-    """Choose settings on `domain` whose error stays within the error of `old_attrs` on its domain."""
+def _evaluate(old_attrs, domain, setting):
+    attrs = dict(old_attrs, domain=tuple(domain), **setting)
+    if 'method' in setting:
+        from ..dsl.ops_spec import new_approx_error
+        problem = new_approx_error(dict(attrs, degrees=attrs.get('degrees'))) if setting['method'] != 'cheb' else (
+            'cheb takes deg and domain only' if any(attrs.get(k) is not None for k in ('eps', 'deg0', 'iters')) else None)
+        if problem:
+            return dict(setting, error=math.inf, failure='dsl: '+problem)
+    try:
+        error = max_error(attrs)
+        level = depth(attrs)
+    except Exception as exc:  # numerical or kernel failure: candidate unusable
+        return dict(setting, error=math.inf, failure=type(exc).__name__)
+    return dict(setting, error=error, depth=level)
+
+
+def _order(row):
+    return (row['depth'], row.get('deg') or row.get('deg0'), row.get('iters') or 0, row.get('method', ''))
+
+
+def extended_settings(attrs):
+    """E8 §2.3 stage 1: the same method above the stage-0 limit, up to 255."""
+    method = attrs['method']
+    if method == 'cheb':
+        return []
+    limit = max(BASE_LIMIT, attrs['deg'] if method == 'remez' else attrs['deg0'])
+    extra = [d for d in LADDER if limit < d <= CHEB_LIMIT]
+    if method == 'remez':
+        return [dict(deg=d) for d in extra]
+    if method == 'newton':
+        return [dict(deg0=d, iters=i) for d in extra for i in NEWTON_ITERS]
+    return []
+
+
+def alternative_settings(attrs):
+    """E8 §2.3 stage 2: other methods of the same function, full ladder up to 255."""
+    fn, method = attrs['fn'], attrs['method']
+    methods = ('remez', 'newton') if fn in ('inv', 'rsqrt') else ('remez', 'cheb')
+    if method not in methods:
+        return []
+    ladder = [d for d in LADDER if d <= CHEB_LIMIT]
+    rows = []
+    for other in sorted(m for m in methods if m != method):
+        fit = attrs.get('fit') if other in ('remez', 'newton') and method in ('remez', 'newton') else None
+        if other == 'newton':
+            rows += [dict(method='newton', deg=None, deg0=d, iters=i, fit=fit) for d in ladder for i in NEWTON_ITERS]
+        else:
+            rows += [dict(method=other, deg=d, deg0=None, iters=None, fit=fit) for d in ladder]
+    return rows
+
+
+def refit(old_attrs, domain, *, extended=False):
+    """Choose settings on `domain` whose error stays within the error of `old_attrs` on its domain.
+
+    `extended` (tune rule v8-6.25) adds stage 1 and stage 2 when stage 0 has no setting within the target."""
+    started = time.monotonic()
     target = max_error(old_attrs)
     record = dict(old_domain=list(old_attrs['domain']), new_domain=list(domain), target=target)
-    rows = []
-    for setting in settings(old_attrs):
-        attrs = dict(old_attrs, domain=tuple(domain), **setting)
-        try:
-            error = max_error(attrs)
-            level = depth(attrs)
-        except Exception as exc:  # numerical or kernel failure: candidate unusable
-            rows.append(dict(setting, error=math.inf, failure=type(exc).__name__))
-            continue
-        rows.append(dict(setting, error=error, depth=level))
-    usable = [r for r in rows if math.isfinite(r['error']) and 'depth' in r]
+    stages = [settings(old_attrs)]
+    if extended:
+        stages += [extended_settings(old_attrs), alternative_settings(old_attrs)]
+    usable, counts = [], []
+    choice, stage_used = None, None
+    for stage, candidates in enumerate(stages):
+        rows = [_evaluate(old_attrs, domain, setting) for setting in candidates]
+        counts.append(len(rows))
+        found = [r for r in rows if math.isfinite(r['error']) and 'depth' in r]
+        usable += [dict(r, stage=stage) for r in found]
+        within = [r for r in found if r['error'] <= target*(1+SLACK)]
+        if within:
+            choice, stage_used = min(within, key=_order), stage
+            break
+    if extended:
+        record.update(stage_counts=counts, seconds=time.monotonic()-started)
     if not usable:
         record.update(status='kept', setting=None)
         return {}, record
-    order = lambda r: (r['depth'], r.get('deg', r.get('deg0')), r.get('iters', 0))
-    within = [r for r in usable if r['error'] <= target*(1+SLACK)]
-    choice = min(within, key=order) if within else min(usable, key=lambda r: (r['error'], *order(r)))
-    setting = {k: choice[k] for k in ('deg', 'deg0', 'iters') if k in choice}
-    record.update(status='within' if within else 'closest', setting=setting,
-                  error=choice['error'], depth=choice['depth'])
+    status = 'within'
+    if choice is None:
+        choice = min(usable, key=lambda r: (r['error'], *_order(r)))
+        stage_used, status = choice['stage'], 'closest'
+    keys = ('method', 'deg', 'deg0', 'iters', 'fit') if 'method' in choice else ('deg', 'deg0', 'iters')
+    setting = {k: choice[k] for k in keys if k in choice}
+    record.update(status=status, setting=setting, error=choice['error'], depth=choice['depth'])
+    if extended:
+        record.update(stage=stage_used, method=setting.get('method', old_attrs['method']))
     return setting, record

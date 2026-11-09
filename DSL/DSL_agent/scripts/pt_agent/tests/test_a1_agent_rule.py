@@ -129,7 +129,7 @@ class AgentRuleTests(unittest.TestCase):
                 self.assertEqual(len(default['tuning_rules']), 1)
                 self.assertEqual(set(default['trace'][0]), {
                     'iteration', 'messages', 'fb', 'usage', 'seconds', 'tuned',
-                    'tuned_reused_from', 'tune_policy'})
+                    'tuned_reused_from', 'tune_policy', 'confirm_rule'})
 
     def test_feasible_inputs_keep_feedback_and_results_apart_from_rule_metadata(self):
         for once in (False, True):
