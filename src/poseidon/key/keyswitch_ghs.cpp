@@ -166,8 +166,16 @@ void KSwitchGHS::switch_key_inplace(Ciphertext &encrypted, RNSPoly &poly,
         inverse_ntt_negacyclic_harvey(tmp2[i], ntt_table[i + rns_p_offset]);
     }
 
-    rns_qp->mod_down(ciph_tmp[0][0], tmp1, ciph_tmp[0][0], pool);
-    rns_qp->mod_down(ciph_tmp[1][0], tmp2, ciph_tmp[1][0], pool);
+    if(scheme==CKKS)
+    {
+        rns_qp->mod_down_centered(ciph_tmp[0][0],tmp1,ciph_tmp[0][0],pool);
+        rns_qp->mod_down_centered(ciph_tmp[1][0],tmp2,ciph_tmp[1][0],pool);
+    }
+    else
+    {
+        rns_qp->mod_down(ciph_tmp[0][0],tmp1,ciph_tmp[0][0],pool);
+        rns_qp->mod_down(ciph_tmp[1][0],tmp2,ciph_tmp[1][0],pool);
+    }
 
     if (scheme == CKKS || scheme == BGV)
     {

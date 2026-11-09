@@ -1,4 +1,5 @@
 #include "rns_tool_qp.h"
+#include <algorithm>
 
 namespace poseidon
 {
@@ -217,6 +218,34 @@ void RNSToolQP::mod_down(ConstRNSIter input_q, ConstRNSIter input_p,
                          multiply_poly_scalar_coeffmod(get<0>(I), coeff_count_, get<2>(I).operand,
                                                        get<1>(I), get<0>(I));
                      });
+}
+
+void RNSToolQP::mod_down_centered(ConstRNSIter input_q, ConstRNSIter input_p,
+                                  RNSIter destination, MemoryPoolHandle pool) const
+{
+    const auto p_size=base_p_->size();
+    const auto q_size=base_q_->size();
+    auto composed=allocate_uint(coeff_count_*p_size,pool);
+    for(std::size_t i=0;i<p_size;++i)
+        std::copy_n(&input_p[i][0],coeff_count_,composed.get()+i*coeff_count_);
+    // compose_array changes RNS-major storage to coefficient-major integers in [0,P).
+    base_p_->compose_array(composed.get(),coeff_count_,pool);
+    auto half=allocate_uint(p_size,pool);
+    right_shift_uint(base_p_->base_prod(),1,p_size,half.get());
+    auto negative=allocate_uint(coeff_count_,pool);
+    for(std::size_t j=0;j<coeff_count_;++j)
+        negative[j]=is_greater_than_uint(composed.get()+j*p_size,half.get(),p_size);
+    for(std::size_t i=0;i<q_size;++i)
+    {
+        const auto &qi=base_q_->base()[i];
+        for(std::size_t j=0;j<coeff_count_;++j)
+        {
+            auto residue=modulo_uint(composed.get()+j*p_size,p_size,qi);
+            if(negative[j]) residue=sub_uint_mod(residue,prod_p_mod_qi_[i].operand,qi);
+            const auto difference=sub_uint_mod(input_q[i][j],residue,qi);
+            destination[i][j]=multiply_uint_mod(difference,prod_p_inv_mod_qi_[i].operand,qi);
+        }
+    }
 }
 
 void RNSToolQP::RNSToolInter::initialize(const RNSBase &q, const RNSBase &p, size_t decomp_idx)

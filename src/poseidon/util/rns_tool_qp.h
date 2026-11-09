@@ -43,6 +43,10 @@ public:
 
     void mod_down(ConstRNSIter input_q, ConstRNSIter input_p, RNSIter destination,
                   MemoryPoolHandle pool) const;
+    // Exact centered P representative, giving round(input/P) in base Q.
+    // This avoids the biased rounding of approximate P-to-Q conversion in CKKS.
+    void mod_down_centered(ConstRNSIter input_q, ConstRNSIter input_p,
+                           RNSIter destination, MemoryPoolHandle pool) const;
     POSEIDON_NODISCARD inline auto p_mod_qi() const noexcept { return prod_p_mod_qi_.get(); }
 
     POSEIDON_NODISCARD inline auto p_inv_mod_qi() const noexcept

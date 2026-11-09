@@ -169,8 +169,12 @@ void moddown_qp_ciphertext_to_q(const PoseidonContext &context, CpuHoistWorkspac
         {
             inverse_ntt_negacyclic_harvey(acc_p + limb * n, tables[p_offset + limb]);
         }
-        data->qp_rns_tool()->mod_down(ConstRNSIter(acc_q, n), ConstRNSIter(acc_p, n),
-                                      RNSIter(destination.data(component), n), pool);
+        if(context.parameters_literal()->scheme()==CKKS)
+            data->qp_rns_tool()->mod_down_centered(ConstRNSIter(acc_q,n),ConstRNSIter(acc_p,n),
+                                                   RNSIter(destination.data(component),n),pool);
+        else
+            data->qp_rns_tool()->mod_down(ConstRNSIter(acc_q,n),ConstRNSIter(acc_p,n),
+                                          RNSIter(destination.data(component),n),pool);
         for (std::size_t limb = 0; limb < q; ++limb)
         {
             ntt_negacyclic_harvey(destination.data(component) + limb * n, tables[limb]);

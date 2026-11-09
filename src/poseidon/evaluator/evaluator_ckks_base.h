@@ -253,9 +253,7 @@ public:
 
         if (const_data == 0.0 || const_data == complex<double>(0.0, 0.0))
         {
-            Plaintext tmp;
-            encoder.encode(0, ciph.parms_id(), tmp);
-            add_plain(ciph, tmp, result);
+            result = ciph;
             return;
         }
         Plaintext tmp;

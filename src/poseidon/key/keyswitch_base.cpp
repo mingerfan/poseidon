@@ -1,6 +1,7 @@
 #include "keyswitch_base.h"
 #include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/util/thread_pool.h"
+#include <algorithm>
 #ifdef USING_HARDWARE
 #include "poseidon_hardware/hardware_drive/ckks_hardware_api.h"
 #endif
@@ -344,6 +345,28 @@ void KSwitchGenBase::generate_kswitch_keys(const SecretKey &prev_secret_key, Con
 void KSwitchBase::switch_key(const Ciphertext &encrypted, const KSwitchKeys &switch_keys,
                              Ciphertext &destination) const
 {
+    if (!encrypted.is_valid() || encrypted.size() != 2 || !encrypted.is_ntt_form() ||
+        !context_.crt_context()->get_context_data(encrypted.parms_id()) ||
+        switch_keys.parms_id() != context_.crt_context()->key_parms_id() ||
+        switch_keys.data().size() != 1 || switch_keys.data().front().empty())
+        throw std::invalid_argument("invalid ciphertext or secret-switch key");
+    if (context_.parameters_literal()->scheme() != CKKS)
+        throw std::invalid_argument("generic secret switching currently supports CKKS only");
+
+    // Reuse the backend's tested gadget-product/mod-down operation. Its first
+    // relin slot is an encryption of the source secret rather than s_target^2:
+    // (c0, 0, c1) -> (c0 + KS0(c1), KS1(c1)). No multiplication or level drop.
+    Ciphertext expanded = encrypted;
+    expanded.resize(context_, encrypted.parms_id(), 3);
+    const auto n = encrypted.poly_modulus_degree();
+    const auto limbs = encrypted.coeff_modulus_size();
+    std::copy_n(encrypted.data(1), n * limbs, expanded.data(2));
+    std::fill_n(expanded.data(1), n * limbs, std::uint64_t{0});
+    RelinKeys adapter;
+    adapter.parms_id() = switch_keys.parms_id();
+    adapter.data() = switch_keys.data();
+    relinearize_internal(expanded, adapter, 2, pool_);
+    destination = std::move(expanded);
 }
 
 void KSwitchBase::rotate(const Ciphertext &encrypted, Ciphertext &destination, int steps,

@@ -102,6 +102,45 @@ void check_equal(const Ciphertext &left, const Ciphertext &right, const std::str
     require(std::equal(left.data(), left.data() + words, right.data()), label + ": data changed");
 }
 
+void check_centered_moddown()
+{
+    // Independent signed 128-bit rounding oracle, including P/2 boundaries for
+    // products wider than double's mantissa and both aliased/nonaliased output.
+    for(const auto &p_bits:std::vector<std::vector<std::uint32_t>>{{40},{49,49},{30,31,32}})
+    {
+        ParametersLiteral params{CKKS,10,9,35,5,0,0,{},{},sec_level_type::none};
+        params.set_log_modulus({35,36,38},p_bits);
+        auto pool=MemoryPoolHandle::New();
+        util::RNSBase q(params.q(),pool),p(params.p(),pool);
+        constexpr std::size_t n=16;
+        util::RNSToolQP rns(n,q,p,Modulus(0),pool);
+        __int128 product=1;
+        for(const auto &mod:params.p())product*=mod.value();
+        const __int128 half=product/2;
+        const std::vector<__int128> values{0,1,-1,half,half+1,-half,-half-1,
+            product-1,product+half,product+half+1,-product-half,-product-half-1,
+            5*product+half,5*product+half+1,-5*product-half,-5*product-half-1};
+        auto residue=[](__int128 value,std::uint64_t modulus) {
+            __int128 r=value%modulus;
+            return static_cast<std::uint64_t>(r<0?r+modulus:r);
+        };
+        std::vector<std::uint64_t> input_q(n*q.size()),input_p(n*p.size()),output(input_q.size());
+        for(std::size_t i=0;i<q.size();++i)for(std::size_t j=0;j<n;++j)
+            input_q[i*n+j]=residue(values[j],params.q()[i].value());
+        for(std::size_t i=0;i<p.size();++i)for(std::size_t j=0;j<n;++j)
+            input_p[i*n+j]=residue(values[j],params.p()[i].value());
+        rns.mod_down_centered(util::ConstRNSIter(input_q.data(),n),util::ConstRNSIter(input_p.data(),n),util::RNSIter(output.data(),n),pool);
+        for(std::size_t i=0;i<q.size();++i)for(std::size_t j=0;j<n;++j)
+        {
+            const auto x=values[j];
+            const auto rounded=x>=0?(x+half)/product:-((-x+half)/product);
+            require(output[i*n+j]==residue(rounded,params.q()[i].value()),"centered ModDown rounding oracle");
+        }
+        rns.mod_down_centered(util::ConstRNSIter(input_q.data(),n),util::ConstRNSIter(input_p.data(),n),util::RNSIter(input_q.data(),n),pool);
+        require(input_q==output,"centered ModDown aliasing");
+    }
+}
+
 void check_sampler_bounds()
 {
     // Seed 5 previously sampled coefficient N and overwrote the trailing guard.
@@ -445,6 +484,7 @@ int main(int argc, char **argv)
     {
         PoseidonFactory::get_instance()->set_device_type(DEVICE_SOFTWARE);
         check_single_prime_modup();
+        check_centered_moddown();
         check_sampler_bounds();
         for (const auto [q, p] : std::vector<std::pair<std::size_t, std::size_t>>{
                  {5, 2}, {8, 3}, {3, 5}, {4, 1}, {3, 3}})
