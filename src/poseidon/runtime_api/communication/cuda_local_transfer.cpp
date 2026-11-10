@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <atomic>
 #include <cmath>
+#include <cstdlib>
 #include <map>
 #include <mutex>
 #include <stdexcept>
@@ -21,6 +22,7 @@ namespace
 
 std::atomic<std::size_t> pinned_live{0}, pinned_peak{0};
 std::atomic<std::size_t> pinned_allocations{0},pinned_frees{0};
+std::atomic<std::size_t> pinned_cuda_allocations{0}, pinned_reuses{0};
 std::atomic<std::uint64_t> h2d_completed_bytes{0}, h2d_elapsed_nanoseconds{0},
     h2d_completed_count{0};
 
@@ -48,27 +50,116 @@ void validate_request(const DeviceBufferCopy &request)
     }
 }
 
+// Pinned Host memory is kept for reuse instead of being returned to CUDA.
+// cudaMallocHost and cudaFreeHost take the driver's lock, so every other
+// thread's launches and event calls wait behind them, and cudaFreeHost can
+// also wait for queued GPU work.  On a host without peer access every
+// card-to-card copy is staged through a buffer of its own size: on the 2 x
+// RTX 4090 host a fresh buffer cost more than the copy (2.5 GB/s against
+// 12.9 GB/s with a preallocated one), and the frees stalled the other card's
+// submission thread for seconds (nsys, 2026-11-01/02).
+//
+// A returned block is cached up to POSEIDON_GPU_RUNTIME_PINNED_CACHE_MB
+// (default 4096, 0 disables the cache) and handed to a later request of at
+// most its size and at least two thirds of it.  Every user already keeps its
+// buffer until the copy that reads or writes it has completed, which is all
+// reuse needs.  The cache is never torn down: blocks still cached at exit go
+// back with the process, after CUDA itself may already have been unloaded.
+class PinnedHostCache
+{
+public:
+    static PinnedHostCache &instance()
+    {
+        static PinnedHostCache *cache = new PinnedHostCache();
+        return *cache;
+    }
+
+    void *acquire(std::size_t bytes, std::size_t &capacity)
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            const auto found = free_.lower_bound(bytes);
+            if (found != free_.end() && found->first - bytes <= found->first / 3)
+            {
+                capacity = found->first;
+                void *data = found->second;
+                cached_bytes_ -= capacity;
+                free_.erase(found);
+                pinned_reuses.fetch_add(1, std::memory_order_relaxed);
+                return data;
+            }
+        }
+        capacity = round_up(bytes);
+        void *data = nullptr;
+        check_cuda(cudaMallocHost(&data, capacity), "CUDA transfer cudaMallocHost");
+        pinned_cuda_allocations.fetch_add(1, std::memory_order_relaxed);
+        return data;
+    }
+
+    void release(void *data, std::size_t capacity) noexcept
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            if (cached_bytes_ + capacity <= limit_)
+            {
+                free_.emplace(capacity, data);
+                cached_bytes_ += capacity;
+                return;
+            }
+        }
+        (void)cudaFreeHost(data);
+    }
+
+    std::size_t cached_bytes()
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        return cached_bytes_;
+    }
+
+private:
+    PinnedHostCache()
+    {
+        std::size_t megabytes = 4096;
+        if (const char *text = std::getenv("POSEIDON_GPU_RUNTIME_PINNED_CACHE_MB"))
+        {
+            char *end = nullptr;
+            const unsigned long long value = std::strtoull(text, &end, 10);
+            if (end == text || *end != '\0')
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_GPU_RUNTIME_PINNED_CACHE_MB must be a nonnegative integer");
+            }
+            megabytes = static_cast<std::size_t>(value);
+        }
+        limit_ = megabytes << 20;
+    }
+
+    // Sizes come from a modulus chain, so many requests differ by a few
+    // limbs; rounding lets one cached block serve its neighbours.
+    static std::size_t round_up(std::size_t bytes)
+    {
+        constexpr std::size_t granule = 64 * 1024;
+        return bytes > ~std::size_t{0} - granule ? bytes
+                                                  : (bytes + granule - 1) / granule * granule;
+    }
+
+    std::mutex mutex_;
+    std::multimap<std::size_t, void *> free_;
+    std::size_t cached_bytes_ = 0;
+    std::size_t limit_ = 0;
+};
+
 void copy_host_staged(const DeviceBufferCopy &request)
 {
-    void *host = nullptr;
-    check_cuda(cudaMallocHost(&host, request.bytes), "CUDA transfer cudaMallocHost");
-    try
-    {
-        check_cuda(cudaSetDevice(request.source_device),
-                   "CUDA transfer cudaSetDevice source");
-        check_cuda(cudaMemcpy(host, request.source, request.bytes, cudaMemcpyDeviceToHost),
-                   "CUDA transfer device to host");
-        check_cuda(cudaSetDevice(request.destination_device),
-                   "CUDA transfer cudaSetDevice destination");
-        check_cuda(cudaMemcpy(request.destination, host, request.bytes, cudaMemcpyHostToDevice),
-                   "CUDA transfer host to device");
-    }
-    catch (...)
-    {
-        (void)cudaFreeHost(host);
-        throw;
-    }
-    check_cuda(cudaFreeHost(host), "CUDA transfer cudaFreeHost");
+    PinnedHostBuffer host(request.bytes);
+    check_cuda(cudaSetDevice(request.source_device),
+               "CUDA transfer cudaSetDevice source");
+    check_cuda(cudaMemcpy(host.data(), request.source, request.bytes, cudaMemcpyDeviceToHost),
+               "CUDA transfer device to host");
+    check_cuda(cudaSetDevice(request.destination_device),
+               "CUDA transfer cudaSetDevice destination");
+    check_cuda(cudaMemcpy(request.destination, host.data(), request.bytes, cudaMemcpyHostToDevice),
+               "CUDA transfer host to device");
 }
 
 cudaStream_t create_stream(int device)
@@ -114,7 +205,7 @@ PinnedHostBuffer::PinnedHostBuffer(std::size_t bytes) : bytes_(bytes)
     {
         throw std::invalid_argument("CUDA pinned Host buffer must be non-empty");
     }
-    check_cuda(cudaMallocHost(&data_, bytes_), "CUDA transfer cudaMallocHost");
+    data_ = PinnedHostCache::instance().acquire(bytes_, capacity_);
     pinned_allocations.fetch_add(1,std::memory_order_relaxed);
     const auto live = pinned_live.fetch_add(bytes_, std::memory_order_relaxed) + bytes_;
     auto peak = pinned_peak.load(std::memory_order_relaxed);
@@ -126,7 +217,7 @@ PinnedHostBuffer::~PinnedHostBuffer()
 {
     if (data_ != nullptr)
     {
-        (void)cudaFreeHost(data_);
+        PinnedHostCache::instance().release(data_, capacity_);
         pinned_frees.fetch_add(1,std::memory_order_relaxed);
         pinned_live.fetch_sub(bytes_, std::memory_order_relaxed);
     }
@@ -136,6 +227,13 @@ std::size_t PinnedHostBuffer::live_bytes() noexcept { return pinned_live.load(st
 std::size_t PinnedHostBuffer::peak_bytes() noexcept { return pinned_peak.load(std::memory_order_relaxed); }
 std::size_t PinnedHostBuffer::allocation_calls() noexcept { return pinned_allocations.load(std::memory_order_relaxed); }
 std::size_t PinnedHostBuffer::free_calls() noexcept { return pinned_frees.load(std::memory_order_relaxed); }
+std::size_t PinnedHostBuffer::cuda_allocation_calls() noexcept { return pinned_cuda_allocations.load(std::memory_order_relaxed); }
+std::size_t PinnedHostBuffer::reuse_calls() noexcept { return pinned_reuses.load(std::memory_order_relaxed); }
+std::size_t PinnedHostBuffer::cached_bytes() noexcept
+{
+    try { return PinnedHostCache::instance().cached_bytes(); }
+    catch (...) { return 0; }
+}
 
 void *PinnedHostBuffer::data() noexcept
 {
@@ -360,6 +458,11 @@ cudaEvent_t CudaTransferRequest::completion_event() const
     return state_->completion.value;
 }
 
+bool CudaTransferRequest::holds_staging() const
+{
+    return state_ && state_->staging != nullptr;
+}
+
 int CudaTransferRequest::completion_device() const
 {
     if (!state_ || !state_->completion_recorded ||
@@ -411,6 +514,14 @@ void CudaTransferRequest::wait()
                "CUDA transfer cudaEventSynchronize");
     state_->record_h2d_completion();
     state_->waited = true;
+    // The staging buffer is only needed until the copy that reads or writes it
+    // has finished, which is exactly now.  Holding it until the request itself
+    // is destroyed charged its cudaFreeHost to whoever dropped the last
+    // reference to the request: for the initialisation uploads that was the end
+    // of the online phase, where 122 buffers cost ~200 ms -- 28% of a 733 ms
+    // latency measurement, none of it computation.  A download keeps its own
+    // shared_ptr in CommHandle::State::deferred_outputs, so the buffer it still
+    // has to read survives this reset.
     state_->staging.reset();
 }
 

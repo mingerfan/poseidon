@@ -60,6 +60,15 @@ void launch_forward_ntt_poly_shard_batch_fourstep_65536(
     std::size_t degree,
     std::size_t batch_count);
 
+// In-place two-phase forward NTT of `limb_count` contiguous coefficient-form
+// limbs whose tables start at `modulus_offset` (each block of phase 1 reads
+// and writes the same coefficients).
+void launch_forward_ntt_limbs_inplace_fourstep_65536(
+    GpuWord *values,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    const GpuParameterShard &parameter_shard);
+
 void launch_forward_ntt_qp_active_fourstep_65536(
     GpuWord *destination_q,
     GpuWord *destination_p,

@@ -209,6 +209,23 @@ void launch_hybrid_apply_moddown_ntt_out_of_place_batch(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/** Most components launch_hybrid_apply_moddown_ntt_selected accepts. */
+inline constexpr std::size_t kMaxSelectedModDownComponents = 64;
+
+/**
+ * ModDown apply (source - converted) * P^{-1} for scattered components:
+ * converted slot k is component component_indices[k] of source/destination
+ * (consecutive Q components of hybrid_base_q_count * degree words).
+ */
+void launch_hybrid_apply_moddown_ntt_selected(
+    GpuWord *destination_q,
+    const GpuWord *source_q,
+    const GpuWord *converted_q,
+    const std::uint32_t *component_indices,
+    std::size_t component_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_apply_moddown_ntt_from_q_groups(
     GpuWord *destination_q0,
     GpuWord *destination_q1,

@@ -37,7 +37,8 @@ logits；区间内没有逐阶段 `cudaDeviceSynchronize()`、H2D/D2H、中间�
 需要 CMake 3.26.4 或更新版本，以及带 CUPTI 的 CUDA Toolkit。脚本从源码配置
 独立的 `build_resnet20_s2c_first`，由 CMake 跟踪核心和应用依赖，不再链接其他
 测试目录里现成的 `.o`。可用 `CMAKE_BIN`、`POSEIDON_S2C_BUILD_DIR`、`BUILD_JOBS`
-指定工具和构建目录，默认并行度为 2。应用是 opt-in，不改变默认 CPU/mGPU 构建。
+指定工具和构建目录，默认并行度为 2。`CUDA_ARCHITECTURES` 指定 GPU 架构，默认
+`70`（V100），RTX 4090 用 `89`。应用是 opt-in，不改变默认 CPU/mGPU 构建。
 
 ```bash
 bash bench/resnet20_s2c_first/build.sh /tmp/poseidon_resnet20_s2c_first
@@ -62,6 +63,49 @@ CUDA_VISIBLE_DEVICES=0 /tmp/poseidon_resnet20_s2c_first \
 
 `--unsafe-*` 表示 Q50/P25、`dnum=2` 尚未获得安全参数批准，不能作为生产安全
 配置。两条 GPU 路径均使用随机非零秘密密钥，不允许零密钥或中间结果重加密。
+
+## RTX 4090 推荐配置（2026-11-10）
+
+24 GB 卡要缩小常驻池（默认 30 GiB 是按 32 GB V100 定的），并打开库 Boot 与
+giant 步 c0 留在 QP 两个开关：
+
+```bash
+CUDA_ARCHITECTURES=89 bash bench/resnet20_s2c_first/build.sh /tmp/poseidon_resnet20_s2c_first
+
+CUDA_VISIBLE_DEVICES=0 CUDA_MODULE_LOADING=EAGER \
+POSEIDON_S2C_POOL_MIB=22528 \
+POSEIDON_S2C_LIBRARY_BOOT=1 POSEIDON_DOUBLE_HOIST_QP_C0=1 POSEIDON_S2C_CUPTI=0 \
+  /tmp/poseidon_resnet20_s2c_first --unsafe-performance-only \
+  Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt 0
+```
+
+结果看 `CONTINUOUS_TIMING_RESULT` 行的 `wall_ms`、`accuracy`、`max_logit_error`。
+一次进程约 5 分钟，大部分是计时前的密钥和明文准备。
+
+| 环境变量 | 默认 | 作用 |
+| --- | --- | --- |
+| `POSEIDON_S2C_POOL_MIB` / `POSEIDON_S2C_POOL_HEADROOM_MIB` | 30720 / 1024 | 连续模式 RMM 池及要求的额外空闲显存 |
+| `POSEIDON_S2C_LIBRARY_BOOT` | 0 | 1：18 次 Boot 改用 GPU 库的 S2C-first profile（与 Runtime adapter 相同），稀疏临时秘密 + 22 阶 EvalMod，契约仍是 Q6/2^40 → Q31/2^40；0：应用自带的 59 阶 Boot |
+| `POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}` | 22, 3, 12, 2, 1, 32 | 库 Boot 的参数 |
+| `POSEIDON_DOUBLE_HOIST_QP_C0` | 0 | 1：double hoist 的 giant 步把 c0 留在 QP，省掉一次 ModDown 再抬回（Boot 约 −7%） |
+| `POSEIDON_S2C_CUPTI` | 1 | 0：不挂应用自带的 CUPTI 采集（在线时间少 4–5%，nsys 采集时也要设 0） |
+| `POSEIDON_S2C_POOL_STATS` | 0 | 1：报告池的实时/峰值占用 |
+
+库层面默认打开、可用环境变量设 `0` 关掉的：`POSEIDON_GPU_LAZY_BASECONV`（P>9 的
+惰性 96 位乘加基转换）、`POSEIDON_GPU_MODDOWN_FOURSTEP`、
+`POSEIDON_GPU_QP_FOURSTEP_ANY_P`（N=65536 时任意 P 走 four-step NTT）。
+
+RTX 4090（AutoDL，单卡，每组一个进程，均 PASS、预测类别 3）：
+
+| 配置 | 挂 CUPTI `wall_ms` | `POSEIDON_S2C_CUPTI=0` `wall_ms` | `max_logit_error` |
+| --- | --- | --- | --- |
+| 应用 59 阶 Boot | 1946.6（3 次中位数） | 1857.1 | 0.010 |
+| `POSEIDON_S2C_LIBRARY_BOOT=1` | 1703.2（3 次中位数） | 1628.6 | 0.011 |
+| 再加 `POSEIDON_DOUBLE_HOIST_QP_C0=1` | 1622.9（2 次均值） | 1549.6 | 0.011 |
+
+安全性：除 Q50/P25、`dnum=2` 本身未获批准外，库 Boot 的 dense→sparse 切换密钥
+（h=32）是在完整 Q50+P25 模数上生成的，按这个模数 h=32 不安全；只能用于性能
+测量。
 
 ## 上一轮完整实测（2026-09-18，Q32、C2S full-baby 与 ReLU Q-prefix views）
 

@@ -19,6 +19,7 @@
 #include <string>
 #include <string_view>
 #include <variant>
+#include <unordered_map>
 #include <vector>
 
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
@@ -64,6 +65,10 @@ struct GpuProcessTopology
     std::vector<int> rank_to_node;
 };
 
+// A deferred linear combination (POSEIDON_RUNTIME_LAZY_LINEAR=1): defined in
+// the .cpp; a value carrying one is materialized at its first real consumer.
+struct PoseidonLazyLinear;
+
 class PoseidonGpuValue
 {
 public:
@@ -99,6 +104,7 @@ private:
 
     Storage storage_;
     std::shared_ptr<ReadyEvent> ready_;
+    std::shared_ptr<PoseidonLazyLinear> lazy_;
 
     friend class PoseidonGpuApi;
 };
@@ -220,6 +226,8 @@ public:
     Value prepare_plaintext_async(const fhegpu::ValueDesc &desc, const std::vector<double> &slots, fhegpu::PrepareBackend backend);
     bool is_ready(Value &value);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
+    // One step of an expanded Boot (RuntimePlan V6), on its profile's device state.
+    Value compute_boot_step(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
     bool supports_reuse(const fhegpu::ComputeOp &op) const;
     Value compute_reuse(const fhegpu::ComputeOp &op, Value input,
                         const std::vector<Value> &other_inputs);
@@ -232,6 +240,32 @@ public:
     std::vector<std::optional<Value>> wait(CommHandle &handle);
     void collect_completed();
     void drain();
+    /**
+     * @brief Resources still held because GPU work that uses them may not have
+     * finished, and what has been released so far.
+     */
+    struct InFlightStats
+    {
+        std::size_t pending = 0;          ///< entries still held
+        std::size_t released = 0;         ///< entries released as their work completed
+        std::size_t drained = 0;          ///< entries released by drain_in_flight()
+    };
+
+    /**
+     * @brief drain(), counting what it released.
+     *
+     * Call between runs, outside any timed region: what one run allocated is
+     * returned before the next starts, instead of being freed inside it.
+     * Returns how many entries were released.
+     */
+    std::size_t drain_in_flight();
+    InFlightStats in_flight_stats();
+
+    // True when wait() on this posted handle only confirms completion: every
+    // output already carries the completion event its consumers wait on, and
+    // no request holds a staging buffer or a download to unpack.  A caller
+    // may then activate the consumers at once and wait later.
+    bool wait_can_be_deferred(const CommHandle &handle) const;
     void synchronize(Value &value);
     void preflight(std::string_view plan_source_sha256, bool skip_artifact_digest_checks,
                    const fhegpu::TargetConfig &target,
@@ -239,9 +273,21 @@ public:
                    const fhegpu::PlanRequirements &requirements);
     [[noreturn]] void abort_all(int exit_code, const std::string &reason);
     void validate_value(const Value &value, const fhegpu::ValueDesc &expected) const;
+    /**
+     * @brief Called by the runtime once the plan is loaded, before any value
+     * exists. With POSEIDON_RUNTIME_LAZY_LINEAR=1 (resident plans only) it
+     * finds Add trees of Rotate / MulCP terms that share a source and defers
+     * them: one ModUp per source, QP plaintext MACs, one ModDown per tree.
+     */
+    void observe_plan(const fhegpu::RuntimePlan &plan);
 
 private:
     struct DeviceState;
+    struct LazyLinearPlan;
+    std::optional<Value> try_compute_lazy(const fhegpu::ComputeOp &op,
+                                          const std::vector<Value> &inputs);
+    void materialize_lazy(const Value &value);
+    void materialize_lazy(const std::vector<Value> &values);
 
     DeviceState &device_state(const fhegpu::Place &place, const char *where);
     const DeviceState &device_state(const fhegpu::Place &place,
@@ -286,7 +332,9 @@ private:
     std::optional<int> max_rescale_levels_per_op_;
     bool native_rescale_ = false;
     std::optional<int> waterline_rescale_workspace_levels_;
+    std::unordered_map<fhegpu::ValueId, std::size_t> waterline_keyswitch_input_q_count_;
     std::vector<std::uint64_t> waterline_allocator_capacity_;
+    std::unique_ptr<LazyLinearPlan> lazy_plan_;
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     std::unique_ptr<communication::NcclMpiTransport> nccl_transport_;
 #endif
@@ -295,6 +343,8 @@ private:
     std::vector<int> device_counts_;
     std::vector<int> rank_to_node_;
     std::vector<InFlightWork> in_flight_work_;
+    std::size_t in_flight_released_ = 0;
+    std::size_t in_flight_drained_ = 0;
     std::mutex in_flight_mutex_;
     std::atomic<std::uint64_t> cpu_prepare_calls_{0},cpu_encode_nanoseconds_{0},cpu_plain_h2d_bytes_{0};
 };

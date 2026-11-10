@@ -1055,6 +1055,37 @@ void test_transfer_staging_cleanup()
             "collected transfer lost its dependency event");
 }
 
+void test_pinned_staging_cache()
+{
+    namespace comm = poseidon::runtime_api::communication;
+    // A size no other test uses, so the first buffer needs its own block.
+    constexpr std::size_t bytes = (37u << 20) + 12345;
+    const auto allocations = comm::PinnedHostBuffer::cuda_allocation_calls();
+    const auto live = comm::PinnedHostBuffer::live_bytes();
+    void *first = nullptr;
+    {
+        comm::PinnedHostBuffer buffer(bytes);
+        first = buffer.data();
+        require(buffer.size() == bytes, "pinned buffer does not report its requested size");
+    }
+    require(comm::PinnedHostBuffer::live_bytes() == live, "a destroyed pinned buffer is still counted live");
+    const auto cached = comm::PinnedHostBuffer::cached_bytes();
+    const auto reuses = comm::PinnedHostBuffer::reuse_calls();
+    {
+        comm::PinnedHostBuffer again(bytes - 4096);
+        require(again.data() == first && comm::PinnedHostBuffer::reuse_calls() == reuses + 1,
+                "a released pinned block was not reused for a request of nearly its size");
+        require(comm::PinnedHostBuffer::cached_bytes() < cached, "a reused block is still counted cached");
+    }
+    {
+        comm::PinnedHostBuffer tiny(4096);
+        require(tiny.data() != first, "a small request took a block more than half again its size");
+    }
+    require(comm::PinnedHostBuffer::cuda_allocation_calls() - allocations <= 2,
+            "pinned cache allocated more than the two distinct blocks it needed");
+    std::cout << "PINNED_STAGING_CACHE reused=true cached_bytes=" << comm::PinnedHostBuffer::cached_bytes()
+              << " cuda_allocations=" << comm::PinnedHostBuffer::cuda_allocation_calls() - allocations << '\n';
+}
 
 fhegpu::RuntimePlan make_add_plain_plan(const fhegpu::LoadedOperatorSpec &loaded_spec,
                                         int level)
@@ -1553,7 +1584,8 @@ void test_boot_input_normalization()
     const auto &ids = context.crt_context()->parms_id_map();
     const auto q0 = ids.at(1);
     const double target = std::exp2(std::round(std::log2(context.crt_context()->q0() / 32.)));
-    const auto check = [&](const GpuCiphertextData &source, double factor) {
+    const auto check = [&](const GpuCiphertextData &source, double factor,
+                           double scale_tolerance = 2e-5) {
         poseidon::Ciphertext before, after, normalized;
         GpuUploader::download_ciphertext(source, before, context);
         GpuCiphertextData output;
@@ -1567,7 +1599,7 @@ void test_boot_input_normalization()
         require(output.meta.q_count == 2 && output.meta.parms_id == q0 &&
                     output.meta.is_ntt_form && output.size() == source.size(),
                 "Boot input normalization did not reach q0");
-        require(std::abs(output.meta.scale / target - 1.) < 2e-5,
+        require(std::abs(output.meta.scale / target - 1.) < scale_tolerance,
                 "Boot input normalization lost target-scale precision");
         poseidon::Plaintext decrypted;
         decryptor.decrypt(normalized, decrypted);
@@ -1593,6 +1625,17 @@ void test_boot_input_normalization()
             auto source = GpuUploader::upload_ciphertext(cipher, kDeviceId);
             check(source, 1.);
         }
+    // An input scale far above q0/ratio (Qwen's scale-80 Boot inputs): one
+    // extra modulus would leave a multiplier of ~50 and round the scale by up
+    // to 1%, which a Boot's raised-scale override turns into a message gain.
+    // With moduli to spare the normalization divides out more of them.
+    {
+        poseidon::Plaintext plain;
+        encoder.encode(expected, ids.at(5), std::exp2(79.3), plain);
+        poseidon::Ciphertext cipher;
+        encryptor.encrypt(plain, cipher);
+        check(GpuUploader::upload_ciphertext(cipher, kDeviceId), 1., 1e-9);
+    }
     poseidon::Plaintext plain;
     encoder.encode(expected, ids.at(5), std::exp2(40.), plain);
     poseidon::Ciphertext cipher;
@@ -3421,6 +3464,7 @@ int main()
             test_rescale_workspace_uses_validated_plan(context,key_generator,loaded_spec,rmm_pool);
         });
         run_test("completed transfer releases pinned staging", test_transfer_staging_cleanup);
+        run_test("released pinned staging is reused", test_pinned_staging_cache);
         run_test("Runtime drains work outside final output dependencies",
                  [&] { test_runtime_drains_unreturned_work(
                      context, key_generator, loaded_spec, rmm_pool); });

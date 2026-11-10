@@ -1450,6 +1450,96 @@ GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
     return result;
 }
 
+std::vector<GpuMatrixPlainQP> GpuUploader::upload_double_hoist_group_views(
+    const GpuMatrixPlainQP &matrix,
+    int device_id)
+{
+    const auto &plan = matrix.plan;
+    const bool compressed = plan.compressed_plaintexts;
+    if (matrix.group_view ||
+        (compressed ? matrix.compressed_plain_vec_qp.empty() : matrix.plain_vec_qp.empty()) ||
+        plan.group_term_offsets.size() != plan.giant_steps.size() + 1)
+    {
+        throw std::invalid_argument(
+            "upload_double_hoist_group_views: needs a complete double-hoist matrix");
+    }
+    std::vector<GpuMatrixPlainQP> result;
+    result.reserve(plan.giant_steps.size());
+    for (std::size_t group = 0; group < plan.giant_steps.size(); ++group)
+    {
+        const std::uint32_t begin = plan.group_term_offsets[group];
+        const std::uint32_t end = plan.group_term_offsets[group + 1];
+        // The group's baby steps, in the parent's order.
+        std::map<std::uint32_t, std::uint32_t> babies;
+        for (std::uint32_t t = begin; t < end; ++t)
+        {
+            babies.emplace(plan.terms.at(t).baby_index, 0);
+        }
+        GpuMatrixPlainQP view;
+        view.log_slots = matrix.log_slots;
+        view.n1 = matrix.n1;
+        view.level = matrix.level;
+        view.scale = matrix.scale;
+        view.rot_index = matrix.rot_index;
+        view.group_view = true;
+        auto &sub = view.plan;
+        sub.log_slots = plan.log_slots;
+        sub.n1 = plan.n1;
+        sub.n2 = 1;
+        sub.rescale_count = plan.rescale_count;
+        sub.compressed_plaintexts = compressed;
+        sub.giant_steps = {plan.giant_steps[group]};
+        for (auto &[parent_index, index] : babies)
+        {
+            index = static_cast<std::uint32_t>(sub.baby_steps.size());
+            sub.baby_steps.push_back(plan.baby_steps.at(parent_index));
+        }
+        std::vector<const GpuWord *> q_ptrs;
+        std::vector<const GpuWord *> p_ptrs;
+        std::vector<std::uint32_t> periods;
+        std::vector<std::uint32_t> baby_indices;
+        for (std::uint32_t t = begin; t < end; ++t)
+        {
+            const auto &term = plan.terms[t];
+            const int diagonal =
+                plan.giant_steps[group] + plan.baby_steps.at(term.baby_index);
+            if (compressed)
+            {
+                const auto &plain = matrix.compressed_plain_vec_qp.at(diagonal);
+                q_ptrs.push_back(plain.residues.data());
+                p_ptrs.push_back(plain.residues.data() + plain.meta.q_count * plain.period);
+                periods.push_back(static_cast<std::uint32_t>(plain.period));
+            }
+            else
+            {
+                const auto plain = matrix.plain_vec_qp.at(diagonal).make_const_view();
+                const auto &shard = plain.poly.shards.front();
+                q_ptrs.push_back(shard.ptr);
+                p_ptrs.push_back(shard.ptr + plain.meta.q_count * plain.meta.degree);
+                periods.push_back(static_cast<std::uint32_t>(plain.meta.degree));
+            }
+            const std::uint32_t baby = babies.at(term.baby_index);
+            baby_indices.push_back(baby);
+            sub.terms.push_back(GpuDoubleHoistTerm{
+                0, baby, static_cast<std::uint32_t>(sub.terms.size())});
+        }
+        sub.group_term_offsets = {0, static_cast<std::uint32_t>(sub.terms.size())};
+        sub.diagonal_q_ptrs.allocate(q_ptrs.size(), device_id);
+        sub.diagonal_p_ptrs.allocate(p_ptrs.size(), device_id);
+        sub.diagonal_periods.allocate(periods.size(), device_id);
+        sub.term_baby_indices.allocate(baby_indices.size(), device_id);
+        sub.group_term_offsets_device.allocate(sub.group_term_offsets.size(), device_id);
+        sub.diagonal_q_ptrs.copy_from_host(q_ptrs.data(), q_ptrs.size());
+        sub.diagonal_p_ptrs.copy_from_host(p_ptrs.data(), p_ptrs.size());
+        sub.diagonal_periods.copy_from_host(periods.data(), periods.size());
+        sub.term_baby_indices.copy_from_host(baby_indices.data(), baby_indices.size());
+        sub.group_term_offsets_device.copy_from_host(
+            sub.group_term_offsets.data(), sub.group_term_offsets.size());
+        result.push_back(std::move(view));
+    }
+    return result;
+}
+
 GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     const EvalModPoly &eval_mod_poly,
     const CKKSEncoder &encoder,
@@ -2927,11 +3017,13 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
     return result;
 }
 
-GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(
-    const GaloisKeys &src,
-    int device_id)
+namespace
 {
-    auto result = upload_kswitch_keys(src, device_id);
+
+// Inverse-pre-rotate every uploaded Galois key in place and build the device
+// pointer tables the double-hoist KeyMult reads.
+void pre_rotate_galois_keys(GpuGaloisKeysData &result, int device_id)
+{
     result.meta.galois_format =
         GpuGaloisKeyFormat::InversePreRotated;
     result.galois_elts_by_key_index.assign(
@@ -3039,6 +3131,38 @@ GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(
     result.galois_key_p0_ptrs.copy_from_host(p0_ptrs.data(), pointer_count);
     result.galois_key_q1_ptrs.copy_from_host(q1_ptrs.data(), pointer_count);
     result.galois_key_p1_ptrs.copy_from_host(p1_ptrs.data(), pointer_count);
+}
+
+} // namespace
+
+GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(
+    const GaloisKeys &src,
+    int device_id)
+{
+    auto result = upload_kswitch_keys(src, device_id);
+    pre_rotate_galois_keys(result, device_id);
+    return result;
+}
+
+GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(
+    const GaloisKeys &src,
+    int device_id,
+    std::size_t q_count,
+    const std::vector<std::uint32_t> &galois_elts)
+{
+    std::vector<std::size_t> key_indices;
+    key_indices.reserve(galois_elts.size());
+    for (const auto galois_elt : galois_elts)
+    {
+        if (!src.has_key(galois_elt))
+        {
+            throw std::invalid_argument("selected Galois key does not exist");
+        }
+        key_indices.push_back(GaloisKeys::get_index(galois_elt));
+    }
+    auto result = upload_kswitch_keys(src, device_id, &key_indices);
+    pre_rotate_galois_keys(result, device_id);
+    prepare_key_views_for_q_counts(result, {q_count});
     return result;
 }
 
@@ -3065,6 +3189,14 @@ void GpuUploader::prepare_key_views_for_q_counts(
            cheap and retain no setup-time pointer lifetime beyond keys. */
         (void)keys.make_const_view(q_count);
     }
+}
+
+GpuPlaintextData GpuUploader::upload_plaintext_qp_exact(
+    const Plaintext &src,
+    const PoseidonContext &context,
+    int device_id)
+{
+    return upload_qp_plaintext_exact(src, context, device_id);
 }
 
 }  // namespace gpu

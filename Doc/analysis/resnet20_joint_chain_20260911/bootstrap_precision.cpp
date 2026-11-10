@@ -8,6 +8,22 @@
 using Values = std::vector<Complex>;
 using Diagonals = std::map<int, std::vector<std::complex<double>>>;
 
+// S2C leaves the ciphertext exactly at q0. Scale it to the ModRaise target by
+// a rounded integer, without consuming a modulus. GpuEvaluator's
+// bootstrap_prepare_modraise_input did exactly this for an input already at q0
+// until it began to require one modulus above q0; GpuEvaluator::bootstrap
+// still does it for its own S2C-first profile.
+void prepare_modraise_at_q0(const GpuEvaluator &eval,const CT &source,CT &destination,
+    parms_id_type q0_parms_id,double target) {
+    if (source.meta.parms_id!=q0_parms_id)
+        throw std::runtime_error("ModRaise preparation expects the S2C output at q0");
+    const double multiplier=std::round(target/source.meta.scale);
+    if (!std::isfinite(multiplier) || multiplier<1 || multiplier>std::ldexp(1.0,53))
+        throw std::runtime_error("ModRaise preparation multiplier is outside [1, 2^53]");
+    eval.multiply_scalar(source,static_cast<std::uint64_t>(multiplier),destination);
+    destination.meta.scale=source.meta.scale*multiplier;
+}
+
 Values plain_dft(const Values &x, const Diagonals &matrix) {
     Values out(x.size());
     for (const auto &[rotation, diagonal] : matrix) {
@@ -163,7 +179,7 @@ int main(int argc, char **argv) {
         replay.scale_check(stc_out,47.045350653721194);
         const auto decoded_stc=decoded_values(replay,stc_out);
         CT prepared,raised;
-        eval.bootstrap_prepare_modraise_input(stc_out,prepared,parameters.get_level_by_q_count(2).parms_id,ctx.crt_context()->q0()/32);
+        prepare_modraise_at_q0(eval,stc_out,prepared,parameters.get_level_by_q_count(2).parms_id,ctx.crt_context()->q0()/32);
         replay.scale_check(prepared,std::log2(prep_scale));
         replay.check("prepare_integer3897",prepared,decoded_stc);
         eval.raise_modulus(prepared,raised);

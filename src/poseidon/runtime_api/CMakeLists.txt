@@ -24,6 +24,7 @@ endif()
 
 add_library(poseidon_runtime_gpu_api STATIC
     poseidon_gpu_api.cpp
+    boot_recipe.cpp
     gpu_plaintext_encoder.cu
     communication/cuda_local_transfer.cpp
     communication/gpu_object_copy.cpp

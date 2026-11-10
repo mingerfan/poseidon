@@ -88,6 +88,12 @@ struct GpuMatrixPlainQP
     std::map<int, GpuPlaintextData> plain_vec_qp;
     std::map<int, GpuCompressedPlaintextQP> compressed_plain_vec_qp;
     GpuDoubleHoistMatrixPlan plan;
+    /*
+     * One giant group of another matrix (GpuUploader::upload_double_hoist_group_views):
+     * its plan addresses that matrix's plaintexts, so it owns none. It must
+     * not outlive the matrix it was made from.
+     */
+    bool group_view = false;
 };
 
 class GpuLinearMatrixGroupQP

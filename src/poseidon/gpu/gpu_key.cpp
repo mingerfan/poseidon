@@ -153,5 +153,17 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view(
     return result;
 }
 
+const GpuConstEvaluationKeyView &GpuEvaluationKeyData::const_view(
+    std::size_t active_q_count) const
+{
+    std::lock_guard<std::mutex> lock(view_cache_.mutex);
+    auto &slot = view_cache_.views[active_q_count];
+    if (!slot)
+    {
+        slot = std::make_unique<GpuConstEvaluationKeyView>(make_const_view(active_q_count));
+    }
+    return *slot;
+}
+
 }  // namespace gpu
 }  // namespace poseidon

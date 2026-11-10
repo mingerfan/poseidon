@@ -6,6 +6,9 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <map>
+#include <memory>
+#include <mutex>
 #include <vector>
 
 namespace poseidon
@@ -77,6 +80,40 @@ struct GpuConstEvaluationKeyView
  * - polys_ describes logical key polynomials;
  * - each key polynomial can be sharded across GPUs.
  */
+/**
+ * @brief Per-object cache of key views by active Q count. A copy starts
+ * empty, so a deep-copied key never shares views with its source; a move
+ * keeps them, since moving the owning fields does not move device memory.
+ */
+struct GpuKeyViewCache
+{
+    GpuKeyViewCache() = default;
+    GpuKeyViewCache(const GpuKeyViewCache &) {}
+    GpuKeyViewCache &operator=(const GpuKeyViewCache &)
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        views.clear();
+        return *this;
+    }
+    GpuKeyViewCache(GpuKeyViewCache &&other) noexcept
+    {
+        std::lock_guard<std::mutex> lock(other.mutex);
+        views = std::move(other.views);
+    }
+    GpuKeyViewCache &operator=(GpuKeyViewCache &&other) noexcept
+    {
+        if (this != &other)
+        {
+            std::scoped_lock lock(mutex, other.mutex);
+            views = std::move(other.views);
+        }
+        return *this;
+    }
+
+    std::mutex mutex;
+    std::map<std::size_t, std::unique_ptr<struct GpuConstEvaluationKeyView>> views;
+};
+
 class GpuEvaluationKeyData
 {
 public:
@@ -136,6 +173,18 @@ public:
      */
     GpuConstEvaluationKeyView make_const_view(
         std::size_t active_q_count) const;
+
+    /**
+     * @brief The same view as make_const_view(active_q_count), built once
+     * and cached. Keys are immutable after upload, so hot paths (every
+     * rotation and relinearization) avoid rebuilding a view per key poly.
+     */
+    const GpuConstEvaluationKeyView &const_view(std::size_t active_q_count) const;
+
+private:
+    mutable GpuKeyViewCache view_cache_;
+
+public:
 };
 
 using GpuRelinKeysData = GpuEvaluationKeyData;

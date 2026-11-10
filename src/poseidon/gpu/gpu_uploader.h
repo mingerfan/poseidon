@@ -51,6 +51,18 @@ class GpuUploader
 {
 public:
     /**
+     * @brief Upload an NTT-form CPU plaintext with its exact Q->P extension.
+     *
+     * The signed coefficient integer is composed once on the host and reduced
+     * into every special prime, so a QP plaintext MAC followed by one ModDown
+     * equals the Q-only product (one [Q|P] allocation, q limbs first).
+     */
+    static GpuPlaintextData upload_plaintext_qp_exact(
+        const Plaintext &src,
+        const PoseidonContext &context,
+        int device_id);
+
+    /**
      * @brief Upload CPU Ciphertext to GPU.
      *
      * - Read shape and metadata from CPU Ciphertext.
@@ -139,6 +151,20 @@ public:
         bool compress_plaintexts = false);
 
     /**
+     * @brief One single-group matrix per BSGS giant group of `matrix`.
+     *
+     * Each view keeps only that group's terms and the baby steps they use,
+     * and points at `matrix`'s QP plaintexts, so the double-hoist executor
+     * computes exactly that group: one ModUp of the input, the group's baby
+     * rotations accumulated in QP, one ModDown, then the giant rotation. The
+     * views own no plaintexts and must not outlive `matrix`. Used by the
+     * bsgs_group step of an expanded Boot (RuntimePlan V6).
+     */
+    static std::vector<GpuMatrixPlainQP> upload_double_hoist_group_views(
+        const GpuMatrixPlainQP &matrix,
+        int device_id);
+
+    /**
      * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
      *
      * Polynomial splitting, level simulation, plaintext encoding and all
@@ -223,6 +249,13 @@ public:
     static GpuGaloisKeysData upload_double_hoist_galois_keys(
         const GaloisKeys &src,
         int device_id);
+
+    /** Selected keys only, as the selective upload_galois_keys overload. */
+    static GpuGaloisKeysData upload_double_hoist_galois_keys(
+        const GaloisKeys &src,
+        int device_id,
+        std::size_t q_count,
+        const std::vector<std::uint32_t> &galois_elts);
 
     /**
      * @brief Validate setup-time zero-copy views over one [Q_storage | P] key.

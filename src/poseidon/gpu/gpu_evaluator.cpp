@@ -99,6 +99,26 @@ bool use_double_hoist_direct_giant_accumulate()
            value != "FALSE";
 }
 
+// Keep c0 of every giant group in QP (Lattigo's layout): only c1 of the
+// non-identity groups is moved down to Q for the giant key switch, and the
+// giant accumulation reads c0 straight from the QP group accumulators. This
+// removes group_count + 1 of the 2 * group_count inner ModDown components.
+// Off by default until measured; the rounding differs from the lifted path.
+bool use_double_hoist_qp_c0()
+{
+    const char *raw = std::getenv("POSEIDON_DOUBLE_HOIST_QP_C0");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
 bool use_double_hoist_qp_mac_direct_init()
 {
     const char *raw =
@@ -2923,33 +2943,66 @@ void GpuEvaluator::bootstrap_prepare_modraise_input(
             "GpuEvaluator::bootstrap_prepare_modraise_input: invalid q0 level");
     }
 
-    const std::size_t normalization_q_count = q0_level_info.q_count + 1;
-    if (source_ciphertext.meta.q_count < normalization_q_count)
+    if (source_ciphertext.meta.q_count < q0_level_info.q_count + 1)
     {
         throw std::invalid_argument(
             "GpuEvaluator::bootstrap_prepare_modraise_input: input needs one q modulus above q0 for scale normalization");
     }
-    const auto &normalization_level =
-        params_.get_level_by_q_count(normalization_q_count, 0);
-    if (normalization_level.shards.empty() ||
-        normalization_level.shards.front().q_last == 0)
-    {
-        throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_prepare_modraise_input: missing q_last parameter");
-    }
-    const double q_last =
-        static_cast<double>(normalization_level.shards.front().q_last);
     // Multiply before rescaling: rounding target/scale alone loses precision
     // when that ratio is small. The extra q gives the integer multiplier
     // another modulus worth of precision without lowering the input scale.
-    const double scale_multiplier_double =
-        std::round(q0_over_message_ratio * q_last / source_ciphertext.meta.scale);
-    if (!std::isfinite(scale_multiplier_double) || scale_multiplier_double < 1.0 ||
-        scale_multiplier_double > std::ldexp(1.0, 53))
+    //
+    // One extra q stays the choice whenever its multiplier rounds within
+    // kOneModulusRounding.  For an input scale far above q0/ratio (2^80
+    // against 2^53) that multiplier is ~32 and rounds the scale by ~1.2%;
+    // the output scale records it, but a Boot's raised-scale override then
+    // discards it and the message comes back scaled.  There, further moduli
+    // are divided out until the multiplier rounds within kPreciseRounding,
+    // keeping it inside the exact integer range.  With no better choice the
+    // most precise one is kept (bootstrap() refuses what it cannot use).
+    constexpr double kOneModulusRounding = 1e-6;
+    constexpr double kPreciseRounding = 1e-9;
+    const double exact_integer_limit = std::ldexp(1.0, 53);
+    std::size_t extra_moduli = 0;
+    double scale_multiplier_double = 0.0;
+    double rounding_error = std::numeric_limits<double>::infinity();
+    double divisor = 1.0;
+    for (std::size_t extra = 1;
+         q0_level_info.q_count + extra <= source_ciphertext.meta.q_count; ++extra)
+    {
+        const auto &level =
+            params_.get_level_by_q_count(q0_level_info.q_count + extra, 0);
+        if (level.shards.empty() || level.shards.front().q_last == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap_prepare_modraise_input: missing q_last parameter");
+        }
+        divisor *= static_cast<double>(level.shards.front().q_last);
+        const double exact =
+            q0_over_message_ratio * divisor / source_ciphertext.meta.scale;
+        if (!std::isfinite(exact) || exact > exact_integer_limit)
+            break;
+        const double rounded = std::round(exact);
+        if (rounded < 1.0)
+            continue;
+        const double error = std::abs(rounded / exact - 1.0);
+        if (error < rounding_error)
+        {
+            extra_moduli = extra;
+            scale_multiplier_double = rounded;
+            rounding_error = error;
+        }
+        if (error <= (extra == 1 ? kOneModulusRounding : kPreciseRounding))
+            break;
+    }
+    if (extra_moduli == 0)
     {
         throw std::invalid_argument(
             "GpuEvaluator::bootstrap_prepare_modraise_input: scale multiplier is outside the exact integer range [1, 2^53]");
     }
+    const std::size_t normalization_q_count = q0_level_info.q_count + extra_moduli;
+    const auto &normalization_level =
+        params_.get_level_by_q_count(normalization_q_count, 0);
 
     const GpuCiphertextData *current = &source_ciphertext;
     GpuCiphertextData dropped;
@@ -2961,7 +3014,10 @@ void GpuEvaluator::bootstrap_prepare_modraise_input(
     GpuCiphertextData scaled;
     multiply_scalar(*current, static_cast<std::uint64_t>(scale_multiplier_double), scaled);
     scaled.meta.scale = current->meta.scale * scale_multiplier_double;
-    rescale(scaled, destination_ciphertext);
+    if (extra_moduli == 1)
+        rescale(scaled, destination_ciphertext);
+    else
+        rescale_many(scaled, destination_ciphertext, static_cast<std::uint32_t>(extra_moduli));
 }
 
 /* GpuEvaluator::multiply(...) -> 输出 3 component: d0, d1, d2 */
@@ -3045,8 +3101,8 @@ void GpuEvaluator::relinearize(
 
     auto source_view = source_ciphertext.make_const_view();
     auto destination_view = result->make_view();
-    auto relin_keys_view =
-        relin_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &relin_keys_view =
+        relin_keys.const_view(source_ciphertext.meta.q_count);
     const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
     /* 通过dnum分解的方式进行重线性化 */
@@ -3165,8 +3221,8 @@ void GpuEvaluator::relinearize_rescale_x2_hybrid(
 
     auto source_view = source_ciphertext.make_const_view();
     auto destination_view = result->make_view();
-    auto relin_keys_view =
-        relin_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &relin_keys_view =
+        relin_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.relinearize_hybrid_ciphertext_rescale_x2(
         destination_view,
         source_view,
@@ -3211,6 +3267,17 @@ void GpuEvaluator::rotate(
     int step,
     const GpuGaloisKeysData &galois_keys,
     GpuCiphertextData &destination_ciphertext) const
+{
+    rotate(source_ciphertext, step, galois_keys, destination_ciphertext, nullptr, 0);
+}
+
+void GpuEvaluator::rotate(
+    const GpuCiphertextData &source_ciphertext,
+    int step,
+    const GpuGaloisKeysData &galois_keys,
+    GpuCiphertextData &destination_ciphertext,
+    GpuRotationHoistCache *hoist_cache,
+    std::uintptr_t source_tag) const
 {
     validate_rotate_input(source_ciphertext);
 
@@ -3262,22 +3329,61 @@ void GpuEvaluator::rotate(
     if (galois_keys.meta.galois_format ==
         GpuGaloisKeyFormat::InversePreRotated)
     {
-        GpuDoubleHoistWorkspace staged;
+        static const bool persistent_scratch = [] {
+            const char *raw = std::getenv("POSEIDON_GPU_PERSISTENT_ROTATE_WORKSPACE");
+            return raw != nullptr && std::string(raw) == "1";
+        }();
+        GpuDoubleHoistWorkspace local_staged;
+        std::unique_lock<std::mutex> scratch_lock;
+        if (persistent_scratch)
+        {
+            scratch_lock = std::unique_lock<std::mutex>(rotate_scratch_->mutex);
+        }
+        GpuDoubleHoistWorkspace &staged =
+            persistent_scratch ? rotate_scratch_->workspace : local_staged;
         staged.outer_accumulator.ensure_capacity(
             device_id,
             source_ciphertext.meta.degree,
             source_ciphertext.meta.q_count,
             galois_keys.meta.p_count,
             1);
-        keyswitch_handler_.hoist_decompose_modup_ntt(
-            source_view.polys[1],
-            level_info,
-            staged.source_hoist,
-            staged.keyswitch);
-        const auto key_view =
-            galois_keys.make_const_view(source_ciphertext.meta.q_count);
+        // Runtime hoisting: the ModUp of c1 depends only on the source, so
+        // rotations of the same source share one decomposition.
+        GpuHoistedDecomposition *hoisted = &staged.source_hoist;
+        if (hoist_cache != nullptr && source_tag != 0)
+        {
+            hoisted = &hoist_cache->decomposition;
+            if (hoist_cache->source_tag != source_tag ||
+                hoisted->parms_id != source_ciphertext.meta.parms_id ||
+                hoisted->q_count != source_ciphertext.meta.q_count ||
+                hoisted->device_id != device_id)
+            {
+                hoist_cache->source_tag = 0;
+                keyswitch_handler_.hoist_decompose_modup_ntt(
+                    source_view.polys[1],
+                    level_info,
+                    *hoisted,
+                    staged.keyswitch);
+                hoist_cache->source_tag = source_tag;
+                ++hoist_cache->misses;
+            }
+            else
+            {
+                ++hoist_cache->hits;
+            }
+        }
+        else
+        {
+            keyswitch_handler_.hoist_decompose_modup_ntt(
+                source_view.polys[1],
+                level_info,
+                staged.source_hoist,
+                staged.keyswitch);
+        }
+        const auto &key_view =
+            galois_keys.const_view(source_ciphertext.meta.q_count);
         keyswitch_handler_.keyswitch_multsum_no_moddown(
-            staged.source_hoist,
+            *hoisted,
             galois_elt,
             key_view,
             galois_keys,
@@ -3349,8 +3455,8 @@ void GpuEvaluator::rotate(
     zero_poly(destination_view.polys[1], "GpuEvaluator::rotate zero c1");
 
     auto rotated_c1_const_view = rotated_c1.make_const_view();
-    auto galois_keys_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &galois_keys_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         rotated_c1_const_view.polys[0],
@@ -3359,6 +3465,46 @@ void GpuEvaluator::rotate(
         key_index,
         level_info);
 
+    destination_ciphertext = std::move(result);
+}
+
+void GpuEvaluator::switch_key(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuEvaluationKeyData &switch_key,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    validate_rotate_input(source_ciphertext);
+    if (switch_key.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::switch_key: empty key");
+    }
+    NvtxRange range("SwitchKey");
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            2,
+            device_id,
+            source_ciphertext.polys_.at(0).shards,
+            source_ciphertext.meta.p_count);
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = 2;
+    result.meta.is_ntt_form = true;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    copy_poly(destination_view.polys[0], source_view.polys[0],
+              "GpuEvaluator::switch_key copy c0");
+    zero_poly(destination_view.polys[1], "GpuEvaluator::switch_key zero c1");
+    keyswitch_handler_.switch_key_hybrid_ciphertext(
+        destination_view,
+        source_view.polys[1],
+        switch_key.const_view(source_ciphertext.meta.q_count),
+        switch_key,
+        0,
+        level_info);
     destination_ciphertext = std::move(result);
 }
 
@@ -3423,8 +3569,8 @@ void GpuEvaluator::rotate_many_hoisted(
         level_info,
         workspace.source_hoist,
         workspace.keyswitch);
-    const auto key_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &key_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
 
     for (std::size_t index = 0; index < steps.size(); ++index)
     {
@@ -3473,6 +3619,14 @@ void GpuEvaluator::rotate_inplace(
     GpuCiphertextData &ciphertext, int step,
     const GpuGaloisKeysData &galois_keys, GpuRotateWorkspace &workspace) const
 {
+    rotate_inplace(ciphertext, step, galois_keys, workspace, nullptr, 0);
+}
+
+void GpuEvaluator::rotate_inplace(
+    GpuCiphertextData &ciphertext, int step,
+    const GpuGaloisKeysData &galois_keys, GpuRotateWorkspace &workspace,
+    const GpuRotationHoistCache *hoist_cache, std::uintptr_t source_tag) const
+{
     validate_rotate_input(ciphertext);
     if (step == 0) return;
     if (galois_keys.empty())
@@ -3489,10 +3643,18 @@ void GpuEvaluator::rotate_inplace(
         auto &staged = workspace.pre_rotated;
         staged.outer_accumulator.ensure_capacity(device_id, ciphertext.meta.degree,
             ciphertext.meta.q_count, galois_keys.meta.p_count, 1);
-        keyswitch_handler_.hoist_decompose_modup_ntt(source_view.polys[1],
-            level_info, staged.source_hoist, staged.keyswitch);
-        const auto key_view = galois_keys.make_const_view(ciphertext.meta.q_count);
-        keyswitch_handler_.keyswitch_multsum_no_moddown(staged.source_hoist,
+        // The input is consumed here, so a cached decomposition is only read.
+        const GpuHoistedDecomposition *hoisted = &staged.source_hoist;
+        if (hoist_cache != nullptr && source_tag != 0 && hoist_cache->source_tag == source_tag &&
+            hoist_cache->decomposition.parms_id == ciphertext.meta.parms_id &&
+            hoist_cache->decomposition.q_count == ciphertext.meta.q_count &&
+            hoist_cache->decomposition.device_id == device_id)
+            hoisted = &hoist_cache->decomposition;
+        else
+            keyswitch_handler_.hoist_decompose_modup_ntt(source_view.polys[1],
+                level_info, staged.source_hoist, staged.keyswitch);
+        const auto &key_view = galois_keys.const_view(ciphertext.meta.q_count);
+        keyswitch_handler_.keyswitch_multsum_no_moddown(*hoisted,
             galois_elt, key_view, galois_keys, key_index,
             staged.outer_accumulator, 0, true, level_info, staged.keyswitch);
         const GpuParameterShard *parameter_shard = nullptr;
@@ -3535,7 +3697,7 @@ void GpuEvaluator::rotate_inplace(
         source_view.polys[1].shards.front(), galois_elt, ciphertext.meta.degree);
     zero_poly(destination_view.polys[1], "GpuEvaluator::rotate_inplace zero c1");
     auto temporary_const_view = temporary.make_const_view();
-    const auto key_view = galois_keys.make_const_view(ciphertext.meta.q_count);
+    const auto &key_view = galois_keys.const_view(ciphertext.meta.q_count);
     keyswitch_handler_.switch_key_hybrid_ciphertext(destination_view,
         temporary_const_view.polys[0], key_view, galois_keys, key_index,
         level_info, &workspace.key_switch);
@@ -3632,8 +3794,8 @@ void GpuEvaluator::conjugate(
     zero_poly(destination_view.polys[1], "GpuEvaluator::conjugate zero c1");
 
     auto conjugated_c1_const_view = conjugated_c1.make_const_view();
-    auto galois_keys_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &galois_keys_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         conjugated_c1_const_view.polys[0],
@@ -3684,8 +3846,8 @@ void GpuEvaluator::conjugate_pre_rotated(
         level_info,
         workspace.source_hoist,
         workspace.keyswitch);
-    const auto key_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &key_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.keyswitch_multsum_no_moddown(
         workspace.source_hoist,
         galois_elt,
@@ -4028,7 +4190,10 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     const bool has_full_plaintexts = !matrix.plain_vec_qp.empty();
     const bool has_compressed_plaintexts =
         !matrix.compressed_plain_vec_qp.empty();
-    if (has_full_plaintexts == has_compressed_plaintexts ||
+    // A group view reads its parent matrix's plaintexts through plan pointers.
+    if ((matrix.group_view
+             ? has_full_plaintexts || has_compressed_plaintexts
+             : has_full_plaintexts == has_compressed_plaintexts) ||
         matrix.plan.terms.empty() ||
         matrix.plan.baby_steps.empty() ||
         matrix.plan.giant_steps.empty() ||
@@ -4164,8 +4329,8 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         workspace.keyswitch);
     workspace.last_counts.source_decompose_count = 1;
 
-    const auto galois_keys_view =
-        galois_keys.make_const_view(q_count);
+    const auto &galois_keys_view =
+        galois_keys.const_view(q_count);
     const bool fused_baby_keyswitch_c0 =
         use_double_hoist_fused_baby_keyswitch_c0() &&
         dnum == 1 &&
@@ -4438,21 +4603,48 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         }
         return;
     }
+    const bool qp_c0 = direct_giant_accumulate && use_double_hoist_qp_c0();
     if (grouped_outer_moddown)
     {
-        /*
-         * All group accumulators have the same shape. Batch their P-side
-         * INTT/P->Q/forward-NTT/ModDown instead of completing one full
-         * pipeline before launching the next group.
-         */
-        keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
-            workspace.group_accumulators,
-            group_count,
-            workspace.inner_q_batch,
-            level_info,
-            workspace.batch_p_coeff,
-            workspace.batch_converted_q);
-        workspace.last_counts.inner_moddown_count += group_count;
+        if (qp_c0)
+        {
+            // Only c1 of the non-identity groups is decomposed for the giant
+            // key switch; everything else stays in QP.
+            std::vector<std::uint32_t> c1_groups;
+            c1_groups.reserve(group_count);
+            for (std::size_t group = 0; group < group_count; ++group)
+            {
+                if (matrix.plan.giant_steps[group] != 0)
+                {
+                    c1_groups.push_back(static_cast<std::uint32_t>(group));
+                }
+            }
+            keyswitch_handler_.moddown_qp_c1_groups_to_q(
+                workspace.group_accumulators,
+                c1_groups,
+                group_count,
+                workspace.inner_q_batch,
+                level_info,
+                workspace.batch_p_coeff,
+                workspace.batch_converted_q);
+            workspace.last_counts.inner_moddown_count += c1_groups.size();
+        }
+        else
+        {
+            /*
+             * All group accumulators have the same shape. Batch their P-side
+             * INTT/P->Q/forward-NTT/ModDown instead of completing one full
+             * pipeline before launching the next group.
+             */
+            keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
+                workspace.group_accumulators,
+                group_count,
+                workspace.inner_q_batch,
+                level_info,
+                workspace.batch_p_coeff,
+                workspace.batch_converted_q);
+            workspace.last_counts.inner_moddown_count += group_count;
+        }
 
         bool batched_giant_intt =
             requested_batched_giant_intt &&
@@ -4591,7 +4783,38 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         const std::size_t active_group_count = group_indices.size();
         if (active_group_count != 0)
         {
-            if (direct_giant_accumulate)
+            if (qp_c0)
+            {
+                workspace.outer_accumulator.ensure_capacity(
+                    source_shard0.device_id,
+                    degree,
+                    q_count,
+                    p_count,
+                    1);
+                kernel::launch_double_hoist_pre_rotated_giant_group_accumulate_qp_c0(
+                    workspace.outer_accumulator.q_component(0, 0),
+                    workspace.outer_accumulator.q_component(0, 1),
+                    workspace.outer_accumulator.p_component(0, 0),
+                    workspace.outer_accumulator.p_component(0, 1),
+                    workspace.group_accumulators.q.data(),
+                    workspace.group_accumulators.p.data(),
+                    identity_group_index,
+                    digit_q_ptrs.data(),
+                    digit_p_ptrs.data(),
+                    group_indices.data(),
+                    galois_elts.data(),
+                    key_indices.data(),
+                    galois_keys.galois_key_q0_ptrs.data(),
+                    galois_keys.galois_key_p0_ptrs.data(),
+                    galois_keys.galois_key_q1_ptrs.data(),
+                    galois_keys.galois_key_p1_ptrs.data(),
+                    active_group_count,
+                    dnum,
+                    galois_keys.meta.decomposition_count,
+                    *parameter_shard,
+                    degree);
+            }
+            else if (direct_giant_accumulate)
             {
                 workspace.outer_accumulator.ensure_capacity(
                     source_shard0.device_id,
@@ -5114,6 +5337,75 @@ void GpuEvaluator::slot_to_coeff_double_hoist(
         result);
 }
 
+namespace
+{
+// A profile's raised-scale override assumes ModRaise starts from exactly
+// q0/ratio, the scale its CoeffToSlot constants were built for.  Whatever the
+// integer normalization left over would scale the message by that factor,
+// with no metadata left to record it.
+void require_modraise_scale(const GpuCiphertextData &input, double q0_over_message_ratio,
+                            const char *where)
+{
+    const double relative = std::abs(input.meta.scale / q0_over_message_ratio - 1.0);
+    if (!(relative <= 1e-6))
+    {
+        throw std::runtime_error(
+            std::string(where) + ": ModRaise input scale is " + std::to_string(relative) +
+            " off q0/ratio; the raised-scale override would scale the message by as much");
+    }
+}
+} // namespace
+
+namespace
+{
+
+// ModRaise, with sparse-secret encapsulation when the profile has its keys:
+// dense -> ephemeral at q0, raise, ephemeral -> dense at the top level.
+void raise_modulus_encapsulated(
+    const GpuEvaluator &evaluator,
+    const GpuCiphertextData &input,
+    const GpuBootstrapData &data,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &raised)
+{
+    if (!data.sparse_switch_to_ephemeral && !data.sparse_switch_to_dense)
+    {
+        evaluator.raise_modulus(input, raised);
+        return;
+    }
+    if (!data.sparse_switch_to_ephemeral || !data.sparse_switch_to_dense)
+    {
+        throw std::invalid_argument(
+            "GPU bootstrap sparse-secret encapsulation needs both switching keys");
+    }
+    NvtxRange range("SparseSecretEncapsulation");
+    evaluator.switch_key(input, *data.sparse_switch_to_ephemeral, workspace.scratch4);
+    evaluator.raise_modulus(workspace.scratch4, workspace.scratch5);
+    evaluator.switch_key(workspace.scratch5, *data.sparse_switch_to_dense, raised);
+}
+
+// A profile whose EvalMod ends above its declared SlotToCoeff input drops the
+// surplus Q limbs without a copy, before SlotToCoeff.
+void drop_to_slot_to_coeff_input(
+    const GpuEvaluator &evaluator,
+    const GpuBootstrapData &data,
+    GpuCiphertextData &ciphertext)
+{
+    if (data.slot_to_coeff_input_q_count == 0 ||
+        ciphertext.meta.q_count == data.slot_to_coeff_input_q_count)
+    {
+        return;
+    }
+    if (ciphertext.meta.q_count < data.slot_to_coeff_input_q_count)
+    {
+        throw std::runtime_error(
+            "GPU bootstrap EvalMod output is below the SlotToCoeff input level");
+    }
+    evaluator.drop_modulus_inplace(ciphertext, data.slot_to_coeff_input_parms_id);
+}
+
+} // namespace
+
 void GpuEvaluator::bootstrap(
     const GpuCiphertextData &source_ciphertext,
     const GpuBootstrapData &bootstrap_data,
@@ -5201,9 +5493,14 @@ void GpuEvaluator::bootstrap(
                 workspace.modraise_input,
                 bootstrap_data.q0_parms_id,
                 bootstrap_data.q0_over_message_ratio);
+            if (bootstrap_data.raised_scale_override > 0.0)
+                require_modraise_scale(workspace.modraise_input,
+                                       bootstrap_data.q0_over_message_ratio,
+                                       "GpuEvaluator::bootstrap");
         }
 
-        raise_modulus(workspace.modraise_input, workspace.raised);
+        raise_modulus_encapsulated(
+            *this, workspace.modraise_input, bootstrap_data, workspace, workspace.raised);
 
         if (bootstrap_data.raised_scale_override > 0.0)
         {
@@ -5294,6 +5591,8 @@ void GpuEvaluator::bootstrap(
         workspace.eval_mod_imag.meta.scale =
             bootstrap_data.slot_to_coeff_input_scale;
     }
+    drop_to_slot_to_coeff_input(*this, bootstrap_data, workspace.eval_mod_real);
+    drop_to_slot_to_coeff_input(*this, bootstrap_data, workspace.eval_mod_imag);
 
     {
         NvtxRange range("StC");
@@ -5381,6 +5680,239 @@ void GpuEvaluator::bootstrap(
             workspace.scratch0);
         destination_ciphertext = std::move(workspace.scratch0);
     }
+}
+
+void GpuEvaluator::bootstrap_raise(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuBootstrapData &bootstrap_data,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    // Without the override the raised scale follows the input, and an
+    // expanded Boot's later steps were planned for one fixed scale.
+    if (!(bootstrap_data.raised_scale_override > 0.0))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_raise: the profile has no raised_scale_override");
+    }
+    NvtxRange range("ModRaise");
+    if (bootstrap_data.slot_to_coeff_first)
+    {
+        // The steps before this one ran SlotToCoeff down to q0 and the
+        // rounded product that sets the scale (a mul_scalar step), as
+        // bootstrap() does before raise_modulus.
+        if (source_ciphertext.meta.parms_id != bootstrap_data.q0_parms_id)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap_raise: an S2C-first Boot raises from q0");
+        }
+        raise_modulus_encapsulated(
+            *this, source_ciphertext, bootstrap_data, workspace, destination_ciphertext);
+    }
+    else
+    {
+        bootstrap_prepare_modraise_input(
+            source_ciphertext,
+            workspace.modraise_input,
+            bootstrap_data.q0_parms_id,
+            bootstrap_data.q0_over_message_ratio);
+        require_modraise_scale(workspace.modraise_input, bootstrap_data.q0_over_message_ratio,
+                               "GpuEvaluator::bootstrap_raise");
+        raise_modulus_encapsulated(
+            *this, workspace.modraise_input, bootstrap_data, workspace, destination_ciphertext);
+    }
+    destination_ciphertext.meta.scale = bootstrap_data.raised_scale_override;
+}
+
+void GpuEvaluator::bootstrap_linear_layer(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuBootstrapData &bootstrap_data,
+    bool coeff_to_slot,
+    std::size_t layer,
+    const GpuGaloisKeysData &galois_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    const auto mode =
+        bootstrap_data.allow_environment_linear_transform_override
+            ? gpu_linear_transform_mode_from_environment(
+                  bootstrap_data.linear_transform_mode)
+            : bootstrap_data.linear_transform_mode;
+    NvtxRange range(coeff_to_slot ? "CtS layer" : "StC layer");
+    // One iteration of dft_double_hoist / dft_loose / dft.
+    if (mode == GpuLinearTransformMode::DoubleHoistBsgs)
+    {
+        const auto &group = coeff_to_slot
+            ? bootstrap_data.coeff_to_slot_matrix_qp
+            : bootstrap_data.slot_to_coeff_matrix_qp;
+        const bool dynamic_rescale = group.rescale_min_scale() > 0.0;
+        GpuCiphertextData product;
+        multiply_by_diag_matrix_bsgs_double_hoist(
+            source_ciphertext,
+            group.data().at(layer),
+            galois_keys,
+            dynamic_rescale ? 0 : std::max(group.step(), std::uint32_t{1}),
+            coeff_to_slot ? workspace.coeff_to_slot_double_hoist
+                          : workspace.slot_to_coeff_double_hoist,
+            dynamic_rescale ? product : destination_ciphertext);
+        if (dynamic_rescale)
+        {
+            rescale_dynamic(product, destination_ciphertext, group.rescale_min_scale());
+        }
+        return;
+    }
+    if (mode == GpuLinearTransformMode::SingleHoistBsgs)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_linear_layer: single_hoist is not a bootstrap mode");
+    }
+    const auto &group = coeff_to_slot
+        ? bootstrap_data.coeff_to_slot_matrix
+        : bootstrap_data.slot_to_coeff_matrix;
+    const bool dynamic_rescale = group.rescale_min_scale() > 0.0;
+    const std::uint32_t rescale_count =
+        dynamic_rescale ? 0 : std::max(group.step(), std::uint32_t{1});
+    GpuCiphertextData product;
+    GpuCiphertextData &target = dynamic_rescale ? product : destination_ciphertext;
+    if (mode == GpuLinearTransformMode::LooseCoupledBsgs ||
+        mode == GpuLinearTransformMode::NoHoistBsgs)
+    {
+        multiply_by_diag_matrix_bsgs_loose(
+            source_ciphertext, group.data().at(layer), galois_keys, rescale_count, target);
+    }
+    else
+    {
+        multiply_by_diag_matrix_bsgs(
+            source_ciphertext, group.data().at(layer), galois_keys, rescale_count, target);
+    }
+    if (dynamic_rescale)
+    {
+        rescale_dynamic(product, destination_ciphertext, group.rescale_min_scale());
+    }
+}
+
+void GpuEvaluator::bootstrap_bsgs_group(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuBootstrapData &bootstrap_data,
+    bool coeff_to_slot,
+    std::size_t layer,
+    std::size_t group,
+    const GpuGaloisKeysData &galois_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    const auto &groups = coeff_to_slot
+        ? bootstrap_data.coeff_to_slot_groups_qp
+        : bootstrap_data.slot_to_coeff_groups_qp;
+    if (groups.empty())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_bsgs_group: the profile has no group views "
+            "(a double-hoist profile builds them)");
+    }
+    NvtxRange range(coeff_to_slot ? "CtS group" : "StC group");
+    multiply_by_diag_matrix_bsgs_double_hoist(
+        source_ciphertext,
+        groups.at(layer).at(group),
+        galois_keys,
+        0,
+        coeff_to_slot ? workspace.coeff_to_slot_double_hoist
+                      : workspace.slot_to_coeff_double_hoist,
+        destination_ciphertext);
+}
+
+void GpuEvaluator::bootstrap_conjugate(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuGaloisKeysData &galois_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    // As coeff_to_slot_double_hoist chooses.
+    if (galois_keys.meta.galois_format == GpuGaloisKeyFormat::InversePreRotated)
+    {
+        conjugate_pre_rotated(
+            source_ciphertext,
+            galois_keys,
+            workspace.coeff_to_slot_double_hoist,
+            destination_ciphertext);
+    }
+    else
+    {
+        conjugate(source_ciphertext, galois_keys, destination_ciphertext);
+    }
+}
+
+void GpuEvaluator::bootstrap_set_scale(
+    const GpuCiphertextData &source_ciphertext,
+    double scale,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (!(scale > 0.0) || !std::isfinite(scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::bootstrap_set_scale: invalid scale");
+    }
+    copy_ciphertext_data(
+        source_ciphertext,
+        destination_ciphertext,
+        "GpuEvaluator::bootstrap_set_scale");
+    destination_ciphertext.meta.scale = scale;
+}
+
+void GpuEvaluator::multiply_plain_q_view(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (source_plaintext.meta.p_count == 0)
+    {
+        multiply_plain(source_ciphertext, source_plaintext, destination_ciphertext);
+        return;
+    }
+    if (source_ciphertext.empty() || source_plaintext.empty() ||
+        !(source_ciphertext.meta.parms_id == source_plaintext.meta.parms_id) ||
+        !source_ciphertext.meta.is_ntt_form || !source_plaintext.meta.is_ntt_form ||
+        source_ciphertext.meta.degree != source_plaintext.meta.degree ||
+        source_ciphertext.meta.q_count != source_plaintext.meta.q_count ||
+        source_ciphertext.meta.p_count != 0 ||
+        source_ciphertext.meta.component_count != source_ciphertext.size() ||
+        source_plaintext.poly_.shards.size() != 1)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_plain_q_view: the plaintext's Q prefix does not "
+            "match the ciphertext");
+    }
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, reference_layout) ||
+        reference_layout.shards.size() != 1)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_plain_q_view: ciphertext shard layout mismatch");
+    }
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            source_ciphertext.size(),
+            device_id,
+            reference_layout.shards,
+            0);
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = source_ciphertext.size();
+    result.meta.scale = source_ciphertext.meta.scale * source_plaintext.meta.scale;
+    // [Q|P] residues are stored Q first, so the Q prefix is the same pointer
+    // with fewer limbs.
+    auto plaintext_view = source_plaintext.make_const_view();
+    plaintext_view.meta.p_count = 0;
+    plaintext_view.poly.shards.front().limb_count = source_ciphertext.meta.q_count;
+    auto ciphertext_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    elementwise_handler_.multiply_plain_with_ciphertext(
+        destination_view,
+        ciphertext_view,
+        plaintext_view,
+        params_.get_level(source_ciphertext.meta.parms_id));
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::eval_mod_high_precision(

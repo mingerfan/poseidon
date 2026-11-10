@@ -6,7 +6,9 @@
 #include "poseidon/gpu/gpu_parameter.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <vector>
 
 namespace poseidon
 {
@@ -109,6 +111,21 @@ public:
     void moddown_qp_ciphertext_batch_to_q(
         GpuQPCiphertextBuffer &source,
         std::size_t batch_count,
+        GpuQCiphertextBatchBuffer &destination,
+        const GpuLevelInfo &level_info,
+        DeviceVector<GpuWord> &p_coeff,
+        DeviceVector<GpuWord> &converted_q) const;
+
+    /**
+     * ModDown only component 1 of the listed groups: destination
+     * q_component(g, 1) = ModDown(source group g, component 1). Component 0
+     * and unlisted groups of destination are left untouched. Used when the
+     * giant-step c0 stays in QP (POSEIDON_DOUBLE_HOIST_QP_C0).
+     */
+    void moddown_qp_c1_groups_to_q(
+        GpuQPCiphertextBuffer &source,
+        const std::vector<std::uint32_t> &groups,
+        std::size_t destination_batch_count,
         GpuQCiphertextBatchBuffer &destination,
         const GpuLevelInfo &level_info,
         DeviceVector<GpuWord> &p_coeff,

@@ -1,5 +1,7 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 
+#include "poseidon/runtime_api/boot_recipe.h"
+
 #include "gpu_plaintext_encoder.h"
 #include "rescale_normalization.h"
 #include "poseidon/ckks_encoder.h"
@@ -22,6 +24,8 @@
 #include <rmm/mr/device/statistics_resource_adaptor.hpp>
 
 #include <algorithm>
+#include <array>
+#include <atomic>
 #include <cmath>
 #include <chrono>
 #include <complex>
@@ -40,10 +44,12 @@
 #include <thread>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <variant>
 
 #include <cuda_runtime_api.h>
+#include <nvtx3/nvToolsExt.h>
 #include <rmm/cuda_device.hpp>
 #include <rmm/mr/device/cuda_memory_resource.hpp>
 #include <rmm/mr/device/per_device_resource.hpp>
@@ -51,6 +57,88 @@
 
 namespace poseidon::runtime_api
 {
+
+// A deferred sum of terms  sum_t plain_t * rot(source_t, step_t)  plus
+// ordinary ciphertext addends (POSEIDON_RUNTIME_LAZY_LINEAR=1). Every copy of
+// the value shares `storage`, which holds only the output metadata until the
+// first real consumer materializes it in place; `result` then carries the
+// completion event.
+struct PoseidonLazyLinear
+{
+    struct Term
+    {
+        PoseidonGpuValue source;
+        int step = 0;
+        fhegpu::ValueId plain_id = 0;
+        std::shared_ptr<const gpu::GpuPlaintextData> plain;  // [Q|P]; null = 1
+        double plain_scale = 1.0;
+        // Q-basis multiply-accumulate term source * plain_value (no rotation).
+        bool qmac = false;
+        std::optional<PoseidonGpuValue> plain_value;
+    };
+    fhegpu::ValueId output = 0;
+    int logical_device = 0;
+    int cuda_device = 0;
+    std::vector<Term> terms;
+    std::vector<PoseidonGpuValue> addends;
+    std::shared_ptr<gpu::GpuCiphertextData> storage;
+    std::optional<PoseidonGpuValue> result;
+    std::mutex mutex;
+};
+
+namespace
+{
+// Per-op host phase timing of PoseidonGpuApi::compute
+// (POSEIDON_RUNTIME_HOST_TIMING=1); printed at process exit.
+struct HostPhaseTimes
+{
+    std::atomic<std::uint64_t> calls{0}, total{0}, prologue{0}, evaluate{0}, event{0}, retain{0}, collect{0};
+};
+struct HostPhaseReport
+{
+    std::array<HostPhaseTimes, 32> kinds;
+    ~HostPhaseReport()
+    {
+        for (std::size_t k = 0; k < kinds.size(); ++k)
+        {
+            const auto &t = kinds[k];
+            const auto n = t.calls.load();
+            if (n == 0) continue;
+            const auto us = [n](const std::atomic<std::uint64_t> &v) { return v.load() / 1e3 / n; };
+            std::fprintf(stderr,
+                "HOST_TIMING kind=%zu calls=%llu total_s=%.3f per_op_us total=%.1f prologue_wait=%.1f evaluate=%.1f event=%.1f retain=%.1f collect=%.1f\n",
+                k, static_cast<unsigned long long>(n), t.total.load() / 1e9, us(t.total), us(t.prologue),
+                us(t.evaluate), us(t.event), us(t.retain), us(t.collect));
+        }
+    }
+};
+bool boot_graph_enabled()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv("POSEIDON_RUNTIME_BOOT_GRAPH");
+        return raw != nullptr && std::string(raw) == "1";
+    }();
+    return enabled;
+}
+bool host_timing_enabled()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv("POSEIDON_RUNTIME_HOST_TIMING");
+        return raw != nullptr && std::string(raw) == "1";
+    }();
+    return enabled;
+}
+HostPhaseTimes &host_phase_times(fhegpu::ComputeKind kind)
+{
+    static HostPhaseReport report;
+    return report.kinds[static_cast<std::size_t>(kind) % report.kinds.size()];
+}
+std::uint64_t host_now_ns()
+{
+    return static_cast<std::uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count());
+}
+} // namespace
 
 fhegpu::BootProfile make_native_boot_profile(
     const gpu::GpuBootstrapProfile &profile)
@@ -82,6 +170,51 @@ fhegpu::BootProfile make_native_boot_profile(
 
 namespace
 {
+
+// Instruction-level NVTX ranges, for attributing device activity to plan
+// instructions under Nsight Systems (`--trace=cuda,nvtx`).  A compute is named
+// "c/<output ValueId>", a transfer "t/<transfer_id>"; everything else about the
+// instruction is joined from the plan afterwards.  Off unless
+// POSEIDON_RUNTIME_NVTX is set and not "0", so timed runs execute exactly as
+// before; read once, because the answer cannot change during a run.
+bool instruction_ranges_enabled()
+{
+    static const bool enabled = [] {
+        const char *value = std::getenv("POSEIDON_RUNTIME_NVTX");
+        return value != nullptr && value[0] != '\0' && std::strcmp(value, "0") != 0;
+    }();
+    return enabled;
+}
+
+class InstructionRange
+{
+public:
+    InstructionRange(char tag, std::uint64_t id) : active_(instruction_ranges_enabled())
+    {
+        if (!active_)
+        {
+            return;
+        }
+        char name[32];
+        std::snprintf(name, sizeof(name), "%c/%llu", tag,
+                      static_cast<unsigned long long>(id));
+        nvtxRangePushA(name);
+    }
+
+    InstructionRange(const InstructionRange &) = delete;
+    InstructionRange &operator=(const InstructionRange &) = delete;
+
+    ~InstructionRange()
+    {
+        if (active_)
+        {
+            nvtxRangePop();
+        }
+    }
+
+private:
+    bool active_;
+};
 
 constexpr std::size_t kMinimumInitialDevicePoolSize = 64ULL << 20;
 
@@ -234,24 +367,154 @@ void require_same_mpi_string(MPI_Comm communicator, int world_size,
 }
 #endif
 
+// Set while completed work is reaped: every buffer freed in that scope has no
+// pending GPU use left, so the allocation cache may hand it to any stream.
+thread_local bool completed_reclamation_active = false;
+
 // Reaping completed work may destroy buffers from any device. A caller's
 // explicit stream belongs to only one device; PTDS is valid on each device.
 class ScopedCompletedReclamation
 {
 public:
-    ScopedCompletedReclamation() : stream_(cudaStreamPerThread) {
+    ScopedCompletedReclamation() : stream_(cudaStreamPerThread), previous_(completed_reclamation_active) {
         gpu::gpu_check_cuda(cudaGetDevice(&caller_device_), "reclamation caller device");
+        completed_reclamation_active = true;
     }
-    ~ScopedCompletedReclamation() { (void)cudaSetDevice(caller_device_); }
+    ~ScopedCompletedReclamation() { completed_reclamation_active = previous_; (void)cudaSetDevice(caller_device_); }
 private:
     gpu::ScopedGpuExecutionStream stream_;
+    bool previous_ = false;
     int caller_device_=0;
+};
+
+// Exact-size block cache in front of the RMM pool. RMM's pool keeps one
+// coalescing free list per stream and scans it linearly; buffers released by
+// the dispatcher thread land on that thread's list, so nearly every allocation
+// on the device worker searched the other lists and inserted a stream wait.
+// FHE buffers come in a few sizes (ciphertexts per level, QP workspaces), so
+// an exact-size cache returns most of them in O(1):
+//  - a block freed on stream S is reused only on S (stream order, no sync);
+//  - a block freed while completed work is reaped is reused on any stream;
+//  - an upstream allocation failure synchronizes the device, returns every
+//    cached block to the pool and retries once.
+// Cached blocks are below the statistics adaptor, so live-byte accounting is
+// unchanged. POSEIDON_GPU_ALLOCATION_CACHE_MB enables and caps the cache.
+class ExactSizeAllocationCache final : public rmm::mr::device_memory_resource
+{
+public:
+    ExactSizeAllocationCache(rmm::mr::device_memory_resource *upstream, int device)
+        : upstream_(upstream), device_(device), capacity_(configured_capacity()) {}
+    ~ExactSizeAllocationCache() override
+    {
+        if (capacity_ != 0)
+            std::fprintf(stderr, "GPU_ALLOCATION_CACHE device=%d hits=%llu misses=%llu any_stream_frees=%llu stream_frees=%llu passthrough_frees=%llu\n",
+                         device_, hits_, misses_, any_frees_, stream_frees_, passthrough_frees_);
+    }
+
+    std::size_t cached_bytes() const { std::lock_guard<std::mutex> lock(mutex_); return cached_bytes_; }
+
+    void flush()
+    {
+        std::unordered_map<std::size_t, std::vector<Block>> blocks;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            blocks.swap(free_);
+            cached_bytes_ = 0;
+        }
+        if (blocks.empty()) return;
+        int caller = -1;
+        (void)cudaGetDevice(&caller);
+        (void)cudaSetDevice(device_);
+        // Blocks may still be pending on the stream that freed them.
+        gpu::gpu_check_cuda(cudaDeviceSynchronize(), "allocation cache flush");
+        for (auto &[bytes, list] : blocks)
+            for (const auto &block : list)
+                upstream_->deallocate(block.ptr, bytes, rmm::cuda_stream_view{cudaStreamPerThread});
+        if (caller >= 0) (void)cudaSetDevice(caller);
+    }
+
+private:
+    struct Block { void *ptr; std::uintptr_t key; };
+    static constexpr std::uintptr_t kAnyStream = 0;
+
+    static std::size_t configured_capacity()
+    {
+        // Off by default: on the 4090 it measured no different (MLP, ResNet-20, Qwen).
+        const char *raw = std::getenv("POSEIDON_GPU_ALLOCATION_CACHE_MB");
+        if (raw == nullptr || *raw == '\0') return 0;
+        return static_cast<std::size_t>(std::strtoull(raw, nullptr, 10)) << 20;
+    }
+
+    static std::uintptr_t stream_key(rmm::cuda_stream_view stream)
+    {
+        // PTDS is one stream per host thread; the legacy stream is shared.
+        thread_local char per_thread_marker = 0;
+        if (stream.is_per_thread_default()) return reinterpret_cast<std::uintptr_t>(&per_thread_marker);
+        if (stream.is_default()) return 1;
+        return reinterpret_cast<std::uintptr_t>(stream.value());
+    }
+
+    void *do_allocate(std::size_t bytes, rmm::cuda_stream_view stream) override
+    {
+        if (capacity_ != 0 && bytes != 0) {
+            const auto key = stream_key(stream);
+            std::lock_guard<std::mutex> lock(mutex_);
+            const auto found = free_.find(bytes);
+            if (found != free_.end()) {
+                auto &list = found->second;
+                for (std::size_t i = list.size(); i-- > 0;) {
+                    if (list[i].key != key && list[i].key != kAnyStream) continue;
+                    void *ptr = list[i].ptr;
+                    list[i] = list.back();
+                    list.pop_back();
+                    cached_bytes_ -= bytes;
+                    ++hits_;
+                    return ptr;
+                }
+            }
+            ++misses_;
+        }
+        try { return upstream_->allocate(bytes, stream); }
+        catch (const std::bad_alloc &) {
+            if (cached_bytes() == 0) throw;
+        }
+        flush();
+        return upstream_->allocate(bytes, stream);
+    }
+
+    void do_deallocate(void *ptr, std::size_t bytes, rmm::cuda_stream_view stream) override
+    {
+        if (ptr == nullptr) return;
+        if (capacity_ != 0 && bytes != 0) {
+            const auto key = completed_reclamation_active ? kAnyStream : stream_key(stream);
+            std::lock_guard<std::mutex> lock(mutex_);
+            if (cached_bytes_ + bytes <= capacity_) {
+                free_[bytes].push_back(Block{ptr, key});
+                cached_bytes_ += bytes;
+                ++(key == kAnyStream ? any_frees_ : stream_frees_);
+                return;
+            }
+            ++passthrough_frees_;
+        }
+        upstream_->deallocate(ptr, bytes, stream);
+    }
+
+    bool do_is_equal(const rmm::mr::device_memory_resource &other) const noexcept override
+    { return this == &other; }
+
+    rmm::mr::device_memory_resource *upstream_;
+    int device_;
+    std::size_t capacity_;
+    mutable std::mutex mutex_;
+    std::unordered_map<std::size_t, std::vector<Block>> free_;
+    std::size_t cached_bytes_ = 0;
+    unsigned long long hits_ = 0, misses_ = 0, any_frees_ = 0, stream_frees_ = 0, passthrough_frees_ = 0;
 };
 
 class DeviceMemoryPool
 {
     using Pool = rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>;
-    using Statistics = rmm::mr::statistics_resource_adaptor<Pool>;
+    using Statistics = rmm::mr::statistics_resource_adaptor<rmm::mr::device_memory_resource>;
     class AllocationDiagnostics final : public rmm::mr::device_memory_resource
     {
     public:
@@ -304,7 +567,8 @@ public:
         pool_ = std::make_unique<
             rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
             upstream_.get(), initial,maximum_size_);
-        statistics_=std::make_unique<Statistics>(pool_.get());
+        cache_=std::make_unique<ExactSizeAllocationCache>(pool_.get(),cuda_device_id_);
+        statistics_=std::make_unique<Statistics>(static_cast<rmm::mr::device_memory_resource *>(cache_.get()));
         diagnostics_=std::make_unique<AllocationDiagnostics>(*statistics_,*pool_,maximum_size_,cuda_device_id_);
         rmm::mr::set_per_device_resource(
             rmm::cuda_device_id{cuda_device_id_}, resource());
@@ -343,6 +607,7 @@ private:
     std::unique_ptr<rmm::mr::cuda_memory_resource> upstream_;
     std::unique_ptr<
         rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>> pool_;
+    std::unique_ptr<ExactSizeAllocationCache> cache_;
     std::unique_ptr<Statistics> statistics_;
     std::unique_ptr<AllocationDiagnostics> diagnostics_;
     std::size_t maximum_size_=0;
@@ -466,6 +731,25 @@ const Ciphertext &require_host_ciphertext(const std::vector<PoseidonGpuValue> &i
     return inputs[index].host_ciphertext();
 }
 
+// POSEIDON_RUNTIME_FUSED_RESCALE=0 restores prime-by-prime multi-prime Rescale.
+bool fused_multi_prime_rescale_enabled()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv("POSEIDON_RUNTIME_FUSED_RESCALE");
+        return raw == nullptr || std::string(raw) != "0";
+    }();
+    return enabled;
+}
+
+bool hoisted_rotation_enabled()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv("POSEIDON_RUNTIME_HOISTED_ROTATION");
+        return raw != nullptr && std::string(raw) == "1";
+    }();
+    return enabled;
+}
+
 std::vector<int> available_rotation_steps(const PoseidonContext &context,
                                           const GaloisKeys &keys, int requested_step)
 {
@@ -482,13 +766,12 @@ std::vector<int> available_rotation_steps(const PoseidonContext &context,
         return {normalized};
     }
 
-    auto steps = decompose_rotation_step(normalized, slot_count);
-    for (int step : steps)
+    auto steps = keyed_rotation_terms(normalized, slot_count, [&](int step) {
+        return keys.has_key(galois_tool->get_elt_from_step(step));
+    });
+    if (steps.empty())
     {
-        if (!keys.has_key(galois_tool->get_elt_from_step(step)))
-        {
-            throw std::runtime_error("Poseidon GPU Api lacks a binary rotation key");
-        }
+        throw std::runtime_error("Poseidon GPU Api lacks a binary rotation key");
     }
     return steps;
 }
@@ -837,11 +1120,26 @@ PoseidonGpuValue allocate_descriptor_value(const fhegpu::ValueDesc &desc,
 class NativeBootMemoryResource final : public rmm::mr::device_memory_resource
 {
 public:
-    NativeBootMemoryResource(rmm::mr::device_memory_resource *upstream, std::uint64_t limit)
-        : upstream_(upstream), upstream_owner_(gpu::device_memory_resource_owner(upstream)), limit_(limit) {}
+    NativeBootMemoryResource(rmm::mr::device_memory_resource *upstream, std::uint64_t limit,
+                             bool dedicated = false)
+        : upstream_(upstream), upstream_owner_(gpu::device_memory_resource_owner(upstream)), limit_(limit)
+    {
+        // A Boot captured into a CUDA graph frees its temporaries before the
+        // graph runs; a pool only the Boot stream uses keeps other streams
+        // from taking those blocks early. Reserved once, at the hard limit.
+        if (dedicated)
+        {
+            dedicated_ = std::make_unique<rmm::mr::pool_memory_resource<rmm::mr::device_memory_resource>>(
+                upstream_, static_cast<std::size_t>(limit_), static_cast<std::size_t>(limit_));
+            source_ = dedicated_.get();
+        }
+    }
     ~NativeBootMemoryResource() { gpu::unregister_device_memory_resource_owner(this, this); }
     std::uint64_t limit() const { return limit_; }
     std::uint64_t requested_live() const { std::lock_guard<std::mutex> lock(mutex_); return requested_live_; }
+    // Bytes this resource holds in its upstream pool.
+    std::uint64_t pooled_live() const { return dedicated_ ? dedicated_->pool_size() : requested_live(); }
+    bool dedicated() const { return dedicated_ != nullptr; }
     bool uses(const rmm::mr::device_memory_resource *resource) const { return upstream_ == resource; }
 private:
     void *do_allocate(std::size_t bytes, rmm::cuda_stream_view stream) override {
@@ -850,14 +1148,14 @@ private:
         if (charged > limit_ - live_)
             throw std::runtime_error("native Boot workspace allocation exceeds configured hard limit (live=" +
                 std::to_string(live_) + ", request=" + std::to_string(bytes) + ", limit=" + std::to_string(limit_) + ")");
-        auto *result = upstream_->allocate(bytes, stream);
+        auto *result = source_->allocate(bytes, stream);
         live_ += charged;
         requested_live_ += bytes;
         return result;
     }
     void do_deallocate(void *ptr, std::size_t bytes, rmm::cuda_stream_view stream) override {
         std::lock_guard<std::mutex> lock(mutex_);
-        upstream_->deallocate(ptr, bytes, stream);
+        source_->deallocate(ptr, bytes, stream);
         live_ -= allocation_bytes(bytes);
         requested_live_ -= bytes;
     }
@@ -870,6 +1168,8 @@ private:
     rmm::mr::device_memory_resource *upstream_;
     std::shared_ptr<void> upstream_owner_;
     const std::uint64_t limit_;
+    std::unique_ptr<rmm::mr::pool_memory_resource<rmm::mr::device_memory_resource>> dedicated_;
+    rmm::mr::device_memory_resource *source_ = upstream_;
     mutable std::mutex mutex_;
     std::uint64_t live_ = 0;
     std::uint64_t requested_live_ = 0;
@@ -895,6 +1195,24 @@ struct PoseidonGpuApi::DeviceState
         gpu::GpuBootstrapWorkspace workspace;
         std::mutex submission_mutex;
         std::shared_ptr<PoseidonGpuValue::ReadyEvent> ready;
+        // POSEIDON_RUNTIME_BOOT_GRAPH=1: one executable graph per input
+        // Q count, refreshed from a new capture by cudaGraphExecUpdate.
+        std::map<std::size_t, cudaGraphExec_t> graph_execs;
+        // Eager Boots per input Q count before capturing: the first one moves
+        // the pool's blocks onto the Boot stream, so a capture never waits on
+        // another stream's event.
+        std::map<std::size_t, int> eager_boots;
+        bool graph_failed = false;
+        std::uint64_t graph_launches = 0, graph_instantiations = 0;
+        ~NativeBootstrapState()
+        {
+            for (auto &entry : graph_execs)
+                if (entry.second) (void)cudaGraphExecDestroy(entry.second);
+            if (graph_launches)
+                std::fprintf(stderr, "BOOT_GRAPH launches=%llu instantiations=%llu\n",
+                             static_cast<unsigned long long>(graph_launches),
+                             static_cast<unsigned long long>(graph_instantiations));
+        }
     };
 
     int cuda_device_id = 0;
@@ -952,6 +1270,30 @@ struct PoseidonGpuApi::DeviceState
     std::set<std::uint32_t> galois_elements;
     std::unordered_map<std::string, std::unique_ptr<NativeBootstrapState>>
         native_bootstrap_by_profile;
+    // Runtime hoisting (POSEIDON_RUNTIME_HOISTED_ROTATION=1): pre-rotated
+    // application keys and the last rotated source's decomposition, refilled
+    // only on the stream its readers used.
+    std::mutex rotation_hoist_mutex;
+    gpu::GpuRotationHoistCache rotation_hoist;
+    cudaStream_t rotation_hoist_stream = nullptr;
+    // Deferred linear combinations (POSEIDON_RUNTIME_LAZY_LINEAR=1).
+    gpu::GpuDoubleHoistWorkspace lazy_linear_workspace;
+};
+
+struct PoseidonGpuApi::LazyLinearPlan
+{
+    std::uint64_t plan_id = 0;
+    std::size_t value_count = 0;
+    std::unordered_set<fhegpu::ValueId> lazy_outputs;
+    // Host Encode output -> (Device plaintext it is transferred to, device).
+    std::unordered_map<fhegpu::ValueId, std::pair<fhegpu::ValueId, int>> encode_to_device;
+    std::mutex mutex;
+    // [Q|P] plaintexts and BSGS schedules persist across runs of one plan.
+    std::unordered_map<fhegpu::ValueId, std::shared_ptr<const gpu::GpuPlaintextData>> qp_plain;
+    std::map<std::pair<int, std::size_t>, std::shared_ptr<const gpu::GpuPlaintextData>> qp_ones;
+    std::map<std::pair<fhegpu::ValueId, std::size_t>, std::shared_ptr<gpu::GpuMatrixPlainQP>> matrices;
+    std::size_t trees = 0, terms = 0;
+    std::atomic<std::uint64_t> materialized{0}, fallbacks{0};
 };
 
 class PoseidonGpuValue::ReadyEvent
@@ -1221,6 +1563,7 @@ PoseidonGpuValue &PoseidonGpuValue::operator=(const PoseidonGpuValue &other)
     {
         ready_ = other.ready_;
         storage_ = other.storage_;
+        lazy_ = other.lazy_;
     }
     return *this;
 }
@@ -1231,6 +1574,7 @@ PoseidonGpuValue &PoseidonGpuValue::operator=(PoseidonGpuValue &&other) noexcept
     {
         ready_ = std::move(other.ready_);
         storage_ = std::move(other.storage_);
+        lazy_ = std::move(other.lazy_);
     }
     return *this;
 }
@@ -1554,7 +1898,7 @@ void PoseidonGpuApi::configure_native_bootstrap(
         workspace_limit_bytes = checked_mul_size(context_.parameters_literal()->degree(), 65536,
                                                   "native Boot workspace capacity overflow");
     state->memory = std::make_shared<NativeBootMemoryResource>(
-        rmm::mr::get_current_device_resource(), workspace_limit_bytes);
+        rmm::mr::get_current_device_resource(), workspace_limit_bytes, boot_graph_enabled());
     gpu::register_device_memory_resource_owner(state->memory.get(), state->memory);
     const bool inserted = device.native_bootstrap_by_profile.emplace(
         std::move(operator_profile), std::move(state)).second;
@@ -1670,6 +2014,23 @@ PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
         context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(output_desc.level));
     Plaintext output;
     encoder_->encode(slots, parms_id, exact_scale(output_desc.scale_log2), output);
+    if (lazy_plan_)
+    {
+        const auto target = lazy_plan_->encode_to_device.find(output_desc.id);
+        if (target != lazy_plan_->encode_to_device.end())
+        {
+            std::lock_guard<std::mutex> lock(lazy_plan_->mutex);
+            auto &slot = lazy_plan_->qp_plain[target->second.first];
+            if (!slot)
+            {
+                // Setup time: the same plan reuses it on every later run.
+                auto &device = device_state(target->second.second);
+                gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+                slot = std::make_shared<gpu::GpuPlaintextData>(
+                    gpu::GpuUploader::upload_plaintext_qp_exact(output, context_, device.cuda_device_id));
+            }
+        }
+    }
     return Value::from_host_plaintext(std::move(output));
 }
 
@@ -1687,6 +2048,7 @@ fhegpu::ResourceUsage PoseidonGpuApi::value_resources(const fhegpu::ValueDesc &d
 void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &plan)
 {
     waterline_rescale_workspace_levels_.reset();
+    waterline_keyswitch_input_q_count_.clear();
     if(!plan.waterline)throw std::invalid_argument("Waterline resource validation requires configuration");
     const auto &config=*plan.waterline;
     for(const auto &device:devices_) {
@@ -1719,11 +2081,26 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                     throw std::runtime_error("GPU complete Prepare resource bound unavailable");
             }
         } else if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body);op && op->place.kind==fhegpu::PlaceKind::Device) {
+            if((op->kind==fhegpu::ComputeKind::Rotate || op->kind==fhegpu::ComputeKind::Relinearize) && !op->inputs.empty()) {
+                // The key-switch workspace scales with the input's Q prefix.
+                const auto input=std::lower_bound(descriptors.begin(),descriptors.end(),op->inputs.front(),
+                    [](const auto *value,auto id){return value->id<id;});
+                if(input!=descriptors.end() && (*input)->id==op->inputs.front() && (*input)->level>=0)
+                    waterline_keyswitch_input_q_count_[op->inputs.front()]=std::size_t((*input)->level)+1;
+            }
             if(op->kind==fhegpu::ComputeKind::Boot && std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native) {
                 const auto &attrs=std::get<fhegpu::BootAttrs>(op->attrs);
                 const auto &device=device_state(op->place,"Waterline native Boot");
                 if(!device.native_bootstrap_by_profile.count(attrs.operator_profile))
                     throw std::runtime_error("Waterline native Boot profile is not configured: "+attrs.operator_profile);
+                keyswitch.at(op->place.index)=true;
+                rescale.at(op->place.index)=true;
+            }
+            if(op->kind==fhegpu::ComputeKind::BootStep) {
+                const auto &attrs=std::get<fhegpu::BootStepAttrs>(op->attrs);
+                const auto &device=device_state(op->place,"Waterline Boot step");
+                if(!device.native_bootstrap_by_profile.count(attrs.operator_profile))
+                    throw std::runtime_error("Waterline Boot step profile is not configured: "+attrs.operator_profile);
                 keyswitch.at(op->place.index)=true;
                 rescale.at(op->place.index)=true;
             }
@@ -1777,9 +2154,13 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                 fhegpu::ResourceUsage::add(persistent,key_bytes(native.relin_keys.get()));
             if(counted_keys.insert(native.galois_keys.get()).second)
                 fhegpu::ResourceUsage::add(persistent,key_bytes(native.galois_keys.get()));
+            for(const auto *key:{native.bootstrap_data.sparse_switch_to_ephemeral.get(),
+                                 native.bootstrap_data.sparse_switch_to_dense.get()})
+                if(key && counted_keys.insert(key).second)
+                    fhegpu::ResourceUsage::add(persistent,key_bytes(key));
             fhegpu::ResourceUsage::add(native_workspace,native.memory->limit());
             if(device.memory_pool && native.memory->uses(device.memory_pool->resource()))
-                fhegpu::ResourceUsage::add(native_pooled_live,native.memory->requested_live());
+                fhegpu::ResourceUsage::add(native_pooled_live,native.memory->pooled_live());
         }
         if(device.plaintext_encoder)fhegpu::ResourceUsage::add(persistent,device.plaintext_encoder->persistent_bytes());
         // Reserve each cache's current storage plus its possible future growth.
@@ -1910,9 +2291,18 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
             }
             case fhegpu::ComputeKind::ModSwitch:bytes=n*q*4*8;break;
             case fhegpu::ComputeKind::Rotate:case fhegpu::ComputeKind::Relinearize:
+            {
                 // Conservative bound on HYBRID digit expansion, accumulation,
-                // automorphism/copy and retained intermediate rotations.
-                bytes=n*(q+p)*4*(16+4*q);break;
+                // automorphism/copy and retained intermediate rotations, at
+                // the input's Q prefix when the plan declared it (every
+                // allocation of the key switch scales with the active Q).
+                std::uint64_t active=q;
+                if(!op->inputs.empty()) {
+                    const auto found=waterline_keyswitch_input_q_count_.find(op->inputs.front());
+                    if(found!=waterline_keyswitch_input_q_count_.end())active=std::min<std::uint64_t>(q,found->second);
+                }
+                bytes=n*(active+p)*4*(16+4*active);break;
+            }
             case fhegpu::ComputeKind::Boot:
                 if(std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native) {
                     const auto &device=device_state(op->place,"native Boot workspace");
@@ -1923,6 +2313,13 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
                     break;
                 }
                 usage.host=n*(32+(q+p)*8*8);usage.pinned=n*q*8;break;
+            case fhegpu::ComputeKind::BootStep: {
+                const auto &device=device_state(op->place,"Boot step workspace");
+                if(!device.native_bootstrap_by_profile.count(std::get<fhegpu::BootStepAttrs>(op->attrs).operator_profile))
+                    throw std::runtime_error("Boot step workspace profile is not configured");
+                // Scratch lives in the profile's hard-limited arena, charged to the fixed reserve.
+                break;
+            }
             }
             usage.front.at(op->place.index)=bytes;
         }
@@ -2012,6 +2409,12 @@ PoseidonGpuApi::Value PoseidonGpuApi::prepare_plaintext_async(const fhegpu::Valu
 
 bool PoseidonGpuApi::is_ready(Value &value)
 {
+    if (value.lazy_)
+    {
+        if (!value.lazy_->result) return true;  // no GPU work submitted yet
+        Value materialized = *value.lazy_->result;
+        return is_ready(materialized);
+    }
     const auto completion=value.ready_;
     if(!completion)return true;
     if(!completion->collect_completed())return false;
@@ -2107,6 +2510,17 @@ bool PoseidonGpuApi::supports_reuse(const fhegpu::ComputeOp &op) const
 PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
     const fhegpu::ComputeOp &op, Value input, const std::vector<Value> &other_inputs)
 {
+    if (input.lazy_ || std::any_of(other_inputs.begin(), other_inputs.end(),
+                                   [](const Value &v) { return v.lazy_ != nullptr; }))
+    {
+        materialize_lazy(input);
+        materialize_lazy(other_inputs);
+        if (input.lazy_) input = Value(*input.lazy_->result);
+        auto resolved = other_inputs;
+        for (auto &value : resolved)
+            if (value.lazy_) value = Value(*value.lazy_->result);
+        return compute_reuse(op, std::move(input), resolved);
+    }
     if (!supports_reuse(op) || op.reuse_input != 0 ||
         other_inputs.size() != (op.kind == fhegpu::ComputeKind::Rotate ? 0U : 1U))
         throw std::invalid_argument("unsupported Poseidon GPU compute_reuse");
@@ -2134,10 +2548,33 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
                 throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
             auto workspace = std::make_shared<gpu::GpuRotateWorkspace>();
             temporaries.push_back(workspace);
+            // The first term may reuse a decomposition another rotation of
+            // this value left in the hoist cache.
+            std::unique_lock<std::mutex> hoist_lock(device.rotation_hoist_mutex, std::defer_lock);
+            const gpu::GpuRotationHoistCache *hoist = nullptr;
+            std::uintptr_t hoist_tag = 0;
+            if (hoisted_rotation_enabled() && input.ready_ != nullptr)
+            {
+                hoist_lock.lock();
+                if (device.rotation_hoist_stream == gpu::gpu_execution_stream())
+                {
+                    hoist = &device.rotation_hoist;
+                    hoist_tag = reinterpret_cast<std::uintptr_t>(input.ready_.get());
+                }
+                else
+                {
+                    hoist_lock.unlock();
+                }
+            }
+            bool first = true;
             for (int step : available_rotation_steps(
                      context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps))
+            {
                 device.evaluator->rotate_inplace(ciphertext, step,
-                    galois_keys_for(device, ciphertext.meta.q_count), *workspace);
+                    galois_keys_for(device, ciphertext.meta.q_count), *workspace,
+                    first ? hoist : nullptr, first ? hoist_tag : 0);
+                first = false;
+            }
         }
         input.ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
         auto retained = other_inputs;
@@ -2154,9 +2591,154 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
     }
 }
 
+PoseidonGpuApi::Value PoseidonGpuApi::compute_boot_step(const fhegpu::ComputeOp &op,
+                                                        const std::vector<Value> &inputs)
+{
+    // As a native Boot: its profile's keys, constants and workspace, under the
+    // profile's hard memory limit, on the device's ordered stream. Only the
+    // step's output leaves the workspace arena.
+    const auto &attrs = std::get<fhegpu::BootStepAttrs>(op.attrs);
+    auto &device = device_state(op.place, "Poseidon GPU Boot step");
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    gpu::ScopedGpuExecutionStream foreground(
+        device.foreground_stream ? device.foreground_stream : gpu::gpu_execution_stream());
+    const bool binary = attrs.step == fhegpu::BootStepKind::Add || attrs.step == fhegpu::BootStepKind::Sub;
+    if (inputs.size() != (binary ? 2U : 1U))
+    {
+        throw std::invalid_argument("Poseidon GPU Boot step has the wrong number of inputs");
+    }
+    for (const auto &input : inputs)
+    {
+        if (value_cuda_device_id(input, "Poseidon GPU Boot step input") != device.cuda_device_id)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU Boot step input is not on the operation CUDA device");
+        }
+    }
+    const auto resources = device.native_bootstrap_by_profile.find(attrs.operator_profile);
+    if (resources == device.native_bootstrap_by_profile.end())
+    {
+        throw std::runtime_error("Poseidon GPU Boot step profile is not configured: " +
+                                 attrs.operator_profile);
+    }
+    auto &native = *resources->second;
+    std::lock_guard<std::mutex> submission(native.submission_mutex);
+    if (native.ready) native.ready->wait_on_execution_stream(device.cuda_device_id);
+    for (const auto &input : inputs)
+        if (input.ready_ != nullptr) input.ready_->wait_on_execution_stream(device.cuda_device_id);
+
+    const auto &data = native.bootstrap_data;
+    const auto &evaluator = *device.evaluator;
+    const bool c2s = attrs.transform == fhegpu::BootTransform::CoeffToSlot;
+    const auto &source = require_ciphertext(inputs, 0);
+    gpu::GpuCiphertextData output;
+    try
+    {
+        {
+            gpu::ScopedGpuMemoryResource memory(native.memory.get());
+            switch (attrs.step)
+            {
+            case fhegpu::BootStepKind::Raise:
+                evaluator.bootstrap_raise(source, data, native.workspace, output);
+                break;
+            case fhegpu::BootStepKind::Rotate:
+                evaluator.rotate(source, attrs.steps, *native.galois_keys, output);
+                break;
+            case fhegpu::BootStepKind::Conjugate:
+                evaluator.bootstrap_conjugate(source, *native.galois_keys, native.workspace, output);
+                break;
+            case fhegpu::BootStepKind::MulConst:
+                evaluator.multiply_plain_q_view(source, boot_plaintext(data, attrs.key), output);
+                break;
+            case fhegpu::BootStepKind::MulScalar:
+                evaluator.multiply_scalar(source, attrs.multiplier, output);
+                output.meta.scale = exact_scale(attrs.target_scale_log2);
+                break;
+            case fhegpu::BootStepKind::SetScale:
+                evaluator.bootstrap_set_scale(source, exact_scale(attrs.target_scale_log2), output);
+                break;
+            case fhegpu::BootStepKind::Rescale:
+                evaluator.rescale_many(source, output, static_cast<std::uint32_t>(attrs.count));
+                output.meta.scale = exact_scale(attrs.target_scale_log2);
+                break;
+            case fhegpu::BootStepKind::Linear:
+                evaluator.bootstrap_linear_layer(source, data, c2s, static_cast<std::size_t>(attrs.layer),
+                                                 *native.galois_keys, native.workspace, output);
+                break;
+            case fhegpu::BootStepKind::BsgsGroup:
+                evaluator.bootstrap_bsgs_group(source, data, c2s, static_cast<std::size_t>(attrs.layer),
+                                               static_cast<std::size_t>(attrs.group), *native.galois_keys,
+                                               native.workspace, output);
+                break;
+            case fhegpu::BootStepKind::EvalMod:
+                evaluator.eval_mod_high_precision(source, data, *native.relin_keys, native.workspace, output);
+                break;
+            case fhegpu::BootStepKind::Add:
+                evaluator.add(source, require_ciphertext(inputs, 1), output);
+                break;
+            case fhegpu::BootStepKind::Sub:
+                evaluator.sub(source, require_ciphertext(inputs, 1), output);
+                break;
+            }
+        }
+        if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
+            output.meta.component_count != 2 ||
+            std::abs(std::log2(output.meta.scale) - attrs.target_scale_log2) > 1e-6)
+        {
+            throw std::runtime_error(
+                "Poseidon GPU Boot step " + fhegpu::to_string(attrs.step) +
+                " output does not match RuntimePlan metadata (actual q_count=" +
+                std::to_string(output.meta.q_count) + ", scale_log2=" +
+                std::to_string(std::log2(output.meta.scale)) + "; expected level=" +
+                std::to_string(attrs.target_level) + ", scale_log2=" +
+                std::to_string(attrs.target_scale_log2) + ")");
+        }
+        // Export into ordinary graph storage, as a native Boot does.
+        gpu::GpuCiphertextData graph_output;
+        for (const auto &copy : communication::prepare_full_object_copy(output, graph_output, device.cuda_device_id))
+            gpu::gpu_check_cuda(cudaMemcpyAsync(copy.destination, copy.source, copy.bytes,
+                cudaMemcpyDeviceToDevice, gpu::gpu_execution_stream()), "Boot step output copy");
+        auto result = Value::from_device_ciphertext(std::move(graph_output));
+        result.ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+        native.ready = result.ready_;
+        auto retained = inputs;
+        retained.push_back(result);
+        retain_in_flight(result.ready_, retained);
+        collect_completed();
+        return result;
+    }
+    catch (...)
+    {
+        (void)cudaSetDevice(device.cuda_device_id);
+        (void)cudaStreamSynchronize(gpu::gpu_execution_stream());
+        throw;
+    }
+}
+
 PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                               const std::vector<Value> &inputs)
 {
+    if (lazy_plan_)
+    {
+        if (lazy_plan_->lazy_outputs.count(op.output))
+        {
+            if (auto lazy = try_compute_lazy(op, inputs)) return std::move(*lazy);
+            ++lazy_plan_->fallbacks;
+        }
+        if (std::any_of(inputs.begin(), inputs.end(), [](const Value &v) { return v.lazy_ != nullptr; }))
+        {
+            materialize_lazy(inputs);
+            auto resolved = inputs;
+            for (auto &value : resolved)
+                if (value.lazy_) value = Value(*value.lazy_->result);
+            return compute(op, resolved);
+        }
+    }
+    const InstructionRange range('c', op.output);
+    if (op.kind == fhegpu::ComputeKind::BootStep)
+    {
+        return compute_boot_step(op, inputs);
+    }
     if (op.kind == fhegpu::ComputeKind::Boot)
     {
         const auto attrs = std::get<fhegpu::BootAttrs>(op.attrs);
@@ -2202,13 +2784,71 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             {
                 {
                     gpu::ScopedGpuMemoryResource memory(native.memory.get());
-                    device.evaluator->bootstrap(
-                    require_ciphertext(inputs, 0),
-                    native.bootstrap_data,
-                    *native.relin_keys,
-                    *native.galois_keys,
-                    native.workspace,
-                        output);
+                    const auto run_boot = [&] {
+                        device.evaluator->bootstrap(
+                            require_ciphertext(inputs, 0),
+                            native.bootstrap_data,
+                            *native.relin_keys,
+                            *native.galois_keys,
+                            native.workspace,
+                            output);
+                    };
+                    const std::size_t boot_q = require_ciphertext(inputs, 0).meta.q_count;
+                    if (boot_graph_enabled() && native.memory->dedicated() && !native.graph_failed &&
+                        native.eager_boots[boot_q] >= 1)
+                    {
+                        // Record the Boot as one graph: the submitting thread
+                        // returns after the capture instead of waiting on a
+                        // full launch queue for the whole Boot.
+                        const cudaStream_t stream = gpu::gpu_execution_stream();
+                        gpu::gpu_check_cuda(cudaStreamBeginCapture(stream, cudaStreamCaptureModeRelaxed),
+                                            "native Boot graph capture begin");
+                        bool captured = true;
+                        try { run_boot(); }
+                        catch (...) { captured = false; }
+                        cudaGraph_t graph = nullptr;
+                        const auto end_status = cudaStreamEndCapture(stream, &graph);
+                        if (!captured || end_status != cudaSuccess || graph == nullptr)
+                        {
+                            if (graph) (void)cudaGraphDestroy(graph);
+                            (void)cudaGetLastError();
+                            native.graph_failed = true;
+                            output = gpu::GpuCiphertextData{};
+                            std::fprintf(stderr, "BOOT_GRAPH capture failed (%s); Boot runs eagerly\n",
+                                         cudaGetErrorString(end_status));
+                            run_boot();
+                        }
+                        else
+                        {
+                            auto &exec = native.graph_execs[boot_q];
+                            bool updated = false;
+                            if (exec)
+                            {
+                                cudaGraphExecUpdateResultInfo info{};
+                                updated = cudaGraphExecUpdate(exec, graph, &info) == cudaSuccess;
+                                if (!updated)
+                                {
+                                    (void)cudaGetLastError();
+                                    (void)cudaGraphExecDestroy(exec);
+                                    exec = nullptr;
+                                }
+                            }
+                            if (!updated)
+                            {
+                                gpu::gpu_check_cuda(cudaGraphInstantiate(&exec, graph, 0),
+                                                    "native Boot graph instantiate");
+                                ++native.graph_instantiations;
+                            }
+                            (void)cudaGraphDestroy(graph);
+                            gpu::gpu_check_cuda(cudaGraphLaunch(exec, stream), "native Boot graph launch");
+                            ++native.graph_launches;
+                        }
+                    }
+                    else
+                    {
+                        run_boot();
+                        ++native.eager_boots[boot_q];
+                    }
                 }
                 if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
                     output.meta.component_count !=
@@ -2288,7 +2928,10 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 "Poseidon GPU compute input is not on the operation CUDA device");
         }
     }
+    const bool host_timing = host_timing_enabled();
+    const std::uint64_t host_t0 = host_timing ? host_now_ns() : 0;
     wait_on_compute_inputs(device,inputs);
+    const std::uint64_t host_t1 = host_timing ? host_now_ns() : 0;
     gpu::GpuCiphertextData output;
     std::vector<std::shared_ptr<void>> temporaries;
 
@@ -2343,12 +2986,36 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             temporaries.reserve(steps.size());
             std::shared_ptr<gpu::GpuCiphertextData> next;
             const gpu::GpuCiphertextData *source = &input;
+            // The first term rotates the op's input: with pre-rotated keys its
+            // ModUp is shared with other rotations of the same value.
+            gpu::GpuRotationHoistCache *hoist = nullptr;
+            std::uintptr_t hoist_tag = 0;
+            std::unique_lock<std::mutex> hoist_lock(device.rotation_hoist_mutex, std::defer_lock);
+            if (hoisted_rotation_enabled() && inputs.front().ready_ != nullptr)
+            {
+                hoist_lock.lock();
+                const auto stream = gpu::gpu_execution_stream();
+                if (device.rotation_hoist_stream == nullptr || device.rotation_hoist_stream == stream)
+                {
+                    device.rotation_hoist_stream = stream;
+                    hoist = &device.rotation_hoist;
+                    hoist_tag = reinterpret_cast<std::uintptr_t>(inputs.front().ready_.get());
+                    if (hoist->source_tag != hoist_tag)
+                        hoist->source_owner = inputs.front().ready_;
+                }
+                else
+                {
+                    hoist_lock.unlock();
+                }
+            }
             for (int step : steps)
             {
                 next = std::make_shared<gpu::GpuCiphertextData>();
                 temporaries.push_back(next);
+                const bool first = source == &input;
                 device.evaluator->rotate(
-                    *source, step, galois_keys_for(device, input.meta.q_count), *next);
+                    *source, step, galois_keys_for(device, input.meta.q_count), *next,
+                    first ? hoist : nullptr, first ? hoist_tag : 0);
                 source = next.get();
             }
             output = std::move(*next);
@@ -2379,6 +3046,14 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 // Every native Rescale is visible in the plan's level budget.
                 const gpu::GpuCiphertextData *source = &input;
                 std::shared_ptr<gpu::GpuCiphertextData> next;
+                if (fused_multi_prime_rescale_enabled() && drop_count > 1) {
+                    // One exact division by the product of the dropped primes
+                    // (about a third of the kernels of prime-by-prime).
+                    next = std::make_shared<gpu::GpuCiphertextData>();
+                    temporaries.push_back(next);
+                    device.evaluator->rescale_many(*source, *next, static_cast<std::uint32_t>(drop_count));
+                    source = next.get();
+                } else
                 for (int dropped = 0; dropped < drop_count; ++dropped) {
                     next = std::make_shared<gpu::GpuCiphertextData>();
                     temporaries.push_back(next);
@@ -2405,6 +3080,15 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 next->meta.scale=input.meta.scale*static_cast<double>(normalization.coefficient_multiplier);
                 source=next.get();
             }
+            if (fused_multi_prime_rescale_enabled() && normalization.native_drop_count > 1)
+            {
+                next = std::make_shared<gpu::GpuCiphertextData>();
+                temporaries.push_back(next);
+                device.evaluator->rescale_many(*source, *next,
+                    static_cast<std::uint32_t>(normalization.native_drop_count));
+                source = next.get();
+            }
+            else
             for (std::size_t dropped = 0; dropped < normalization.native_drop_count; ++dropped)
             {
                 next = std::make_shared<gpu::GpuCiphertextData>();
@@ -2449,14 +3133,31 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         }
         case fhegpu::ComputeKind::Boot:
             throw std::logic_error("Poseidon GPU Boot reached Device dispatch");
+        case fhegpu::ComputeKind::BootStep:
+            throw std::logic_error("Poseidon GPU Boot step reached Device dispatch");
         }
 
+        const std::uint64_t host_t2 = host_timing ? host_now_ns() : 0;
         result.emplace(Value::from_device_ciphertext(std::move(output)));
         result->ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+        const std::uint64_t host_t3 = host_timing ? host_now_ns() : 0;
         auto retained = inputs;
         retained.push_back(*result);
         retain_in_flight(result->ready_, retained, temporaries);
+        const std::uint64_t host_t4 = host_timing ? host_now_ns() : 0;
         collect_completed();
+        if (host_timing)
+        {
+            const std::uint64_t host_t5 = host_now_ns();
+            auto &times = host_phase_times(op.kind);
+            ++times.calls;
+            times.total += host_t5 - host_t0;
+            times.prologue += host_t1 - host_t0;
+            times.evaluate += host_t2 - host_t1;
+            times.event += host_t3 - host_t2;
+            times.retain += host_t4 - host_t3;
+            times.collect += host_t5 - host_t4;
+        }
         return std::move(*result);
     }
     catch (...)
@@ -2471,6 +3172,16 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
     const fhegpu::CommAction &action, const std::vector<Value> &local_inputs,
     const std::vector<fhegpu::ValueDesc> &output_descs)
 {
+    if (std::any_of(local_inputs.begin(), local_inputs.end(),
+                    [](const Value &v) { return v.lazy_ != nullptr; }))
+    {
+        materialize_lazy(local_inputs);
+        auto resolved = local_inputs;
+        for (auto &value : resolved)
+            if (value.lazy_) value = Value(*value.lazy_->result);
+        return communicate_async(action, resolved, output_descs);
+    }
+    const InstructionRange range('t', action.id);
     if (output_descs.size() != action.outputs.size())
     {
         throw std::invalid_argument(
@@ -3080,6 +3791,47 @@ PoseidonGpuApi::posted_outputs(CommHandle &handle)
     return result;
 }
 
+bool PoseidonGpuApi::wait_can_be_deferred(const CommHandle &handle) const
+{
+    if (!handle.state_)
+    {
+        return false;
+    }
+    const auto &state = *handle.state_;
+    if (state.waited || !state.deferred_outputs.empty())
+    {
+        return false;
+    }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    if (!state.nccl_requests.empty() || !state.nccl_output_requests.empty() ||
+        state.source_staging_request)
+    {
+        return false;
+    }
+#endif
+    // Every output slot has a request whose completion event it publishes:
+    // that event is what a consumer waits on, on the GPU.
+    for (std::size_t slot = 0; slot < state.outputs.size(); ++slot)
+    {
+        if (!state.outputs[slot])
+        {
+            continue;
+        }
+        if (slot >= state.requests.size() || !state.requests[slot])
+        {
+            return false;
+        }
+    }
+    for (const auto &request : state.requests)
+    {
+        if (request && request->holds_staging())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 std::vector<std::optional<PoseidonGpuApi::Value>>
 PoseidonGpuApi::wait(CommHandle &handle)
 {
@@ -3162,6 +3914,11 @@ PoseidonGpuApi::wait(CommHandle &handle)
 
 void PoseidonGpuApi::synchronize(Value &value)
 {
+    if (value.lazy_)
+    {
+        materialize_lazy(value);
+        value = Value(*value.lazy_->result);
+    }
     if (value.place_kind() == fhegpu::PlaceKind::Device)
     {
         if (value.ready_ != nullptr)
@@ -3304,9 +4061,10 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         const bool local = capability == fhegpu::RequiredCapability::Encode ||
                            capability == fhegpu::RequiredCapability::Transfer ||
                            capability == fhegpu::RequiredCapability::Replicate;
+        // Boot steps need the same configured profile; each step checks its own.
         const bool native_boot = has_configured_native_bootstrap &&
-                                 capability ==
-                                     fhegpu::RequiredCapability::BootNative;
+                                 (capability == fhegpu::RequiredCapability::BootNative ||
+                                  capability == fhegpu::RequiredCapability::BootSteps);
         const bool boot = boot_encryptor_ != nullptr && boot_decryptor_ != nullptr &&
                           (capability == fhegpu::RequiredCapability::HostCompute ||
                            capability ==
@@ -3405,6 +4163,27 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
 void PoseidonGpuApi::validate_value(const Value &value,
                                     const fhegpu::ValueDesc &expected) const
 {
+    if (value.lazy_)
+    {
+        if (value.lazy_->result)
+        {
+            validate_value(*value.lazy_->result, expected);
+            return;
+        }
+        // Not submitted yet: only the metadata the producer derived exists.
+        const auto &meta = value.lazy_->storage->meta;
+        const auto context_data = context_.crt_context()->get_context_data(meta.parms_id);
+        if (expected.context != context_id_ || expected.kind != fhegpu::ValueKind::Ciphertext ||
+            expected.place.kind != fhegpu::PlaceKind::Device || context_data == nullptr ||
+            static_cast<int>(context_data->level()) != expected.level ||
+            !(meta.scale > 0.0) ||
+            std::abs(std::log2(meta.scale) - expected.scale_log2) > 1e-6 ||
+            meta.is_ntt_form != expected.ntt ||
+            static_cast<int>(meta.component_count) != expected.components)
+            throw std::runtime_error("Poseidon GPU deferred value metadata does not match ValueDesc " +
+                                     std::to_string(expected.id));
+        return;
+    }
     if (expected.context != context_id_ || value.kind() != expected.kind ||
         value.place_kind() != expected.place.kind)
     {
@@ -3622,14 +4401,16 @@ void PoseidonGpuApi::collect_completed()
         std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
         if(lock.owns_lock()) {
             std::vector<std::shared_ptr<PoseidonGpuValue::ReadyEvent>> blocked_streams;
-            in_flight_work_.erase(
+            const auto finished =
                 std::remove_if(in_flight_work_.begin(),in_flight_work_.end(),[&](auto &work) {
                     for(const auto &blocked:blocked_streams)
                         if(work.completion->same_ordered_stream(*blocked))return false;
                     if(work.completion->collect_completed())return true;
                     if(work.completion->recorded_on_explicit_stream())blocked_streams.push_back(work.completion);
                     return false;
-                }),in_flight_work_.end());
+                });
+            in_flight_released_ += static_cast<std::size_t>(in_flight_work_.end() - finished);
+            in_flight_work_.erase(finished, in_flight_work_.end());
         }
     }
     for(auto &device:devices_) {
@@ -3651,6 +4432,24 @@ void PoseidonGpuApi::drain()
         if(device->gpu_raw_pinned_ready)device->gpu_raw_pinned_ready->wait();
         device->gpu_raw_pinned_ready.reset();device->gpu_raw_pinned.reset();
     }
+}
+
+std::size_t PoseidonGpuApi::drain_in_flight()
+{
+    std::size_t count = 0;
+    {
+        std::lock_guard<std::mutex> lock(in_flight_mutex_);
+        count = in_flight_work_.size();
+        in_flight_drained_ += count;
+    }
+    drain();
+    return count;
+}
+
+PoseidonGpuApi::InFlightStats PoseidonGpuApi::in_flight_stats()
+{
+    std::lock_guard<std::mutex> lock(in_flight_mutex_);
+    return {in_flight_work_.size(), in_flight_released_, in_flight_drained_};
 }
 
 void PoseidonGpuApi::synchronize_device(int cuda_device_id) const
@@ -3736,8 +4535,11 @@ void PoseidonGpuApi::materialize_galois_keys(
     const std::vector<std::uint32_t> selected_galois_elts(
         combined_galois_elts.begin(), combined_galois_elts.end());
     device.galois_keys = std::make_unique<gpu::GpuGaloisKeysData>(
-        gpu::GpuUploader::upload_galois_keys(*galois_keys_, device.cuda_device_id,
-                                             q_count, selected_galois_elts));
+        hoisted_rotation_enabled()
+            ? gpu::GpuUploader::upload_double_hoist_galois_keys(
+                  *galois_keys_, device.cuda_device_id, q_count, selected_galois_elts)
+            : gpu::GpuUploader::upload_galois_keys(*galois_keys_, device.cuda_device_id,
+                                                   q_count, selected_galois_elts));
     device.galois_elements = std::move(combined_galois_elts);
 }
 
@@ -3761,6 +4563,544 @@ const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
             "Poseidon GPU GaloisKeys were not preloaded for the input level");
     }
     return *device.galois_keys;
+}
+
+// --------------------------------------------------------------------------
+// Deferred linear combinations (POSEIDON_RUNTIME_LAZY_LINEAR=1).
+//
+// A tree of AddCC whose leaves are  Rotate(x, s)  or  MulCP(Rotate(x, s), p)
+// or  MulCP(x, p)  is evaluated, per source x, as one hoisted linear
+// transform: one ModUp of x, one KeyMult per term, the plaintexts multiplied
+// in the extended [Q|P] basis, one ModDown for the whole group
+// (Cerium's RotateMultiplyAccumulate, on gpu::multiply_by_diag_matrix_bsgs_
+// double_hoist with a single giant group). The plaintexts need exact P
+// residues, so the feature is limited to resident plans whose plaintexts
+// are encoded once on the host before the online window; waterline plans
+// stream theirs and are left unchanged.
+// --------------------------------------------------------------------------
+namespace
+{
+bool lazy_linear_requested()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv("POSEIDON_RUNTIME_LAZY_LINEAR");
+        return raw != nullptr && std::string(raw) == "1";
+    }();
+    return enabled;
+}
+} // namespace
+
+void PoseidonGpuApi::observe_plan(const fhegpu::RuntimePlan &plan)
+{
+    if (!lazy_linear_requested())
+    {
+        lazy_plan_.reset();
+        return;
+    }
+    // Rotation groups need [Q|P] plaintexts encoded once before the online
+    // window (resident plans) and pre-rotated keys; Q-basis multiply-
+    // accumulate trees need neither and also run under the waterline.
+    const bool rotation_groups = !plan.waterline && hoisted_rotation_enabled() && galois_keys_;
+    if (lazy_plan_ && lazy_plan_->plan_id == plan.plan_id &&
+        lazy_plan_->value_count == plan.values.size())
+        return;  // the same plan again: keep its [Q|P] plaintexts and schedules
+    auto next = std::make_unique<LazyLinearPlan>();
+    next->plan_id = plan.plan_id;
+    next->value_count = plan.values.size();
+
+    std::unordered_map<fhegpu::ValueId, const fhegpu::ValueDesc *> desc;
+    for (const auto &value : plan.values) desc[value.id] = &value;
+    std::unordered_map<fhegpu::ValueId, const fhegpu::ComputeOp *> producer;
+    // nullptr marks a use that is not a ComputeOp (transfer, final output).
+    std::unordered_map<fhegpu::ValueId, std::vector<const fhegpu::ComputeOp *>> users;
+    std::unordered_set<fhegpu::ValueId> encoded;
+    std::unordered_map<fhegpu::ValueId, std::pair<fhegpu::ValueId, int>> device_plain_source;
+    for (const auto *phase : {&plan.initialization, &plan.execution, &plan.finalization})
+        for (const auto &instruction : *phase)
+        {
+            if (const auto *op = std::get_if<fhegpu::ComputeOp>(&instruction.body))
+            {
+                producer[op->output] = op;
+                for (auto id : op->inputs) users[id].push_back(op);
+            }
+            else if (const auto *encode = std::get_if<fhegpu::EncodeOp>(&instruction.body))
+            {
+                encoded.insert(encode->output);
+            }
+            else if (const auto *action = std::get_if<fhegpu::CommAction>(&instruction.body))
+            {
+                for (auto id : action->inputs) users[id].push_back(nullptr);
+                if (action->kind == fhegpu::CommKind::Transfer &&
+                    action->inputs.size() == action->outputs.size())
+                    for (std::size_t i = 0; i < action->inputs.size(); ++i)
+                    {
+                        if (!encoded.count(action->inputs[i]) || action->destinations.empty())
+                            continue;
+                        const auto &place = action->destinations[
+                            i < action->destinations.size() ? i : 0];
+                        if (place.kind != fhegpu::PlaceKind::Device || place.rank != mpi_rank_)
+                            continue;
+                        device_plain_source[action->outputs[i]] = {action->inputs[i], place.index};
+                    }
+            }
+        }
+    for (auto id : plan.final_outputs) users[id].push_back(nullptr);
+
+    const auto only_use = [&](fhegpu::ValueId id) -> const fhegpu::ComputeOp * {
+        const auto it = users.find(id);
+        return it == users.end() || it->second.size() != 1 ? nullptr : it->second.front();
+    };
+    const auto plain_op = [](const fhegpu::ComputeOp *op, fhegpu::ComputeKind kind) {
+        return op != nullptr && op->kind == kind && !op->reuse_input &&
+               op->place.kind == fhegpu::PlaceKind::Device;
+    };
+    const auto same_level = [&](fhegpu::ValueId a, fhegpu::ValueId b) {
+        const auto x = desc.find(a), y = desc.find(b);
+        return x != desc.end() && y != desc.end() && x->second->level == y->second->level;
+    };
+    // A value some op rewrites in place must not be captured by a deferred term.
+    std::unordered_set<fhegpu::ValueId> rewritten;
+    for (const auto &[output, op] : producer)
+        if (op->reuse_input && *op->reuse_input < op->inputs.size())
+            rewritten.insert(op->inputs[*op->reuse_input]);
+    std::unordered_set<fhegpu::ValueId> needed_plain;
+    std::size_t mac_trees = 0, mac_terms = 0;
+    for (const auto &[output, op] : producer)
+    {
+        if (!plain_op(op, fhegpu::ComputeKind::AddCC)) continue;
+        const auto *consumer = only_use(output);
+        if (plain_op(consumer, fhegpu::ComputeKind::AddCC) && consumer->place.index == op->place.index)
+            continue;  // internal node of a larger tree
+        std::vector<const fhegpu::ComputeOp *> adds, stack{op};
+        std::vector<fhegpu::ValueId> leaves;
+        while (!stack.empty())
+        {
+            const auto *add = stack.back();
+            stack.pop_back();
+            adds.push_back(add);
+            for (auto input : add->inputs)
+            {
+                const auto p = producer.find(input);
+                if (p != producer.end() && plain_op(p->second, fhegpu::ComputeKind::AddCC) &&
+                    only_use(input) == add && p->second->place.index == op->place.index)
+                    stack.push_back(p->second);
+                else
+                    leaves.push_back(input);
+            }
+        }
+        struct Leaf { std::vector<const fhegpu::ComputeOp *> ops; fhegpu::ValueId plain = 0; bool rotation = false; };
+        std::map<fhegpu::ValueId, std::vector<Leaf>> groups;
+        std::vector<const fhegpu::ComputeOp *> macs;
+        for (auto leaf : leaves)
+        {
+            const auto p = producer.find(leaf);
+            if (p == producer.end() || only_use(leaf) == nullptr) continue;
+            const auto *first = p->second;
+            if (first->place.index != op->place.index) continue;
+            if (plain_op(first, fhegpu::ComputeKind::Rotate))
+            {
+                if (rotation_groups && !rewritten.count(first->inputs.at(0)))
+                    groups[first->inputs.at(0)].push_back({{first}, 0, true});
+            }
+            else if (plain_op(first, fhegpu::ComputeKind::MulCP) && first->inputs.size() == 2)
+            {
+                const auto cipher = first->inputs[0], plain = first->inputs[1];
+                if (!same_level(cipher, plain)) continue;
+                const auto c = producer.find(cipher);
+                if (rotation_groups && device_plain_source.count(plain) &&
+                    c != producer.end() && plain_op(c->second, fhegpu::ComputeKind::Rotate) &&
+                    only_use(cipher) == first && c->second->place.index == op->place.index &&
+                    !rewritten.count(c->second->inputs.at(0)))
+                    groups[c->second->inputs.at(0)].push_back({{c->second, first}, plain, true});
+                else if (!rewritten.count(cipher))
+                    macs.push_back(first);
+            }
+        }
+        bool any = false;
+        if (macs.size() >= 2)
+        {
+            any = true;
+            for (const auto *mac : macs) next->lazy_outputs.insert(mac->output);
+            ++mac_trees;
+            mac_terms += macs.size();
+        }
+        for (const auto &[source, list] : groups)
+        {
+            const auto rotations = std::count_if(list.begin(), list.end(),
+                                                 [](const Leaf &leaf) { return leaf.rotation; });
+            if (list.size() < 2 || rotations == 0) continue;
+            any = true;
+            for (const auto &leaf : list)
+            {
+                for (const auto *leaf_op : leaf.ops) next->lazy_outputs.insert(leaf_op->output);
+                if (leaf.plain) needed_plain.insert(leaf.plain);
+                ++next->terms;
+            }
+        }
+        if (!any) continue;
+        for (const auto *add : adds) next->lazy_outputs.insert(add->output);
+        ++next->trees;
+    }
+    for (auto plain : needed_plain)
+    {
+        const auto &source = device_plain_source.at(plain);
+        next->encode_to_device[source.first] = {plain, source.second};
+    }
+    std::cerr << "LAZY_LINEAR plan=" << plan.plan_id << " trees=" << next->trees
+              << " rotation_terms=" << next->terms << " mac_trees=" << mac_trees
+              << " mac_terms=" << mac_terms << " lazy_values=" << next->lazy_outputs.size()
+              << " qp_plaintexts=" << needed_plain.size()
+              << " rotation_groups=" << rotation_groups << std::endl;
+    lazy_plan_ = std::move(next);
+}
+
+std::optional<PoseidonGpuApi::Value> PoseidonGpuApi::try_compute_lazy(
+    const fhegpu::ComputeOp &op, const std::vector<Value> &inputs)
+{
+    const auto make = [&](const gpu::GpuCiphertextMeta &meta, int cuda_device) {
+        auto node = std::make_shared<PoseidonLazyLinear>();
+        node->output = op.output;
+        node->logical_device = op.place.index;
+        node->cuda_device = cuda_device;
+        node->storage = std::make_shared<gpu::GpuCiphertextData>();
+        node->storage->meta = meta;
+        Value value{Value::Storage(node->storage)};
+        value.lazy_ = node;
+        return std::make_pair(node, value);
+    };
+    const auto pending = [](const Value &value) { return value.lazy_ && !value.lazy_->result; };
+    const auto resolved = [&](const Value &value) -> const Value & {
+        return value.lazy_ && value.lazy_->result ? *value.lazy_->result : value;
+    };
+    const auto meta_of = [&](const Value &value) -> const gpu::GpuCiphertextMeta & {
+        return pending(value) ? value.lazy_->storage->meta
+                              : resolved(value).device_ciphertext().meta;
+    };
+    const auto device_of = [&](const Value &value) {
+        return pending(value) ? value.lazy_->cuda_device
+                              : value_cuda_device_id(resolved(value), "Poseidon GPU lazy linear input");
+    };
+    for (const auto &input : inputs)
+        if (input.kind() == fhegpu::ValueKind::Ciphertext &&
+            input.place_kind() != fhegpu::PlaceKind::Device)
+            return std::nullopt;
+    switch (op.kind)
+    {
+    case fhegpu::ComputeKind::Rotate:
+    {
+        if (inputs.size() != 1) return std::nullopt;
+        materialize_lazy(inputs);
+        const auto steps = available_rotation_steps(
+            context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps);
+        if (steps.size() != 1) return std::nullopt;  // NAF chains rotate eagerly
+        const auto source = inputs.front().lazy_ ? *inputs.front().lazy_->result : inputs.front();
+        auto [node, value] = make(source.device_ciphertext().meta, device_of(source));
+        node->terms.push_back({source, steps.front(), 0, nullptr, 1.0});
+        return value;
+    }
+    case fhegpu::ComputeKind::MulCP:
+    {
+        if (inputs.size() != 2 || inputs[1].kind() != fhegpu::ValueKind::Plaintext ||
+            inputs[1].place_kind() != fhegpu::PlaceKind::Device)
+            return std::nullopt;
+        std::shared_ptr<const gpu::GpuPlaintextData> qp;
+        {
+            std::lock_guard<std::mutex> lock(lazy_plan_->mutex);
+            const auto it = lazy_plan_->qp_plain.find(op.inputs.at(1));
+            if (it != lazy_plan_->qp_plain.end()) qp = it->second;
+        }
+        const auto &plain = inputs[1].device_plaintext();
+        if (!pending(inputs[0]))
+        {
+            // Q-basis multiply-accumulate term: x * p, summed with its tree.
+            materialize_lazy(inputs[0]);
+            const auto source = inputs[0].lazy_ ? *inputs[0].lazy_->result : inputs[0];
+            auto meta = source.device_ciphertext().meta;
+            if (plain.meta.q_count != meta.q_count || !(plain.meta.parms_id == meta.parms_id))
+                return std::nullopt;
+            meta.scale *= plain.meta.scale;
+            auto [node, value] = make(meta, device_of(source));
+            PoseidonLazyLinear::Term term{source, 0, op.inputs[1], nullptr, plain.meta.scale};
+            term.qmac = true;
+            term.plain_value.emplace(inputs[1]);
+            node->terms.push_back(std::move(term));
+            return value;
+        }
+        if (!qp) return std::nullopt;
+        std::vector<PoseidonLazyLinear::Term> terms;
+        gpu::GpuCiphertextMeta meta;
+        int cuda_device = 0;
+        if (pending(inputs[0]))
+        {
+            auto &source = *inputs[0].lazy_;
+            std::lock_guard<std::mutex> lock(source.mutex);
+            if (!source.addends.empty()) return std::nullopt;
+            for (const auto &term : source.terms)
+                if (term.plain || term.qmac) return std::nullopt;
+            terms = source.terms;
+            meta = source.storage->meta;
+            cuda_device = source.cuda_device;
+        }
+        else
+        {
+            materialize_lazy(inputs[0]);
+            const auto source = inputs[0].lazy_ ? *inputs[0].lazy_->result : inputs[0];
+            terms.push_back({source, 0, 0, nullptr, 1.0});
+            meta = source.device_ciphertext().meta;
+            cuda_device = device_of(source);
+        }
+        if (qp->meta.q_count != meta.q_count) return std::nullopt;
+        for (auto &term : terms)
+        {
+            term.plain = qp;
+            term.plain_id = op.inputs[1];
+            term.plain_scale = plain.meta.scale;
+        }
+        meta.scale *= plain.meta.scale;
+        auto [node, value] = make(meta, cuda_device);
+        node->terms = std::move(terms);
+        return value;
+    }
+    case fhegpu::ComputeKind::AddCC:
+    {
+        if (inputs.size() != 2) return std::nullopt;
+        auto [node, value] = make(meta_of(inputs[0]), device_of(inputs[0]));
+        for (const auto &input : inputs)
+        {
+            if (pending(input))
+            {
+                std::lock_guard<std::mutex> lock(input.lazy_->mutex);
+                node->terms.insert(node->terms.end(), input.lazy_->terms.begin(), input.lazy_->terms.end());
+                node->addends.insert(node->addends.end(), input.lazy_->addends.begin(), input.lazy_->addends.end());
+            }
+            else
+            {
+                node->addends.push_back(input.lazy_ ? *input.lazy_->result : input);
+            }
+        }
+        // Deferred Q-basis terms keep their ciphertext and plaintext alive
+        // past the points where the plan (and Waterline) released them; cap
+        // how many one value holds (POSEIDON_RUNTIME_LAZY_MAC_TERMS).
+        static const std::size_t mac_cap = [] {
+            const char *raw = std::getenv("POSEIDON_RUNTIME_LAZY_MAC_TERMS");
+            const auto value = raw ? std::strtoull(raw, nullptr, 10) : 8ULL;
+            return static_cast<std::size_t>(value ? value : 8);
+        }();
+        const auto mac_terms = static_cast<std::size_t>(std::count_if(
+            node->terms.begin(), node->terms.end(), [](const auto &t) { return t.qmac; }));
+        if (mac_terms >= mac_cap)
+        {
+            materialize_lazy(value);
+            return Value(*node->result);
+        }
+        return value;
+    }
+    default:
+        return std::nullopt;
+    }
+}
+
+void PoseidonGpuApi::materialize_lazy(const std::vector<Value> &values)
+{
+    for (const auto &value : values) materialize_lazy(value);
+}
+
+void PoseidonGpuApi::materialize_lazy(const Value &value)
+{
+    const auto node = value.lazy_;
+    if (!node) return;
+    std::lock_guard<std::mutex> lock(node->mutex);
+    if (node->result) return;
+    auto &device = device_state(node->logical_device);
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    gpu::ScopedGpuExecutionStream foreground(
+        device.foreground_stream ? device.foreground_stream : gpu::gpu_execution_stream());
+    const InstructionRange range('l', node->output);
+    std::vector<Value> leaves;
+    for (const auto &term : node->terms)
+    {
+        leaves.push_back(term.source);
+        if (term.plain_value) leaves.push_back(*term.plain_value);
+    }
+    leaves.insert(leaves.end(), node->addends.begin(), node->addends.end());
+    wait_on_compute_inputs(device, leaves);
+
+    // Terms of one source and one plaintext scale form one linear transform;
+    // a repeated rotation step starts another (one baby term per step).
+    struct Group
+    {
+        const gpu::GpuCiphertextData *source;
+        double scale;
+        std::vector<const PoseidonLazyLinear::Term *> terms;
+    };
+    std::vector<Group> groups;
+    std::vector<const PoseidonLazyLinear::Term *> qmac_terms;
+    for (const auto &term : node->terms)
+    {
+        if (term.qmac)
+        {
+            qmac_terms.push_back(&term);
+            continue;
+        }
+        const auto *source = &term.source.device_ciphertext();
+        auto group = std::find_if(groups.begin(), groups.end(), [&](const Group &g) {
+            return g.source == source && g.scale == term.plain_scale &&
+                   std::none_of(g.terms.begin(), g.terms.end(),
+                                [&](const auto *t) { return t->step == term.step; });
+        });
+        if (group == groups.end()) groups.push_back({source, term.plain_scale, {&term}});
+        else group->terms.push_back(&term);
+    }
+
+    std::vector<std::shared_ptr<void>> temporaries;
+    std::optional<gpu::GpuCiphertextData> sum;
+    const auto accumulate = [&](gpu::GpuCiphertextData addend) {
+        if (!sum) { sum.emplace(std::move(addend)); return; }
+        gpu::GpuCiphertextData next;
+        device.evaluator->add(*sum, addend, next);
+        temporaries.push_back(std::make_shared<gpu::GpuCiphertextData>(std::move(*sum)));
+        temporaries.push_back(std::make_shared<gpu::GpuCiphertextData>(std::move(addend)));
+        sum.emplace(std::move(next));
+    };
+    // Q-basis multiply-accumulate: terms of one product scale in chunks of
+    // four per launch, accumulated in place.
+    {
+        std::vector<std::vector<const PoseidonLazyLinear::Term *>> by_scale;
+        for (const auto *term : qmac_terms)
+        {
+            const double product = term->source.device_ciphertext().meta.scale * term->plain_scale;
+            auto bucket = std::find_if(by_scale.begin(), by_scale.end(), [&](const auto &b) {
+                const double other = b.front()->source.device_ciphertext().meta.scale * b.front()->plain_scale;
+                return std::abs(std::log2(product / other)) <= 1e-9;
+            });
+            if (bucket == by_scale.end()) by_scale.push_back({term});
+            else bucket->push_back(term);
+        }
+        for (const auto &bucket : by_scale)
+        {
+            gpu::GpuCiphertextData partial;
+            for (std::size_t begin = 0; begin < bucket.size(); begin += 4)
+            {
+                std::vector<const gpu::GpuCiphertextData *> ciphertexts;
+                std::vector<const gpu::GpuPlaintextData *> plaintexts;
+                for (std::size_t i = begin; i < std::min(bucket.size(), begin + 4); ++i)
+                {
+                    ciphertexts.push_back(&bucket[i]->source.device_ciphertext());
+                    plaintexts.push_back(&bucket[i]->plain_value->device_plaintext());
+                }
+                device.evaluator->multiply_plain_sum_q_prefix(ciphertexts, plaintexts, partial, begin != 0);
+            }
+            accumulate(std::move(partial));
+        }
+    }
+    for (std::size_t g = 0; g < groups.size(); ++g)
+    {
+        const auto &group = groups[g];
+        const auto &source = *group.source;
+        const auto &keys = galois_keys_for(device, source.meta.q_count);
+        std::shared_ptr<gpu::GpuMatrixPlainQP> matrix;
+        {
+            std::lock_guard<std::mutex> plan_lock(lazy_plan_->mutex);
+            auto &slot = lazy_plan_->matrices[{node->output, g}];
+            if (!slot)
+            {
+                // Built once per tree; plaintext addresses persist across runs.
+                auto built = std::make_shared<gpu::GpuMatrixPlainQP>();
+                built->group_view = true;
+                built->scale = group.scale;
+                auto &schedule = built->plan;
+                schedule.rescale_count = 0;
+                schedule.giant_steps = {0};
+                schedule.group_term_offsets = {0, static_cast<std::uint32_t>(group.terms.size())};
+                std::vector<const gpu::GpuWord *> q_ptrs, p_ptrs;
+                std::vector<std::uint32_t> periods, babies;
+                const std::size_t degree = source.meta.degree;
+                for (std::size_t t = 0; t < group.terms.size(); ++t)
+                {
+                    const auto *term = group.terms[t];
+                    std::shared_ptr<const gpu::GpuPlaintextData> plain = term->plain;
+                    if (!plain)
+                    {
+                        auto &ones = lazy_plan_->qp_ones[{device.cuda_device_id, source.meta.q_count}];
+                        if (!ones)
+                        {
+                            Plaintext one;
+                            const auto parms_id = source.meta.parms_id;
+                            const auto context_data = context_.crt_context()->get_context_data(parms_id);
+                            one.resize(context_data->parms().q().size() * degree);
+                            one.parms_id() = parms_id;
+                            one.scale() = 1.0;
+                            std::fill_n(one.data(), one.coeff_count(), std::uint64_t{1});
+                            ones = std::make_shared<gpu::GpuPlaintextData>(
+                                gpu::GpuUploader::upload_plaintext_qp_exact(one, context_, device.cuda_device_id));
+                        }
+                        plain = ones;
+                    }
+                    const auto view = plain->make_const_view();
+                    const auto &shard = view.poly.shards.front();
+                    q_ptrs.push_back(shard.ptr);
+                    p_ptrs.push_back(shard.ptr + view.meta.q_count * view.meta.degree);
+                    periods.push_back(static_cast<std::uint32_t>(degree));
+                    babies.push_back(static_cast<std::uint32_t>(t));
+                    schedule.baby_steps.push_back(term->step);
+                    schedule.terms.push_back({0, static_cast<std::uint32_t>(t), static_cast<std::uint32_t>(t)});
+                }
+                schedule.n1 = static_cast<std::uint32_t>(group.terms.size());
+                schedule.n2 = 1;
+                schedule.diagonal_q_ptrs.allocate(q_ptrs.size(), device.cuda_device_id);
+                schedule.diagonal_p_ptrs.allocate(p_ptrs.size(), device.cuda_device_id);
+                schedule.diagonal_periods.allocate(periods.size(), device.cuda_device_id);
+                schedule.term_baby_indices.allocate(babies.size(), device.cuda_device_id);
+                schedule.group_term_offsets_device.allocate(2, device.cuda_device_id);
+                schedule.diagonal_q_ptrs.copy_from_host(q_ptrs.data(), q_ptrs.size());
+                schedule.diagonal_p_ptrs.copy_from_host(p_ptrs.data(), p_ptrs.size());
+                schedule.diagonal_periods.copy_from_host(periods.data(), periods.size());
+                schedule.term_baby_indices.copy_from_host(babies.data(), babies.size());
+                schedule.group_term_offsets_device.copy_from_host(
+                    schedule.group_term_offsets.data(), schedule.group_term_offsets.size());
+                slot = std::move(built);
+            }
+            matrix = slot;
+        }
+        gpu::GpuCiphertextData out;
+        device.evaluator->multiply_by_diag_matrix_bsgs_double_hoist(
+            source, *matrix, keys, 0, device.lazy_linear_workspace, out);
+        accumulate(std::move(out));
+    }
+    std::size_t addend_index = 0;
+    if (!sum && !node->addends.empty())
+    {
+        // Only reached when a deferred Add fell back before its tree root:
+        // a sum of ordinary addends.
+        if (node->addends.size() == 1)
+        {
+            node->result.emplace(node->addends.front());
+            node->addends.clear();
+            ++lazy_plan_->fallbacks;
+            return;
+        }
+        gpu::GpuCiphertextData first;
+        device.evaluator->add(node->addends[0].device_ciphertext(),
+                              node->addends[1].device_ciphertext(), first);
+        sum.emplace(std::move(first));
+        addend_index = 2;
+    }
+    for (; addend_index < node->addends.size(); ++addend_index)
+    {
+        gpu::GpuCiphertextData next;
+        device.evaluator->add(*sum, node->addends[addend_index].device_ciphertext(), next);
+        temporaries.push_back(std::make_shared<gpu::GpuCiphertextData>(std::move(*sum)));
+        sum.emplace(std::move(next));
+    }
+    if (!sum) throw std::logic_error("Poseidon GPU lazy linear value has no terms");
+    *node->storage = std::move(*sum);
+    Value result{Value::Storage(node->storage)};
+    result.ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+    retain_in_flight(result.ready_, leaves, temporaries);
+    node->result.emplace(std::move(result));
+    node->terms.clear();
+    node->addends.clear();
+    ++lazy_plan_->materialized;
 }
 
 } // namespace poseidon::runtime_api

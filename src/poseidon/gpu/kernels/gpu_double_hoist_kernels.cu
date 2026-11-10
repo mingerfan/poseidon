@@ -563,6 +563,108 @@ __global__ void pre_rotated_giant_group_accumulate_kernel(
     destination1[tid] = accumulator1;
 }
 
+/*
+ * Same output as pre_rotated_giant_group_accumulate_kernel, but c0 of every
+ * giant group (and both components of the identity group) is read from the
+ * QP group accumulators instead of from ModDown(accumulator) lifted back by P.
+ * Only c1 of the non-identity groups has to leave QP (it is decomposed for the
+ * giant key switch). The kernel runs once per side (Q limbs, then P limbs);
+ * qp_groups points at that side's [group][component][limb][coeff] storage.
+ */
+__global__ void pre_rotated_giant_group_accumulate_qp_c0_kernel(
+    GpuWord *destination0,
+    GpuWord *destination1,
+    const GpuWord *qp_groups,
+    std::size_t identity_group_index,
+    GiantGroupKernelArguments group_args,
+    const GpuWord *const *key0_ptrs,
+    const GpuWord *const *key1_ptrs,
+    const GpuWord *moduli,
+    const GpuWide *barrett,
+    std::size_t active_group_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
+    std::size_t limb_count,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t component_words = limb_count * degree;
+    if (tid >= component_words)
+    {
+        return;
+    }
+
+    const std::uint32_t degree_u32 = static_cast<std::uint32_t>(degree);
+    const std::uint32_t degree_mask = degree_u32 - 1;
+    const std::size_t limb = tid >> degree_power;
+    const std::uint32_t coeff =
+        static_cast<std::uint32_t>(tid & degree_mask);
+    const std::uint32_t reversed =
+        reverse_bits_limited(degree_u32 + coeff, degree_power + 1);
+    const GpuWord modulus = moduli[limb];
+    const GpuWide ratio = barrett[limb];
+
+    const std::size_t identity_offset =
+        identity_group_index * 2 * component_words + tid;
+    GpuWord accumulator0 = qp_groups[identity_offset];
+    GpuWord accumulator1 = qp_groups[identity_offset + component_words];
+
+    for (std::size_t active_group = 0;
+         active_group < active_group_count;
+         ++active_group)
+    {
+        const std::uint32_t galois_elt =
+            group_args.galois_elts[active_group];
+        const std::uint64_t index_raw =
+            (static_cast<std::uint64_t>(galois_elt) * reversed) >> 1;
+        const std::uint32_t source_coeff = reverse_bits_limited(
+            static_cast<std::uint32_t>(index_raw & degree_mask),
+            degree_power);
+        const std::size_t source_index = limb * degree + source_coeff;
+        const std::size_t key_base =
+            static_cast<std::size_t>(
+                group_args.key_indices[active_group]) *
+            storage_dnum;
+        const GpuWord *digits =
+            group_args.digit_ptrs[active_group];
+
+        for (std::size_t digit = 0; digit < dnum; ++digit)
+        {
+            const GpuWord source_value =
+                digits[digit * component_words + source_index];
+            accumulator0 = add_mod(
+                accumulator0,
+                multiply_mod(
+                    source_value,
+                    key0_ptrs[key_base + digit][source_index],
+                    modulus,
+                    ratio),
+                modulus);
+            accumulator1 = add_mod(
+                accumulator1,
+                multiply_mod(
+                    source_value,
+                    key1_ptrs[key_base + digit][source_index],
+                    modulus,
+                    ratio),
+                modulus);
+        }
+        const std::size_t group_c0_offset =
+            static_cast<std::size_t>(
+                group_args.group_indices[active_group]) *
+                2 * component_words +
+            source_index;
+        accumulator0 = add_mod(
+            accumulator0,
+            qp_groups[group_c0_offset],
+            modulus);
+    }
+
+    destination0[tid] = accumulator0;
+    destination1[tid] = accumulator1;
+}
+
 __global__ void reduce_qp_groups_kernel(
     GpuWord *destination,
     const GpuWord *group_values,
@@ -1722,6 +1824,116 @@ void launch_double_hoist_pre_rotated_giant_group_accumulate(
         degree,
         degree_power,
         false);
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_double_hoist_pre_rotated_giant_group_accumulate_qp_c0(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    GpuWord *destination_p0,
+    GpuWord *destination_p1,
+    const GpuWord *group_q,
+    const GpuWord *group_p,
+    std::size_t identity_group_index,
+    const GpuWord *const *host_group_digit_q_ptrs,
+    const GpuWord *const *host_group_digit_p_ptrs,
+    const std::uint32_t *host_group_indices,
+    const std::uint32_t *host_galois_elts,
+    const std::uint32_t *host_key_indices,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    std::size_t active_group_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name =
+        "launch_double_hoist_pre_rotated_giant_group_accumulate_qp_c0";
+    validate_parameter_shard(parameter_shard, degree, name);
+    if (destination_q0 == nullptr || destination_q1 == nullptr ||
+        destination_p0 == nullptr || destination_p1 == nullptr ||
+        group_q == nullptr || group_p == nullptr ||
+        host_group_digit_q_ptrs == nullptr ||
+        host_group_digit_p_ptrs == nullptr ||
+        host_group_indices == nullptr ||
+        host_galois_elts == nullptr ||
+        host_key_indices == nullptr ||
+        key_q0_ptrs == nullptr || key_p0_ptrs == nullptr ||
+        key_q1_ptrs == nullptr || key_p1_ptrs == nullptr ||
+        active_group_count == 0 ||
+        active_group_count > kMaxFusedGiantGroups ||
+        dnum == 0 || storage_dnum < dnum)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid argument");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+
+    GiantGroupKernelArguments q_group_args{};
+    GiantGroupKernelArguments p_group_args{};
+    for (std::size_t group = 0;
+         group < active_group_count;
+         ++group)
+    {
+        q_group_args.digit_ptrs[group] =
+            host_group_digit_q_ptrs[group];
+        p_group_args.digit_ptrs[group] =
+            host_group_digit_p_ptrs[group];
+        q_group_args.group_indices[group] =
+            p_group_args.group_indices[group] =
+                host_group_indices[group];
+        q_group_args.galois_elts[group] =
+            p_group_args.galois_elts[group] =
+                host_galois_elts[group];
+        q_group_args.key_indices[group] =
+            p_group_args.key_indices[group] =
+                host_key_indices[group];
+    }
+
+    constexpr int block_size = 256;
+    const unsigned int degree_power = log2_degree(degree, name);
+    const std::size_t q_count = parameter_shard.hybrid_base_q_count;
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const int q_grid = static_cast<int>(
+        (q_count * degree + block_size - 1) / block_size);
+    pre_rotated_giant_group_accumulate_qp_c0_kernel<<<q_grid, block_size, 0, gpu_execution_stream()>>>(
+        destination_q0,
+        destination_q1,
+        group_q,
+        identity_group_index,
+        q_group_args,
+        key_q0_ptrs,
+        key_q1_ptrs,
+        parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(),
+        active_group_count,
+        dnum,
+        storage_dnum,
+        q_count,
+        degree,
+        degree_power);
+    gpu_check_cuda(cudaGetLastError(), name);
+
+    const int p_grid = static_cast<int>(
+        (p_count * degree + block_size - 1) / block_size);
+    pre_rotated_giant_group_accumulate_qp_c0_kernel<<<p_grid, block_size, 0, gpu_execution_stream()>>>(
+        destination_p0,
+        destination_p1,
+        group_p,
+        identity_group_index,
+        p_group_args,
+        key_p0_ptrs,
+        key_p1_ptrs,
+        parameter_shard.rns_primes.data() + q_count,
+        parameter_shard.rns_modulus_constants.data() + q_count,
+        active_group_count,
+        dnum,
+        storage_dnum,
+        p_count,
+        degree,
+        degree_power);
     gpu_check_cuda(cudaGetLastError(), name);
 }
 

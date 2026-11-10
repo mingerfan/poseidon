@@ -43,16 +43,26 @@ void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
                                       const PoseidonContext &context, parms_id_type id,
                                       uint64_t *destination)
 {
+    sample_poly_ternary_with_hamming(std::move(prng), context, id,
+                                     context.parameters_literal()->hamming_weight(), destination);
+}
+
+void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
+                                      const PoseidonContext &context, parms_id_type id,
+                                      std::size_t hamming_weight, uint64_t *destination)
+{
     auto context_data = context.crt_context()->get_context_data(id);
     auto &parms = context_data->parms();
     auto coeff_modulus = context_data->coeff_modulus();
-    auto hamming_weight = context.parameters_literal()->hamming_weight();
     size_t coeff_modulus_size = coeff_modulus.size();
     size_t coeff_count = parms.degree();
 
     RandomToStandardAdapter engine(prng);
     uniform_int_distribution<uint64_t> dist(0, 2);
-    uniform_int_distribution<size_t> dist_deg(0, coeff_count);
+    if (hamming_weight > coeff_count)
+        throw std::invalid_argument("secret Hamming weight exceeds polynomial degree");
+    set_zero_poly(coeff_count, coeff_modulus_size, destination);
+    uniform_int_distribution<size_t> dist_deg(0, coeff_count - 1);
 
     unordered_map<size_t, uint64_t> index_map;
     while (hamming_weight != 0)
@@ -64,10 +74,10 @@ void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
         {
             index_map[index] = rand;
             hamming_weight--;
-        }
-        for (auto i = 0; i < coeff_modulus_size; i++)
-        {
-            destination[i * coeff_count + index] = rand + (flag & coeff_modulus[i].value()) - 1;
+            for (size_t i = 0; i < coeff_modulus_size; i++)
+            {
+                destination[i * coeff_count + index] = rand + (flag & coeff_modulus[i].value()) - 1;
+            }
         }
     }
 }

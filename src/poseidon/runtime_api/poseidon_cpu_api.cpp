@@ -81,13 +81,12 @@ std::vector<int> available_rotation_steps(const PoseidonContext &context,
         return {normalized};
     }
 
-    auto steps = decompose_rotation_step(normalized, slot_count);
-    for (int step : steps)
+    auto steps = keyed_rotation_terms(normalized, slot_count, [&](int step) {
+        return keys.has_key(galois_tool->get_elt_from_step(step));
+    });
+    if (steps.empty())
     {
-        if (!keys.has_key(galois_tool->get_elt_from_step(step)))
-        {
-            throw std::runtime_error("Poseidon CPU Api lacks a binary rotation key");
-        }
+        throw std::runtime_error("Poseidon CPU Api lacks a binary rotation key");
     }
     return steps;
 }
@@ -703,6 +702,8 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
         boot_encryptor_->encrypt(refreshed, output);
         break;
     }
+    case fhegpu::ComputeKind::BootStep:
+        throw std::runtime_error("Poseidon CPU cannot run Boot steps: they need a native GPU profile");
     }
 
     return Value::from_ciphertext(std::move(output));

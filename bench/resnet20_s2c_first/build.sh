@@ -16,7 +16,8 @@ if [[ -z "$cmake_bin" ]]; then
 fi
 
 "$cmake_bin" -S "$repo_dir/src/poseidon/tests/bootstrapping" -B "$build_dir" \
-  -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=70 \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CUDA_ARCHITECTURES="${CUDA_ARCHITECTURES:-70}" \
   -DPOSEIDON_BUILD_RESNET20_S2C_FIRST=ON
 "$cmake_bin" --build "$build_dir" --target poseidon_resnet20_s2c_first \
   --parallel "${BUILD_JOBS:-2}"

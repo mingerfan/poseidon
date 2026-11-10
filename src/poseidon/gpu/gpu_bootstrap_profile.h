@@ -46,6 +46,40 @@ struct GpuBootstrapProfileConfig
     bool project_real = false;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::DoubleHoistBsgs;
+
+    /*
+     * Sparse-secret encapsulation: a non-zero value is the Hamming weight of
+     * the ephemeral secret ModRaise runs under (Cerium uses 32). With h=32
+     * the ModRaise overflow stays within K=12 often enough for the degree-22
+     * fit (about 2^-29 failure per Boot, versus 2^-14 for h=192/K=25).
+     * The dense->sparse key is generated over the full key modulus, which a
+     * secure deployment must replace with a small-modulus key.
+     */
+    std::uint32_t sparse_secret_hamming_weight = 0;
+    /* Evaluate odd Chebyshev terms too (the discrete fit is not even). */
+    bool eval_mod_full_coefficients = false;
+    /* Periodic compression of the double-hoist DFT diagonals. */
+    bool compress_linear_plaintexts = false;
+    /*
+     * Declared output level. A cheaper EvalMod leaves surplus Q limbs; they
+     * are dropped before SlotToCoeff so the profile still matches the
+     * OperatorSpec, and SlotToCoeff runs on fewer limbs.
+     */
+    std::optional<int> output_level;
+};
+
+/**
+ * @brief EvalMod choices of the manual S2C-first ResNet20 Boot. The defaults
+ * are the original degree-59/DA2/K=25 profile.
+ */
+struct GpuResNet20ManualOptions
+{
+    std::uint32_t sine_degree = 59;
+    std::uint32_t double_angle = 2;
+    std::uint32_t k = 25;
+    std::uint32_t log_split = 3;
+    bool full_coefficients = false;
+    std::uint32_t sparse_secret_hamming_weight = 0;
 };
 
 /**
@@ -85,7 +119,7 @@ public:
     // degree59/DA2 with folded coefficients -> Q31/scale40.
     static GpuBootstrapProfile build_resnet20_manual(
         const PoseidonContext &context, KeyGenerator &key_generator,
-        int cuda_device_id);
+        int cuda_device_id, const GpuResNet20ManualOptions &options = {});
 };
 
 } // namespace gpu

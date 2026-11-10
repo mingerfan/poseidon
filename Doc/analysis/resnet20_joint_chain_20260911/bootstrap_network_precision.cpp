@@ -9,6 +9,8 @@
 #include "original_conv_reference.h"
 #include "conv_probe_runtime.h"
 
+#include <nvtx3/nvToolsExt.h>
+
 #include <optional>
 #include <type_traits>
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
@@ -178,9 +180,20 @@ double check_boundary(const BaselineSession &s,const std::string &label,
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
 using ActivityTiming=poseidon::benchmark::s2c_first::GpuActivityTiming;
 
+// An NVTX range "s2c/<label>" around every stage, so an nsys capture (taken
+// with POSEIDON_S2C_CUPTI=0) can attribute kernels to the same categories as
+// the CUPTI breakdown. Without a profiler attached NVTX calls are no-ops.
+struct S2cNvtxRange {
+    explicit S2cNvtxRange(const std::string &label) {
+        nvtxRangePushA(("s2c/"+label).c_str());
+    }
+    ~S2cNvtxRange() {nvtxRangePop();}
+};
+
 template<class Function>
 auto run_activity(ActivityTiming *timing,const std::string &label,Function &&function) {
     using Result=decltype(function());
+    const S2cNvtxRange nvtx_range(label);
     if(!timing) {
         if constexpr(std::is_void_v<Result>) {function();return;}
         else return function();
@@ -299,8 +312,84 @@ class ContinuousBootstrap {
     GpuDoubleHoistWorkspace stc_workspace,cts_workspace;
     GpuBootstrapWorkspace evalmod_workspace;
     double alpha=1;
+    // POSEIDON_S2C_LIBRARY_BOOT=1 runs GpuEvaluator::bootstrap on the GPU
+    // library's S2C-first profile (the one the Runtime adapter uses) instead
+    // of the degree-59 stages below: same Q6/2^40 -> Q31/2^40 contract, with
+    // the sparse ephemeral secret and the low-degree EvalMod. The defaults are
+    // the measured degree-22 / DA3 / K=12 / h=32 profile; each can be set with
+    // POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}.
+    std::optional<GpuBootstrapProfile> library;
+    GpuBootstrapWorkspace library_workspace;
+    GpuResNet20ManualOptions library_options;
+
+    static std::uint32_t environment_u32(const char *name,std::uint32_t fallback) {
+        const char *raw=std::getenv(name);
+        if(!raw || !*raw)return fallback;
+        char *end=nullptr;const auto value=std::strtoul(raw,&end,10);
+        if(!end || *end!='\0')
+            throw std::invalid_argument(std::string(name)+" must be an unsigned integer");
+        return static_cast<std::uint32_t>(value);
+    }
+
+    void prepare_library() {
+        library_options.sine_degree=environment_u32("POSEIDON_S2C_BOOT_DEGREE",22);
+        library_options.double_angle=environment_u32("POSEIDON_S2C_BOOT_DOUBLE_ANGLE",3);
+        library_options.k=environment_u32("POSEIDON_S2C_BOOT_K",12);
+        library_options.log_split=environment_u32("POSEIDON_S2C_BOOT_LOG_SPLIT",2);
+        library_options.full_coefficients=
+            environment_u32("POSEIDON_S2C_BOOT_FULL_COEFFICIENTS",1)!=0;
+        library_options.sparse_secret_hamming_weight=
+            environment_u32("POSEIDON_S2C_BOOT_SPARSE_H",32);
+        library=s.manual_boot_profile(library_options);
+        const auto &boot=library->bootstrap_data;
+        if(!boot.slot_to_coeff_first || boot.input_q_count!=6 ||
+            !library->relin_keys || !library->galois_keys)
+            throw std::logic_error("library Boot profile is not the S2C-first Q6 profile");
+        library_workspace.coeff_to_slot_double_hoist.baby_tile_size=default_c2s_baby_tile;
+        const auto stc_compression=compressed_qp_stats(boot.slot_to_coeff_matrix_qp);
+        const auto cts_compression=compressed_qp_stats(boot.coeff_to_slot_matrix_qp);
+        const auto full_words=stc_compression.full_words+cts_compression.full_words;
+        const auto compact_words=
+            stc_compression.compact_words+cts_compression.compact_words;
+        if(!stc_compression.exact || !cts_compression.exact ||
+            !compact_words || compact_words>=full_words)
+            throw std::logic_error("library Boot QP plaintexts are not exactly compressed");
+        std::cout<<"BOOTSTRAP_QP_COMPRESSION enabled=true exact=true"
+            <<" stc_diagonals="<<stc_compression.diagonals
+            <<" cts_diagonals="<<cts_compression.diagonals
+            <<" full_MiB="<<double(full_words*sizeof(GpuWord))/(1ULL<<20)
+            <<" compact_MiB="<<double(compact_words*sizeof(GpuWord))/(1ULL<<20)
+            <<" ratio="<<double(full_words)/compact_words<<'\n';
+        std::cout<<"CONTINUOUS_PREPARE_BOOTSTRAP implementation="<<implementation()
+            <<" degree="<<library_options.sine_degree
+            <<" double_angle="<<library_options.double_angle
+            <<" k="<<library_options.k
+            <<" log_split="<<library_options.log_split
+            <<" full_coefficients="<<(library_options.full_coefficients?"true":"false")
+            <<" sparse_secret_h="<<library_options.sparse_secret_hamming_weight
+            <<" stc_diagonals="<<stc_compression.diagonals
+            <<" cts_diagonals="<<cts_compression.diagonals
+            <<" evalmod_q_out="<<boot.eval_mod.output_q_count<<'\n';
+    }
 public:
+    static bool library_boot_requested() {
+        const char *raw=std::getenv("POSEIDON_S2C_LIBRARY_BOOT");
+        if(!raw || !*raw)return false;
+        const std::string value(raw);
+        if(value!="0" && value!="1")
+            throw std::invalid_argument("POSEIDON_S2C_LIBRARY_BOOT must be 0 or 1");
+        return value=="1";
+    }
+    bool library_boot() const {return library.has_value();}
+    std::string implementation() const {
+        if(!library)return "application_degree59";
+        return "library_degree"+std::to_string(library_options.sine_degree)+
+            "_k"+std::to_string(library_options.k)+
+            "_h"+std::to_string(library_options.sparse_secret_hamming_weight);
+    }
+
     explicit ContinuousBootstrap(const BaselineSession &session):s(session) {
+        if(library_boot_requested()) {prepare_library();return;}
         // The Q50/P25 C2S matrices have eight baby steps per stage.  Keeping
         // all eight in one tile removes the second Q/P accumulator pass.
         // Only stage 1 has <=4 giant groups and uses the fused KeySwitch/MAC;
@@ -365,13 +454,25 @@ public:
             std::round(std::log2(ctx.crt_context()->q0()/32)));
         if(encrypted_input.meta.q_count!=6)
             throw std::runtime_error("continuous bootstrap input must be Q6");
+        if(library) {
+            CT refreshed;
+            run_activity(timing,"bootstrap.library",[&]{
+                eval.bootstrap(encrypted_input,library->bootstrap_data,
+                    *library->relin_keys,*library->galois_keys,
+                    library_workspace,refreshed);
+            });
+            s.replay.scale_check(refreshed,40);
+            if(refreshed.meta.q_count!=31)
+                throw std::runtime_error("library bootstrap output must be Q31");
+            return refreshed;
+        }
         CT stc_out,prepared,raised,real,imag,eval_real,eval_imag;
         run_activity(timing,"bootstrap.S2C",[&]{
             eval.dft_double_hoist(encrypted_input,stc,rotations,
                 stc_workspace,stc_out);
         });
         run_activity(timing,"bootstrap.prepare",[&]{
-            eval.bootstrap_prepare_modraise_input(stc_out,prepared,
+            prepare_modraise_at_q0(eval,stc_out,prepared,
                 ctx.crt_context()->parms_id_map().at(1),preparation_target);
         });
         run_activity(timing,"bootstrap.ModRaise",[&]{
@@ -404,22 +505,29 @@ public:
     }
 
     std::size_t stc_baby_tile_size() const {
-        return stc_workspace.baby_tile_size;
+        return stc_active().baby_tile_size;
     }
     std::size_t c2s_baby_tile_size() const {
-        return cts_workspace.baby_tile_size;
+        return cts_active().baby_tile_size;
     }
     std::size_t c2s_matrix_count() const {
-        return cts_workspace.matrix_counts.size();
+        return cts_active().matrix_counts.size();
     }
     std::size_t c2s_tile_batches() const {
         std::size_t result=0;
-        for(const auto &counts:cts_workspace.matrix_counts)
+        for(const auto &counts:cts_active().matrix_counts)
             result+=counts.baby_tile_count;
         return result;
     }
 
 private:
+    const GpuDoubleHoistWorkspace &stc_active() const {
+        return library?library_workspace.slot_to_coeff_double_hoist:stc_workspace;
+    }
+    const GpuDoubleHoistWorkspace &cts_active() const {
+        return library?library_workspace.coeff_to_slot_double_hoist:cts_workspace;
+    }
+
     struct QpCompressionStats {
         std::size_t diagonals=0,full_words=0,compact_words=0;
         bool exact=true;
@@ -850,7 +958,14 @@ public:
             <<" bootstrap_c2s_tile_batches="<<c2s_tile_batches
             <<" free_MiB="<<double(free_bytes)/(1ULL<<20)<<'\n';
 
-        poseidon::benchmark::s2c_first::GpuActivityTiming activity;
+        // POSEIDON_S2C_CUPTI=0 times the inference without the CUPTI collector
+        // (no per-API activity records), the condition Cerium's program.run()
+        // is timed under. Only wall, event and enqueue time and the accuracy
+        // check are reported then; the category breakdown needs CUPTI.
+        const char *cupti_raw=std::getenv("POSEIDON_S2C_CUPTI");
+        const bool cupti=!(cupti_raw && std::string(cupti_raw)=="0");
+        std::optional<poseidon::benchmark::s2c_first::GpuActivityTiming> activity_storage;
+        if(cupti)activity_storage.emplace();
         cudaEvent_t start_event=nullptr,stop_event=nullptr;
         gpu_check_cuda(cudaEventCreate(&start_event),"continuous start event");
         gpu_check_cuda(cudaEventCreate(&stop_event),"continuous stop event");
@@ -858,16 +973,46 @@ public:
             if(a)cudaEventDestroy(a);if(b)cudaEventDestroy(b);}} cleanup{start_event,stop_event};
         gpu_check_cuda(cudaDeviceSynchronize(),"continuous timing start sync");
         s.replay.reset_moddrop_stats();
-        activity.begin_continuous();
+        if(cupti)activity_storage->begin_continuous();
         gpu_check_cuda(cudaEventRecord(start_event),"continuous record start");
+        nvtxRangePushA("s2c.online");
         const auto wall_begin=std::chrono::steady_clock::now();
-        auto logits=execute_graph(false,&activity);
+        auto logits=execute_graph(false,cupti?&*activity_storage:nullptr);
         const auto enqueue_end=std::chrono::steady_clock::now();
         gpu_check_cuda(cudaEventRecord(stop_event),"continuous record stop");
         gpu_check_cuda(cudaDeviceSynchronize(),"continuous inference completion");
         const auto wall_end=std::chrono::steady_clock::now();
+        nvtxRangePop();
         float event_ms=0;gpu_check_cuda(cudaEventElapsedTime(
             &event_ms,start_event,stop_event),"continuous event elapsed");
+        if(!cupti) {
+            const auto decoded=s.replay.decoded_after_timing(logits);
+            if(decoded.size()<fixture.reference_logits.size())
+                throw std::runtime_error("post-timing logits are truncated");
+            double max_logit_error=0;int gpu_prediction=0,plain_prediction=0;
+            for(std::size_t index=0;index<fixture.reference_logits.size();++index) {
+                max_logit_error=std::max(max_logit_error,
+                    std::abs(decoded[index].real()-fixture.reference_logits[index]));
+                if(decoded[index].real()>decoded[gpu_prediction].real())
+                    gpu_prediction=int(index);
+                if(fixture.reference_logits[index]>fixture.reference_logits[plain_prediction])
+                    plain_prediction=int(index);
+            }
+            const bool accuracy_pass=std::isfinite(max_logit_error) &&
+                max_logit_error<=0.1 && gpu_prediction==plain_prediction;
+            std::cout<<"CONTINUOUS_TIMING_RESULT mode=clean_wall_no_cupti"
+                <<" wall_ms="<<std::chrono::duration<double,std::milli>(
+                    wall_end-wall_begin).count()
+                <<" cuda_event_ms="<<event_ms
+                <<" host_enqueue_ms="<<std::chrono::duration<double,std::milli>(
+                    enqueue_end-wall_begin).count()
+                <<" prediction="<<gpu_prediction
+                <<" accuracy="<<(accuracy_pass?"PASS":"FAIL")
+                <<" max_logit_error="<<max_logit_error
+                <<" bootstrap_implementation="<<bootstrap->implementation()<<'\n';
+            return accuracy_pass?0:1;
+        }
+        auto &activity=*activity_storage;
         auto result=activity.finish();result.print();
         report_conv_plain_batch(false);
         report_relu_basis_fusion(false);
@@ -912,13 +1057,19 @@ public:
             <<" adds_removed="<<moddrop_stats.fused_leaf_adds_removed
             <<" exact_checks="<<moddrop_stats.exact_leaf_checks
             <<" online_observer=false coefficients_changed=false rescale_changed=false\n";
-        const std::map<std::string,int> category_calls{
-            {"bootstrap.C2S",18},{"bootstrap.EvalMod",36},
-            {"bootstrap.ModRaise",18},{"bootstrap.S2C",18},
-            {"bootstrap.prepare",18},{"bootstrap.recombine",18},
+        // The library Boot is one call per bootstrap; its stages are NVTX
+        // ranges inside GpuEvaluator::bootstrap, not separate categories here.
+        const std::vector<std::string> bootstrap_categories=bootstrap->library_boot()
+            ? std::vector<std::string>{"bootstrap.library"}
+            : std::vector<std::string>{"bootstrap.C2S","bootstrap.EvalMod",
+                "bootstrap.ModRaise","bootstrap.S2C","bootstrap.prepare",
+                "bootstrap.recombine"};
+        std::map<std::string,int> category_calls{
             {"conv_bn",18},{"head",1},{"relu",19},
             {"residual.add",9},{"residual.clone",9},{"shortcut",2},
             {"stem.conv_bn",1}};
+        for(const auto &category:bootstrap_categories)
+            category_calls.emplace(category,category=="bootstrap.EvalMod"?36:18);
         double breakdown_sum_ms=0;
         for(const auto &[category,stage]:result.stages) {
             if(!category_calls.count(category))
@@ -935,12 +1086,13 @@ public:
         const auto stage_ms=[&](const char *category) {
             return result.stages.at(category).gpu_ms;
         };
+        double bootstrap_ms=0;
+        for(const auto &category:bootstrap_categories)
+            bootstrap_ms+=stage_ms(category.c_str());
         const std::vector<std::pair<std::string,double>> report_categories{
             {"Conv+BN",stage_ms("conv_bn")+stage_ms("stem.conv_bn")},
             {"ReLU",stage_ms("relu")},
-            {"Bootstrap",stage_ms("bootstrap.C2S")+stage_ms("bootstrap.EvalMod")+
-                stage_ms("bootstrap.ModRaise")+stage_ms("bootstrap.S2C")+
-                stage_ms("bootstrap.prepare")+stage_ms("bootstrap.recombine")},
+            {"Bootstrap",bootstrap_ms},
             {"Shortcut",stage_ms("shortcut")},
             {"Pool+FC",stage_ms("head")},
             {"Residual/copy",stage_ms("residual.add")+stage_ms("residual.clone")}};
@@ -1013,6 +1165,7 @@ public:
             <<" conv_plain_batch="<<(conv_plain_batch?"true":"false")
             <<" relu_basis_fusion="<<(basis_fusion?"true":"false")
             <<" encrypted_logits_q="<<logits.meta.q_count
+            <<" bootstrap_implementation="<<bootstrap->implementation()
             <<" security_approved=false\n";
         return accuracy_pass?0:1;
     }

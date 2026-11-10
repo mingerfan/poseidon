@@ -1,7 +1,9 @@
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/gpu_memory.h"
+#include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 
 #include <cstdint>
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -84,6 +86,54 @@ __device__ __forceinline__ std::uint32_t reverse_bits_limited(
     unsigned int bit_count)
 {
     return __brev(value) >> (32U - bit_count);
+}
+
+/*
+ * Lazy basis-conversion arithmetic: word products (< 2^64) are summed into a
+ * 96-bit accumulator with three integer instructions and reduced once, rather
+ * than one Barrett reduction and one modular add per term.
+ */
+struct LazyAccumulator
+{
+    std::uint32_t lo = 0;
+    std::uint32_t mid = 0;
+    std::uint32_t hi = 0;
+};
+
+__device__ __forceinline__ void lazy_mac(
+    LazyAccumulator &acc,
+    GpuWord left,
+    GpuWord right)
+{
+    asm("mad.lo.cc.u32 %0, %3, %4, %0;\n\t"
+        "madc.hi.cc.u32 %1, %3, %4, %1;\n\t"
+        "addc.u32 %2, %2, 0;"
+        : "+r"(acc.lo), "+r"(acc.mid), "+r"(acc.hi)
+        : "r"(left), "r"(right));
+}
+
+__device__ __forceinline__ GpuWord lazy_reduce(
+    const LazyAccumulator &acc,
+    GpuWord modulus,
+    GpuWide barrett_ratio)
+{
+    const GpuWide low =
+        (static_cast<GpuWide>(acc.mid) << 32) | static_cast<GpuWide>(acc.lo);
+    GpuWord result = barrett_reduce_u64_u32(low, modulus, barrett_ratio);
+    if (acc.hi != 0)
+    {
+        // barrett_ratio = floor(2^64 / modulus): 2^64 mod modulus.
+        GpuWide two64 = GpuWide{0} - barrett_ratio * static_cast<GpuWide>(modulus);
+        if (two64 >= modulus)
+        {
+            two64 -= modulus;
+        }
+        const GpuWord carry = barrett_reduce_u64_u32(
+            static_cast<GpuWide>(acc.hi) * two64, modulus, barrett_ratio);
+        const GpuWide sum = static_cast<GpuWide>(result) + carry;
+        result = static_cast<GpuWord>(sum >= modulus ? sum - modulus : sum);
+    }
+    return result;
 }
 
 __device__ __forceinline__ GpuWord hybrid_modup_contribution(
@@ -555,6 +605,336 @@ __global__ void hybrid_modup_qp_kernel(
     }
 
     modup_p[target_offset] = sum;
+}
+
+/*
+ * ModUp with lazy accumulation. One thread owns one coefficient and a tile of
+ * target limbs: each source residue is weighted by its punctured inverse once
+ * per tile (not once per target) and every target sum is reduced once.
+ * Targets enumerate base Q then base P; the decomposition's own Q limbs are
+ * skipped, as in hybrid_modup_qp_kernel.
+ */
+template <int TargetTile>
+__global__ void hybrid_modup_qp_lazy_kernel(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *q_matrix_offsets,
+    const GpuWord *q_matrices,
+    const GpuWord *p_matrix_offsets,
+    const GpuWord *p_matrices,
+    const GpuWord *qi_inv_punctured,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    // Two coefficients (j, j + N/2) per thread: twice the independent work
+    // per matrix entry and per punctured-inverse weighting.
+    const std::size_t half = degree >> 1;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    // Only targets outside the digit: Q limbs before/after it, then P.
+    const std::size_t active_q_count = base_q_size - decomp_limb_count;
+    const std::size_t target_count = active_q_count + base_p_size;
+    const std::size_t tile_count = (target_count + TargetTile - 1) / TargetTile;
+    if (tid >= tile_count * half)
+    {
+        return;
+    }
+    const auto table_limb_of = [&](std::size_t active) {
+        return active < active_q_count
+            ? (active < decomp_limb_begin ? active : active + decomp_limb_count)
+            : base_q_size + (active - active_q_count);
+    };
+    const std::size_t low = tid & (half - 1);
+    const std::size_t high = low + half;
+    const std::size_t target_begin = (tid >> (degree_power - 1)) * TargetTile;
+    const std::size_t inv_offset = decomp_index * base_p_size;
+    const std::size_t q_offset = q_matrix_offsets[decomp_index];
+    const std::size_t p_offset = p_matrix_offsets[decomp_index];
+
+    LazyAccumulator low_acc[TargetTile];
+    LazyAccumulator high_acc[TargetTile];
+    for (std::size_t col = 0; col < decomp_limb_count; ++col)
+    {
+        const std::size_t source_limb = decomp_limb_begin + col;
+        GpuWord low_value = c2_coeff[source_limb * degree + low];
+        GpuWord high_value = c2_coeff[source_limb * degree + high];
+        const GpuWord inv_punctured = qi_inv_punctured[inv_offset + col];
+        if (inv_punctured != 1)
+        {
+            const GpuWord source_modulus = rns_primes[source_limb];
+            const GpuWide source_barrett = rns_modulus_constants[source_limb];
+            low_value = mul_mod(low_value, inv_punctured, source_modulus, source_barrett);
+            high_value = mul_mod(high_value, inv_punctured, source_modulus, source_barrett);
+        }
+#pragma unroll
+        for (int t = 0; t < TargetTile; ++t)
+        {
+            const std::size_t target = target_begin + t;
+            if (target >= target_count)
+            {
+                break;
+            }
+            const std::size_t limb = table_limb_of(target);
+            const GpuWord matrix_value = limb < base_q_size
+                ? q_matrices[q_offset + limb * base_p_size + col]
+                : p_matrices[p_offset + (limb - base_q_size) * base_p_size + col];
+            lazy_mac(low_acc[t], low_value, matrix_value);
+            lazy_mac(high_acc[t], high_value, matrix_value);
+        }
+    }
+#pragma unroll
+    for (int t = 0; t < TargetTile; ++t)
+    {
+        const std::size_t target = target_begin + t;
+        if (target >= target_count)
+        {
+            break;
+        }
+        const std::size_t limb = table_limb_of(target);
+        const GpuWord modulus = rns_primes[limb];
+        const GpuWide barrett = rns_modulus_constants[limb];
+        GpuWord *values = limb < base_q_size
+            ? modup_q + limb * degree
+            : modup_p + (limb - base_q_size) * degree;
+        values[low] = lazy_reduce(low_acc[t], modulus, barrett);
+        values[high] = lazy_reduce(high_acc[t], modulus, barrett);
+    }
+}
+
+/*
+ * P->Q conversion plus the first forward NTT stage with lazy accumulation.
+ * One thread owns one butterfly (left/right coefficient, both components) for
+ * a tile of Q limbs; each P residue is loaded and weighted once per tile.
+ */
+template <int QTile, bool FirstStage = true>
+__global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *accum_p0,
+    const GpuWord *accum_p1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    const GpuWord *moddown_p_to_q_matrix,
+    const GpuWord *p_inv_punctured,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree,
+    unsigned int degree_power,
+    bool source_preweighted)
+{
+    const std::size_t half = degree >> 1;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t tile_count = (base_q_size + QTile - 1) / QTile;
+    if (tid >= tile_count * half)
+    {
+        return;
+    }
+    const std::size_t left_coeff = tid & (half - 1);
+    const std::size_t right_coeff = left_coeff + half;
+    const std::size_t q_begin = (tid >> (degree_power - 1)) * QTile;
+
+    LazyAccumulator acc[QTile][4];
+    for (std::size_t p_limb = 0; p_limb < base_p_size; ++p_limb)
+    {
+        const std::size_t p_base = p_limb * degree;
+        GpuWord values[4] = {
+            accum_p0[p_base + left_coeff],
+            accum_p0[p_base + right_coeff],
+            accum_p1[p_base + left_coeff],
+            accum_p1[p_base + right_coeff]};
+        if (!source_preweighted)
+        {
+            const GpuWord inv_punctured = p_inv_punctured[p_limb];
+            if (inv_punctured != 1)
+            {
+                const GpuWord p_modulus = rns_primes[base_q_size + p_limb];
+                const GpuWide p_barrett = rns_modulus_constants[base_q_size + p_limb];
+#pragma unroll
+                for (int k = 0; k < 4; ++k)
+                {
+                    values[k] = mul_mod(values[k], inv_punctured, p_modulus, p_barrett);
+                }
+            }
+        }
+#pragma unroll
+        for (int t = 0; t < QTile; ++t)
+        {
+            const std::size_t q_limb = q_begin + t;
+            if (q_limb >= base_q_size)
+            {
+                break;
+            }
+            const GpuWord matrix_value =
+                moddown_p_to_q_matrix[q_limb * base_p_size + p_limb];
+#pragma unroll
+            for (int k = 0; k < 4; ++k)
+            {
+                lazy_mac(acc[t][k], values[k], matrix_value);
+            }
+        }
+    }
+#pragma unroll
+    for (int t = 0; t < QTile; ++t)
+    {
+        const std::size_t q_limb = q_begin + t;
+        if (q_limb >= base_q_size)
+        {
+            break;
+        }
+        const GpuWord q_modulus = rns_primes[q_limb];
+        const GpuWide q_barrett = rns_modulus_constants[q_limb];
+        const GpuWord left0 = lazy_reduce(acc[t][0], q_modulus, q_barrett);
+        const GpuWord right0 = lazy_reduce(acc[t][1], q_modulus, q_barrett);
+        const GpuWord left1 = lazy_reduce(acc[t][2], q_modulus, q_barrett);
+        const GpuWord right1 = lazy_reduce(acc[t][3], q_modulus, q_barrett);
+        const std::size_t q_base = q_limb * degree;
+        if constexpr (!FirstStage)
+        {
+            // Coefficient form; a separate in-place NTT follows.
+            converted_q0[q_base + left_coeff] = left0;
+            converted_q0[q_base + right_coeff] = right0;
+            converted_q1[q_base + left_coeff] = left1;
+            converted_q1[q_base + right_coeff] = right1;
+            continue;
+        }
+        const GpuWord root = roots[q_limb * degree + 1];
+        const GpuWord twisted_right0 = mul_mod(right0, root, q_modulus, q_barrett);
+        converted_q0[q_base + left_coeff] = add_mod(left0, twisted_right0, q_modulus);
+        converted_q0[q_base + right_coeff] = sub_mod(left0, twisted_right0, q_modulus);
+        const GpuWord twisted_right1 = mul_mod(right1, root, q_modulus, q_barrett);
+        converted_q1[q_base + left_coeff] = add_mod(left1, twisted_right1, q_modulus);
+        converted_q1[q_base + right_coeff] = sub_mod(left1, twisted_right1, q_modulus);
+    }
+}
+
+/*
+ * ModUp plus the first forward NTT stage with lazy accumulation: one thread
+ * owns one butterfly for a tile of active target limbs (Q outside the digit,
+ * then P); each digit residue pair is weighted once per tile.
+ */
+template <int Tile>
+__global__ void hybrid_modup_qp_forward_ntt_first_stage_lazy_kernel(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    const GpuWord *q_matrix_offsets,
+    const GpuWord *q_matrices,
+    const GpuWord *p_matrix_offsets,
+    const GpuWord *p_matrices,
+    const GpuWord *qi_inv_punctured,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t half = degree >> 1;
+    const std::size_t active_q_count = base_q_size - decomp_limb_count;
+    const std::size_t active_count = active_q_count + base_p_size;
+    const std::size_t tile_count = (active_count + Tile - 1) / Tile;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= tile_count * half)
+    {
+        return;
+    }
+    const std::size_t left_coeff = tid & (half - 1);
+    const std::size_t right_coeff = left_coeff + half;
+    const std::size_t active_begin = (tid >> (degree_power - 1)) * Tile;
+    const std::size_t inv_offset = decomp_index * base_p_size;
+    const std::size_t q_offset = q_matrix_offsets[decomp_index];
+    const std::size_t p_offset = p_matrix_offsets[decomp_index];
+
+    LazyAccumulator left_acc[Tile];
+    LazyAccumulator right_acc[Tile];
+    for (std::size_t col = 0; col < decomp_limb_count; ++col)
+    {
+        const std::size_t source_limb = decomp_limb_begin + col;
+        GpuWord left_value = c2_coeff[source_limb * degree + left_coeff];
+        GpuWord right_value = c2_coeff[source_limb * degree + right_coeff];
+        const GpuWord inv_punctured = qi_inv_punctured[inv_offset + col];
+        if (inv_punctured != 1)
+        {
+            const GpuWord source_modulus = rns_primes[source_limb];
+            const GpuWide source_barrett = rns_modulus_constants[source_limb];
+            left_value = mul_mod(left_value, inv_punctured, source_modulus, source_barrett);
+            right_value = mul_mod(right_value, inv_punctured, source_modulus, source_barrett);
+        }
+#pragma unroll
+        for (int t = 0; t < Tile; ++t)
+        {
+            const std::size_t active = active_begin + t;
+            if (active >= active_count)
+            {
+                break;
+            }
+            GpuWord matrix_value;
+            if (active < active_q_count)
+            {
+                const std::size_t limb =
+                    active < decomp_limb_begin ? active : active + decomp_limb_count;
+                matrix_value = q_matrices[q_offset + limb * base_p_size + col];
+            }
+            else
+            {
+                matrix_value = p_matrices[p_offset + (active - active_q_count) * base_p_size + col];
+            }
+            lazy_mac(left_acc[t], left_value, matrix_value);
+            lazy_mac(right_acc[t], right_value, matrix_value);
+        }
+    }
+#pragma unroll
+    for (int t = 0; t < Tile; ++t)
+    {
+        const std::size_t active = active_begin + t;
+        if (active >= active_count)
+        {
+            break;
+        }
+        GpuWord *values = modup_q;
+        std::size_t value_limb, table_limb;
+        if (active < active_q_count)
+        {
+            value_limb = active < decomp_limb_begin ? active : active + decomp_limb_count;
+            table_limb = value_limb;
+        }
+        else
+        {
+            values = modup_p;
+            value_limb = active - active_q_count;
+            table_limb = base_q_size + value_limb;
+        }
+        const GpuWord modulus = rns_primes[table_limb];
+        const GpuWide barrett = rns_modulus_constants[table_limb];
+        const GpuWord left = lazy_reduce(left_acc[t], modulus, barrett);
+        const GpuWord right = lazy_reduce(right_acc[t], modulus, barrett);
+        const GpuWord root = roots[table_limb * degree + 1];
+        const GpuWord twisted_right = mul_mod(right, root, modulus, barrett);
+        const std::size_t value_base = value_limb * degree;
+        values[value_base + left_coeff] = add_mod(left, twisted_right, modulus);
+        values[value_base + right_coeff] = sub_mod(left, twisted_right, modulus);
+    }
+}
+
+bool lazy_base_conversion_enabled()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv("POSEIDON_GPU_LAZY_BASECONV");
+        return raw == nullptr || *raw == '\0' || std::string(raw) != "0";
+    }();
+    return enabled;
 }
 
 __device__ __forceinline__ void hybrid_modup_pair_contribution(
@@ -3047,6 +3427,51 @@ __global__ void hybrid_apply_moddown_ntt_out_of_place_batch_kernel(
         rns_modulus_constants[q_limb]);
 }
 
+struct SelectedModDownComponents
+{
+    std::uint32_t index[kMaxSelectedModDownComponents];
+};
+
+/*
+ * Out-of-place ModDown apply for a scattered set of components. Converted
+ * slot k belongs to component index[k] of source/destination, both laid out
+ * as consecutive Q components of words_per_component words.
+ */
+__global__ void hybrid_apply_moddown_ntt_selected_kernel(
+    GpuWord *destination_q,
+    const GpuWord *source_q,
+    const GpuWord *converted_q,
+    SelectedModDownComponents components,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *inv_p_mod_q,
+    std::size_t component_count,
+    std::size_t base_q_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t words_per_component = base_q_size * degree;
+    const std::size_t total = component_count * words_per_component;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= total)
+    {
+        return;
+    }
+    const std::size_t slot = tid / words_per_component;
+    const std::size_t local = tid - slot * words_per_component;
+    const std::size_t offset =
+        static_cast<std::size_t>(components.index[slot]) *
+            words_per_component +
+        local;
+    const std::size_t q_limb = local >> degree_power;
+    const GpuWord modulus = rns_primes[q_limb];
+    destination_q[offset] = mul_mod(
+        sub_mod(source_q[offset], converted_q[tid], modulus),
+        inv_p_mod_q[q_limb],
+        modulus,
+        rns_modulus_constants[q_limb]);
+}
+
 __global__ void hybrid_apply_moddown_ntt_from_q_groups_kernel(
     GpuWord *destination_q0,
     GpuWord *destination_q1,
@@ -3390,6 +3815,33 @@ void launch_hybrid_modup_decomposition(
     const unsigned int degree_power = checked_log2_degree(
         degree,
         "launch_hybrid_modup_decomposition");
+    if (lazy_base_conversion_enabled() && decomp_limb_count > 1)
+    {
+        constexpr int target_tile = 4;
+        const std::size_t tiles =
+            (base_q_size - decomp_limb_count + base_p_size + target_tile - 1) / target_tile;
+        const int lazy_grid = static_cast<int>(((tiles * degree >> 1) + block_size - 1) / block_size);
+        hybrid_modup_qp_lazy_kernel<target_tile><<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
+            modup_q,
+            modup_p,
+            c2_coeff,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_q_conv_matrix_offsets.data(),
+            parameter_shard.hybrid_q_conv_matrices.data(),
+            parameter_shard.hybrid_p_conv_matrix_offsets.data(),
+            parameter_shard.hybrid_p_conv_matrices.data(),
+            parameter_shard.hybrid_qi_inv_punctured.data(),
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            base_q_size,
+            base_p_size,
+            degree,
+            degree_power);
+        gpu_check_cuda(cudaGetLastError(), "launch_hybrid_modup_decomposition lazy kernel launch");
+        return;
+    }
     /* 发射模升kernel */
     hybrid_modup_qp_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         modup_q,
@@ -3488,7 +3940,34 @@ void launch_hybrid_modup_decomposition_forward_ntt_first_stage(
             degree,                                                        \
             degree_power)
 
-    if (decomp_limb_count == 1)
+    if (lazy_base_conversion_enabled() && decomp_limb_count >= 4 && decomp_limb_count != 9)
+    {
+        constexpr int tile = 4;
+        const std::size_t tiles = (active_limb_count + tile - 1) / tile;
+        const int lazy_grid = static_cast<int>(
+            (tiles * (degree >> 1) + block_size - 1) / block_size);
+        hybrid_modup_qp_forward_ntt_first_stage_lazy_kernel<tile>
+            <<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
+                modup_q,
+                modup_p,
+                c2_coeff,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_q_conv_matrix_offsets.data(),
+                parameter_shard.hybrid_q_conv_matrices.data(),
+                parameter_shard.hybrid_p_conv_matrix_offsets.data(),
+                parameter_shard.hybrid_p_conv_matrices.data(),
+                parameter_shard.hybrid_qi_inv_punctured.data(),
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                base_q_size,
+                base_p_size,
+                degree,
+                degree_power);
+    }
+    else if (decomp_limb_count == 1)
     {
         POSEIDON_LAUNCH_MODUP_NTT_HEAD(1);
     }
@@ -5079,7 +5558,64 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     const int first_stage_grid = static_cast<int>(
         (first_stage_total + block_size - 1) / block_size);
 
-    if (base_p_size == 2 && source_preweighted)
+    if (lazy_base_conversion_enabled() && base_p_size > 9)
+    {
+        // Generic P (e.g. 25 special primes): tiled, lazily reduced; P=2 and
+        // P=9 keep their tuned kernels below.
+        constexpr int q_tile = 4;
+        const std::size_t tiles = (base_q_size + q_tile - 1) / q_tile;
+        const int lazy_grid = static_cast<int>(
+            (tiles * (degree >> 1) + block_size - 1) / block_size);
+        static const bool fourstep = [] {
+            const char *raw = std::getenv("POSEIDON_GPU_MODDOWN_FOURSTEP");
+            return raw == nullptr || *raw == '\0' || std::string(raw) != "0";
+        }();
+        if (fourstep && degree == 65536)
+        {
+            // Convert into coefficient form, then two-phase NTT per
+            // component instead of the stage-by-stage tail.
+            hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel<q_tile, false>
+                <<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
+                    converted_q0,
+                    converted_q1,
+                    accum_p0,
+                    accum_p1,
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    parameter_shard.ntt_tables.data(),
+                    parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                    parameter_shard.hybrid_p_inv_punctured.data(),
+                    base_q_size,
+                    base_p_size,
+                    degree,
+                    degree_power,
+                    source_preweighted);
+            gpu_check_cuda(cudaGetLastError(),
+                           "launch_hybrid_convert_p_to_q_forward_ntt lazy conversion launch");
+            launch_forward_ntt_limbs_inplace_fourstep_65536(
+                converted_q0, 0, base_q_size, parameter_shard);
+            launch_forward_ntt_limbs_inplace_fourstep_65536(
+                converted_q1, 0, base_q_size, parameter_shard);
+            return;
+        }
+        hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel<q_tile>
+            <<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                base_p_size,
+                degree,
+                degree_power,
+                source_preweighted);
+    }
+    else if (base_p_size == 2 && source_preweighted)
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<2, true>
             <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
@@ -5544,6 +6080,51 @@ void launch_hybrid_apply_moddown_ntt_out_of_place_batch(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_apply_moddown_ntt_out_of_place_batch kernel launch");
+}
+
+void launch_hybrid_apply_moddown_ntt_selected(
+    GpuWord *destination_q,
+    const GpuWord *source_q,
+    const GpuWord *converted_q,
+    const std::uint32_t *component_indices,
+    std::size_t component_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_hybrid_apply_moddown_ntt_selected";
+    validate_hybrid_tables(name, parameter_shard, degree);
+    if (destination_q == nullptr || source_q == nullptr ||
+        converted_q == nullptr || component_indices == nullptr ||
+        component_count == 0 ||
+        component_count > kMaxSelectedModDownComponents)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid argument");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    SelectedModDownComponents components{};
+    for (std::size_t slot = 0; slot < component_count; ++slot)
+    {
+        components.index[slot] = component_indices[slot];
+    }
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t total = component_count * base_q_size * degree;
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total + block_size - 1) / block_size);
+    hybrid_apply_moddown_ntt_selected_kernel
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
+            destination_q,
+            source_q,
+            converted_q,
+            components,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_inv_p_mod_q.data(),
+            component_count,
+            base_q_size,
+            degree,
+            checked_log2_degree(degree, name));
+    gpu_check_cuda(cudaGetLastError(), name);
 }
 
 void launch_hybrid_apply_moddown_ntt_from_q_groups(

@@ -568,7 +568,7 @@ Multiply、Square、Rescale、Relinearize 等分支显式识别 source/destinati
 6. 记录 completion event，把输出 Device Value 作为可 posted 句柄返回。
 7. 后续 compute 在自己的 execution stream 上等待该 event。
 
-`PinnedHostBuffer` 通过 cudaMallocHost 分配、cudaFreeHost 析构；当前没有 staging-buffer pool/cache。这次传输的 CPU 转换 loop 和 pinned allocation 在提交 API 调用内完成，payload 的 GPU copy 异步完成。
+`PinnedHostBuffer` 从进程级的锁页块缓存取块，析构时把块还给缓存（11-03 起）：缓存里有不小于请求、且不超过请求 1.5 倍的块就复用，否则 cudaMallocHost 一块（按 64 KiB 取整）；缓存总量超过 `POSEIDON_GPU_RUNTIME_PINNED_CACHE_MB`（默认 4096，0 关闭缓存）时才 cudaFreeHost。`live_bytes`/`peak_bytes` 仍只计正在使用的缓冲，`cuda_allocation_calls`、`reuse_calls`、`cached_bytes` 报告缓存本身。这次传输的 CPU 转换 loop 和 pinned allocation 在提交 API 调用内完成，payload 的 GPU copy 异步完成。
 
 传输源不失效，也不从 Runtime store 中消失；目标拥有新 allocation。H2D request 持有 staging，输出 ready event 持有 request，Runtime/API 还各自持有输出引用。
 

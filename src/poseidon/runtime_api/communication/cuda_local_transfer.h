@@ -33,14 +33,22 @@ public:
     const void *data() const noexcept;
     std::size_t size() const noexcept;
     // Process-wide transfer staging counters (thread safe, excluding other CUDA users).
+    // live/peak count bytes held by buffers; allocation/free count buffers
+    // constructed and destroyed.  A destroyed buffer's block is cached for
+    // reuse (POSEIDON_GPU_RUNTIME_PINNED_CACHE_MB), so cudaMallocHost runs
+    // only cuda_allocation_calls() times.
     static std::size_t live_bytes() noexcept;
     static std::size_t peak_bytes() noexcept;
     static std::size_t allocation_calls() noexcept;
     static std::size_t free_calls() noexcept;
+    static std::size_t cuda_allocation_calls() noexcept;
+    static std::size_t reuse_calls() noexcept;
+    static std::size_t cached_bytes() noexcept;
 
 private:
     void *data_ = nullptr;
     std::size_t bytes_ = 0;
+    std::size_t capacity_ = 0;
 };
 
 class CudaTransferRequest
@@ -58,6 +66,10 @@ public:
     int completion_device() const;
     bool collect_completed();
     void wait();
+    // Whether wait() has anything to reclaim: a Host-staged copy holds a
+    // pinned buffer until it is waited, a peer or same-device copy holds
+    // nothing but its events.
+    bool holds_staging() const;
 
 private:
     struct State;

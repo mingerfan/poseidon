@@ -3,6 +3,8 @@
 // This does NOT approve security or fold the native output to scale 2^40.
 #define POSEIDON_BOOTSTRAP_PRECISION_LIBRARY
 #include "bootstrap_precision.cpp"
+#include "poseidon/gpu/gpu_bootstrap_profile.h"
+#include <rmm/mr/device/statistics_resource_adaptor.hpp>
 #include <chrono>
 #include <functional>
 
@@ -23,6 +25,10 @@ struct BaselineMetadata {
 };
 using RotationKeyFactory=std::function<GpuGaloisKeysData(const std::vector<int> &)>;
 using ApplicationInputEncryptor=std::function<CT(const std::vector<double> &)>;
+// The GPU library's own S2C-first Boot (the Runtime adapter's profile), built
+// under this session's secret. Returns public evaluation material only.
+using ManualBootProfileFactory=
+    std::function<GpuBootstrapProfile(const GpuResNet20ManualOptions &)>;
 
 ParametersLiteral make_application_keyswitch_parameters(
     const ParametersLiteral &global_parameters,
@@ -126,6 +132,7 @@ struct BaselineSession {
     ApplicationInputEncryptor encrypt_application_input;
     RotationKeyFactory rotation_keys,bootstrap_rotation_keys;
     ApplicationKeySwitchFactory application_keyswitch;
+    ManualBootProfileFactory manual_boot_profile;
 };
 
 const std::vector<std::uint32_t> historical_q_bits = {
@@ -138,13 +145,41 @@ const std::vector<std::uint32_t> historical_q_bits = {
 struct BaselinePool {
     rmm::mr::cuda_memory_resource upstream;
     rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource> pool;
+    // POSEIDON_S2C_POOL_STATS=1 counts live and peak bytes. Off by default so
+    // the measured allocation path stays the plain pool.
+    std::unique_ptr<rmm::mr::statistics_resource_adaptor<
+        rmm::mr::device_memory_resource>> statistics;
     rmm::mr::device_memory_resource *previous;
     explicit BaselinePool(std::size_t cap,std::size_t initial=1<<20)
         : pool(&upstream,initial,cap), previous(rmm::mr::get_current_device_resource()) {
-        rmm::mr::set_current_device_resource(&pool);
+        const char *raw=std::getenv("POSEIDON_S2C_POOL_STATS");
+        if(raw && *raw && std::string(raw)!="0")
+            statistics=std::make_unique<rmm::mr::statistics_resource_adaptor<
+                rmm::mr::device_memory_resource>>(&pool);
+        rmm::mr::set_current_device_resource(statistics
+            ? static_cast<rmm::mr::device_memory_resource *>(statistics.get())
+            : &pool);
     }
-    ~BaselinePool() { rmm::mr::set_current_device_resource(previous); }
+    void report(const char *label) const {
+        if(!statistics)return;
+        const auto bytes=statistics->get_bytes_counter();
+        std::cout<<"POOL_STATS at="<<label
+            <<" live_MiB="<<double(bytes.value)/(1ULL<<20)
+            <<" peak_MiB="<<double(bytes.peak)/(1ULL<<20)<<'\n';
+    }
+    ~BaselinePool() {
+        report("exit");
+        rmm::mr::set_current_device_resource(previous);
+    }
 };
+
+// MiB from an environment variable, or the fallback when unset or malformed.
+std::size_t environment_mib(const char *name,std::size_t fallback) {
+    const char *raw=std::getenv(name);
+    if(!raw || !*raw)return fallback;
+    char *end=nullptr;const auto value=std::strtoull(raw,&end,10);
+    return end && *end=='\0' && value!=0 ? static_cast<std::size_t>(value) : fallback;
+}
 
 ParametersLiteral baseline_parameters(const std::string &profile, const std::string &fixture) {
     ParametersLiteral p(CKKS,16,15,40,192,1,Modulus(0),{}, {},sec_level_type::none);
@@ -254,18 +289,26 @@ int run_bootstrap_baseline(int argc, char **argv,
 
         gpu_check_cuda(cudaSetDevice(0),"cudaSetDevice");
         std::size_t free,total; gpu_check_cuda(cudaMemGetInfo(&free,&total),"cudaMemGetInfo");
-        const std::size_t pool_gib=continuous?30:(nq==50?18:12);
-        const std::size_t initial_pool_gib=continuous?pool_gib:0;
-        const std::size_t required_free=continuous
-            ? (pool_gib<<30)+(std::size_t(1)<<30)
-            : ((pool_gib+8)<<30);
-        if (free<required_free) throw std::runtime_error(continuous
-            ? "continuous resident mode needs a 30 GiB pool plus 1 GiB free headroom"
+        // The continuous pool is reserved whole at start-up: 30 GiB on the
+        // 32 GB V100 it was validated on. POSEIDON_S2C_POOL_MIB and
+        // POSEIDON_S2C_POOL_HEADROOM_MIB size it for a smaller card.
+        const std::size_t default_pool_mib=
+            (continuous?std::size_t(30):(nq==50?std::size_t(18):std::size_t(12)))<<10;
+        const std::size_t pool_mib=continuous
+            ? environment_mib("POSEIDON_S2C_POOL_MIB",default_pool_mib)
+            : default_pool_mib;
+        const std::size_t headroom_mib=continuous
+            ? environment_mib("POSEIDON_S2C_POOL_HEADROOM_MIB",1024)
+            : std::size_t(8)<<10;
+        const std::size_t pool_bytes=pool_mib<<20;
+        if (free<pool_bytes+(headroom_mib<<20)) throw std::runtime_error(continuous
+            ? "continuous resident mode needs its pool plus free headroom "
+              "(POSEIDON_S2C_POOL_MIB, POSEIDON_S2C_POOL_HEADROOM_MIB)"
             : "need pool cap plus 8 GiB free headroom");
-        std::cout<<"MEMORY pool_cap_GiB="<<pool_gib
-            <<" pool_initial_GiB="<<initial_pool_gib
+        std::cout<<"MEMORY pool_cap_GiB="<<double(pool_mib)/1024
+            <<" pool_initial_GiB="<<(continuous?double(pool_mib)/1024:0.0)
             <<" startup_free_GiB="<<double(free)/(1ULL<<30)<<'\n';
-        BaselinePool pool(pool_gib<<30,continuous?(pool_gib<<30):(1<<20));
+        BaselinePool pool(pool_bytes,continuous?pool_bytes:(1<<20));
         auto secret=nonzero_secret(ctx); KeyGenerator generator(ctx,secret);
         PublicKey pub; generator.create_public_key(pub); RelinKeys relin; generator.create_relin_keys(relin);
         Encryptor encryptor(ctx,pub,secret); Decryptor decryptor(ctx,secret);
@@ -315,9 +358,15 @@ int run_bootstrap_baseline(int argc, char **argv,
                 throw std::logic_error("application input encryption did not produce Q32");
             return GpuUploader::upload_ciphertext(encrypted,0);
         };
+        ManualBootProfileFactory manual_boot_profile=
+            [&](const GpuResNet20ManualOptions &options) {
+                return GpuBootstrapProfileBuilder::build_resnet20_manual(
+                    ctx,generator,0,options);
+            };
         if(session_continuation)
             return session_continuation(BaselineSession{metadata_state,eval,keys,replay,
-                encrypt_application_input,direct,boot,application_keyswitch});
+                encrypt_application_input,direct,boot,application_keyswitch,
+                manual_boot_profile});
 
         std::vector<std::complex<double>> message(32768);
         for (std::size_t i=0;i<message.size();++i)
