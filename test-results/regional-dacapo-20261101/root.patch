@@ -1,6 +1,0 @@
-diff --git a/third_party/ckks-runtime b/third_party/ckks-runtime
---- a/third_party/ckks-runtime
-+++ b/third_party/ckks-runtime
-@@ -1 +1 @@
--Subproject commit 3b9b49c9f43fae7470ab3064a72332774a48a02c
-+Subproject commit 3b9b49c9f43fae7470ab3064a72332774a48a02c-dirty

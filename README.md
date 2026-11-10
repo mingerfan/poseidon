@@ -65,8 +65,10 @@ V4 Waterline currently supports one rank and ciphertexts with at most three
 components. Native Boot resource bounds are not implemented and cause an
 explicit error. Host decrypt/re-encrypt Boot uses the secret key and is reported
 as a test refresh, with its actual semantics stated in each model result.
-Validation status and reproducible evidence are in
-[the Waterline results](test-results/waterline-20261013/README.md).
+Historical validation outputs are local/external archives, not bundled test
+inputs. The entire `test-results/` directory is ignored; see the
+[experiment artifact policy](docs/experiment-artifacts.md). Maintained benchmark
+inputs live in [`bench/fixtures/waterline/`](bench/fixtures/waterline/README.md).
 
 ## Optional CKKS Runtime CPU/GPU Api
 

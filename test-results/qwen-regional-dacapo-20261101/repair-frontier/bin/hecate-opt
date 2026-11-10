@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /home/xuming/poseidon-mixed-q-20261026/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-mixed-q-20261026/toolchain/lib /home/xuming/poseidon-qwen-regional-20261101/repair-frontier/hecate-opt.real "$@"

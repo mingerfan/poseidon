@@ -1,6 +1,0 @@
-# Rebuild these generated plans and model payloads from command.json.
-# Their paths, sizes and hashes are recorded in local-artifacts.json.
-*.mlirbc
-*.runtime-plan.bin
-*.bundle/
-/audit-plan

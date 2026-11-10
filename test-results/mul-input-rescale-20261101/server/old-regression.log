@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/xuming/poseidon-qwen-regional-20261101/mul-input-rescale/check-regional-scale.py", line 382, in <module>
-    main()
-  File "/home/xuming/poseidon-qwen-regional-20261101/mul-input-rescale/check-regional-scale.py", line 275, in main
-    assert 40 <= desc[mul['inputs'][0]]['scale_log2'] < 70, (name, mul)
-AssertionError: ('high-input-mul-x', {'inputs': ['0', '0'], 'kind': 'compute', 'op': 'mul_cc', 'ordinal': 0, 'output': '2', 'place': {'kind': 'host', 'rank': 0}})
