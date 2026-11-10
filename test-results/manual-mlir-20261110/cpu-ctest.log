@@ -1,0 +1,16 @@
+Internal ctest changing into directory: /home/xuming/poseidon-manual-mlir-20261110/build
+Test project /home/xuming/poseidon-manual-mlir-20261110/build
+    Start 2: resnet20_s2c_first_metadata
+1/5 Test #2: resnet20_s2c_first_metadata ......   Passed   11.25 sec
+    Start 3: resnet20_manual_boot_host
+2/5 Test #3: resnet20_manual_boot_host ........   Passed    1.75 sec
+    Start 4: resnet20_prepared_api_graph
+3/5 Test #4: resnet20_prepared_api_graph ......   Passed    0.01 sec
+    Start 5: test_homomorphic_dft_repack
+4/5 Test #5: test_homomorphic_dft_repack ......   Passed    0.00 sec
+    Start 6: resnet20_s2c_support
+5/5 Test #6: resnet20_s2c_support .............   Passed    0.14 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =  13.16 sec

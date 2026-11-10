@@ -1,0 +1,103 @@
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: ON
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package CCCL@ (/home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/../cccl)
+CMake Warning (dev) at /home/xuming/poseidon-tools/cmake/cmake/data/share/cmake-3.31/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rapids-cmake/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- CPM: Adding package nvtx3@ (/home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/../nvtx)
+CMake Warning (dev) at /home/xuming/poseidon-tools/cmake/cmake/data/share/cmake-3.31/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(nvtx3) is deprecated, call
+  FetchContent_MakeAvailable(nvtx3) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(nvtx3) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rapids-cmake/rapids-cmake/cpm/nvtx3.cmake:75 (rapids_cpm_find)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/cmake/thirdparty/get_nvtx.cmake:19 (rapids_cpm_nvtx3)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/cmake/thirdparty/get_nvtx.cmake:23 (find_and_configure_nvtx3)
+  /home/xuming/poseidon-manual-mlir-20261110/src/third_party/rmm/CMakeLists.txt:78 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/xuming/poseidon-manual-mlir-20261110/build
+[  1%] Building CXX object poseidon_build/bench/resnet20_s2c_first/ckks-runtime/CMakeFiles/ckks_runtime_core.dir/runtime/verifier.cpp.o
+[ 67%] Built target poseidon_shared
+[ 87%] Built target poseidon_gpu
+[ 88%] Linking CXX static library ../../../libruntime_core.a
+[ 92%] Built target ckks_runtime_core
+[ 95%] Built target ckks_runtime_plan_json
+gmake[3]: Warning: File '/home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/prepared_gpu_api.h' has modification time 240 s in the future
+[ 95%] Building CXX object poseidon_build/bench/resnet20_s2c_first/CMakeFiles/poseidon_resnet20_s2c_first.dir/main.cpp.o
+In file included from /home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/factory/poseidon_factory.h:5,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/../../Doc/analysis/resnet20_joint_chain_20260911/relu_precision.cpp:7,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/../../Doc/analysis/resnet20_joint_chain_20260911/bootstrap_precision.cpp:3,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/../../Doc/analysis/resnet20_joint_chain_20260911/bootstrap_baseline_precision.cpp:5,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/../../Doc/analysis/resnet20_joint_chain_20260911/bootstrap_relu_precision.cpp:4,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/../../Doc/analysis/resnet20_joint_chain_20260911/bootstrap_network_precision.cpp:8,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/bench/resnet20_s2c_first/main.cpp:9:
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 96%] Linking CXX executable ../../../bin/poseidon_resnet20_s2c_first
+gmake[3]: warning:  Clock skew detected.  Your build may be incomplete.
+[100%] Built target poseidon_resnet20_s2c_first
+[ 74%] Built target poseidon_shared
+[ 97%] Built target poseidon_gpu
+[ 98%] Building CXX object poseidon_build/bench/resnet20_s2c_first/CMakeFiles/test_resnet20_manual_boot.dir/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/tests/runtime_api/manual_low_boot_test.cpp.o
+In file included from /home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/tests/runtime_api/manual_low_boot_test.cpp:5:
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/home/xuming/poseidon-manual-mlir-20261110/src/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[100%] Linking CXX executable ../../../bin/test_resnet20_manual_boot
+[100%] Built target test_resnet20_manual_boot
+[ 50%] Building CXX object poseidon_build/bench/resnet20_s2c_first/CMakeFiles/test_resnet20_prepared_api_graph.dir/test_prepared_api_graph.cpp.o
+[100%] Linking CXX executable ../../../bin/test_resnet20_prepared_api_graph
+[100%] Built target test_resnet20_prepared_api_graph

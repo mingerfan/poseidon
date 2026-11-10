@@ -1,0 +1,47 @@
+{
+  "implementation_commit": "30057fc24ade0b9be70dbb71606a36a10e6c448a",
+  "framework_base": "e45b10f7c966b6fe4f842985f703e46cad9b89f3",
+  "manual_optimization_source": "a0ca0a894746956550afce68609a1694fc41b236",
+  "runtime_commit": "b324472346c94faf5bd6200e5f2a6f7c21ada1b2",
+  "compiler_commit": "39ac33868209e8d946668418e1765111b2de95fc",
+  "branch": "experiment/manual-resnet20-mlir",
+  "server": "188Server",
+  "server_run_dir": "/home/xuming/poseidon-manual-mlir-20261110",
+  "gpu": "Tesla V100-SXM2-32GB",
+  "network_physical_gpu": 0,
+  "standalone_low_boot_physical_gpu": 0,
+  "standalone_high_boot_physical_gpu": 1,
+  "cuda": "12.2",
+  "gcc": "11",
+  "compiler_llvm_mlir": "18.1.8",
+  "hecate_opt_sha256": "ebdfb6953b411014cbddeb77873e3a571a6a78ccd70c9b7d2361502c5d79da76",
+  "source_sha256": {
+    "bench/resnet20_s2c_first/prepared_api_graph.h": "4f519344d9f00243dac9823d33a0eb542c2bd74f25265daa8ab4d0df4df24acc",
+    "bench/resnet20_s2c_first/prepared_gpu_api.h": "9e81323376ad48ffc6d089b7655e46d64d796b10c40eac26c89f9954adb37e2e",
+    "Doc/analysis/resnet20_joint_chain_20260911/bootstrap_network_precision.cpp": "521b868b0da820664d2e121e41bb232f755c83399993d64d00d970a936b65fd3",
+    "src/poseidon/gpu/gpu_bootstrap_profile.cpp": "63d22389bf11f61c8b8bd312381b886076a694087c35381a2c28645c30e246d9",
+    "src/poseidon/gpu/gpu_evaluator.cpp": "1fb4e79cea2ee0cd38c9d182d0e1cb87f3bcbc6f4a05183babaf9dd812cb6545"
+  },
+  "tested_source_matches_worktree": true,
+  "artifact_sha256": {
+    "resnet20-manual.mlir": "e24947cf6989a2923abf9147026d66b0c7fe715a6fb4f00c70942d1199a1bac8",
+    "compiled-json/operator-spec.json": "589e3e795f49eb613d474089b7188beb56152397435f89475ea7de9ea40872c3",
+    "compiled-json/scheduled.resnet20_manual.runtime-plan.json": "7a3696b8e472aca8eb91ca389c284bb9be62adc5ec0998dfb99e219c4b712abb",
+    "compiled-bin/scheduled.resnet20_manual.runtime-plan.bin": "cfe402f1862cb2bb82d7b5af7eec262564eb1af9c958f8df4a62306871c95831"
+  },
+  "standalone_boot_errors": {
+    "degree22": 1.57338e-05,
+    "degree59": 3.0556e-05
+  },
+  "test_counts": {
+    "compiler_ctest_passed": 35,
+    "runtime_ctest_passed": 10,
+    "server_ctest_passed": 5,
+    "bench_python_passed": 31,
+    "bench_python_skipped": 8
+  },
+  "native_boot": "degree22/DA3/K12/log_split2/full_coefficients/h32",
+  "task_granularity": "prepared_api",
+  "security_approved": false,
+  "source_branches_pushed": false
+}

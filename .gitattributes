@@ -23,4 +23,7 @@ test-results/mul-input-rescale-20261101/** -text -whitespace
 test-results/qwen-linear-reduction-fix-20261101/** -text -whitespace
 test-results/qwen-regional-dacapo-20261101/** -text -whitespace
 test-results/qwen-scale-audit-20261101/** -text -whitespace
+
+# Preserve single-GPU prepared-API plans, raw logs and recorded hashes.
+test-results/manual-mlir-20261110/** -text -whitespace
 test-results/regional-dacapo-20261101/** -text -whitespace
