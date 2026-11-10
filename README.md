@@ -88,14 +88,16 @@ ctest --test-dir build-runtime-cpu -R poseidon_runtime_cpu_api_tests --output-on
 
 `POSEIDON_CKKS_RUNTIME_SOURCE_DIR` can still point at another Runtime checkout
 for local development. The bundled CPU MLP, GPU MLP/Qwen, GPU MPI plan and
-runtime drivers generate direct Galois keys
+runtime drivers, and the ResNet20 resident driver generate direct Galois keys
 for requested rotation steps by default. Set
 `POSEIDON_RUNTIME_ROTATION_KEY_POLICY=binary` to opt into the compact binary
 basis; unset, empty or `direct` selects direct keys. Direct keys can require
 substantially more host and GPU memory and longer key generation. The CPU/GPU
 API still falls back to binary decomposition when callers supply only basis
 keys; this setting does not generate keys for external callers or modify native
-Bootstrap keys. MPI ranks should use the same policy.
+Bootstrap keys. MPI ranks should use the same policy. The isolated ResNet20
+resident runner and its profile requirements are documented in
+[`bench/resnet20_runtime/README.md`](bench/resnet20_runtime/README.md).
 
 CPU MPI and CUDA test paths are controlled by
 `POSEIDON_BUILD_CKKS_RUNTIME_MPI` and
