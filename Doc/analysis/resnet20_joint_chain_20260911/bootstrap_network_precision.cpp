@@ -9,10 +9,15 @@
 #include "original_conv_reference.h"
 #include "conv_probe_runtime.h"
 
+#include <nvtx3/nvToolsExt.h>
+
 #include <optional>
 #include <type_traits>
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
 #include "../../../bench/resnet20_s2c_first/gpu_activity_timing.h"
+#include "../../../bench/resnet20_s2c_first/prepared_gpu_api.h"
+#include "runtime/plan_reader.hpp"
+#include "runtime/operator_spec_reader.hpp"
 #endif
 
 namespace network_probe {
@@ -178,9 +183,20 @@ double check_boundary(const BaselineSession &s,const std::string &label,
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
 using ActivityTiming=poseidon::benchmark::s2c_first::GpuActivityTiming;
 
+// An NVTX range "s2c/<label>" around every stage, so an nsys capture (taken
+// with POSEIDON_S2C_CUPTI=0) can attribute kernels to the same categories as
+// the CUPTI breakdown. Without a profiler attached NVTX calls are no-ops.
+struct S2cNvtxRange {
+    explicit S2cNvtxRange(const std::string &label) {
+        nvtxRangePushA(("s2c/"+label).c_str());
+    }
+    ~S2cNvtxRange() {nvtxRangePop();}
+};
+
 template<class Function>
 auto run_activity(ActivityTiming *timing,const std::string &label,Function &&function) {
     using Result=decltype(function());
+    const S2cNvtxRange nvtx_range(label);
     if(!timing) {
         if constexpr(std::is_void_v<Result>) {function();return;}
         else return function();
@@ -299,8 +315,90 @@ class ContinuousBootstrap {
     GpuDoubleHoistWorkspace stc_workspace,cts_workspace;
     GpuBootstrapWorkspace evalmod_workspace;
     double alpha=1;
+    // By default (POSEIDON_S2C_LIBRARY_BOOT unset or 1) the performance path
+    // runs GpuEvaluator::bootstrap on the GPU library's S2C-first profile (the
+    // one the Runtime adapter uses): same Q6/2^40 -> Q31/2^40 contract as the
+    // degree-59 stages below, with the sparse ephemeral secret and the
+    // low-degree EvalMod. Its parameters are the measured degree-22 / DA3 /
+    // K=12 / h=32 profile; each can be set with
+    // POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}.
+    // POSEIDON_S2C_LIBRARY_BOOT=0 runs the application's degree-59 stages.
+    std::optional<GpuBootstrapProfile> library;
+    GpuBootstrapWorkspace library_workspace;
+    GpuResNet20ManualOptions library_options;
+
+    static std::uint32_t environment_u32(const char *name,std::uint32_t fallback) {
+        const char *raw=std::getenv(name);
+        if(!raw || !*raw)return fallback;
+        char *end=nullptr;const auto value=std::strtoul(raw,&end,10);
+        if(!end || *end!='\0')
+            throw std::invalid_argument(std::string(name)+" must be an unsigned integer");
+        return static_cast<std::uint32_t>(value);
+    }
+
+    void prepare_library() {
+        library_options.sine_degree=environment_u32("POSEIDON_S2C_BOOT_DEGREE",22);
+        library_options.double_angle=environment_u32("POSEIDON_S2C_BOOT_DOUBLE_ANGLE",3);
+        library_options.k=environment_u32("POSEIDON_S2C_BOOT_K",12);
+        library_options.log_split=environment_u32("POSEIDON_S2C_BOOT_LOG_SPLIT",2);
+        library_options.full_coefficients=
+            environment_u32("POSEIDON_S2C_BOOT_FULL_COEFFICIENTS",1)!=0;
+        library_options.sparse_secret_hamming_weight=
+            environment_u32("POSEIDON_S2C_BOOT_SPARSE_H",32);
+        library=s.manual_boot_profile(library_options);
+        const auto &boot=library->bootstrap_data;
+        if(!boot.slot_to_coeff_first || boot.input_q_count!=6 ||
+            !library->relin_keys || !library->galois_keys)
+            throw std::logic_error("library Boot profile is not the S2C-first Q6 profile");
+        library_workspace.coeff_to_slot_double_hoist.baby_tile_size=default_c2s_baby_tile;
+        const auto stc_compression=compressed_qp_stats(boot.slot_to_coeff_matrix_qp);
+        const auto cts_compression=compressed_qp_stats(boot.coeff_to_slot_matrix_qp);
+        const auto full_words=stc_compression.full_words+cts_compression.full_words;
+        const auto compact_words=
+            stc_compression.compact_words+cts_compression.compact_words;
+        if(!stc_compression.exact || !cts_compression.exact ||
+            !compact_words || compact_words>=full_words)
+            throw std::logic_error("library Boot QP plaintexts are not exactly compressed");
+        std::cout<<"BOOTSTRAP_QP_COMPRESSION enabled=true exact=true"
+            <<" stc_diagonals="<<stc_compression.diagonals
+            <<" cts_diagonals="<<cts_compression.diagonals
+            <<" full_MiB="<<double(full_words*sizeof(GpuWord))/(1ULL<<20)
+            <<" compact_MiB="<<double(compact_words*sizeof(GpuWord))/(1ULL<<20)
+            <<" ratio="<<double(full_words)/compact_words<<'\n';
+        std::cout<<"CONTINUOUS_PREPARE_BOOTSTRAP implementation="<<implementation()
+            <<" degree="<<library_options.sine_degree
+            <<" double_angle="<<library_options.double_angle
+            <<" k="<<library_options.k
+            <<" log_split="<<library_options.log_split
+            <<" full_coefficients="<<(library_options.full_coefficients?"true":"false")
+            <<" sparse_secret_h="<<library_options.sparse_secret_hamming_weight
+            <<" stc_diagonals="<<stc_compression.diagonals
+            <<" cts_diagonals="<<cts_compression.diagonals
+            <<" evalmod_q_out="<<boot.eval_mod.output_q_count<<'\n';
+    }
 public:
+    static bool library_boot_requested() {
+        const char *raw=std::getenv("POSEIDON_S2C_LIBRARY_BOOT");
+        if(!raw || !*raw)return true;
+        const std::string value(raw);
+        if(value!="0" && value!="1")
+            throw std::invalid_argument("POSEIDON_S2C_LIBRARY_BOOT must be 0 or 1");
+        return value=="1";
+    }
+    bool library_boot() const {return library.has_value();}
+    static std::string requested_implementation() {
+        if(!library_boot_requested())return "application_degree59";
+        return "library_degree"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_DEGREE",22))+
+            "_da"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_DOUBLE_ANGLE",3))+
+            "_k"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_K",12))+
+            "_h"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_SPARSE_H",32))+
+            "_split"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_LOG_SPLIT",2))+
+            "_full"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_FULL_COEFFICIENTS",1));
+    }
+    std::string implementation() const {return requested_implementation();}
+
     explicit ContinuousBootstrap(const BaselineSession &session):s(session) {
+        if(library_boot_requested()) {prepare_library();return;}
         // The Q50/P25 C2S matrices have eight baby steps per stage.  Keeping
         // all eight in one tile removes the second Q/P accumulator pass.
         // Only stage 1 has <=4 giant groups and uses the fused KeySwitch/MAC;
@@ -365,13 +463,25 @@ public:
             std::round(std::log2(ctx.crt_context()->q0()/32)));
         if(encrypted_input.meta.q_count!=6)
             throw std::runtime_error("continuous bootstrap input must be Q6");
+        if(library) {
+            CT refreshed;
+            run_activity(timing,"bootstrap.library",[&]{
+                eval.bootstrap(encrypted_input,library->bootstrap_data,
+                    *library->relin_keys,*library->galois_keys,
+                    library_workspace,refreshed);
+            });
+            s.replay.scale_check(refreshed,40);
+            if(refreshed.meta.q_count!=31)
+                throw std::runtime_error("library bootstrap output must be Q31");
+            return refreshed;
+        }
         CT stc_out,prepared,raised,real,imag,eval_real,eval_imag;
         run_activity(timing,"bootstrap.S2C",[&]{
             eval.dft_double_hoist(encrypted_input,stc,rotations,
                 stc_workspace,stc_out);
         });
         run_activity(timing,"bootstrap.prepare",[&]{
-            eval.bootstrap_prepare_modraise_input(stc_out,prepared,
+            prepare_modraise_at_q0(eval,stc_out,prepared,
                 ctx.crt_context()->parms_id_map().at(1),preparation_target);
         });
         run_activity(timing,"bootstrap.ModRaise",[&]{
@@ -404,22 +514,29 @@ public:
     }
 
     std::size_t stc_baby_tile_size() const {
-        return stc_workspace.baby_tile_size;
+        return stc_active().baby_tile_size;
     }
     std::size_t c2s_baby_tile_size() const {
-        return cts_workspace.baby_tile_size;
+        return cts_active().baby_tile_size;
     }
     std::size_t c2s_matrix_count() const {
-        return cts_workspace.matrix_counts.size();
+        return cts_active().matrix_counts.size();
     }
     std::size_t c2s_tile_batches() const {
         std::size_t result=0;
-        for(const auto &counts:cts_workspace.matrix_counts)
+        for(const auto &counts:cts_active().matrix_counts)
             result+=counts.baby_tile_count;
         return result;
     }
 
 private:
+    const GpuDoubleHoistWorkspace &stc_active() const {
+        return library?library_workspace.slot_to_coeff_double_hoist:stc_workspace;
+    }
+    const GpuDoubleHoistWorkspace &cts_active() const {
+        return library?library_workspace.coeff_to_slot_double_hoist:cts_workspace;
+    }
+
     struct QpCompressionStats {
         std::size_t diagonals=0,full_words=0,compact_words=0;
         bool exact=true;
@@ -458,6 +575,13 @@ private:
         return result;
     }
 };
+
+poseidon::benchmark::s2c_first::PreparedApiGraph make_prepared_api_graph(
+    const ApplicationNetworkFixture &fixture,const std::string &implementation) {
+    std::vector<int> strides;
+    for(const auto &block:fixture.blocks)strides.push_back(block.conv1.stride);
+    return poseidon::benchmark::s2c_first::PreparedApiGraph::resnet20(strides,implementation);
+}
 
 class FixedDnum2ApplicationKeys {
     const BaselineSession &s;
@@ -810,6 +934,119 @@ public:
 
     ~ContinuousNetwork() {s.replay.clear_relinearize_callback();}
 
+    CT dispatch_prepared_api(const poseidon::benchmark::s2c_first::PreparedApiTask &task,
+        std::vector<CT> inputs) {
+        if(task.callee=="stem") {
+            stem_runtime->begin_prepared_replay();
+            auto output=app::encrypted_stem_conv2d_bn(fixture.image,32,32,3,16,1,3,3,
+                fixture.stem.weights,fixture.stem.bn_scale,fixture.stem.bn_bias,*stem_runtime);
+            stem_runtime->finish_prepared_replay();
+            return std::move(*output.packs[0].gpu);
+        }
+        if(task.callee=="clone")return std::move(inputs.at(0));
+        if(task.callee=="relu")return execute_relu(inputs.at(0),false,nullptr);
+        if(task.callee.rfind("bootstrap.",0)==0)return bootstrap->run(inputs.at(0),nullptr);
+        if(task.callee=="conv") {
+            const auto &block=fixture.blocks.at(task.index/2);
+            const auto &layer=task.index%2?block.conv2:block.conv1;
+            return execute_conv(task.index,std::move(inputs.at(0)),layer,
+                task.h,task.w,task.c,task.k,false,nullptr);
+        }
+        if(task.callee=="shortcut")
+            return execute_shortcut(task.index,std::move(inputs.at(0)),
+                task.h,task.w,task.c,task.k,false,nullptr);
+        if(task.callee=="residual_add") {
+            auto left=tensor_from_device(s.metadata,std::move(inputs.at(0)),
+                task.h,task.w,task.c,task.k,no_keys,s.eval);
+            auto right=tensor_from_device(s.metadata,std::move(inputs.at(1)),
+                task.h,task.w,task.c,task.k,no_keys,s.eval);
+            auto output=app::residual_add(left,right,*add_runtime);
+            return std::move(*output.packs[0].gpu);
+        }
+        if(task.callee=="head") {
+            head_runtime->begin_prepared_replay();
+            auto tensor=tensor_from_device(s.metadata,std::move(inputs.at(0)),
+                task.h,task.w,task.c,task.k,no_keys,s.eval);
+            auto features=app::global_average_pool(tensor,40,*head_runtime);
+            auto output=app::fully_connected(features,64,fixture.linear_weight,
+                fixture.linear_bias,10,*head_runtime);
+            head_runtime->finish_prepared_replay();
+            return std::move(*output.gpu);
+        }
+        throw std::runtime_error("unregistered prepared GPU API: "+task.callee);
+    }
+
+    int run_runtime_plan(const std::string &plan_path,const std::string &spec_path) {
+        using Api=poseidon::benchmark::s2c_first::PreparedGpuApi;
+        const auto graph=make_prepared_api_graph(fixture,bootstrap->implementation());
+        const auto plan=fhegpu::RuntimePlanReader::read_file(plan_path);
+        const auto spec=fhegpu::OperatorSpecReader::read_file(spec_path);
+        Api api(graph,plan.plan,s.metadata.ctx,s.eval,[this](const auto &task,auto inputs) {
+            return dispatch_prepared_api(task,std::move(inputs));
+        });
+        s.replay.set_basis_preparation_checks(true);
+        auto warm=execute_graph(true);
+        s.replay.set_basis_preparation_checks(false);
+        gpu_check_cuda(cudaDeviceSynchronize(),"prepared API warmup");
+        warm=CT{};
+        const auto direct_begin=std::chrono::steady_clock::now();
+        auto direct=execute_graph(false);
+        gpu_check_cuda(cudaDeviceSynchronize(),"manual API reference completion");
+        const double direct_ms=std::chrono::duration<double,std::milli>(
+            std::chrono::steady_clock::now()-direct_begin).count();
+        s.replay.reset_moddrop_stats();
+        fhegpu::SequentialRuntime<Api> runtime(0,1,1,api);
+        cudaEvent_t begin,end;
+        gpu_check_cuda(cudaEventCreate(&begin),"prepared start event");
+        gpu_check_cuda(cudaEventCreate(&end),"prepared stop event");
+        struct Events {cudaEvent_t a,b;~Events(){cudaEventDestroy(a);cudaEventDestroy(b);}} events{begin,end};
+        const char *cupti_raw=std::getenv("POSEIDON_S2C_CUPTI");
+        const bool cupti=cupti_raw && std::string(cupti_raw)=="1";
+        std::optional<ActivityTiming> activity;
+        if(cupti) {activity.emplace();activity->begin_continuous();activity->stage("runtime",true);}
+        gpu_check_cuda(cudaEventRecord(begin),"prepared record start");
+        const auto wall_begin=std::chrono::steady_clock::now();
+        auto artifact=runtime.run(plan,fhegpu::RuntimeResources{spec,std::nullopt,false},{});
+        const double wall_ms=std::chrono::duration<double,std::milli>(
+            std::chrono::steady_clock::now()-wall_begin).count();
+        gpu_check_cuda(cudaEventRecord(end),"prepared record stop");
+        gpu_check_cuda(cudaEventSynchronize(end),"prepared timing completion");
+        float event_ms=0;gpu_check_cuda(cudaEventElapsedTime(&event_ms,begin,end),"prepared elapsed");
+        if(cupti) {
+            activity->stage("runtime",false);
+            auto result=activity->finish();result.print();
+        }
+        std::cout<<"PREPARED_RUNTIME_CALL_ORDER";
+        for(auto id:api.dispatch_order())std::cout<<' '<<id;
+        std::cout<<'\n';
+        const auto &logits=*artifact.values.at(plan.plan.final_outputs.at(0)).value;
+        const auto residues=require_exact_ciphertexts(s.metadata.ctx,direct,logits,"manual_vs_RuntimePlan");
+        const auto decoded=s.replay.decoded_after_timing(logits);
+        double error=0;int prediction=0,reference_prediction=0;
+        for(std::size_t i=0;i<fixture.reference_logits.size();++i) {
+            if(!std::isfinite(decoded.at(i).real()) || !std::isfinite(decoded.at(i).imag()))
+                throw std::runtime_error("RuntimePlan produced a non-finite logit");
+            error=std::max(error,std::abs(decoded.at(i).real()-fixture.reference_logits[i]));
+            if(decoded[i].real()>decoded[prediction].real())prediction=int(i);
+            if(fixture.reference_logits[i]>fixture.reference_logits[reference_prediction])reference_prediction=int(i);
+        }
+        const bool pass=std::isfinite(error) && error<=0.1 && prediction==reference_prediction;
+        std::cout<<"PREPARED_RUNTIME_RESULT accuracy="<<(pass?"PASS":"FAIL")
+            <<" exact_rns=true exact_residues="<<residues
+            <<" tasks="<<api.calls()<<" bootstraps="<<api.boot_calls()
+            <<" runtime_compute_calls="<<artifact.timing.compute_calls
+            <<" runtime_online_ms="<<double(artifact.timing.online_execution_nanoseconds)/1e6
+            <<" wall_ms="<<wall_ms<<" cuda_event_ms="<<event_ms<<" manual_wall_ms="<<direct_ms
+            <<" max_logit_error="<<error<<" prediction="<<prediction
+            <<" reference_prediction="<<reference_prediction
+            <<" bootstrap_implementation="<<bootstrap->implementation()
+            <<" encrypted_logits_q="<<logits.meta.q_count
+            <<" intermediate_reencryptions=0 cupti="<<(cupti?"true":"false")
+            <<" task_granularity=prepared_api"
+            <<" scale_planning=false boot_planning=false devices=1 security_approved=false\n";
+        return pass?0:1;
+    }
+
     int run() {
         s.replay.reset_moddrop_stats();
         s.replay.set_basis_preparation_checks(true);
@@ -850,7 +1087,14 @@ public:
             <<" bootstrap_c2s_tile_batches="<<c2s_tile_batches
             <<" free_MiB="<<double(free_bytes)/(1ULL<<20)<<'\n';
 
-        poseidon::benchmark::s2c_first::GpuActivityTiming activity;
+        // POSEIDON_S2C_CUPTI=0 times the inference without the CUPTI collector
+        // (no per-API activity records), the condition Cerium's program.run()
+        // is timed under. Only wall, event and enqueue time and the accuracy
+        // check are reported then; the category breakdown needs CUPTI.
+        const char *cupti_raw=std::getenv("POSEIDON_S2C_CUPTI");
+        const bool cupti=!(cupti_raw && std::string(cupti_raw)=="0");
+        std::optional<poseidon::benchmark::s2c_first::GpuActivityTiming> activity_storage;
+        if(cupti)activity_storage.emplace();
         cudaEvent_t start_event=nullptr,stop_event=nullptr;
         gpu_check_cuda(cudaEventCreate(&start_event),"continuous start event");
         gpu_check_cuda(cudaEventCreate(&stop_event),"continuous stop event");
@@ -858,16 +1102,48 @@ public:
             if(a)cudaEventDestroy(a);if(b)cudaEventDestroy(b);}} cleanup{start_event,stop_event};
         gpu_check_cuda(cudaDeviceSynchronize(),"continuous timing start sync");
         s.replay.reset_moddrop_stats();
-        activity.begin_continuous();
+        if(cupti)activity_storage->begin_continuous();
         gpu_check_cuda(cudaEventRecord(start_event),"continuous record start");
+        nvtxRangePushA("s2c.online");
         const auto wall_begin=std::chrono::steady_clock::now();
-        auto logits=execute_graph(false,&activity);
+        auto logits=execute_graph(false,cupti?&*activity_storage:nullptr);
         const auto enqueue_end=std::chrono::steady_clock::now();
         gpu_check_cuda(cudaEventRecord(stop_event),"continuous record stop");
         gpu_check_cuda(cudaDeviceSynchronize(),"continuous inference completion");
         const auto wall_end=std::chrono::steady_clock::now();
+        nvtxRangePop();
         float event_ms=0;gpu_check_cuda(cudaEventElapsedTime(
             &event_ms,start_event,stop_event),"continuous event elapsed");
+        if(!cupti) {
+            const auto decoded=s.replay.decoded_after_timing(logits);
+            if(decoded.size()<fixture.reference_logits.size())
+                throw std::runtime_error("post-timing logits are truncated");
+            double max_logit_error=0;int gpu_prediction=0,plain_prediction=0;
+            for(std::size_t index=0;index<fixture.reference_logits.size();++index) {
+                if(!std::isfinite(decoded[index].real()) || !std::isfinite(decoded[index].imag()))
+                    throw std::runtime_error("manual network produced a non-finite logit");
+                max_logit_error=std::max(max_logit_error,
+                    std::abs(decoded[index].real()-fixture.reference_logits[index]));
+                if(decoded[index].real()>decoded[gpu_prediction].real())
+                    gpu_prediction=int(index);
+                if(fixture.reference_logits[index]>fixture.reference_logits[plain_prediction])
+                    plain_prediction=int(index);
+            }
+            const bool accuracy_pass=std::isfinite(max_logit_error) &&
+                max_logit_error<=0.1 && gpu_prediction==plain_prediction;
+            std::cout<<"CONTINUOUS_TIMING_RESULT mode=clean_wall_no_cupti"
+                <<" wall_ms="<<std::chrono::duration<double,std::milli>(
+                    wall_end-wall_begin).count()
+                <<" cuda_event_ms="<<event_ms
+                <<" host_enqueue_ms="<<std::chrono::duration<double,std::milli>(
+                    enqueue_end-wall_begin).count()
+                <<" prediction="<<gpu_prediction
+                <<" accuracy="<<(accuracy_pass?"PASS":"FAIL")
+                <<" max_logit_error="<<max_logit_error
+                <<" bootstrap_implementation="<<bootstrap->implementation()<<'\n';
+            return accuracy_pass?0:1;
+        }
+        auto &activity=*activity_storage;
         auto result=activity.finish();result.print();
         report_conv_plain_batch(false);
         report_relu_basis_fusion(false);
@@ -912,13 +1188,19 @@ public:
             <<" adds_removed="<<moddrop_stats.fused_leaf_adds_removed
             <<" exact_checks="<<moddrop_stats.exact_leaf_checks
             <<" online_observer=false coefficients_changed=false rescale_changed=false\n";
-        const std::map<std::string,int> category_calls{
-            {"bootstrap.C2S",18},{"bootstrap.EvalMod",36},
-            {"bootstrap.ModRaise",18},{"bootstrap.S2C",18},
-            {"bootstrap.prepare",18},{"bootstrap.recombine",18},
+        // The library Boot is one call per bootstrap; its stages are NVTX
+        // ranges inside GpuEvaluator::bootstrap, not separate categories here.
+        const std::vector<std::string> bootstrap_categories=bootstrap->library_boot()
+            ? std::vector<std::string>{"bootstrap.library"}
+            : std::vector<std::string>{"bootstrap.C2S","bootstrap.EvalMod",
+                "bootstrap.ModRaise","bootstrap.S2C","bootstrap.prepare",
+                "bootstrap.recombine"};
+        std::map<std::string,int> category_calls{
             {"conv_bn",18},{"head",1},{"relu",19},
             {"residual.add",9},{"residual.clone",9},{"shortcut",2},
             {"stem.conv_bn",1}};
+        for(const auto &category:bootstrap_categories)
+            category_calls.emplace(category,category=="bootstrap.EvalMod"?36:18);
         double breakdown_sum_ms=0;
         for(const auto &[category,stage]:result.stages) {
             if(!category_calls.count(category))
@@ -935,12 +1217,13 @@ public:
         const auto stage_ms=[&](const char *category) {
             return result.stages.at(category).gpu_ms;
         };
+        double bootstrap_ms=0;
+        for(const auto &category:bootstrap_categories)
+            bootstrap_ms+=stage_ms(category.c_str());
         const std::vector<std::pair<std::string,double>> report_categories{
             {"Conv+BN",stage_ms("conv_bn")+stage_ms("stem.conv_bn")},
             {"ReLU",stage_ms("relu")},
-            {"Bootstrap",stage_ms("bootstrap.C2S")+stage_ms("bootstrap.EvalMod")+
-                stage_ms("bootstrap.ModRaise")+stage_ms("bootstrap.S2C")+
-                stage_ms("bootstrap.prepare")+stage_ms("bootstrap.recombine")},
+            {"Bootstrap",bootstrap_ms},
             {"Shortcut",stage_ms("shortcut")},
             {"Pool+FC",stage_ms("head")},
             {"Residual/copy",stage_ms("residual.add")+stage_ms("residual.clone")}};
@@ -965,6 +1248,8 @@ public:
         std::vector<double> gpu_logits(fixture.reference_logits.size());
         double max_logit_error=0,max_logit_imag=0;
         for(std::size_t index=0;index<gpu_logits.size();++index) {
+            if(!std::isfinite(decoded[index].real()) || !std::isfinite(decoded[index].imag()))
+                throw std::runtime_error("manual network produced a non-finite logit");
             gpu_logits[index]=decoded[index].real();
             max_logit_error=std::max(max_logit_error,
                 std::abs(gpu_logits[index]-fixture.reference_logits[index]));
@@ -1013,6 +1298,7 @@ public:
             <<" conv_plain_batch="<<(conv_plain_batch?"true":"false")
             <<" relu_basis_fusion="<<(basis_fusion?"true":"false")
             <<" encrypted_logits_q="<<logits.meta.q_count
+            <<" bootstrap_implementation="<<bootstrap->implementation()
             <<" security_approved=false\n";
         return accuracy_pass?0:1;
     }
@@ -1183,10 +1469,11 @@ int run_s2c_first_resnet20_application(int argc,char **argv) {
         const std::string mode=argc>1?argv[1]:"";
         bool valid_mode=mode=="--metadata-only" || mode=="--unsafe-accuracy-only";
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
-        valid_mode=valid_mode || mode=="--unsafe-performance-only";
+        valid_mode=valid_mode || mode=="--unsafe-performance-only" ||
+            mode=="--emit-mlir" || mode=="--unsafe-runtime-plan";
 #endif
         if(argc<4 || argc>6 || !valid_mode)
-            throw std::runtime_error("usage: bootstrap_network_precision --metadata-only|--unsafe-accuracy-only|--unsafe-performance-only fixture.txt image_id [--max-blocks N]");
+            throw std::runtime_error("usage: bootstrap_network_precision --metadata-only|--unsafe-accuracy-only|--unsafe-performance-only fixture image [--max-blocks N]; --emit-mlir fixture image output.mlir; --unsafe-runtime-plan fixture image plan operator-spec");
 #ifndef POSEIDON_S2C_FIRST_ENABLE_TIMING
         if(mode=="--unsafe-performance-only")
             throw std::runtime_error("performance mode is available only in the dedicated bench entry");
@@ -1194,8 +1481,11 @@ int run_s2c_first_resnet20_application(int argc,char **argv) {
         std::size_t parsed=0;const int image=std::stoi(argv[3],&parsed);
         if(parsed!=std::string(argv[3]).size() || image<0 || image>=10000)
             throw std::runtime_error("invalid CIFAR image id");
+        const bool emit=mode=="--emit-mlir",runtime_plan=mode=="--unsafe-runtime-plan";
+        if((emit && argc!=5) || (runtime_plan && argc!=6))
+            throw std::runtime_error("usage: --emit-mlir fixture image output.mlir OR --unsafe-runtime-plan fixture image plan.json operator-spec.json");
         std::size_t max_blocks=9;
-        if(argc>4) {
+        if(argc>4 && !emit && !runtime_plan) {
             if(std::string(argv[4])!="--max-blocks" || argc!=6)
                 throw std::runtime_error("expected --max-blocks N");
             parsed=0;max_blocks=std::stoul(argv[5],&parsed);
@@ -1206,17 +1496,31 @@ int run_s2c_first_resnet20_application(int argc,char **argv) {
             throw std::runtime_error("performance mode always runs the complete 9-block network");
         ReluFixture relu(argv[2]);auto fixture=load_application_network_fixture(image);
         std::string profile="q50-fixed45",dataset="grid";
-        char *args[]={argv[0],argv[1],profile.data(),dataset.data(),argv[2]};
+        std::string baseline_mode=emit?"--metadata-only":runtime_plan?"--unsafe-performance-only":mode;
+        char *args[]={argv[0],baseline_mode.data(),profile.data(),dataset.data(),argv[2]};
         return run_bootstrap_baseline(5,args,[&](const BaselineMetadata &m) {
             check_continuation_metadata(m,relu);
             if(fixture.blocks.size()!=9 || fixture.stem_output.size()!=16384 ||
                 fixture.reference_logits.size()!=10)
                 throw std::runtime_error("ResNet20 fixture is incomplete");
+#ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
+            if(emit) {
+                auto graph=network_probe::make_prepared_api_graph(fixture,
+                    network_probe::ContinuousBootstrap::requested_implementation());
+                std::vector<std::uint64_t> q;
+                for(const auto &prime:m.ctx.parameters_literal()->q())q.push_back(prime.value());
+                graph.write_mlir(argv[4],q);
+                std::cout<<"PREPARED_MLIR output="<<argv[4]<<" tasks="<<graph.tasks.size()
+                    <<" bootstrap_implementation="<<graph.bootstrap_implementation<<'\n';
+            }
+#endif
             std::cout<<"NETWORK_METADATA topology_blocks=9 bootstrap_points=18"
                 <<" input_q=32 stem_output_q=31"
                 <<" oracle=independent_original_CHW input_boundary=40 status=PASS\n";
         },{},nullptr,true,[&](const BaselineSession &session) {
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
+            if(runtime_plan)
+                return network_probe::ContinuousNetwork(session,relu,fixture).run_runtime_plan(argv[4],argv[5]);
             if(mode=="--unsafe-performance-only")
                 return network_probe::ContinuousNetwork(session,relu,fixture).run();
 #endif

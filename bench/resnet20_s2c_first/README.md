@@ -5,9 +5,14 @@
 ```text
 27 x prepared encrypted input patches (Q32) -> stem (Q31) -> ReLU (Q9)
   -> 9 BasicBlocks
-  -> 18 x (S2C-first degree-59 bootstrap + ReLU)
+  -> 18 x (S2C-first bootstrap + ReLU)
   -> global average pool -> FC -> encrypted logits
 ```
+
+性能模式默认使用库级 degree-22 / DA3 / K12 / h32 Boot，保留压缩 QP 明文、
+hoisting、ReLU Q-prefix/融合和 Conv 批量乘加。`POSEIDON_S2C_LIBRARY_BOOT=0`
+切回应用自带的 degree-59 Boot。两者均为 Q6/2^40 → Q31/2^40；逐阶段
+`--unsafe-accuracy-only` 仍是旧 degree-59 诊断。
 
 输入 patch 直接在 Q32、scale `2^40` 编码和加密；Stem 的一次明文乘法与
 rescale 自然得到 Q31、scale `2^40`。入口不再先生成 Q50 patch，也不存在原来的
@@ -62,6 +67,67 @@ CUDA_VISIBLE_DEVICES=0 /tmp/poseidon_resnet20_s2c_first \
 
 `--unsafe-*` 表示 Q50/P25、`dnum=2` 尚未获得安全参数批准，不能作为生产安全
 配置。两条 GPU 路径均使用随机非零秘密密钥，不允许零密钥或中间结果重加密。
+
+## 单卡 API → MLIR → RuntimePlan 实验
+
+`--emit-mlir` 把这条手写网络的 prepared API 边界输出为 77 个 `ckks.apicall`：
+stem 1、Conv 18、ReLU 19、native Boot 18、clone 9、residual add 9、shortcut 2、head 1。
+结果类型明确使用物理 Q 层（MLIR level = Q 数 − 1）和 scale40，包括 shortcut Q8、
+混合 Q 输入的 residual add 以及最终 Q4 logits。
+
+编译器只运行 HEFT placement、通信物化和边界值内存规划，不运行 scale/Boot
+规划，也不移动内部 rescale。输出是真正的 RuntimePlan V7（JSON 或 binary），由
+通用 `SequentialRuntime<PreparedGpuApi>` 逐条执行；不是另写一个网络绕过计划。
+Boot 的完整参数写进 callee 并与本地 registry 匹配，实际调用优化后的 native GPU
+Boot；没有解密重加密路径。27 个原始输入 patch、权重、密钥和 Boot 材料在运行前
+准备并常驻，stem 是零输入的 prepared call，计划不会重复上传这些资源。
+
+**粒度限制：** Conv/ReLU/Boot 内部仍由原实现管理 workspace 和 scratch，编译器
+目前只看见 77 个任务及其边界值，不能调度内部的每个 kernel。这里的耗时估计是
+手工粗估，不是 GPU profiling 数据。当前 executor 只支持一个 rank、一张卡、单流
+串行执行，不声称多卡或跨 stream 并发。
+
+```bash
+# 1. 编译 GPU 应用（与原构建入口相同，另加轻量 RuntimePlan reader/core）
+bash bench/resnet20_s2c_first/build.sh /tmp/poseidon_resnet20_s2c_first
+FIXTURE=Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt
+
+# 2. 只生成 MLIR；不初始化 GPU、不生成密钥
+/tmp/poseidon_resnet20_s2c_first --emit-mlir "$FIXTURE" 0 /tmp/resnet20-manual.mlir
+
+# 3. 使用本分支的新 hecate-opt（旧工具没有 apicall/V7）
+DACAPO=third_party/ckks-runtime/third_party/dacapo
+# 首次构建需本地 LLVM/MLIR 18 开发包；不需要联网下载。
+cmake -S "$DACAPO" -B "$DACAPO/build/manual" -G Ninja \
+  -DMLIR_DIR=/path/to/llvm18/lib/cmake/mlir -DLLVM_DIR=/path/to/llvm18/lib/cmake/llvm \
+  -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON
+cmake --build "$DACAPO/build/manual" --target hecate-opt --parallel 8
+python3 bench/resnet20_s2c_first/compile_prepared.py /tmp/resnet20-manual.mlir \
+  --format binary --output-dir /tmp/manual-plan
+# 自动生成的 operator-spec.json 只声明真实上下文，不伪造普通算子能力/latency。
+
+# 4. 单卡执行；同进程先运行原手写版作为同密钥、同输入密文的参考
+CUDA_VISIBLE_DEVICES=0 POSEIDON_DOUBLE_HOIST_QP_C0=1 \
+  /tmp/poseidon_resnet20_s2c_first --unsafe-runtime-plan "$FIXTURE" 0 \
+  /tmp/manual-plan/scheduled.resnet20_manual.runtime-plan.bin \
+  /tmp/manual-plan/operator-spec.json
+```
+
+JSON 使用 `--format json`，执行时改传 `.json`。修改 Boot 选项后须重新生成 MLIR
+并编译；不匹配的 callee 会报错。默认低阶参数为
+`POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}`
+= `22,3,12,2,1,32`。旧应用 Boot 用同样方式先设置 `POSEIDON_S2C_LIBRARY_BOOT=0`。
+
+`PREPARED_RUNTIME_RESULT` 要求 77 次真实 dispatch、18 次 Boot、Q4 输出、
+`exact_rns=true`，并按原标准检查分类及十个 logits 误差不超过 0.1。
+`PREPARED_RUNTIME_CALL_ORDER` 是实际执行顺序；HEFT 可以先排 Conv、后排 clone，
+backend 按最后使用转移所有权，保持残差分支。全 RNS 对照和最终解密都在计时外。
+默认报告不挂 CUPTI 的时间；`POSEIDON_S2C_CUPTI=1` 额外验证 online 无 H2D/D2H，
+采集器遇到传输或丢记录直接失败。
+
+低阶 h32 的 dense→sparse key 在完整 Q50/P25 上生成，**不安全，仅用于研究和性能
+实验**；这些测试不构成安全参数批准。188Server 的实测与复现脚本见
+`test-results/manual-mlir-20261110/`。
 
 ## 上一轮完整实测（2026-09-18，Q32、C2S full-baby 与 ReLU Q-prefix views）
 

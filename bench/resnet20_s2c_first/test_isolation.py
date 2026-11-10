@@ -70,7 +70,7 @@ class DedicatedApplicationIsolationTest(unittest.TestCase):
         self.assertNotIn("--unsafe-continuous-performance-only", text)
         self.assertNotIn("class TimingNetwork", text)
         self.assertNotIn("class MeasuredGpuStages", text)
-        self.assertIn("activity.begin_continuous()", text)
+        self.assertIn("activity_storage->begin_continuous()", text)
         self.assertNotIn('activity.stage("resnet20"', text)
         for category in ("bootstrap.S2C", "bootstrap.C2S", "bootstrap.EvalMod",
                          "relu", "conv_bn", "residual.add", "head"):
@@ -174,7 +174,7 @@ class DedicatedApplicationIsolationTest(unittest.TestCase):
         self.assertIn("enabled?285:0", network)
         self.assertIn("enabled && preparation?824311808:0", network)
         self.assertLess(network.index("set_basis_preparation_checks(false)"),
-                        network.index("activity.begin_continuous()"))
+                        network.index("activity_storage->begin_continuous()"))
 
 
 if __name__ == "__main__":

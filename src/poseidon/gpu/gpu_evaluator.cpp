@@ -3376,6 +3376,53 @@ void GpuEvaluator::rotate(
     destination_ciphertext = std::move(result);
 }
 
+void GpuEvaluator::switch_key(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuEvaluationKeyData &switch_key,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    validate_rotate_input(source_ciphertext);
+    if (switch_key.empty())
+        throw std::invalid_argument("GpuEvaluator::switch_key: empty key");
+    NvtxRange range("SwitchKey");
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+    if (source_ciphertext.meta.p_count != 0 ||
+        switch_key.meta.degree != source_ciphertext.meta.degree ||
+        switch_key.meta.q_count < source_ciphertext.meta.q_count ||
+        switch_key.meta.component_count != 2 || switch_key.meta.key_count != 1 ||
+        switch_key.meta.galois_format != GpuGaloisKeyFormat::Standard ||
+        level_info.shards.empty() || switch_key.meta.p_count == 0 ||
+        switch_key.meta.p_count != level_info.shards.front().hybrid_base_p_count ||
+        std::any_of(switch_key.fields_.begin(), switch_key.fields_.end(),
+                    [device_id](const auto &field) { return field.device_id != device_id; }))
+        throw std::invalid_argument("GpuEvaluator::switch_key: incompatible HYBRID key layout");
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            2,
+            device_id,
+            source_ciphertext.polys_.at(0).shards,
+            source_ciphertext.meta.p_count);
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = 2;
+    result.meta.is_ntt_form = true;
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    copy_poly(destination_view.polys[0], source_view.polys[0],
+              "GpuEvaluator::switch_key copy c0");
+    zero_poly(destination_view.polys[1], "GpuEvaluator::switch_key zero c1");
+    keyswitch_handler_.switch_key_hybrid_ciphertext(
+        destination_view,
+        source_view.polys[1],
+        switch_key.const_view(source_ciphertext.meta.q_count),
+        switch_key,
+        0,
+        level_info);
+    destination_ciphertext = std::move(result);
+}
+
 void GpuEvaluator::rotate_many_hoisted(
     const GpuCiphertextData &source_ciphertext,
     const std::vector<int> &steps,
@@ -5166,6 +5213,44 @@ void GpuEvaluator::slot_to_coeff_double_hoist(
         result);
 }
 
+namespace
+{
+// Dense -> sparse at q0, ModRaise under the sparse secret, then back to dense.
+void raise_modulus_encapsulated(
+    const GpuEvaluator &evaluator,
+    const GpuCiphertextData &input,
+    const GpuBootstrapData &data,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &raised)
+{
+    if (!data.sparse_switch_to_ephemeral && !data.sparse_switch_to_dense)
+    {
+        evaluator.raise_modulus(input, raised);
+        return;
+    }
+    if (!data.sparse_switch_to_ephemeral || !data.sparse_switch_to_dense)
+        throw std::invalid_argument(
+            "GPU bootstrap sparse-secret encapsulation needs both switching keys");
+    NvtxRange range("SparseSecretEncapsulation");
+    evaluator.switch_key(input, *data.sparse_switch_to_ephemeral, workspace.scratch4);
+    evaluator.raise_modulus(workspace.scratch4, workspace.scratch5);
+    evaluator.switch_key(workspace.scratch5, *data.sparse_switch_to_dense, raised);
+}
+
+void drop_to_slot_to_coeff_input(
+    const GpuEvaluator &evaluator, const GpuBootstrapData &data,
+    GpuCiphertextData &ciphertext)
+{
+    if (data.slot_to_coeff_input_q_count == 0 ||
+        ciphertext.meta.q_count == data.slot_to_coeff_input_q_count)
+        return;
+    if (ciphertext.meta.q_count < data.slot_to_coeff_input_q_count)
+        throw std::runtime_error(
+            "GPU bootstrap EvalMod output is below the SlotToCoeff input level");
+    evaluator.drop_modulus_inplace(ciphertext, data.slot_to_coeff_input_parms_id);
+}
+} // namespace
+
 void GpuEvaluator::bootstrap(
     const GpuCiphertextData &source_ciphertext,
     const GpuBootstrapData &bootstrap_data,
@@ -5255,7 +5340,8 @@ void GpuEvaluator::bootstrap(
                 bootstrap_data.q0_over_message_ratio);
         }
 
-        raise_modulus(workspace.modraise_input, workspace.raised);
+        raise_modulus_encapsulated(
+            *this, workspace.modraise_input, bootstrap_data, workspace, workspace.raised);
 
         if (bootstrap_data.raised_scale_override > 0.0)
         {
@@ -5346,6 +5432,9 @@ void GpuEvaluator::bootstrap(
         workspace.eval_mod_imag.meta.scale =
             bootstrap_data.slot_to_coeff_input_scale;
     }
+
+    drop_to_slot_to_coeff_input(*this, bootstrap_data, workspace.eval_mod_real);
+    drop_to_slot_to_coeff_input(*this, bootstrap_data, workspace.eval_mod_imag);
 
     {
         NvtxRange range("StC");

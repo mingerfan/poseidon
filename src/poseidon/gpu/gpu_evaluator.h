@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -260,6 +261,16 @@ struct GpuBootstrapData
     bool project_real = false;
     std::uint32_t output_ratio = 1;
     double slot_to_coeff_output_scale = 0.0;
+
+    /* Dense -> ephemeral at q0, ModRaise, then ephemeral -> dense at full Q.
+     * Single KSwitch keys in key-index-zero layout. Both absent disables it.
+     * Full-modulus dense->sparse keys are for unsafe research/performance use. */
+    std::shared_ptr<const GpuEvaluationKeyData> sparse_switch_to_ephemeral;
+    std::shared_ptr<const GpuEvaluationKeyData> sparse_switch_to_dense;
+
+    // Optional EvalMod surplus-Q drop before S2C (or the S2C-first final merge).
+    std::size_t slot_to_coeff_input_q_count = 0;
+    parms_id_type slot_to_coeff_input_parms_id{};
 };
 
 /**
@@ -607,6 +618,13 @@ public:
         const GpuCiphertextData &source_ciphertext,
         int step,
         const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Switch a size-2 NTT ciphertext using a single HYBRID key at index zero.
+     * The caller must generate the key in this evaluator's cryptographic context. */
+    void switch_key(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuEvaluationKeyData &switch_key,
         GpuCiphertextData &destination_ciphertext) const;
 
     void rotate_inplace(GpuCiphertextData &ciphertext, int step,

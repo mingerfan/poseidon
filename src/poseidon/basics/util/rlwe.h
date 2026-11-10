@@ -27,6 +27,11 @@ void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
                                       const PoseidonContext &context, parms_id_type id,
                                       uint64_t *destination);
 
+/** Explicit weight for the ephemeral secret used by sparse-secret encapsulation. */
+void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
+                                      const PoseidonContext &context, parms_id_type id,
+                                      std::size_t hamming_weight, uint64_t *destination);
+
 /**
 Generate a polynomial from a normal distribution and store in RNS representation.
 

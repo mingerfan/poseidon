@@ -46,9 +46,29 @@ struct GpuBootstrapProfileConfig
     bool project_real = false;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::DoubleHoistBsgs;
-    // Store periodic DoubleHoistBsgs QP diagonals exactly, without redundant
-    // residues. This changes storage only, not EvalMod or the secret key.
+    /* Nonzero selects the ephemeral secret's Hamming weight (e.g. 32).
+     * WARNING: the dense->sparse key uses the full key modulus; this is an
+     * unsafe performance/research profile, not a secure deployment scheme. */
+    std::uint32_t sparse_secret_hamming_weight = 0;
+    // Include odd Chebyshev coefficients of the discrete cosine fit.
+    bool eval_mod_full_coefficients = false;
+    // Store periodic DoubleHoistBsgs QP diagonals exactly, without redundant residues.
     bool compress_linear_plaintexts = false;
+    // Drop surplus EvalMod limbs before S2C to retain a declared output level.
+    std::optional<int> output_level;
+};
+
+/** Manual S2C-first Boot options. Defaults retain degree59/DA2/K25.
+ * The optimized research profile uses {22, 3, 12, 2, true, 32}. */
+struct GpuResNet20ManualOptions
+{
+    std::uint32_t sine_degree = 59;
+    std::uint32_t double_angle = 2;
+    std::uint32_t k = 25;
+    std::uint32_t log_split = 3;
+    bool full_coefficients = false;
+    // See the full-modulus sparse-key security warning above.
+    std::uint32_t sparse_secret_hamming_weight = 0;
 };
 
 /**
@@ -88,7 +108,7 @@ public:
     // degree59/DA2 with folded coefficients -> Q31/scale40.
     static GpuBootstrapProfile build_resnet20_manual(
         const PoseidonContext &context, KeyGenerator &key_generator,
-        int cuda_device_id);
+        int cuda_device_id, const GpuResNet20ManualOptions &options = {});
 };
 
 } // namespace gpu

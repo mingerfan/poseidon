@@ -7,13 +7,21 @@ if(NOT TARGET CUDA::cupti)
     message(FATAL_ERROR "The S2C-first activity collector requires CUDA CUPTI")
 endif()
 
+if(NOT TARGET ckks_runtime::plan_json)
+    set(CKKS_RUNTIME_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(CKKS_RUNTIME_BUILD_EXPERIMENTS OFF CACHE BOOL "" FORCE)
+    add_subdirectory("${POSEIDON_INCLUDES_DIR}/third_party/ckks-runtime"
+        "${CMAKE_CURRENT_BINARY_DIR}/ckks-runtime")
+endif()
+
 add_executable(poseidon_resnet20_s2c_first
     main.cpp plain_resnet20_reference.cpp gpu_activity_timing.cpp
     support/resnet20_weights.cpp)
 target_link_libraries(poseidon_resnet20_s2c_first PRIVATE
-    poseidon::gpu CUDA::cupti ${CMAKE_DL_LIBS})
+    poseidon::gpu ckks_runtime::plan_json CUDA::cupti ${CMAKE_DL_LIBS})
 target_include_directories(poseidon_resnet20_s2c_first PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/support"
+    "${POSEIDON_INCLUDES_DIR}/third_party/nvtx/c/include"
     "${POSEIDON_INCLUDES_DIR}/Doc/analysis/resnet20_joint_chain_20260911")
 target_compile_definitions(poseidon_resnet20_s2c_first PRIVATE
     POSEIDON_GPU_RESNET20_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/support")
@@ -26,6 +34,17 @@ set_target_properties(poseidon_resnet20_s2c_first PROPERTIES
 add_test(NAME resnet20_s2c_first_metadata
     COMMAND poseidon_resnet20_s2c_first --metadata-only
     "${POSEIDON_INCLUDES_DIR}/Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt" 0)
+
+add_executable(test_resnet20_manual_boot
+    "${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/manual_low_boot_test.cpp")
+target_link_libraries(test_resnet20_manual_boot PRIVATE poseidon::gpu)
+add_test(NAME resnet20_manual_boot_host COMMAND test_resnet20_manual_boot
+    "${POSEIDON_INCLUDES_DIR}/Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt" --host)
+
+add_executable(test_resnet20_prepared_api_graph test_prepared_api_graph.cpp)
+add_test(NAME resnet20_prepared_api_graph COMMAND test_resnet20_prepared_api_graph)
+set_target_properties(test_resnet20_manual_boot test_resnet20_prepared_api_graph
+    PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 add_executable(test_homomorphic_dft_repack
     "${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/bootstrapping/test_homomorphic_dft_repack.cpp")

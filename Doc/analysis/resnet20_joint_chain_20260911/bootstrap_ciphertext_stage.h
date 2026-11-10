@@ -94,7 +94,7 @@ int bootstrap_existing_ciphertext(const BaselineMetadata &m,
     Values expected_stc=noisy_input;
     for (auto &matrix:stc_ideal) expected_stc=plain_dft(expected_stc,matrix);
     replay.check("baseline_S2C_vs_plain_DFT",stc_out,expected_stc);
-    timed_gpu("prepare",[&]{eval.bootstrap_prepare_modraise_input(
+    timed_gpu("prepare",[&]{prepare_modraise_at_q0(eval,
         stc_out,prepared,ctx.crt_context()->parms_id_map().at(1),preparation_target);});
     if (prepared.meta.q_count!=2) throw std::runtime_error("prepare did not retain Q2");
     const double multiplier=std::round(preparation_target/stc_out.meta.scale);

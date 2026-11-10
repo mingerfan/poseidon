@@ -19,7 +19,7 @@ def fields(line: str) -> dict[str, str]:
     return dict(re.findall(r"([^\s=]+)=([^\s]+)", line))
 
 
-def summarize(text: str) -> dict[str, float | int]:
+def summarize(text: str) -> dict[str, float | int | str]:
     lines = text.splitlines()
     memory = fields(one(lines, "MEMORY "))
     key_preflight = fields(one(lines, "APPLICATION_KEY_PREFLIGHT "))
@@ -135,8 +135,31 @@ def summarize(text: str) -> dict[str, float | int]:
         raise ValueError("post-timing encrypted-logit accuracy did not pass")
     if accuracy.get("max_logit_error") != result.get("max_logit_error"):
         raise ValueError("post-timing accuracy/result error mismatch")
-    if memory.get("pool_cap_GiB") != "30" or memory.get("pool_initial_GiB") != "30":
-        raise ValueError("performance run did not use the fixed 30 GiB resident pool")
+    # 30 GiB on the 32 GB V100; POSEIDON_S2C_POOL_MIB sizes it for smaller
+    # cards. Either way the whole pool is reserved at start-up.
+    if (memory.get("pool_cap_GiB") != memory.get("pool_initial_GiB") or
+            float(memory.get("pool_cap_GiB", "0")) <= 0):
+        raise ValueError("performance run did not reserve its whole resident pool at start-up")
+    # Logs from before the library Boot carry no implementation field.
+    implementation = result.get("bootstrap_implementation", "application_degree59")
+    if implementation == "application_degree59":
+        bootstrap_calls = {
+            "bootstrap.C2S": 18,
+            "bootstrap.EvalMod": 36,
+            "bootstrap.ModRaise": 18,
+            "bootstrap.S2C": 18,
+            "bootstrap.prepare": 18,
+            "bootstrap.recombine": 18,
+        }
+    elif implementation.startswith("library_degree"):
+        prepare = fields(one(lines, "CONTINUOUS_PREPARE_BOOTSTRAP "))
+        if prepare.get("implementation") != implementation:
+            raise ValueError("library Boot preparation/result implementation mismatch")
+        if prepare.get("evalmod_q_out") != "31":
+            raise ValueError("library Boot does not return Q31")
+        bootstrap_calls = {"bootstrap.library": 18}
+    else:
+        raise ValueError(f"unknown bootstrap implementation {implementation!r}")
     expected_key_preflight = {
         "level_rotation_MiB": "1469",
         "level_relin_MiB": "363",
@@ -211,12 +234,7 @@ def summarize(text: str) -> dict[str, float | int]:
         raise ValueError("fragmented/stage-local timing leaked into performance log")
 
     expected_calls = {
-        "bootstrap.C2S": 18,
-        "bootstrap.EvalMod": 36,
-        "bootstrap.ModRaise": 18,
-        "bootstrap.S2C": 18,
-        "bootstrap.prepare": 18,
-        "bootstrap.recombine": 18,
+        **bootstrap_calls,
         "conv_bn": 18,
         "head": 1,
         "relu": 19,
@@ -293,6 +311,7 @@ def summarize(text: str) -> dict[str, float | int]:
                 raise ValueError(f"reported category total changed for {category}")
 
     return {
+        "bootstrap_implementation": implementation,
         "wall_ms": wall,
         "cuda_event_ms": event,
         "gpu_activity_union_ms": gpu,

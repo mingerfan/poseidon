@@ -2,6 +2,8 @@
 
 #include "poseidon/advance/homomorphic_dft.h"
 #include "poseidon/advance/homomorphic_mod.h"
+#include "poseidon/basics/util/ntt.h"
+#include "poseidon/basics/util/rlwe.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/key/galoiskeys.h"
@@ -241,6 +243,52 @@ std::vector<std::size_t> merge_q_counts(
     return lhs;
 }
 
+// Generate the ephemeral secret in the key context, then put it in NTT form.
+SecretKey make_sparse_secret(const PoseidonContext &context, std::size_t hamming_weight)
+{
+    const auto global_context_data = context.crt_context();
+    const auto &key_context = *global_context_data->key_context_data();
+    const auto parms_id = global_context_data->key_parms_id();
+    const std::size_t degree = key_context.parms().degree();
+    const std::size_t modulus_count = key_context.coeff_modulus().size();
+    SecretKey secret;
+    secret.data().resize(context, parms_id, degree * modulus_count);
+    util::sample_poly_ternary_with_hamming(context.random_generator()->create(), context,
+                                           parms_id, hamming_weight, secret.data().data());
+    util::RNSIter coefficients(secret.data().data(), degree);
+    util::ntt_negacyclic_harvey(coefficients, modulus_count,
+                                global_context_data->small_ntt_tables());
+    secret.parms_id() = parms_id;
+    return secret;
+}
+
+// A single switch key uses the relinearization-key layout at key index zero.
+std::shared_ptr<GpuEvaluationKeyData> upload_switch_key(
+    const KSwitchKeys &key, int cuda_device_id)
+{
+    RelinKeys layout;
+    static_cast<KSwitchKeys &>(layout) = key;
+    return std::make_shared<GpuEvaluationKeyData>(
+        GpuUploader::upload_relin_keys(layout, cuda_device_id));
+}
+
+void install_sparse_encapsulation(
+    const PoseidonContext &context, KeyGenerator &key_generator,
+    int cuda_device_id, std::uint32_t hamming_weight, GpuBootstrapData &data)
+{
+    if (hamming_weight == 0)
+        return;
+    const auto degree = context.crt_context()->key_context_data()->parms().degree();
+    if (hamming_weight > degree)
+        throw std::invalid_argument("GPU bootstrap sparse secret weight exceeds the ring degree");
+    const SecretKey sparse = make_sparse_secret(context, hamming_weight);
+    const SecretKey &dense = key_generator.secret_key();
+    data.sparse_switch_to_ephemeral = upload_switch_key(
+        key_generator.create_switch_key(dense, sparse), cuda_device_id);
+    data.sparse_switch_to_dense = upload_switch_key(
+        key_generator.create_switch_key(sparse, dense), cuda_device_id);
+}
+
 void validate_config(
     const PoseidonContext &context,
     int cuda_device_id,
@@ -282,6 +330,12 @@ void validate_config(
     {
         throw std::invalid_argument(
             "GPU bootstrap context has an invalid Q/P modulus chain");
+    }
+    if (config.eval_mod_log_scale < parameters->log_scale() ||
+        config.eval_mod_log_scale - parameters->log_scale() >= 32 ||
+        (config.project_real && config.eval_mod_log_scale == parameters->log_scale()))
+    {
+        throw std::invalid_argument("GPU bootstrap output normalization is outside uint32 range");
     }
     log2_power_of_two(config.bootstrap_ratio, "GPU bootstrap ratio");
 }
@@ -325,6 +379,10 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     {
         eval_mod_poly.truncate_sine_polynomial(
             *config.eval_mod_truncate_degree);
+    }
+    if (config.eval_mod_full_coefficients)
+    {
+        eval_mod_poly.enable_full_cosine_coefficients();
     }
     if (eval_mod_poly.sine_poly().degree() != config.eval_mod_sine_degree)
     {
@@ -392,7 +450,8 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
         eval_mod_options);
     if (config.eval_mod_sine_degree == 22 &&
         config.eval_mod_log_split == 2 &&
-        config.eval_mod_virtual_degree_bound)
+        config.eval_mod_virtual_degree_bound &&
+        !config.eval_mod_full_coefficients)
     {
         std::vector<std::uint32_t> basis_degrees;
         basis_degrees.reserve(eval_mod.basis_steps.size());
@@ -430,33 +489,43 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     }
 
     const double s2c_input_scale = eval_mod.output_scale;
-    auto slot_to_coeff = make_slot_to_coeff_matrix_group(
-        context,
-        encoder,
-        static_cast<std::uint32_t>(eval_mod_context->level()),
-        s2c_scaling,
-        config,
-        s2c_input_scale,
-        eval_mod_scale);
-    const double raw_s2c_output_scale = planned_dft_output_scale(
-        context, s2c_input_scale, slot_to_coeff);
-    slot_to_coeff = make_slot_to_coeff_matrix_group(
-        context,
-        encoder,
-        static_cast<std::uint32_t>(eval_mod_context->level()),
-        s2c_scaling,
-        config,
-        s2c_input_scale,
-        eval_mod_scale,
-        eval_mod_scale / raw_s2c_output_scale);
-    const std::size_t s2c_consumed = consumed_q_count(slot_to_coeff);
-    if (s2c_consumed >= eval_mod.output_q_count)
+    const auto build_slot_to_coeff = [&](std::size_t input_q_count) {
+        const auto level = static_cast<std::uint32_t>(input_q_count - 1);
+        auto group = make_slot_to_coeff_matrix_group(
+            context, encoder, level, s2c_scaling, config, s2c_input_scale, eval_mod_scale);
+        const double raw_output_scale = planned_dft_output_scale(
+            context, s2c_input_scale, group);
+        group = make_slot_to_coeff_matrix_group(
+            context, encoder, level, s2c_scaling, config, s2c_input_scale, eval_mod_scale,
+            eval_mod_scale / raw_output_scale);
+        if (consumed_q_count(group) >= input_q_count)
+        {
+            throw std::invalid_argument(
+                "GPU bootstrap SlotToCoeff consumes the remaining modulus chain");
+        }
+        return group;
+    };
+    std::size_t s2c_input_q_count = eval_mod.output_q_count;
+    auto slot_to_coeff = build_slot_to_coeff(s2c_input_q_count);
+    std::size_t output_q_count = s2c_input_q_count - consumed_q_count(slot_to_coeff);
+    if (config.output_level.has_value())
     {
-        throw std::invalid_argument(
-            "GPU bootstrap SlotToCoeff consumes the remaining modulus chain");
+        const auto declared_q_count = static_cast<std::size_t>(*config.output_level) + 1;
+        if (*config.output_level < 0 || output_q_count < declared_q_count)
+        {
+            throw std::invalid_argument("GPU bootstrap cannot reach its declared output level");
+        }
+        while (output_q_count > declared_q_count)
+        {
+            s2c_input_q_count -= output_q_count - declared_q_count;
+            slot_to_coeff = build_slot_to_coeff(s2c_input_q_count);
+            output_q_count = s2c_input_q_count - consumed_q_count(slot_to_coeff);
+        }
+        if (output_q_count != declared_q_count)
+            throw std::runtime_error("GPU bootstrap SlotToCoeff misses the declared output level");
     }
-    const std::size_t output_q_count =
-        eval_mod.output_q_count - s2c_consumed;
+    const auto s2c_input_parms_id = context.crt_context()->parms_id_map().at(
+        static_cast<std::uint32_t>(s2c_input_q_count - 1));
 
     auto cpu_galois_keys = make_galois_keys(
         context, key_generator, coeff_to_slot, slot_to_coeff);
@@ -469,7 +538,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     const auto c2s_key_q_counts = required_dft_key_q_counts(
         full_q_count, coeff_to_slot, /*include_post_dft_conjugation=*/true);
     const auto s2c_key_q_counts = required_dft_key_q_counts(
-        eval_mod.output_q_count,
+        s2c_input_q_count,
         slot_to_coeff,
         /*include_post_dft_conjugation=*/false);
     GpuUploader::prepare_key_views_for_q_counts(
@@ -487,11 +556,18 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     Plaintext plus_i;
     encoder.encode(
         std::complex<double>(0.0, 1.0),
-        eval_mod.output_parms_id,
+        s2c_input_parms_id,
         1.0,
         plus_i);
 
     GpuBootstrapData bootstrap_data;
+    if (s2c_input_q_count != eval_mod.output_q_count)
+    {
+        bootstrap_data.slot_to_coeff_input_q_count = s2c_input_q_count;
+        bootstrap_data.slot_to_coeff_input_parms_id = s2c_input_parms_id;
+    }
+    install_sparse_encapsulation(context, key_generator, cuda_device_id,
+                                 config.sparse_secret_hamming_weight, bootstrap_data);
     bootstrap_data.linear_transform_mode = config.linear_transform_mode;
     bootstrap_data.allow_environment_linear_transform_override = false;
     bootstrap_data.q0_parms_id = context.crt_context()->parms_id_map().at(q0_level);
@@ -501,7 +577,9 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     bootstrap_data.raised_scale_override = raised_scale;
     bootstrap_data.slot_to_coeff_input_scale = s2c_input_scale;
     bootstrap_data.project_real = config.project_real;
-    bootstrap_data.output_ratio = config.bootstrap_ratio;
+    // S2C contains context_scale * message_ratio / evalmod_scale already.
+    bootstrap_data.output_ratio = std::uint32_t{1} <<
+        (config.eval_mod_log_scale - parameters->log_scale());
     bootstrap_data.slot_to_coeff_output_scale = eval_mod_scale;
     if (config.linear_transform_mode ==
         GpuLinearTransformMode::DoubleHoistBsgs)
@@ -550,7 +628,8 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
 }
 
 GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
-    const PoseidonContext &context, KeyGenerator &key_generator, int cuda_device_id)
+    const PoseidonContext &context, KeyGenerator &key_generator, int cuda_device_id,
+    const GpuResNet20ManualOptions &options)
 {
     const auto parameters = context.parameters_literal();
     if (!parameters || parameters->log_n() != 16 || parameters->log_slots() != 15 ||
@@ -561,11 +640,17 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     CKKSEncoder encoder(context);
     constexpr double working_scale = double(std::uint64_t{1} << 45);
     constexpr double application_scale = double(std::uint64_t{1} << 40);
-    EvalModPoly polynomial(context, CosDiscrete, working_scale, 0, 5, 2, 25, 0, 59);
+    if (options.double_angle == 0 || options.double_angle >= 31 || options.k == 0 ||
+        options.sine_degree == 0 || options.log_split == 0 || options.log_split >= 31)
+        throw std::invalid_argument("manual ResNet20 Boot EvalMod options are invalid");
+    EvalModPoly polynomial(context, CosDiscrete, working_scale, 0, 5, options.double_angle,
+                           options.k, 0, options.sine_degree);
+    if (options.full_coefficients)
+        polynomial.enable_full_cosine_coefficients();
     GpuBootstrapProfileConfig config;
     const double c2s_scaling = polynomial.q_div() /
         (polynomial.k() * polynomial.sc_fac() * polynomial.q_diff());
-    if (std::abs(25 * context.crt_context()->q0() * c2s_scaling / working_scale - 1) > 1e-12)
+    if (std::abs(options.k * context.crt_context()->q0() * c2s_scaling / working_scale - 1) > 1e-12)
         throw std::invalid_argument("manual ResNet20 Boot integer-period contract failed");
     auto c2s = make_coeff_to_slot_matrix_group(context, encoder, c2s_scaling,
         config, working_scale, working_scale);
@@ -578,22 +663,24 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     const double c2s_scale = planned_dft_output_scale(context, working_scale, c2s);
     const auto c2s_id = context.crt_context()->parms_id_map().at(45);
     polynomial.set_level_start(45);
-    GpuEvalModUploadOptions options;
-    options.dynamic_rescale = true;
-    options.polynomial_log_split = 3;
-    options.flat_bsgs_b8 = false;
-    options.virtual_degree_bound = false;
-    options.lead_leaf_resplit = false;
+    GpuEvalModUploadOptions upload_options;
+    upload_options.dynamic_rescale = true;
+    upload_options.polynomial_log_split = options.log_split;
+    upload_options.flat_bsgs_b8 = false;
+    upload_options.virtual_degree_bound = false;
+    upload_options.lead_leaf_resplit = false;
     const auto native = GpuUploader::upload_eval_mod_high_precision(
         polynomial, encoder, c2s_id, cuda_device_id, nullptr, parms_id_zero, 1,
         nullptr, true, std::numeric_limits<std::uint32_t>::max(), NAN, NAN,
-        true, c2s_scale, true, options);
-    if (native.output_q_count != 31 || polynomial.double_angle() != 2)
-        throw std::invalid_argument("manual ResNet20 Boot requires degree59/DA2 output Q31");
+        true, c2s_scale, true, upload_options);
+    // A cheaper EvalMod can end above Q31; drop its surplus limbs before merging.
+    if (native.output_q_count < 31)
+        throw std::invalid_argument("manual ResNet20 Boot EvalMod must end at or above Q31");
     const double alpha = application_scale / native.output_scale;
     if (!(alpha > 0 && alpha < 1))
         throw std::invalid_argument("manual ResNet20 Boot output fold is invalid");
-    const double seed = std::pow(alpha, 0.25);
+    // Every double-angle square also squares the coefficient fold.
+    const double seed = std::pow(alpha, 1.0 / std::ldexp(1.0, static_cast<int>(options.double_angle)));
     Polynomial coefficients = polynomial.sine_poly();
     for (auto &coefficient : coefficients.data()) coefficient *= seed;
 
@@ -604,7 +691,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     auto eval_mod = GpuUploader::upload_eval_mod_high_precision(
         polynomial, encoder, c2s_id, cuda_device_id, relin.get(), parms_id_zero, 1,
         &coefficients, true, std::numeric_limits<std::uint32_t>::max(),
-        polynomial.sqrt_2pi() * seed, NAN, true, c2s_scale, false, options);
+        polynomial.sqrt_2pi() * seed, NAN, true, c2s_scale, false, upload_options);
     if (eval_mod.output_q_count != native.output_q_count ||
         std::abs(eval_mod.output_scale / native.output_scale - 1) > 1e-12)
         throw std::runtime_error("manual ResNet20 output fold changed the Q/scale schedule");
@@ -635,7 +722,17 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
         s2c, context, cuda_device_id, 1, true);
     Plaintext minus_i, plus_i;
     encoder.encode(std::complex<double>(0, -1), c2s_id, 1.0, minus_i);
-    encoder.encode(std::complex<double>(0, 1), data.eval_mod.output_parms_id, 1.0, plus_i);
+    if (data.eval_mod.output_q_count > 31)
+    {
+        data.slot_to_coeff_input_q_count = 31;
+        data.slot_to_coeff_input_parms_id = context.crt_context()->parms_id_map().at(30);
+    }
+    encoder.encode(std::complex<double>(0, 1),
+                   data.slot_to_coeff_input_q_count ? data.slot_to_coeff_input_parms_id
+                                                    : data.eval_mod.output_parms_id,
+                   1.0, plus_i);
+    install_sparse_encapsulation(context, key_generator, cuda_device_id,
+                                 options.sparse_secret_hamming_weight, data);
     data.minus_i_plaintext = GpuUploader::upload_plaintext(minus_i, cuda_device_id);
     data.plus_i_plaintext = GpuUploader::upload_plaintext(plus_i, cuda_device_id);
     GpuBootstrapProfile result;
@@ -695,6 +792,9 @@ std::size_t GpuBootstrapData::allocated_bytes() const
     }
     classic(coeff_to_slot_matrix); classic(slot_to_coeff_matrix);
     qp(coeff_to_slot_matrix_qp); qp(slot_to_coeff_matrix_qp);
+    for (const auto &key : {sparse_switch_to_ephemeral, sparse_switch_to_dense})
+        if (key)
+            for (const auto &field : key->fields_) add(field.buffer.allocated_bytes());
     return bytes;
 }
 
