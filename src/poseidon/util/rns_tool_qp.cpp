@@ -146,8 +146,9 @@ void RNSToolQP::mod_up_from_one_base_q(RNSIter input, size_t base_idx, MemoryPoo
     ConstRNSIter base_iter = input + base_start_index;
     RNSIter iter_tmp = input;
 
-    for (auto i = 0; i < base_start_index; ++i)
+    for (std::size_t i = 0; i < this->base_q_->size(); ++i)
     {
+        if (i == base_start_index) continue;
         if (modulus_q[i] >= modulus_q[base_last_index - 1])
         {
             set_uint(*(base_iter), coeff_count, *(iter_tmp + i));

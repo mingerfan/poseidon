@@ -265,10 +265,9 @@ CrtContext::ContextData CrtContext::validate(const ParametersLiteral &params,
         return context_data;
     }
 
-    // for GHS & Hybrid
-    // P
-    if (!modulus_p.empty() && modulus_p.size() != 1)
-    {  // not bv & has p
+    // GHS/Hybrid and explicit CPU hoisting for single-P CKKS BV.
+    if (!modulus_p.empty() && (modulus_p.size() != 1 || scheme_type == CKKS))
+    {
 
         Pointer<RNSBase> coeff_modulus_p;
         try

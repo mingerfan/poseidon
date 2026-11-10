@@ -1,3 +1,7 @@
+#include <future>
+#include <chrono>
+#include <cstring>
+#include <set>
 #include "evaluator_ckks_base.h"
 #include "poseidon/advance/bootstrapper.h"
 #include "poseidon/advance/homomorphic_dft.h"
@@ -431,40 +435,298 @@ void EvaluatorCkksBase::evaluate_frozen_polynomial(const Polynomial &polynomial,
     min_scale_ = saved_min_scale;
 }
 
-void EvaluatorCkksBase::evaluate_polynomial(const PolynomialVector& poly_vec, const Ciphertext& ct_basis, Ciphertext& ct_res,
-    bool is_chev, bool is_lazy, double target_scale, double min_scale, const RelinKeys& relin_key, const CKKSEncoder& encoder)
-{
-    map<uint32_t, Ciphertext> power_basis;
-    power_basis[1] = ct_basis;
+void EvaluatorCkksBase::evaluate_frozen_polynomial_parallel(
+    const Polynomial &polynomial, const Ciphertext &input, Ciphertext &output,
+    double target_scale, const RelinKeys &keys,
+    const std::vector<EvaluatorCkksBase *> &evaluators,
+    const std::vector<const CKKSEncoder *> &encoders) {
+  evaluate_frozen_polynomial_parallel(polynomial, input, output, target_scale,
+                                      keys, evaluators, encoders,
+                                      FrozenPolynomialOptions{});
+}
 
-    auto log_degree = bit_len(poly_vec[0].degree());
-    auto log_split = optimal_split_optimized(log_degree);
-
-    bool is_odd = false;
-    bool is_even = false;
-    for (auto i = 0; i < poly_vec.polys().size(); i++)
-    {
-        const auto& poly = poly_vec.polys()[i];
-        is_odd = is_odd || poly.is_odd();
-        is_even = is_even || poly.is_even();
+void EvaluatorCkksBase::evaluate_frozen_polynomial_parallel(
+    const Polynomial &polynomial, const Ciphertext &input, Ciphertext &output,
+    double target_scale, const RelinKeys &keys,
+    const std::vector<EvaluatorCkksBase *> &evaluators,
+    const std::vector<const CKKSEncoder *> &encoders,
+    const FrozenPolynomialOptions &options) {
+  if (evaluators.empty() || evaluators.size() != encoders.size() ||
+      !input.is_valid() || !input.is_ntt_form() ||
+      !std::isfinite(target_scale) || target_scale <= 0 ||
+      polynomial.data().size() < 2 ||
+      input.level() < static_cast<unsigned>(bit_len(polynomial.degree())) ||
+      (polynomial.basis_type() != Chebyshev &&
+       polynomial.basis_type() != Monomial) ||
+      polynomial.data().back() == std::complex<double>{})
+    throw std::invalid_argument("invalid parallel frozen polynomial arguments");
+  for (const auto &c : polynomial.data())
+    if (!std::isfinite(c.real()) || !std::isfinite(c.imag()))
+      throw std::invalid_argument("nonfinite frozen polynomial coefficient");
+  std::set<const void *> distinct_evaluators, distinct_encoders;
+  std::vector<double> saved;
+  std::vector<bool> saved_cache;
+  std::size_t hits_before = 0;
+  for (size_t i = 0; i < evaluators.size(); ++i) {
+    if (!evaluators[i] || !encoders[i] ||
+        evaluators[i]->context_.crt_context() != context_.crt_context() ||
+        encoders[i]->context().crt_context() != context_.crt_context() ||
+        !distinct_evaluators.insert(evaluators[i]).second ||
+        !distinct_encoders.insert(encoders[i]).second)
+      throw std::invalid_argument(
+          "parallel workers must be distinct and share the context");
+    saved.push_back(evaluators[i]->min_scale_);
+    saved_cache.push_back(evaluators[i]->polynomial_plain_cache_active_);
+    hits_before += evaluators[i]->polynomial_plain_cache_hits_;
+  }
+  using Clock = std::chrono::steady_clock;
+  const auto started = Clock::now();
+  auto restore = [&] {
+    for (size_t i = 0; i < evaluators.size(); ++i) {
+      evaluators[i]->min_scale_ = saved[i];
+      evaluators[i]->polynomial_plain_cache_active_ = saved_cache[i];
     }
+  };
+  auto parallel_workers = [](unsigned workers, auto &&fn) {
+    if (workers <= 1) {
+      fn(0);
+      return;
+    }
+    std::vector<std::future<void>> tasks;
+    for (unsigned w = 0; w < workers; ++w)
+      tasks.emplace_back(std::async(std::launch::async, [&, w] { fn(w); }));
+    for (auto &task : tasks)
+      task.get();
+  };
+  for (auto *e : evaluators) {
+    e->set_min_scale(target_scale);
+    e->polynomial_plain_cache_active_ = options.cache_plaintexts;
+  }
+  try {
 
-    gen_power_optimized(power_basis, 1 << (log_degree - 1), is_lazy, is_chev, min_scale, relin_key, encoder);
+    // Same PS decomposition, levels and scale schedule as
+    // evaluate_frozen_polynomial. Parallelize independent baby pieces and
+    // disjoint pairwise giant merges.
+    Polynomial copy(polynomial.data(), polynomial.a(), polynomial.b(),
+                    static_cast<int>(polynomial.degree()),
+                    polynomial.basis_type(), true);
+    copy.is_even() = copy.is_odd() = false;
+    for (size_t i = 0; i < copy.data().size(); ++i)
+      if (copy[i] != std::complex<double>{})
+        (i % 2 ? copy.is_odd() : copy.is_even()) = true;
+    copy.lead() = true;
+    PolynomialVector vector({copy}, {});
+    auto &evaluator = *evaluators[0];
+    auto &encoder = *encoders[0];
 
-    for (auto i = (1 << log_split) - 1; i > 2; i--)
-    {
-        if (!(is_even || is_odd) || (((i&1) == 0) && is_even) || (((i&1) == 1) && is_odd))
-        {
-            gen_power_optimized(power_basis, i, is_lazy, is_chev, min_scale, relin_key, encoder);
+    std::map<uint32_t, Ciphertext> powers;
+    powers[1] = input;
+    int log_degree = bit_len(copy.degree()),
+        log_split = optimal_split_optimized(log_degree);
+    bool chebyshev = copy.basis_type() == Chebyshev;
+    if (options.parallel_powers) {
+      std::set<uint32_t> needed;
+      std::function<void(uint32_t)> visit = [&](uint32_t n) {
+        if (n <= 1 || !needed.insert(n).second)
+          return;
+        const auto [a, b] = split_degree(n);
+        visit(a);
+        visit(b);
+        if (chebyshev && a != b)
+          visit(std::abs(a - b));
+      };
+      visit(1 << (log_degree - 1));
+      for (int i = (1 << log_split) - 1; i > 2; --i)
+        if (!(copy.is_even() || copy.is_odd()) ||
+            (!(i & 1) && copy.is_even()) || ((i & 1) && copy.is_odd()))
+          visit(i);
+      while (!needed.empty()) {
+        std::vector<uint32_t> ready;
+        for (auto n : needed) {
+          const auto [a, b] = split_degree(n);
+          const auto c = std::abs(a - b);
+          if (powers.count(a) && powers.count(b) &&
+              (!chebyshev || !c || powers.count(c)))
+            ready.push_back(n);
         }
+        if (ready.empty())
+          throw std::logic_error("cyclic polynomial power dependencies");
+        std::vector<Ciphertext> values(ready.size());
+        unsigned nw = std::min(evaluators.size(), ready.size());
+        parallel_workers(nw, [&](unsigned w) {
+          for (size_t i = w; i < ready.size(); i += nw) {
+            const auto n = ready[i];
+            const auto [a, b] = split_degree(n);
+            const auto c = std::abs(a - b);
+            const auto &available = powers;
+            auto &e = *evaluators[w];
+            auto &value = values[i];
+            e.multiply_relin_dynamic(available.at(a), available.at(b), value,
+                                     keys);
+            if (chebyshev) {
+              e.add(value, value, value);
+              if (!c)
+                e.add_const(value, -1.0, value, *encoders[w]);
+              else
+                e.sub_dynamic(value, available.at(c), value, *encoders[w]);
+            }
+            e.rescale_dynamic(value, value, target_scale);
+          }
+        });
+        for (size_t i = 0; i < ready.size(); ++i) {
+          powers.emplace(ready[i], std::move(values[i]));
+          needed.erase(ready[i]);
+        }
+      }
+    } else {
+      evaluator.gen_power_optimized(powers, 1 << (log_degree - 1), false,
+                                    chebyshev, target_scale, keys, encoder);
+      for (int i = (1 << log_split) - 1; i > 2; --i)
+        if (!(copy.is_even() || copy.is_odd()) ||
+            (!(i & 1) && copy.is_even()) || ((i & 1) && copy.is_odd()))
+          evaluator.gen_power_optimized(powers, i, false, chebyshev,
+                                        target_scale, keys, encoder);
     }
+    const auto powers_at = Clock::now();
+    std::string plan_key;
+    auto append = [&](const auto &value) {
+      plan_key.append(reinterpret_cast<const char *>(&value), sizeof(value));
+    };
+    append(input.parms_id());
+    append(input.scale());
+    append(target_scale);
+    const int basis = copy.basis_type();
+    append(basis);
+    append(copy.a());
+    append(copy.b());
+    for (const auto &c : copy.data()) {
+      append(c.real());
+      append(c.imag());
+    }
+    auto cached = polynomial_plan_cache_.find(plan_key);
+    PatersonStockmeyerPolynomialVector temporary_plan;
+    bool plan_hit =
+        options.cache_plan && cached != polynomial_plan_cache_.end();
+    if (!plan_hit) {
+      evaluator.get_paterson_stockmeyer_polynomial_vector(
+          vector, input.level(), input.scale(), target_scale, temporary_plan);
+      if (options.cache_plan) {
+        if (polynomial_plan_cache_.size() >= 16)
+          polynomial_plan_cache_.clear();
+        cached = polynomial_plan_cache_
+                     .emplace(std::move(plan_key), std::move(temporary_plan))
+                     .first;
+      }
+    }
+    const auto &ps = options.cache_plan ? cached->second : temporary_plan;
+    const auto plan_at = Clock::now();
+    size_t split = ps.polys_[0].polys_.size();
+    std::vector<BabyStep> babies(split);
+    unsigned workers = std::min<size_t>(evaluators.size(), split);
+    parallel_workers(workers, [&](unsigned w) {
+      for (size_t i = w; i < split; i += workers)
+        evaluators[w]->evaluate_baby_step(ps, powers, i, babies[split - i - 1],
+                                          *encoders[w]);
+    });
+    const auto babies_at = Clock::now();
+    while (babies.size() > 1) {
+      std::vector<int> flags(babies.size()), merge;
+      for (size_t i = 0; i < babies.size(); ++i) {
+        if (i + 1 == babies.size())
+          flags[i] = 2;
+        else if (babies[i].degree == babies[i + 1].degree) {
+          flags[i] = 1;
+          merge.push_back(i);
+          ++i;
+        }
+      }
+      workers = std::min<size_t>(evaluators.size(),
+                                 std::max<size_t>(1, merge.size()));
+      parallel_workers(workers, [&](unsigned w) {
+        for (size_t i = w; i < merge.size(); i += workers)
+          evaluators[w]->evaluate_giant_step(merge[i], flags, babies, powers,
+                                             *encoders[w], keys);
+      });
+      for (size_t i = 0; i < flags.size(); ++i)
+        if (flags[i] == 2)
+          evaluator.evaluate_giant_step(i, flags, babies, powers, encoder,
+                                        keys);
+      babies.erase(
+          std::remove_if(babies.begin(), babies.end(),
+                         [](const BabyStep &b) { return !b.value.is_valid(); }),
+          babies.end());
+    }
+    if (babies[0].value.size() == 3)
+      evaluator.relinearize(babies[0].value, babies[0].value, keys);
+    evaluator.rescale(babies[0].value, output);
+    if (options.trace) {
+      size_t hits = 0, bytes = 0;
+      for (auto *e : evaluators) {
+        hits += e->polynomial_plain_cache_hits_;
+        bytes += e->polynomial_plain_cache_bytes_;
+      }
+      std::cerr
+          << "frozen_polynomial degree=" << copy.degree() << " basis=" << basis
+          << " parallel_powers=" << options.parallel_powers
+          << " plan_hit=" << plan_hit << " plain_hits=" << hits - hits_before
+          << " cache_bytes=" << bytes << " powers_ms="
+          << std::chrono::duration<double, std::milli>(powers_at - started)
+                 .count()
+          << " plan_ms="
+          << std::chrono::duration<double, std::milli>(plan_at - powers_at)
+                 .count()
+          << " babies_ms="
+          << std::chrono::duration<double, std::milli>(babies_at - plan_at)
+                 .count()
+          << " giants_ms="
+          << std::chrono::duration<double, std::milli>(Clock::now() - babies_at)
+                 .count()
+          << std::endl;
+    }
+  } catch (...) {
+    restore();
+    throw;
+  }
+  restore();
+}
 
-    PatersonStockmeyerPolynomialVector ps_polys_vec;
-    int input_level = ct_basis.level();
-    double input_scale = ct_basis.scale();
-    get_paterson_stockmeyer_polynomial_vector(poly_vec, input_level, input_scale, target_scale, ps_polys_vec);
+void EvaluatorCkksBase::evaluate_polynomial(
+    const PolynomialVector &poly_vec, const Ciphertext &ct_basis,
+    Ciphertext &ct_res, bool is_chev, bool is_lazy, double target_scale,
+    double min_scale, const RelinKeys &relin_key, const CKKSEncoder &encoder) {
+  map<uint32_t, Ciphertext> power_basis;
+  power_basis[1] = ct_basis;
 
-    evaluate_paterson_stockmeyer_polynomial_vector(ps_polys_vec, power_basis, ct_res, relin_key, encoder);
+  auto log_degree = bit_len(poly_vec[0].degree());
+  auto log_split = optimal_split_optimized(log_degree);
+
+  bool is_odd = false;
+  bool is_even = false;
+  for (auto i = 0; i < poly_vec.polys().size(); i++) {
+    const auto &poly = poly_vec.polys()[i];
+    is_odd = is_odd || poly.is_odd();
+    is_even = is_even || poly.is_even();
+  }
+
+  gen_power_optimized(power_basis, 1 << (log_degree - 1), is_lazy, is_chev,
+                      min_scale, relin_key, encoder);
+
+  for (auto i = (1 << log_split) - 1; i > 2; i--) {
+    if (!(is_even || is_odd) || (((i & 1) == 0) && is_even) ||
+        (((i & 1) == 1) && is_odd)) {
+      gen_power_optimized(power_basis, i, is_lazy, is_chev, min_scale,
+                          relin_key, encoder);
+    }
+  }
+
+  PatersonStockmeyerPolynomialVector ps_polys_vec;
+  int input_level = ct_basis.level();
+  double input_scale = ct_basis.scale();
+  get_paterson_stockmeyer_polynomial_vector(poly_vec, input_level, input_scale,
+                                            target_scale, ps_polys_vec);
+
+  evaluate_paterson_stockmeyer_polynomial_vector(ps_polys_vec, power_basis,
+                                                 ct_res, relin_key, encoder);
 }
 
 void EvaluatorCkksBase::get_paterson_stockmeyer_polynomial(const Polynomial& poly, int input_level,
@@ -568,83 +830,106 @@ void EvaluatorCkksBase::evaluate_paterson_stockmeyer_polynomial_vector(const Pat
     ct_res = baby_steps[0].value;
 }
 
-void EvaluatorCkksBase::evaluate_polynomial_vector_from_power_basis_optimized(const PolynomialVector &poly_vec,
-    const map<uint32_t, Ciphertext> &power_basis, Ciphertext &ciph_res, int target_level, double target_scale, const CKKSEncoder &encoder) const
+const Plaintext& EvaluatorCkksBase::polynomial_coefficient(std::complex<double> coefficient,
+    parms_id_type parms_id,double scale,const CKKSEncoder& encoder,Plaintext& temporary) const
 {
-    auto is_even = poly_vec.is_even();
-    auto is_odd = poly_vec.is_odd();
+    if(!polynomial_plain_cache_active_){encoder.encode(coefficient,parms_id,scale,temporary);return temporary;}
+    std::string key;
+    auto append=[&](const auto& value){key.append(reinterpret_cast<const char*>(&value),sizeof(value));};
+    append(parms_id);append(scale);append(coefficient.real());append(coefficient.imag());
+    auto found = polynomial_plain_cache_.find(key);
+    if (found != polynomial_plain_cache_.end()) {
+      ++polynomial_plain_cache_hits_;
+      return found->second;
+    }
+    encoder.encode(coefficient, parms_id, scale, temporary);
+    constexpr size_t limit = 128ULL * 1024 * 1024;
+    const auto bytes = temporary.coeff_count() * sizeof(uint64_t);
+    if (bytes > limit)
+      return temporary;
+    if (polynomial_plain_cache_bytes_ + bytes > limit) {
+      polynomial_plain_cache_.clear();
+      polynomial_plain_cache_bytes_ = 0;
+    }
+    polynomial_plain_cache_bytes_ += bytes;
+    return polynomial_plain_cache_.emplace(std::move(key), std::move(temporary))
+        .first->second;
+}
 
-    auto minimum_degree_non_zero_coefficient = poly_vec.polys()[0].data().size() - 1;
-    if (is_even && !is_odd)
-    {
-        minimum_degree_non_zero_coefficient--;
+void EvaluatorCkksBase::evaluate_polynomial_vector_from_power_basis_optimized(
+    const PolynomialVector &poly_vec,
+    const map<uint32_t, Ciphertext> &power_basis, Ciphertext &ciph_res,
+    int target_level, double target_scale, const CKKSEncoder &encoder) const {
+  auto is_even = poly_vec.is_even();
+  auto is_odd = poly_vec.is_odd();
+
+  auto minimum_degree_non_zero_coefficient =
+      poly_vec.polys()[0].data().size() - 1;
+  if (is_even && !is_odd) {
+    minimum_degree_non_zero_coefficient--;
+  }
+
+  auto maximum_ciphertext_degree = 0;
+  for (auto i = poly_vec.polys()[0].degree(); i > 0; i--) {
+    if (power_basis.count(i)) {
+      maximum_ciphertext_degree =
+          max(maximum_ciphertext_degree, (int)power_basis.at(i).size() - 1);
+    }
+  }
+
+  if (poly_vec.index().size() > 0) {
+    // TODO 暂时不存在通过slot来计算的情况，可暂时忽略该if分支
+  } else {
+    // Allocates a zero ciphertext at (target_level, target_scale) — note that
+    // X^0 is not stored in the power basis, so the result must start from zero
+    // (see lattigo EvaluatePolynomialVectorFromPowerBasis: rlwe.NewCiphertext).
+    auto &parms_id = context_.crt_context()->parms_id_map().at(target_level);
+    ciph_res.resize(context_, parms_id, 2);
+    ciph_res.is_ntt_form() = true;
+    ciph_res.scale() = target_scale;
+
+    // Constant term c_0 (encoded at target scale; only even polynomials have
+    // one)
+    if (is_even) {
+      add_const(ciph_res, poly_vec[0][0], ciph_res, encoder);
     }
 
-    auto maximum_ciphertext_degree = 0;
-    for (auto i = poly_vec.polys()[0].degree(); i > 0; i--)
-    {
-        if (power_basis.count(i))
-        {
-            maximum_ciphertext_degree = max(maximum_ciphertext_degree, (int)power_basis.at(i).size() - 1);
-        }
+    if (minimum_degree_non_zero_coefficient == 0) {
+      return;
     }
 
-    if (poly_vec.index().size() > 0)
-    {
-        // TODO 暂时不存在通过slot来计算的情况，可暂时忽略该if分支
+    // Loops from the highest degree coefficient down to 1.
+    // Encodes c_k at scale target_scale / X^k.scale so that the product lands
+    // exactly on target_scale (equivalent to lattigo MulThenAdd scalar path).
+    for (auto key = poly_vec[0].degree(); key > 0; key--) {
+      if ((key != 0) &&
+          ((!(is_even || is_odd)) || ((key & 1) == 0 && is_even) ||
+           ((key & 1) == 1 && is_odd))) {
+        auto &x_key = power_basis.at(key);
+        double scale_k = ciph_res.scale() / x_key.scale();
+        if (util::is_approximate<double>(scale_k, 1.0)) {
+          // lattigo MulThenAdd: when the accumulator and X^k share the same
+          // scale the quotient would be 1.0 and round(c_k * 1.0) would destroy
+          // the coefficient. Lift the accumulator by the prime at its level
+          // instead and encode c_k at that prime (value-preserving).
+          auto lift = context_.crt_context()
+                          ->get_context_data(ciph_res.parms_id())
+                          ->coeff_modulus()[ciph_res.level()]
+                          .value();
+          multiply_const_direct(ciph_res, safe_cast<int64_t>(lift), ciph_res,
+                                encoder);
+          ciph_res.scale() *= lift;
+          scale_k = lift;
+        }
+        Plaintext plain_tmp;
+        const auto &coefficient = polynomial_coefficient(
+            poly_vec[0][key], x_key.parms_id(), scale_k, encoder, plain_tmp);
+        Ciphertext ciph_tmp;
+        multiply_plain(x_key, coefficient, ciph_tmp);
+        add_dynamic(ciph_res, ciph_tmp, ciph_res, encoder);
+      }
     }
-    else
-    {
-        // Allocates a zero ciphertext at (target_level, target_scale) — note that X^0 is not
-        // stored in the power basis, so the result must start from zero (see lattigo
-        // EvaluatePolynomialVectorFromPowerBasis: rlwe.NewCiphertext).
-        auto &parms_id = context_.crt_context()->parms_id_map().at(target_level);
-        ciph_res.resize(context_, parms_id, 2);
-        ciph_res.is_ntt_form() = true;
-        ciph_res.scale() = target_scale;
-
-        // Constant term c_0 (encoded at target scale; only even polynomials have one)
-        if (is_even)
-        {
-            add_const(ciph_res, poly_vec[0][0], ciph_res, encoder);
-        }
-
-        if (minimum_degree_non_zero_coefficient == 0)
-        {
-            return;
-        }
-
-        // Loops from the highest degree coefficient down to 1.
-        // Encodes c_k at scale target_scale / X^k.scale so that the product lands exactly on
-        // target_scale (equivalent to lattigo MulThenAdd scalar path).
-        for (auto key = poly_vec[0].degree(); key > 0; key--)
-        {
-            if ((key != 0) && ((!(is_even || is_odd)) || ((key & 1) == 0 && is_even) || ((key & 1) == 1 && is_odd)))
-            {
-                auto &x_key = power_basis.at(key);
-                double scale_k = ciph_res.scale() / x_key.scale();
-                if (util::is_approximate<double>(scale_k, 1.0))
-                {
-                    // lattigo MulThenAdd: when the accumulator and X^k share the same scale the
-                    // quotient would be 1.0 and round(c_k * 1.0) would destroy the coefficient.
-                    // Lift the accumulator by the prime at its level instead and encode c_k at
-                    // that prime (value-preserving).
-                    auto lift = context_.crt_context()
-                                    ->get_context_data(ciph_res.parms_id())
-                                    ->coeff_modulus()[ciph_res.level()]
-                                    .value();
-                    multiply_const_direct(ciph_res, safe_cast<int64_t>(lift), ciph_res, encoder);
-                    ciph_res.scale() *= lift;
-                    scale_k = lift;
-                }
-                Plaintext plain_tmp;
-                encoder.encode(poly_vec[0][key], x_key.parms_id(), scale_k, plain_tmp);
-                Ciphertext ciph_tmp;
-                multiply_plain(x_key, plain_tmp, ciph_tmp);
-                add_dynamic(ciph_res, ciph_tmp, ciph_res, encoder);
-            }
-        }
-    }
+  }
 }
 
 void EvaluatorCkksBase::evaluate_monomial(const Ciphertext& a, Ciphertext& b, const Ciphertext& xpow,

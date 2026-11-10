@@ -30,6 +30,14 @@ struct BabyStepMessage
     bool valid = true;
 };
 
+struct FrozenPolynomialOptions
+{
+    bool parallel_powers = true;
+    bool cache_plaintexts = true;
+    bool cache_plan = true;
+    bool trace = false;
+};
+
 struct BootstrapEvalModTrace
 {
     Ciphertext input;
@@ -144,6 +152,13 @@ public:
     void rotate_many_hoisted(const Ciphertext &ciph, const std::vector<int> &steps,
                              const GaloisKeys &galois_keys, CpuHoistWorkspace &workspace,
                              std::vector<Ciphertext> &results) const;
+    // CPU CKKS BV/HYBRID: prepare once, share the immutable source across
+    // callers; each execution supplies separate scratch and an evaluator.
+    void prepare_hoisted_rotations(const Ciphertext& source,
+        CpuPreparedRotationSource& prepared,unsigned workers=1) const;
+    void rotate_many_prepared(const CpuPreparedRotationSource& prepared,
+        const std::vector<int>& steps,const GaloisKeys& keys,
+        CpuHoistWorkspace& workspace,std::vector<Ciphertext>& results) const;
     virtual void rotate_row(const Ciphertext &ciph, Ciphertext &result, int step,
                             const GaloisKeys &galois_keys) const override;
     virtual void rotate_col(const Ciphertext &ciph, Ciphertext &result,
@@ -197,6 +212,17 @@ public:
     void evaluate_frozen_polynomial(const Polynomial &polynomial, const Ciphertext &input,
                                    Ciphertext &output, double target_scale,
                                    const RelinKeys &relin_keys, const CKKSEncoder &encoder);
+    // Independent workers own mutable evaluator/encoder state. The original
+    // serial entry point remains available.
+    void evaluate_frozen_polynomial_parallel(const Polynomial& polynomial,
+        const Ciphertext& input,Ciphertext& output,double target_scale,const RelinKeys& keys,
+        const std::vector<EvaluatorCkksBase*>& evaluators,
+        const std::vector<const CKKSEncoder*>& encoders);
+    void evaluate_frozen_polynomial_parallel(const Polynomial& polynomial,
+        const Ciphertext& input,Ciphertext& output,double target_scale,const RelinKeys& keys,
+        const std::vector<EvaluatorCkksBase*>& evaluators,
+        const std::vector<const CKKSEncoder*>& encoders,const FrozenPolynomialOptions& options);
+
 
     // old version
     void bootstrap(const Ciphertext &ciph, Ciphertext &result, const RelinKeys &relin_keys,
@@ -347,6 +373,17 @@ private:
 
         std::vector<PatersonStockmeyerPolynomial> polys_;
     };
+
+    // Evaluators are private to their worker. Cache keys include every encoding
+    // input and each evaluator is bound to a single context. Ciphertext powers
+    // are never cached across calls.
+    mutable std::map<std::string, Plaintext> polynomial_plain_cache_;
+    mutable std::size_t polynomial_plain_cache_bytes_ = 0;
+    mutable std::size_t polynomial_plain_cache_hits_ = 0;
+    bool polynomial_plain_cache_active_ = false;
+    std::map<std::string, PatersonStockmeyerPolynomialVector> polynomial_plan_cache_;
+    const Plaintext& polynomial_coefficient(std::complex<double> coefficient,
+        parms_id_type parms_id,double scale,const CKKSEncoder& encoder,Plaintext& temporary) const;
 
     // 用于模拟power_basis在多项式评估中的level和scale
     struct SimPower

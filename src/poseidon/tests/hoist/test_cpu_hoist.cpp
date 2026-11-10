@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <future>
 #include <cmath>
 #include <complex>
 #include <iostream>
@@ -102,6 +103,156 @@ void check_equal(const Ciphertext &left, const Ciphertext &right, const std::str
     require(std::equal(left.data(), left.data() + words, right.data()), label + ": data changed");
 }
 
+void check_parallel_frozen_polynomial()
+{
+    ParametersLiteral params{CKKS, 10, 9, 40, 32, 0, 0, {}, {}, sec_level_type::none};
+    std::vector<std::uint32_t> q(11, 40);
+    q[0] = 45;
+    params.set_log_modulus(q, {51});
+    auto context = PoseidonFactory::get_instance()->create_poseidon_context(params);
+    auto evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+    CKKSEncoder encoder(context);
+    KeyGenerator generator(context);
+    PublicKey pk;
+    generator.create_public_key(pk);
+    RelinKeys relin;
+    generator.create_relin_keys(relin);
+    Encryptor encryptor(context, pk);
+    Decryptor decryptor(context, generator.secret_key());
+    std::vector<std::unique_ptr<EvaluatorCkksBase>> owned;
+    std::vector<std::unique_ptr<CKKSEncoder>> owned_encoders;
+    std::vector<EvaluatorCkksBase *> workers;
+    std::vector<const CKKSEncoder *> encoders;
+    for (int i = 0; i < 3; ++i)
+    {
+        owned.push_back(PoseidonFactory::get_instance()->create_ckks_evaluator(context));
+        owned_encoders.push_back(std::make_unique<CKKSEncoder>(context));
+        workers.push_back(owned.back().get());
+        encoders.push_back(owned_encoders.back().get());
+    }
+    std::vector<double> input(encoder.slot_count());
+    for (size_t i = 0; i < input.size(); ++i)
+        input[i] = .2 * std::sin(i * .17);
+    Plaintext plain;
+    encoder.encode(input, std::exp2(40), plain);
+    Ciphertext encrypted;
+    encryptor.encrypt(plain, encrypted);
+    auto decode = [&](const Ciphertext &ct)
+    {
+        Plaintext pt;
+        decryptor.decrypt(ct, pt);
+        std::vector<Complex> values;
+        encoder.decode(pt, values);
+        return values;
+    };
+    for (int degree : {15, 31})
+        for (auto basis : {Monomial, Chebyshev})
+        {
+            Polynomial poly;
+            poly.data().resize(degree + 1);
+            poly.basis_type() = basis;
+            poly.max_degree() = degree;
+            for (int i = 0; i <= degree; ++i)
+                poly[i] = Complex(std::cos(i * .31), .2 * std::sin(i * .21)) / (i * i + 1.);
+            Ciphertext serial, parallel;
+            evaluator->evaluate_frozen_polynomial(poly, encrypted, serial, std::exp2(40), relin,
+                                                  encoder);
+            workers[0]->evaluate_frozen_polynomial_parallel(
+                poly, encrypted, parallel, std::exp2(40), relin, workers, encoders);
+            auto a = decode(serial), b = decode(parallel);
+            require(serial.level() == parallel.level(), "parallel polynomial level mismatch");
+            require(std::abs(serial.scale() / parallel.scale() - 1) < 1e-10,
+                    "parallel polynomial scale mismatch");
+            for (size_t i = 0; i < input.size(); ++i)
+            {
+                Complex expected = poly[0], previous = 1, power = input[i];
+                for (int k = 1; k <= degree; ++k)
+                {
+                    expected += poly[k] * power;
+                    Complex next =
+                        basis == Chebyshev ? 2. * input[i] * power - previous : power * input[i];
+                    previous = power;
+                    power = next;
+                }
+                require(std::abs(a[i] - b[i]) < 5e-7, "parallel polynomial differs from serial");
+                require(std::isfinite(b[i].real()) && std::isfinite(b[i].imag()) &&
+                            std::abs(b[i] - expected) < 1e-5,
+                        "parallel polynomial scalar oracle");
+            }
+            // A cache hit must reproduce the result. Coefficient and level
+            // changes must invalidate the relevant entries.
+            for(int scenario=0;scenario<3;++scenario){
+                auto changed=poly;auto source=encrypted;
+                if(scenario==1)changed[3]+=Complex(.0123,-.004);
+                if(scenario==2)evaluator->drop_modulus_to_next(source,source);
+                Ciphertext expected,actual;
+                evaluator->evaluate_frozen_polynomial(changed,source,expected,std::exp2(40),relin,encoder);
+                workers[0]->evaluate_frozen_polynomial_parallel(changed,source,actual,std::exp2(40),relin,workers,encoders);
+                check_close(decode(expected),decode(actual),"cached polynomial invalidation");
+            }
+            auto duplicate = workers;
+            duplicate[1] = duplicate[0];
+            require_rejected(
+                [&]
+                {
+                    workers[0]->evaluate_frozen_polynomial_parallel(
+                        poly, encrypted, parallel, std::exp2(40), relin, duplicate, encoders);
+                },
+                "shared parallel worker");
+        }
+}
+
+void check_prepared_shared_rotations()
+{
+    for(std::size_t p_count:{1U,2U}){
+        auto context=PoseidonFactory::get_instance()->create_poseidon_context(parameters(5,p_count));
+        auto evaluator=PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+        CKKSEncoder encoder(context);KeyGenerator generator(context);PublicKey pk;generator.create_public_key(pk);
+        Encryptor encryptor(context,pk);Decryptor decryptor(context,generator.secret_key());
+        const auto values=message(context.parameters_literal()->slot());
+        Plaintext input_plain;encoder.encode(values,std::exp2(40),input_plain);
+        Ciphertext source;encryptor.encrypt(input_plain,source);
+        GaloisKeys keys;generator.create_galois_keys(std::vector<int>{1,-1,2,-2,3,-3,4,-4},keys);
+        std::vector<std::unique_ptr<EvaluatorCkksBase>> workers;
+        for(int w=0;w<3;++w)workers.push_back(PoseidonFactory::get_instance()->create_ckks_evaluator(context));
+        CpuPreparedRotationSource prepared;
+        for(int level=source.level();level>=0;--level){
+            Ciphertext saved=source;
+            evaluator->prepare_hoisted_rotations(source,prepared,4);
+            check_equal(saved,source,"preparation changed input");
+            source=Ciphertext{}; // prepared object owns the source, not an address/level tag.
+            const std::vector<std::vector<int>> batches{{1,-1,0},{2,-2,3},{-3,0,1}};
+            std::vector<std::vector<Ciphertext>> outputs(3);
+            std::vector<CpuHoistWorkspace> scratch(3);
+            std::vector<std::future<void>> tasks;
+            for(int w=0;w<3;++w)tasks.push_back(std::async(std::launch::async,[&,w]{
+                workers[w]->rotate_many_prepared(prepared,batches[w],keys,scratch[w],outputs[w]);
+            }));
+            for(auto& t:tasks)t.get();
+            for(int w=0;w<3;++w){
+                require(scratch[w].last_counts.source_decompose_count==0,"worker decomposed a shared source");
+                for(size_t i=0;i<batches[w].size();++i){
+                    const auto step=batches[w][i];Ciphertext ordinary;
+                    evaluator->rotate(saved,ordinary,step,keys);
+                    check_close(rotated(values,step),decode(decryptor,encoder,outputs[w][i]),"prepared rotation oracle");
+                    check_close(decode(decryptor,encoder,ordinary),decode(decryptor,encoder,outputs[w][i]),"prepared vs ordinary rotation");
+                    require(outputs[w][i].parms_id()==saved.parms_id()&&outputs[w][i].scale()==saved.scale(),"prepared rotation metadata");
+                }
+            }
+            source=std::move(saved);
+            if(level)evaluator->drop_modulus_to_next(source,source);
+        }
+        GaloisKeys powers;generator.create_galois_keys(std::vector<int>{1,-1,2,-2,4,-4},powers);
+        std::vector<Ciphertext> output;CpuHoistWorkspace scratch;
+        evaluator->rotate_many_prepared(prepared,{3},powers,scratch,output);
+        require(scratch.last_counts.fallback_rotation_count==1,"prepared NAF fallback not recorded");
+        check_close(rotated(values,3),decode(decryptor,encoder,output[0]),"prepared NAF fallback");
+        auto saved=output[0];
+        require_rejected([&]{evaluator->rotate_many_prepared(CpuPreparedRotationSource{},{1},keys,scratch,output);},"empty prepared source");
+        check_equal(saved,output[0],"failed prepared rotation changed destination");
+    }
+}
+
 void check_centered_moddown()
 {
     // Independent signed 128-bit rounding oracle, including P/2 boundaries for
@@ -162,6 +313,23 @@ void check_sampler_bounds()
 
 void check_single_prime_modup()
 {
+    // Every single-prime digit must populate both the Q prefix and suffix.
+    // Hybrid only used this shortcut for a final short digit; BV uses every digit.
+    {
+        constexpr size_t count=8;
+        auto local_pool=MemoryPoolHandle::New();
+        std::vector<Modulus> qs{Modulus(17),Modulus(13),Modulus(19)};
+        std::vector<Modulus> ps{Modulus(23)};
+        util::RNSBase qb(qs,local_pool),pb(ps,local_pool);
+        util::RNSToolQP tool(count,qb,pb,Modulus(0),local_pool);
+        for(size_t digit=0;digit<qs.size();++digit){
+            std::vector<uint64_t> residues(count*qs.size(),123456);
+            for(size_t j=0;j<count;++j)residues[digit*count+j]=(j*3)%qs[digit].value();
+            tool.mod_up_from_one_base_q(util::RNSIter(residues.data(),count),digit,local_pool);
+            for(size_t qidx=0;qidx<qs.size();++qidx)for(size_t j=0;j<count;++j)
+                require(residues[qidx*count+j]==((j*3)%qs[digit].value())%qs[qidx].value(),"single-prime ModUp Q suffix/prefix");
+        }
+    }
     // P straddles the source Q prime. The old Q[i] comparison both skipped
     // necessary reduction into P=13 and read beyond the single-Q array.
     constexpr std::size_t n = 8;
@@ -485,6 +653,8 @@ int main(int argc, char **argv)
         PoseidonFactory::get_instance()->set_device_type(DEVICE_SOFTWARE);
         check_single_prime_modup();
         check_centered_moddown();
+        check_parallel_frozen_polynomial();
+        check_prepared_shared_rotations();
         check_sampler_bounds();
         for (const auto [q, p] : std::vector<std::pair<std::size_t, std::size_t>>{
                  {5, 2}, {8, 3}, {3, 5}, {4, 1}, {3, 3}})
