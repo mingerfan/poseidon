@@ -149,7 +149,7 @@ def generate(args):
                      args.reserve_gib*GIB, budget, args.window, backend))
                 cases.append(dict(name=name, plan=f"{name}.json", runner="qwen"))
     elif args.kind == "mlp":
-        original_spec = ROOT / "test-results/e2e-new-profile-e63ec18/profiles/operator-spec.json"
+        original_spec = ROOT / "bench/fixtures/waterline/operator-spec.json"
         # The historical Q17/drop4 MLP predates integer rescale normalization.
         # Q21/drop5 provides precision for the current scale160 -> scale40 path.
         s = json.loads(original_spec.read_text())
@@ -166,14 +166,14 @@ def generate(args):
             boot["latency_us_by_input_level"] = [10000]*21
         spec = out/"operator-spec.json"
         save(spec, s)
-        fixture = ROOT / "test-results/e2e-new-profile-e63ec18/fixture/input.json"
+        fixture = ROOT / "bench/fixtures/waterline/input.json"
         mock = fixture.parent / "mock-result.json"
-        folder = ROOT / "test-results/memory-v1-review/1gpu"
+        folder = ROOT / "bench/fixtures/waterline"
         source = folder / "mlp.reuse._hecate_MLP.runtime-plan.json"
         if args.devices == 2:
             compiler = ROOT / "third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt"
             # Start before physical-level materialization and placement.
-            original = ROOT / "test-results/e2e-new-profile-e63ec18/artifacts/1gpu/mlp.optimized.ckks.mlir"
+            original = ROOT / "bench/fixtures/waterline/mlp.optimized.ckks.mlir"
             # This historical dump used pretty debug locations, which are not
             # parseable MLIR. Remove only those location suffixes.
             import re
@@ -187,7 +187,7 @@ def generate(args):
                 f"assign-ckks-placement{{device-counts=2 operator-spec={spec} boot-profile={s['boot_profiles'][0]['profile_id']}}}",
                 "materialize-ckks-communication", "plan-runtime-memory",
                 f"emit-runtime-plan{{prefix={prefix} plan-format=json bundle-format=pack plan-id=991 ntt=true target-id={s['target_id']} operator-spec-id={s['spec_id']} operator-spec-version={s['version']} operator-spec-sha256={digest(spec)} context-id={s['context']['context_id']} boot-profile={s['boot_profiles'][0]['profile_id']} boot-implementation=decrypt_reencrypt}}"]
-            command = [str(compiler), f"--ckks-config={ROOT/'test-results/v100-profile-e63ec18/applied-profile/compiler-profile.json'}", str(original), "-p=builtin.module(func.func("+",".join(passes)+"))", "-o", str(out/"mlp.mlir")]
+            command = [str(compiler), f"--ckks-config={ROOT/'bench/fixtures/waterline/compiler-profile.json'}", str(original), "-p=builtin.module(func.func("+",".join(passes)+"))", "-o", str(out/"mlp.mlir")]
             save(out/"compile-command.json", command)
             with (out/"compile.log").open("w") as log:
                 subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=True)
