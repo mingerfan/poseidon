@@ -417,9 +417,9 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             logical_rotation_steps.insert(*key.rotation_step);
         }
     }
-    const std::set<int> rotation_key_steps =
-        poseidon::runtime_api::binary_rotation_key_basis(
-            logical_rotation_steps, context.parameters_literal()->slot());
+    const auto rotation_key_policy = poseidon::runtime_api::rotation_key_policy_from_environment();
+    const auto rotation_key_steps = poseidon::runtime_api::rotation_key_steps(
+        logical_rotation_steps, context.parameters_literal()->slot(), rotation_key_policy);
     const auto key_start = std::chrono::steady_clock::now();
     key_generator.create_public_key(*public_key);
     if (needs_relin)
@@ -568,11 +568,12 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         key_seconds, run_seconds, compute_including_boot_seconds, boot_seconds,
         compute_excluding_boot_seconds, setup_seconds, initialization_seconds,
         online_execution_seconds};
-    const std::array<std::uint64_t, 4> local_counts{
+    const std::array<std::uint64_t, 5> local_counts{
         static_cast<std::uint64_t>(artifact.timing.compute_calls),
         static_cast<std::uint64_t>(artifact.timing.boot_calls),
         static_cast<std::uint64_t>(rotation_key_steps.size()),
-        static_cast<std::uint64_t>(needs_relin ? 1 : 0)};
+        static_cast<std::uint64_t>(needs_relin ? 1 : 0),
+        static_cast<std::uint64_t>(rotation_key_policy == poseidon::runtime_api::RotationKeyPolicy::Direct)};
     std::vector<double> gathered_seconds;
     std::vector<std::uint64_t> gathered_counts;
     if (rank == 0)
@@ -619,6 +620,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         std::uint64_t total_compute_calls = 0;
         std::uint64_t total_boot_calls = 0;
         std::uint64_t total_rotation_keys = 0;
+        bool mixed_rotation_key_policy = false;
         for (int measured_rank = 0; measured_rank < world_size; ++measured_rank)
         {
             const std::size_t seconds_offset =
@@ -646,6 +648,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             total_compute_calls += gathered_counts[counts_offset];
             total_boot_calls += gathered_counts[counts_offset + 1];
             total_rotation_keys += gathered_counts[counts_offset + 2];
+            mixed_rotation_key_policy |= gathered_counts[counts_offset + 4] != gathered_counts[4];
             rank_timings.push_back(
                 {{"rank", measured_rank},
                  {"key_generation_seconds", gathered_seconds[seconds_offset]},
@@ -663,7 +666,8 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
                  {"compute_calls", gathered_counts[counts_offset]},
                  {"boot_calls", gathered_counts[counts_offset + 1]},
                  {"rotation_key_count", gathered_counts[counts_offset + 2]},
-                 {"has_relin_key", gathered_counts[counts_offset + 3] != 0}});
+                 {"has_relin_key", gathered_counts[counts_offset + 3] != 0},
+                 {"rotation_key_policy", gathered_counts[counts_offset + 4] ? "direct" : "binary"}});
         }
         Json report{
             {"format_version", 1},
@@ -683,6 +687,8 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
             {"rotation_key_count", total_rotation_keys},
+            {"rotation_key_policy", mixed_rotation_key_policy ? "mixed" :
+                poseidon::runtime_api::rotation_key_policy_name(rotation_key_policy)},
             {"key_generation_seconds", critical_key_seconds},
             {"runtime_seconds", critical_run_seconds},
             {"runtime_scope", "online_execution_only"},

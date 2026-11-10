@@ -71,6 +71,14 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL)
 endif()
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
+    add_executable(poseidon_rotation_key_policy_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/rotation_key_policy_test.cpp
+    )
+    target_include_directories(poseidon_rotation_key_policy_tests PRIVATE
+        ${POSEIDON_INCLUDES_DIR}/src)
+    target_compile_features(poseidon_rotation_key_policy_tests PRIVATE cxx_std_17)
+    add_test(NAME poseidon_rotation_key_policy_tests COMMAND poseidon_rotation_key_policy_tests)
+
     add_executable(poseidon_runtime_cpu_api_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_cpu_api_test.cpp
     )

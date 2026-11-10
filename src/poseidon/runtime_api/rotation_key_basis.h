@@ -2,13 +2,48 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
 #include <limits>
 #include <set>
 #include <stdexcept>
+#include <string_view>
 #include <vector>
 
 namespace poseidon::runtime_api
 {
+
+// This controls key generation in plan runners, not the GPU/CPU API's
+// fallback when an externally supplied key set lacks a direct key.
+enum class RotationKeyPolicy { Direct, Binary };
+
+inline RotationKeyPolicy parse_rotation_key_policy(const char *value)
+{
+    if (value == nullptr || value[0] == '\0' || std::string_view(value) == "direct")
+    {
+        return RotationKeyPolicy::Direct;
+    }
+    if (std::string_view(value) == "binary")
+    {
+        return RotationKeyPolicy::Binary;
+    }
+    throw std::invalid_argument(
+        "POSEIDON_RUNTIME_ROTATION_KEY_POLICY must be direct or binary");
+}
+
+inline RotationKeyPolicy rotation_key_policy_from_environment()
+{
+    return parse_rotation_key_policy(std::getenv("POSEIDON_RUNTIME_ROTATION_KEY_POLICY"));
+}
+
+inline const char *rotation_key_policy_name(RotationKeyPolicy policy)
+{
+    switch (policy)
+    {
+    case RotationKeyPolicy::Direct: return "direct";
+    case RotationKeyPolicy::Binary: return "binary";
+    }
+    throw std::invalid_argument("unknown rotation key policy");
+}
 
 inline int normalize_rotation_step(int step, std::size_t slot_count)
 {
@@ -60,6 +95,31 @@ inline std::set<int> binary_rotation_key_basis(const std::set<int> &rotation_ste
         result.insert(terms.begin(), terms.end());
     }
     return result;
+}
+
+inline std::set<int> rotation_key_steps(const std::set<int> &rotation_steps,
+                                       std::size_t slot_count,
+                                       RotationKeyPolicy policy = RotationKeyPolicy::Direct)
+{
+    switch (policy)
+    {
+    case RotationKeyPolicy::Binary:
+        return binary_rotation_key_basis(rotation_steps, slot_count);
+    case RotationKeyPolicy::Direct:
+    {
+        std::set<int> result;
+        for (int step : rotation_steps)
+        {
+            const int normalized = normalize_rotation_step(step, slot_count);
+            if (normalized != 0)
+            {
+                result.insert(normalized);
+            }
+        }
+        return result;
+    }
+    }
+    throw std::invalid_argument("unknown rotation key policy");
 }
 
 } // namespace poseidon::runtime_api

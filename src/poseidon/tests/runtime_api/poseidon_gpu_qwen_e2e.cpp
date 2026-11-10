@@ -582,12 +582,17 @@ int main(int argc, char **argv)
             }
         }
         if (needs_relin) keys.create_relin_keys(*relin_keys);
-        const auto basis = poseidon::runtime_api::binary_rotation_key_basis(rotation_steps, context.parameters_literal()->slot());
+        const auto key_policy = poseidon::runtime_api::rotation_key_policy_from_environment();
+        const auto basis = poseidon::runtime_api::rotation_key_steps(
+            rotation_steps, context.parameters_literal()->slot(), key_policy);
         if (!basis.empty()) keys.create_galois_keys(std::vector<int>(basis.begin(), basis.end()), *galois_keys);
+        report["rotation_key_policy"] = poseidon::runtime_api::rotation_key_policy_name(key_policy);
         report["rotation_key_basis"] = basis;
         report["key_generation_ms"] = milliseconds(keys_begin, Clock::now());
         std::cout << "KEYS ready rotation_basis=" << basis.size() << " key_generation_ms="
-                  << report["key_generation_ms"] << '\n' << std::flush;
+                  << report["key_generation_ms"] << " rotation_key_policy="
+                  << poseidon::runtime_api::rotation_key_policy_name(key_policy)
+                  << '\n' << std::flush;
 
         stage = "encrypt_inputs";
         const auto input_begin = Clock::now();

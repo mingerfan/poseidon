@@ -455,8 +455,12 @@ int main(int argc, char **argv)
         {
             key_generator.create_relin_keys(*relin_keys);
         }
-        const auto key_basis = poseidon::runtime_api::binary_rotation_key_basis(
-            rotation_steps, context.parameters_literal()->slot());
+        const auto rotation_key_policy = poseidon::runtime_api::rotation_key_policy_from_environment();
+        const auto key_basis = poseidon::runtime_api::rotation_key_steps(
+            rotation_steps, context.parameters_literal()->slot(), rotation_key_policy);
+        std::cout << "rank=" << rank << " rotation_key_policy="
+                  << poseidon::runtime_api::rotation_key_policy_name(rotation_key_policy)
+                  << " rotation_keys=" << key_basis.size() << '\n';
         if (!key_basis.empty())
         {
             key_generator.create_galois_keys(
@@ -662,6 +666,8 @@ int main(int argc, char **argv)
                 decoded_output.push_back({slot.real(), slot.imag()});
         write_report(options.report_path.string() + ".rank" + std::to_string(rank) + ".checks.json",
                      {{"rank", rank}, {"memory_measurement", "Active RMM allocations, including cached keys/parameters in the warmup baseline; pool reservation is excluded."},
+                      {"rotation_key_policy", poseidon::runtime_api::rotation_key_policy_name(rotation_key_policy)},
+                      {"rotation_key_count", key_basis.size()},
                       {"streaming_timing", streaming_timing},
                       {"pinned_live_bytes", poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()},
                       {"pinned_process_peak_bytes", poseidon::runtime_api::communication::PinnedHostBuffer::peak_bytes()},
@@ -719,6 +725,7 @@ int main(int argc, char **argv)
                 {"world_size", world_size},
                 {"device_counts", plan.target.device_counts},
                 {"rank_to_node", rank_to_node},
+                {"rotation_key_policy_rank0", poseidon::runtime_api::rotation_key_policy_name(rotation_key_policy)},
                 {"warmups", options.warmups},
                 {"iterations", options.iterations},
                 {"plan_stats",

@@ -297,9 +297,10 @@ def run(args):
     args.output.mkdir(parents=True, exist_ok=False)
     env = os.environ.copy()
     env.update(CUDA_VISIBLE_DEVICES=args.cuda, OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1",
-        POSEIDON_GPU_MLP_ALLOW_NO_BOOT="1", POSEIDON_RUNTIME_ROTATION_KEY_POLICY="binary",
+        POSEIDON_GPU_MLP_ALLOW_NO_BOOT="1",
         POSEIDON_RUNTIME_DEVICE_WORKERS=str(suite["devices"]),
         POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB=str(args.pool_mib), POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=str(args.pool_mib))
+    env["POSEIDON_RUNTIME_ROTATION_KEY_POLICY"] = env.get("POSEIDON_RUNTIME_ROTATION_KEY_POLICY") or "direct"
     summary = dict(suite=suite, cuda=args.cuda, pool_mib=args.pool_mib,
         timing_scope="Fresh process per sample; forward includes setup/init/online; key generation and input encryption separate; OS file cache not flushed.",
         runner_hashes={name:digest(args.build/"bin"/f"poseidon_runtime_gpu_{name}_e2e") for name in {c["runner"] for c in suite["cases"]}}, samples=[], statistics={})

@@ -479,8 +479,9 @@ int main(int argc, char **argv)
         {
             key_generator.create_relin_keys(*relin_keys);
         }
-        const auto key_basis = poseidon::runtime_api::binary_rotation_key_basis(
-            rotation_steps, context.parameters_literal()->slot());
+        const auto key_basis = poseidon::runtime_api::rotation_key_steps(
+            rotation_steps, context.parameters_literal()->slot(),
+            poseidon::runtime_api::rotation_key_policy_from_environment());
         if (!key_basis.empty())
         {
             key_generator.create_galois_keys(

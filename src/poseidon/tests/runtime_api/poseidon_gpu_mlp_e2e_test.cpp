@@ -44,8 +44,6 @@ constexpr const char *kAllowNoBootEnv =
     "POSEIDON_GPU_MLP_ALLOW_NO_BOOT";
 constexpr const char *kDeviceWorkersEnv =
     "POSEIDON_RUNTIME_DEVICE_WORKERS";
-constexpr const char *kRotationKeyPolicyEnv =
-    "POSEIDON_RUNTIME_ROTATION_KEY_POLICY";
 
 bool env_flag_enabled(const char *name)
 {
@@ -449,37 +447,10 @@ int main(int argc, char **argv)
                 logical_rotation_steps.insert(*key.rotation_step);
             }
         }
-        const char *rotation_key_policy_value =
-            std::getenv(kRotationKeyPolicyEnv);
-        const std::string rotation_key_policy =
-            rotation_key_policy_value == nullptr || rotation_key_policy_value[0] == '\0'
-                ? "binary"
-                : rotation_key_policy_value;
-        if (rotation_key_policy != "binary" && rotation_key_policy != "direct")
-        {
-            throw std::runtime_error(
-                std::string(kRotationKeyPolicyEnv) + " must be binary or direct");
-        }
-
-        std::set<int> rotation_key_steps;
-        if (rotation_key_policy == "direct")
-        {
-            const std::size_t slot_count = context.parameters_literal()->slot();
-            for (int step : logical_rotation_steps)
-            {
-                const int normalized =
-                    poseidon::runtime_api::normalize_rotation_step(step, slot_count);
-                if (normalized != 0)
-                {
-                    rotation_key_steps.insert(normalized);
-                }
-            }
-        }
-        else
-        {
-            rotation_key_steps = poseidon::runtime_api::binary_rotation_key_basis(
-                logical_rotation_steps, context.parameters_literal()->slot());
-        }
+        const auto key_policy = poseidon::runtime_api::rotation_key_policy_from_environment();
+        const std::string rotation_key_policy = poseidon::runtime_api::rotation_key_policy_name(key_policy);
+        const auto rotation_key_steps = poseidon::runtime_api::rotation_key_steps(
+            logical_rotation_steps, context.parameters_literal()->slot(), key_policy);
 
         require_device_memory_lower_bound(
             plan, loaded_spec.spec, rotation_key_steps.size(), needs_relin);

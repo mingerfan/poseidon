@@ -329,7 +329,7 @@ void test_binary_rotation_keys()
         fhegpu::RotateAttrs{3},
     };
     const auto actual = api.compute(
-        rotate, {PoseidonCpuValue::from_ciphertext(std::move(input_cipher))});
+        rotate, {PoseidonCpuValue::from_ciphertext(input_cipher)});
 
     poseidon::Plaintext expected_plain;
     poseidon::Plaintext actual_plain;
@@ -343,6 +343,28 @@ void test_binary_rotation_keys()
     {
         require(std::abs(actual_slots[i] - expected_slots[i]) < 1e-5,
                 "binary rotation key result mismatch");
+    }
+
+    // With both the direct key and its binary basis available, the API must
+    // select the direct key rather than silently performing two rotations.
+    auto mixed_keys = std::make_shared<poseidon::GaloisKeys>();
+    key_generator.create_galois_keys(std::vector<int>{1, 2, 3}, *mixed_keys);
+    poseidon::Ciphertext expected_direct;
+    evaluator.rotate(input_cipher, expected_direct, 3, *mixed_keys);
+    PoseidonCpuApi direct_api(context_id, context, {}, mixed_keys);
+    const auto actual_direct = direct_api.compute(
+        rotate, {PoseidonCpuValue::from_ciphertext(input_cipher)});
+    require(actual_direct.ciphertext().polys().size() == expected_direct.polys().size(),
+            "direct rotation component count mismatch");
+    for (std::size_t component = 0; component < expected_direct.polys().size(); ++component)
+    {
+        const auto &want = expected_direct.polys()[component];
+        const auto &got = actual_direct.ciphertext().polys()[component];
+        require(want.rns_num_q() == got.rns_num_q() && want.poly_degree() == got.poly_degree(),
+                "direct rotation polynomial shape mismatch");
+        const auto words = want.rns_num_q() * want.poly_degree();
+        require(std::equal(want.data(), want.data() + words, got.data()),
+                "API did not choose the direct rotation key");
     }
 }
 
