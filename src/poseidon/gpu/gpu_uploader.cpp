@@ -205,6 +205,7 @@ void upload_ciphertext_component_shards(
     std::size_t component,
     const GpuRNSPoly &poly,
     std::vector<GpuFieldData> &fields,
+    std::size_t source_q_count,
     const char *what)
 {
     const auto degree = src.poly_modulus_degree();
@@ -220,11 +221,16 @@ void upload_ciphertext_component_shards(
 
         for (std::size_t local_limb = 0; local_limb < shard.limb_count; ++local_limb)
         {
+            const auto limb = shard.limb_begin + local_limb;
+            // P follows the original CPU Q, even when the GPU stores a shorter Q prefix.
+            const auto source_limb = limb < poly.q_count
+                                         ? limb
+                                         : source_q_count + (limb - poly.q_count);
             for (std::size_t local_coeff = 0; local_coeff < shard.coeff_count; ++local_coeff)
             {
                 const auto cpu_index =
                     checked_mul(
-                        shard.limb_begin + local_limb,
+                        source_limb,
                         degree,
                         "ciphertext CPU shard index overflow") +
                     shard.coeff_begin + local_coeff;
@@ -336,10 +342,48 @@ void append_uploaded_ciphertext_as_key_polys(
     }
 }
 
+GpuCiphertextData upload_key_ciphertext_q_prefix(
+    const Ciphertext &src,
+    int device_id,
+    std::size_t q_count)
+{
+    std::size_t source_q_count = 0;
+    std::size_t p_count = 0;
+    ciphertext_limb_shape(src, source_q_count, p_count);
+    if (!src.is_valid() || src.size() != 2 ||
+        q_count == 0 || q_count > source_q_count ||
+        source_q_count > src.coeff_modulus_size() ||
+        p_count > src.coeff_modulus_size() - source_q_count)
+    {
+        throw std::invalid_argument("invalid evaluation-key ciphertext shape");
+    }
+
+    auto dst = GpuCiphertextData::allocate_single_device(
+        src.poly_modulus_degree(), q_count, src.size(), device_id, p_count);
+    // Storage cropping does not change the cryptographic key context.
+    dst.meta.parms_id = src.parms_id();
+    dst.meta.scale = src.scale();
+    dst.meta.correction_factor = src.correction_factor();
+    dst.meta.is_ntt_form = src.is_ntt_form();
+
+    for (std::size_t component = 0; component < src.size(); ++component)
+    {
+        upload_ciphertext_component_shards(
+            src,
+            component,
+            dst.polys_[component],
+            dst.fields_,
+            source_q_count,
+            "GpuUploader only supports ciphertext residues that fit in GpuWord");
+    }
+    return dst;
+}
+
 template <typename KSwitchKeyType>
 GpuEvaluationKeyData upload_kswitch_keys(
     const KSwitchKeyType &src,
     int device_id,
+    std::optional<std::size_t> q_count = std::nullopt,
     const std::vector<std::size_t> *selected_key_indices = nullptr)
 {
     GpuEvaluationKeyData dst;
@@ -353,14 +397,32 @@ GpuEvaluationKeyData upload_kswitch_keys(
             throw std::invalid_argument("selected evaluation key does not exist");
         }
         const auto &decompositions = src.data()[key_index];
-        dst.meta.decomposition_count =
-            std::max(dst.meta.decomposition_count, decompositions.size());
-
-        for (std::size_t decomp_index = 0; decomp_index < decompositions.size(); ++decomp_index)
+        auto decomposition_count = decompositions.size();
+        if (q_count)
         {
-            auto uploaded = GpuUploader::upload_ciphertext(
-                decompositions[decomp_index].data(),
-                device_id);
+            std::size_t source_q_count = 0;
+            std::size_t p_count = 0;
+            ciphertext_limb_shape(decompositions.front().data(), source_q_count, p_count);
+            if (*q_count == 0 || *q_count > source_q_count)
+            {
+                throw std::invalid_argument("invalid evaluation-key Q prefix");
+            }
+            // HYBRID keeps its original P-sized partitions; BV uses one digit per Q limb.
+            decomposition_count = p_count == 0 ? *q_count : 1 + (*q_count - 1) / p_count;
+            if (decomposition_count > decompositions.size())
+            {
+                throw std::invalid_argument("insufficient evaluation-key digits");
+            }
+        }
+        dst.meta.decomposition_count =
+            std::max(dst.meta.decomposition_count, decomposition_count);
+
+        for (std::size_t decomp_index = 0; decomp_index < decomposition_count; ++decomp_index)
+        {
+            const auto &ciphertext = decompositions[decomp_index].data();
+            auto uploaded = q_count
+                                ? upload_key_ciphertext_q_prefix(ciphertext, device_id, *q_count)
+                                : GpuUploader::upload_ciphertext(ciphertext, device_id);
             append_uploaded_ciphertext_as_key_polys(
                 std::move(uploaded),
                 key_index,
@@ -387,6 +449,10 @@ GpuEvaluationKeyData upload_kswitch_keys(
         }
     }
 
+    if (q_count && dst.empty())
+    {
+        throw std::invalid_argument("cannot upload a Q prefix of empty evaluation keys");
+    }
     return dst;
 }
 
@@ -736,6 +802,7 @@ GpuCiphertextData GpuUploader::upload_ciphertext(
             component,
             dst.polys_.at(component),
             dst.fields_,
+            q_count,
             "GpuUploader only supports ciphertext residues that fit in GpuWord");
     }
 
@@ -2884,9 +2951,7 @@ GpuRelinKeysData GpuUploader::upload_relin_keys(
     int device_id,
     std::size_t q_count)
 {
-    auto result = upload_kswitch_keys(src, device_id);
-    prepare_key_views_for_q_counts(result, {q_count});
-    return result;
+    return upload_kswitch_keys(src, device_id, q_count);
 }
 
 GpuGaloisKeysData GpuUploader::upload_galois_keys(
@@ -2901,9 +2966,7 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
     int device_id,
     std::size_t q_count)
 {
-    auto result = upload_kswitch_keys(src, device_id);
-    prepare_key_views_for_q_counts(result, {q_count});
-    return result;
+    return upload_kswitch_keys(src, device_id, q_count);
 }
 
 GpuGaloisKeysData GpuUploader::upload_galois_keys(
@@ -2922,9 +2985,7 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
         }
         key_indices.push_back(GaloisKeys::get_index(galois_elt));
     }
-    auto result = upload_kswitch_keys(src, device_id, &key_indices);
-    prepare_key_views_for_q_counts(result, {q_count});
-    return result;
+    return upload_kswitch_keys(src, device_id, q_count, &key_indices);
 }
 
 GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(

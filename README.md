@@ -99,6 +99,15 @@ Bootstrap keys. MPI ranks should use the same policy. The isolated ResNet20
 resident runner and its profile requirements are documented in
 [`bench/resnet20_runtime/README.md`](bench/resnet20_runtime/README.md).
 
+GPU preflight sizes each ordinary rotation key for its highest required physical
+Q level, resolving binary fallback steps before collecting those requirements.
+Keys with the same Q requirement share an upload bucket. Explicit-Q evaluation
+key uploads retain only that Q prefix, all original P limbs, and the required
+key-switch digits; lower levels still share zero-copy views. A later plan can
+raise a key's capacity during preflight, but online execution never uploads a
+missing prefix. Native Bootstrap keeps its separately configured keys and
+internal Q schedule unchanged.
+
 CPU MPI and CUDA test paths are controlled by
 `POSEIDON_BUILD_CKKS_RUNTIME_MPI` and
 `POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS`. The experimental MPI/NCCL GPU backend

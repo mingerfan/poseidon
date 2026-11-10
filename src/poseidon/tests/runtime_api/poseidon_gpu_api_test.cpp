@@ -1454,6 +1454,327 @@ void test_selected_galois_key_upload(
     }
 }
 
+// Keep these regressions independent of the large, environment-configurable
+// main fixture: Q2/P3 needs one HYBRID digit, Q4/P3 needs two, and neither
+// should retain the source key's complete Q6 backing.
+poseidon::ParametersLiteral make_key_prefix_parameters()
+{
+    poseidon::ParametersLiteral parameters(
+        CKKS, 10, 9, 40, 0, 0, poseidon::Modulus(0), {}, {},
+        poseidon::sec_level_type::none);
+    parameters.set_log_modulus(std::vector<std::uint32_t>(6, 30),
+                               std::vector<std::uint32_t>(3, 30));
+    return parameters;
+}
+
+struct KeyPrefixFixture
+{
+    static constexpr std::size_t low_q = 2;
+    static constexpr std::size_t high_q = 4;
+    static constexpr int scale_log2 = 40;
+
+    poseidon::PoseidonContext context{make_key_prefix_parameters()};
+    poseidon::KeyGenerator generator{context};
+    poseidon::CKKSEncoder encoder{context};
+    poseidon::Decryptor decryptor{context, generator.secret_key()};
+    std::shared_ptr<poseidon::RelinKeys> relin =
+        std::make_shared<poseidon::RelinKeys>();
+    std::shared_ptr<poseidon::GaloisKeys> galois =
+        std::make_shared<poseidon::GaloisKeys>();
+    std::vector<double> slots;
+    poseidon::Ciphertext low_cipher, high_cipher;
+
+    KeyPrefixFixture()
+    {
+        generator.create_relin_keys(*relin);
+        const int half = static_cast<int>(context.parameters_literal()->degree() / 4);
+        // Direct 3 exists, but 5 and -3 deliberately require binary fallback.
+        generator.create_galois_keys(std::vector<int>{1, 2, 3, 4, -1, -2, half}, *galois);
+        slots.resize(context.parameters_literal()->degree() / 2);
+        for (std::size_t i = 0; i < slots.size(); ++i)
+            slots[i] = .125 * std::sin(.07 * i) + .0625 * std::cos(.13 * i);
+        poseidon::PublicKey public_key;
+        generator.create_public_key(public_key);
+        poseidon::Encryptor encryptor(context, public_key);
+        for (const auto q : {low_q, high_q})
+        {
+            poseidon::Plaintext plain;
+            const auto id = context.crt_context()->parms_id_map().at(level_for_q(q));
+            encoder.encode(slots, id, std::ldexp(1., scale_log2), plain);
+            encryptor.encrypt(plain, q == low_q ? low_cipher : high_cipher);
+        }
+    }
+
+    int level_for_q(std::size_t q) const
+    {
+        for (const auto &[level, id] : context.crt_context()->parms_id_map())
+            if (context.crt_context()->get_context_data(id)->parms().q().size() == q)
+                return static_cast<int>(level);
+        throw std::runtime_error("key-prefix fixture has no requested Q level");
+    }
+
+    std::size_t key_bytes(std::size_t q) const
+    {
+        const auto p = context.parameters_literal()->p().size();
+        return ((q + p - 1) / p) * 2 * (q + p) *
+               context.parameters_literal()->degree() * sizeof(poseidon::gpu::GpuWord);
+    }
+
+    void check_rotation(const PoseidonGpuValue &value, int step)
+    {
+        poseidon::Ciphertext host;
+        poseidon::gpu::GpuUploader::download_ciphertext(value.device_ciphertext(), host, context);
+        poseidon::Plaintext plain;
+        decryptor.decrypt(host, plain);
+        std::vector<std::complex<double>> actual;
+        encoder.decode(plain, actual);
+        const int count = static_cast<int>(slots.size());
+        const auto offset = static_cast<std::size_t>((step % count + count) % count);
+        require(actual.size() == slots.size(), "Q-prefix rotation changed slot count");
+        double maximum_error = 0;
+        for (std::size_t i = 0; i < actual.size(); ++i)
+            maximum_error = std::max(maximum_error, std::abs(actual[i] - slots[(i + offset) % slots.size()]));
+        require(maximum_error < 1e-4,
+                "Q-prefix rotation differs from dense rotation: step=" + std::to_string(step) +
+                    " max_error=" + std::to_string(maximum_error));
+    }
+};
+
+template <class CpuKeys>
+void require_uploaded_key_prefix(const poseidon::gpu::GpuEvaluationKeyData &uploaded,
+                                 const CpuKeys &source, std::size_t q,
+                                 std::size_t selected_count)
+{
+    using poseidon::gpu::GpuWord;
+    require(!uploaded.poly_metadata_.empty(), "Q-prefix upload produced no key polynomials");
+    const auto &first = uploaded.poly_metadata_.front();
+    const auto &source_cipher = source.data().at(first.key_index).at(0).data();
+    const auto n = source_cipher.poly_modulus_degree();
+    const auto full_q = source_cipher.polys().front().rns_num_q();
+    const auto p = source_cipher.polys().front().rns_num_p();
+    const auto digits = (q + p - 1) / p;
+    const auto components = source_cipher.size();
+    require(uploaded.meta.key_parms_id == source.parms_id() &&
+                uploaded.meta.q_count == q && uploaded.meta.p_count == p &&
+                uploaded.meta.degree == n && uploaded.meta.decomposition_count == digits &&
+                uploaded.meta.component_count == components,
+            "Q-prefix upload has incorrect owner metadata or decomposition count");
+    require(uploaded.polys_.size() == selected_count * digits * components &&
+                uploaded.poly_metadata_.size() == uploaded.polys_.size(),
+            "Q-prefix upload retained unused digits or selected the wrong key count");
+    std::vector<std::vector<GpuWord>> fields;
+    std::size_t backing_bytes = 0;
+    for (const auto &field : uploaded.fields_)
+    {
+        fields.emplace_back(field.size());
+        field.buffer.copy_to_host(fields.back().data(), field.size());
+        backing_bytes += field.buffer.allocated_bytes();
+    }
+    require(backing_bytes == selected_count * digits * components * (q + p) * n * sizeof(GpuWord),
+            "Q-prefix upload retained full-Q or unused-digit coefficient backing");
+    for (const auto &mapping : uploaded.poly_metadata_)
+    {
+        require(mapping.decomposition_index < digits && mapping.component_index < components,
+                "Q-prefix upload retained an out-of-prefix digit/component");
+        const auto &poly = uploaded.polys_.at(mapping.poly_id);
+        require(poly.q_count == q && poly.p_count == p && poly.degree == n,
+                "Q-prefix polynomial metadata still describes full storage");
+        const auto &cpu = source.data().at(mapping.key_index).at(mapping.decomposition_index).data();
+        for (const auto &shard : poly.shards)
+            for (std::size_t limb = 0; limb < shard.limb_count; ++limb)
+            {
+                const auto stored_limb = shard.limb_begin + limb;
+                const auto source_limb = stored_limb < q ? stored_limb : full_q + stored_limb - q;
+                const auto &field = fields.at(shard.field_index);
+                const auto begin = field.begin() + shard.field_offset + limb * shard.coeff_count;
+                const auto *expected = cpu.data(mapping.component_index) + source_limb * n + shard.coeff_begin;
+                require(std::equal(begin, begin + shard.coeff_count, expected),
+                        "Q-prefix upload changed a residue or placed P at the old full-Q offset");
+            }
+    }
+    const auto owner_view = uploaded.make_const_view();
+    const auto low_view = uploaded.make_const_view(1);
+    require(low_view.meta.q_count == 1 && low_view.storage_q_count == q &&
+                low_view.polys.front().shards.front().ptr == owner_view.polys.front().shards.front().ptr,
+            "active Q-prefix view changed storage Q or copied its backing");
+}
+
+void test_cropped_evaluation_key_upload(KeyPrefixFixture &fixture)
+{
+    using poseidon::gpu::GpuUploader;
+    const auto elt = fixture.context.crt_context()->galois_tool()->get_elt_from_step(3);
+    for (const auto q : {KeyPrefixFixture::low_q, fixture.context.parameters_literal()->p().size(),
+                         KeyPrefixFixture::high_q})
+    {
+        auto galois = GpuUploader::upload_galois_keys(*fixture.galois, kDeviceId, q, {elt});
+        require_uploaded_key_prefix(galois, *fixture.galois, q, 1);
+        for (const auto &mapping : galois.poly_metadata_)
+            require(mapping.key_index == poseidon::GaloisKeys::get_index(elt),
+                    "cropped selected-key upload included an unrequested key");
+        auto relin = GpuUploader::upload_relin_keys(*fixture.relin, kDeviceId, q);
+        require_uploaded_key_prefix(relin, *fixture.relin, q, 1);
+        require_rejected([&] { (void)galois.make_const_view(0); }, "stored Q prefix");
+        require_rejected([&] { (void)galois.make_const_view(q + 1); }, "stored Q prefix");
+    }
+    const auto count = static_cast<std::size_t>(std::count_if(
+        fixture.galois->data().begin(), fixture.galois->data().end(),
+        [](const auto &key) { return !key.empty(); }));
+    auto all_low = GpuUploader::upload_galois_keys(*fixture.galois, kDeviceId, KeyPrefixFixture::low_q);
+    require_uploaded_key_prefix(all_low, *fixture.galois, KeyPrefixFixture::low_q, count);
+    auto full = GpuUploader::upload_galois_keys(*fixture.galois, kDeviceId);
+    const auto full_q = fixture.context.parameters_literal()->q().size();
+    require_uploaded_key_prefix(full, *fixture.galois, full_q, count);
+    auto full_relin = GpuUploader::upload_relin_keys(*fixture.relin, kDeviceId);
+    require_uploaded_key_prefix(full_relin, *fixture.relin, full_q, 1);
+    for (const auto invalid_q : {std::size_t{0}, full_q + 1})
+    {
+        require_rejected([&] { (void)GpuUploader::upload_relin_keys(*fixture.relin, kDeviceId, invalid_q); },
+                         "Q prefix");
+        require_rejected([&] { (void)GpuUploader::upload_galois_keys(*fixture.galois, kDeviceId, invalid_q, {elt}); },
+                         "Q prefix");
+    }
+}
+
+using PrefixRotationRequests = std::vector<std::pair<int, std::size_t>>;
+
+fhegpu::RuntimePlan make_key_prefix_rotation_plan(
+    KeyPrefixFixture &fixture, const fhegpu::LoadedOperatorSpec &spec,
+    const PrefixRotationRequests &requests)
+{
+    fhegpu::RuntimePlan plan;
+    plan.plan_id = 1;
+    plan.target = make_target(spec);
+    for (std::size_t i = 0; i < requests.size(); ++i)
+    {
+        const auto [step, q] = requests[i];
+        const int level = fixture.level_for_q(q);
+        const auto host = static_cast<fhegpu::ValueId>(3 * i);
+        const auto input = host + 1, output = host + 2;
+        for (const auto id : {host, input, output})
+            plan.values.push_back({id, fhegpu::ValueKind::Ciphertext,
+                                   id == host ? host_place() : device_place(), kContextId,
+                                   level, KeyPrefixFixture::scale_log2, true, 2});
+        plan.external_inputs.push_back(host);
+        auto upload = transfer_action(i + 1, fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+        upload.inputs = {host};
+        upload.outputs = {input};
+        plan.initialization.push_back({i, std::move(upload)});
+        plan.execution.push_back({requests.size() + i,
+            fhegpu::ComputeOp{fhegpu::ComputeKind::Rotate, {input}, output,
+                             device_place(), fhegpu::RotateAttrs{step}}});
+        plan.final_outputs.push_back(output);
+    }
+    return plan;
+}
+
+void run_key_prefix_rotation_plan(
+    PoseidonGpuApi &api, KeyPrefixFixture &fixture,
+    const fhegpu::LoadedOperatorSpec &spec, const fhegpu::RuntimePlan &plan,
+    const PrefixRotationRequests &requests, const std::string &plan_sha = kPlanSha)
+{
+    std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
+    for (std::size_t i = 0; i < requests.size(); ++i)
+        inputs.emplace(3 * i, PoseidonGpuValue::from_host_ciphertext(
+            requests[i].second == KeyPrefixFixture::low_q ? fixture.low_cipher : fixture.high_cipher));
+    fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api);
+    const auto artifact = runtime.run({plan, plan_sha}, {spec, {}, false}, inputs);
+    for (std::size_t i = 0; i < requests.size(); ++i)
+        fixture.check_rotation(artifact.values.at(3 * i + 2).value, requests[i].first);
+}
+
+void test_per_rotation_q_prefix_and_preflight_upgrade(
+    KeyPrefixFixture &fixture, const RmmPoolScope &pool)
+{
+    const auto spec = make_operator_spec(fixture.context);
+    PoseidonGpuApi api(kContextId, fixture.context, kDeviceId, {}, fixture.galois);
+    const auto baseline = pool.requested_live_bytes();
+    const PrefixRotationRequests requests{{1, KeyPrefixFixture::high_q},
+        {2, KeyPrefixFixture::high_q}, {3, KeyPrefixFixture::low_q}, {1, KeyPrefixFixture::low_q}};
+    const auto plan = make_key_prefix_rotation_plan(fixture, spec, requests);
+    const auto requirements = fhegpu::PlanVerifier::verify(plan, spec);
+    api.preflight(kPlanSha, false, plan.target, spec.spec, requirements);
+    const auto expected_keys = 2 * fixture.key_bytes(KeyPrefixFixture::high_q) +
+                               fixture.key_bytes(KeyPrefixFixture::low_q);
+    require(pool.requested_live_bytes() - baseline == expected_keys,
+            "preflight used global-max Q, duplicate low-level owners, or unused binary keys");
+    const auto uploaded_bytes = pool.total_allocated_bytes();
+    api.preflight(kPlanSha, false, plan.target, spec.spec, requirements);
+    require(pool.total_allocated_bytes() == uploaded_bytes,
+            "unchanged per-key preflight reuploaded evaluation keys");
+    run_key_prefix_rotation_plan(api, fixture, spec, plan, requests);
+
+    {
+        auto high = transfer_value(api, 197, PoseidonGpuValue::from_host_ciphertext(fixture.high_cipher),
+                                   fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+        fhegpu::ComputeOp rotate{fhegpu::ComputeKind::Rotate, {0}, 1,
+                                device_place(), fhegpu::RotateAttrs{3}};
+        rotate.reuse_input = 0;
+        const auto before_rejection = pool.total_allocated_bytes();
+        // Both fallback basis keys have sufficient Q, but an existing direct
+        // key must not fall back merely because its preloaded prefix is short.
+        require_rejected([&] { (void)api.compute(rotate, {high}); }, "not preloaded for the input level");
+        require_rejected([&] { (void)api.compute_reuse(rotate, high, {}); }, "not preloaded for the input level");
+        require(pool.total_allocated_bytes() == before_rejection,
+                "Rotate lazily uploaded a missing higher-Q key during execution");
+        api.drain();
+    }
+    const int slots = static_cast<int>(fixture.slots.size());
+    const PrefixRotationRequests upgraded{{3 + slots, KeyPrefixFixture::high_q},
+                                           {1, KeyPrefixFixture::low_q}};
+    auto next_plan = make_key_prefix_rotation_plan(fixture, spec, upgraded);
+    next_plan.plan_id = 2;
+    const auto next_requirements = fhegpu::PlanVerifier::verify(next_plan, spec);
+    const auto before_upgrade = pool.requested_live_bytes();
+    const std::string next_sha = "sha256:" + std::string(64, '2');
+    api.preflight(next_sha, false, next_plan.target, spec.spec, next_requirements);
+    require(pool.requested_live_bytes() - before_upgrade ==
+                fixture.key_bytes(KeyPrefixFixture::high_q) - fixture.key_bytes(KeyPrefixFixture::low_q),
+            "new-plan preflight did not replace only the upgraded rotation's prefix");
+    run_key_prefix_rotation_plan(api, fixture, spec, next_plan, upgraded, next_sha);
+}
+
+void test_binary_and_normalized_rotation_prefixes(
+    KeyPrefixFixture &fixture, const RmmPoolScope &pool)
+{
+    const auto spec = make_operator_spec(fixture.context);
+    const int slots = static_cast<int>(fixture.slots.size());
+    const PrefixRotationRequests requests{{5 - slots, KeyPrefixFixture::high_q},
+        {5 + slots, KeyPrefixFixture::low_q}, {1, KeyPrefixFixture::low_q},
+        {-3 + slots, KeyPrefixFixture::low_q}, {-slots / 2, KeyPrefixFixture::low_q}};
+    const auto plan = make_key_prefix_rotation_plan(fixture, spec, requests);
+    PoseidonGpuApi api(kContextId, fixture.context, kDeviceId, {}, fixture.galois);
+    const auto baseline = pool.requested_live_bytes();
+    const auto requirements = fhegpu::PlanVerifier::verify(plan, spec);
+    api.preflight(kPlanSha, false, plan.target, spec.spec, requirements);
+    // 5 -> {1,4} at Q4; -3 -> {-1,-2} and the normalized +half key at Q2.
+    // Equivalent 5 requests and the lower-Q use of 1 must share these owners.
+    require(pool.requested_live_bytes() - baseline ==
+                2 * fixture.key_bytes(KeyPrefixFixture::high_q) +
+                3 * fixture.key_bytes(KeyPrefixFixture::low_q),
+            "binary/normalized rotations did not assign maximum Q to their actual physical keys");
+    run_key_prefix_rotation_plan(api, fixture, spec, plan, requests);
+    auto input = transfer_value(api, 198, PoseidonGpuValue::from_host_ciphertext(fixture.high_cipher),
+                                fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+    fhegpu::ComputeOp rotate{fhegpu::ComputeKind::Rotate, {0}, 1,
+                            device_place(), fhegpu::RotateAttrs{5 - slots}};
+    rotate.reuse_input = 0;
+    auto reused = api.compute_reuse(rotate, std::move(input), {});
+    api.synchronize(reused);
+    fixture.check_rotation(reused, 5 - slots);
+    api.drain();
+
+    // PlanVerifier rejects normalized-zero rotations, so exercise the public
+    // normal-compute identity path directly, without requesting another key.
+    auto identity_input = transfer_value(api, 199, PoseidonGpuValue::from_host_ciphertext(fixture.low_cipher),
+                                         fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+    rotate.attrs = fhegpu::RotateAttrs{slots};
+    rotate.reuse_input.reset();
+    auto identity = api.compute(rotate, {identity_input});
+    api.synchronize(identity);
+    fixture.check_rotation(identity, slots);
+    api.drain();
+}
+
 void test_application_gpu_extensions(
     const poseidon::PoseidonContext &context,
     poseidon::KeyGenerator &key_generator,
@@ -3404,6 +3725,18 @@ int main()
         });
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
+        {
+            KeyPrefixFixture key_prefix;
+            run_test("evaluation-key uploads crop Q, HYBRID digits and P offsets", [&] {
+                test_cropped_evaluation_key_upload(key_prefix);
+            });
+            run_test("ordinary rotations retain per-key Q and upgrade only in preflight", [&] {
+                test_per_rotation_q_prefix_and_preflight_upgrade(key_prefix, rmm_pool);
+            });
+            run_test("binary and normalized rotations share physical-key Q prefixes", [&] {
+                test_binary_and_normalized_rotation_prefixes(key_prefix, rmm_pool);
+            });
+        }
         run_test("application Q-prefix, sparse levels and hoisted rotations",
                  [&] { test_application_gpu_extensions(context, key_generator, *galois_keys); });
         run_test("Boot fractional-scale normalization preserves messages and input storage",

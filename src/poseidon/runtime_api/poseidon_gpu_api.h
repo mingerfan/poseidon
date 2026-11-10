@@ -15,7 +15,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <set>
+#include <map>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -267,12 +267,12 @@ private:
     std::size_t q_count_for_level(int level) const;
     void materialize_relin_keys(DeviceState &device, std::size_t q_count);
     void materialize_galois_keys(
-        DeviceState &device, std::size_t q_count,
-        const std::set<std::uint32_t> &galois_elts);
+        DeviceState &device,
+        const std::map<std::uint32_t, std::size_t> &required_q_counts);
     const gpu::GpuRelinKeysData &relin_keys_for(DeviceState &device,
                                                 std::size_t q_count);
     const gpu::GpuGaloisKeysData &galois_keys_for(DeviceState &device,
-                                                  std::size_t q_count);
+                                                int step, std::size_t q_count);
 
     std::string context_id_;
     PoseidonContext context_;

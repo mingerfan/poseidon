@@ -946,10 +946,11 @@ struct PoseidonGpuApi::DeviceState
     std::shared_ptr<DeviceMemoryPool> memory_pool;
     std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
     std::unique_ptr<gpu::GpuEvaluator> evaluator;
-    // One owning Q prefix per key family; evaluator calls create active-level views.
+    // Rotations with the same required Q prefix share an owning key bucket.
+    // Lower-level calls use zero-copy views of their rotation's bucket.
     std::unique_ptr<gpu::GpuRelinKeysData> relin_keys;
-    std::unique_ptr<gpu::GpuGaloisKeysData> galois_keys;
-    std::set<std::uint32_t> galois_elements;
+    std::map<std::size_t, gpu::GpuGaloisKeysData> galois_keys_by_q_count;
+    std::map<std::uint32_t, std::size_t> galois_key_q_counts;
     std::unordered_map<std::string, std::unique_ptr<NativeBootstrapState>>
         native_bootstrap_by_profile;
 };
@@ -1767,7 +1768,8 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         }
         std::uint64_t persistent=device.gpu_parameters->allocated_bytes();
         fhegpu::ResourceUsage::add(persistent,key_bytes(device.relin_keys.get()));
-        fhegpu::ResourceUsage::add(persistent,key_bytes(device.galois_keys.get()));
+        for (const auto &[q_count, keys] : device.galois_keys_by_q_count)
+            fhegpu::ResourceUsage::add(persistent, key_bytes(&keys));
         std::set<const void *> counted_keys;
         std::uint64_t native_workspace=0,native_pooled_live=0;
         for(const auto &entry:device.native_bootstrap_by_profile) {
@@ -2137,7 +2139,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
             for (int step : available_rotation_steps(
                      context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps))
                 device.evaluator->rotate_inplace(ciphertext, step,
-                    galois_keys_for(device, ciphertext.meta.q_count), *workspace);
+                    galois_keys_for(device, step, ciphertext.meta.q_count), *workspace);
         }
         input.ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
         auto retained = other_inputs;
@@ -2335,8 +2337,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps);
             if (steps.empty())
             {
-                device.evaluator->rotate(
-                    input, 0, galois_keys_for(device, input.meta.q_count), output);
+                device.evaluator->rotate(input, 0, {}, output);
                 break;
             }
 
@@ -2348,7 +2349,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 next = std::make_shared<gpu::GpuCiphertextData>();
                 temporaries.push_back(next);
                 device.evaluator->rotate(
-                    *source, step, galois_keys_for(device, input.meta.q_count), *next);
+                    *source, step, galois_keys_for(device, step, input.meta.q_count), *next);
                 source = next.get();
             }
             output = std::move(*next);
@@ -3320,7 +3321,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
 
     std::map<fhegpu::Place, std::size_t> required_relin_q_counts;
     std::map<fhegpu::Place,
-             std::pair<std::size_t, std::set<std::uint32_t>>> required_galois_keys;
+             std::map<std::uint32_t, std::size_t>> required_galois_keys;
     const auto galois_tool = context_.crt_context()->galois_tool();
 
     for (const auto &key : requirements.keys)
@@ -3362,11 +3363,11 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             }
             const auto steps = available_rotation_steps(
                 context_, *galois_keys_, *key.rotation_step);
-            auto &[required_q_count, galois_elts] = required_galois_keys[key.place];
-            required_q_count = std::max(required_q_count, q_count);
             for (int step : steps)
             {
-                galois_elts.insert(galois_tool->get_elt_from_step(step));
+                auto &required_q_count = required_galois_keys[key.place][
+                    galois_tool->get_elt_from_step(step)];
+                required_q_count = std::max(required_q_count, q_count);
             }
         }
         else
@@ -3381,8 +3382,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     }
     for (const auto &[place, required] : required_galois_keys)
     {
-        materialize_galois_keys(device_state(place, "Poseidon GPU GaloisKeys"),
-                               required.first, required.second);
+        materialize_galois_keys(device_state(place, "Poseidon GPU GaloisKeys"), required);
     }
 
     synchronize_all_devices();
@@ -3707,38 +3707,30 @@ void PoseidonGpuApi::materialize_relin_keys(DeviceState &device,
 }
 
 void PoseidonGpuApi::materialize_galois_keys(
-    DeviceState &device, std::size_t q_count,
-    const std::set<std::uint32_t> &galois_elts)
+    DeviceState &device,
+    const std::map<std::uint32_t, std::size_t> &required_q_counts)
 {
-    if (galois_elts.empty())
-    {
+    auto combined = device.galois_key_q_counts;
+    for (const auto &[element, q_count] : required_q_counts)
+        combined[element] = std::max(combined[element], q_count);
+    if (combined == device.galois_key_q_counts)
         return;
-    }
-    if (galois_keys_ == nullptr)
-    {
-        throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
-    }
 
-    auto combined_galois_elts = galois_elts;
-    combined_galois_elts.insert(device.galois_elements.begin(), device.galois_elements.end());
-    if (device.galois_keys)
-    {
-        q_count = std::max(q_count, device.galois_keys->meta.q_count);
-        if (q_count == device.galois_keys->meta.q_count &&
-            combined_galois_elts == device.galois_elements)
-        {
-            return;
-        }
+    // Preflight is the only upload boundary. Retire old buckets before their
+    // replacements so a later plan does not briefly need two complete key sets.
+    if (!device.galois_keys_by_q_count.empty())
         synchronize_device(device.cuda_device_id);
-        device.galois_keys.reset();
-    }
+    device.galois_keys_by_q_count.clear();
+    device.galois_key_q_counts.clear();
 
-    const std::vector<std::uint32_t> selected_galois_elts(
-        combined_galois_elts.begin(), combined_galois_elts.end());
-    device.galois_keys = std::make_unique<gpu::GpuGaloisKeysData>(
-        gpu::GpuUploader::upload_galois_keys(*galois_keys_, device.cuda_device_id,
-                                             q_count, selected_galois_elts));
-    device.galois_elements = std::move(combined_galois_elts);
+    std::map<std::size_t, std::vector<std::uint32_t>> buckets;
+    for (const auto &[element, q_count] : combined)
+        buckets[q_count].push_back(element);
+    for (const auto &[q_count, elements] : buckets)
+        device.galois_keys_by_q_count.emplace(q_count,
+            gpu::GpuUploader::upload_galois_keys(
+                *galois_keys_, device.cuda_device_id, q_count, elements));
+    device.galois_key_q_counts = std::move(combined);
 }
 
 const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
@@ -3753,14 +3745,16 @@ const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
 }
 
 const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
-    DeviceState &device, std::size_t q_count)
+    DeviceState &device, int step, std::size_t q_count)
 {
-    if (!device.galois_keys || device.galois_keys->meta.q_count < q_count)
+    const auto element = context_.crt_context()->galois_tool()->get_elt_from_step(step);
+    const auto key = device.galois_key_q_counts.find(element);
+    if (key == device.galois_key_q_counts.end() || key->second < q_count)
     {
         throw std::runtime_error(
             "Poseidon GPU GaloisKeys were not preloaded for the input level");
     }
-    return *device.galois_keys;
+    return device.galois_keys_by_q_count.at(key->second);
 }
 
 } // namespace poseidon::runtime_api

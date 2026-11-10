@@ -181,11 +181,12 @@ public:
         int device_id);
 
     /**
-     * @brief Upload relinearization keys and validate a runtime Q-prefix view.
+     * @brief Upload relinearization keys with a physically cropped Q prefix.
      *
-     * The owning allocation keeps the full [Q_storage | P] layout required by
-     * the optimized key-switch path. Runtime operations select q_count through
-     * a zero-copy view instead of compacting the key allocation.
+     * Store Q[0, q_count) followed by all original P limbs, retaining only
+     * ceil(q_count / P_count) original HYBRID digits, or q_count BV digits
+     * when P_count is zero. The key parms_id is unchanged. Smaller runtime
+     * Q prefixes use zero-copy views of this owner.
      */
     static GpuRelinKeysData upload_relin_keys(
         const RelinKeys &src,
@@ -202,13 +203,21 @@ public:
         const GaloisKeys &src,
         int device_id);
 
+    /**
+     * @brief Upload Galois keys with the same physical Q/digit crop as relin keys.
+     *
+     * All original P limbs and the original key parms_id are preserved.
+     */
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
         int device_id,
         std::size_t q_count);
 
     /**
-     * @brief Upload only the requested rotations and validate a Q-prefix view.
+     * @brief Upload only the requested rotations with physical Q/digit cropping.
+     *
+     * q_count is shared by every selected rotation; sparse CPU key indices
+     * are preserved in the GPU owner.
      */
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
@@ -229,7 +238,7 @@ public:
      *
      * No device allocation or device-to-device copy is performed. At runtime
      * KeySwitch reads the active Q prefix and addresses P through its fixed
-     * offset in the original full-level key allocation.
+     * offset Q_storage * degree in the owning allocation.
      */
     static void prepare_key_views_for_q_counts(
         const GpuEvaluationKeyData &keys,
