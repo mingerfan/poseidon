@@ -312,12 +312,14 @@ class ContinuousBootstrap {
     GpuDoubleHoistWorkspace stc_workspace,cts_workspace;
     GpuBootstrapWorkspace evalmod_workspace;
     double alpha=1;
-    // POSEIDON_S2C_LIBRARY_BOOT=1 runs GpuEvaluator::bootstrap on the GPU
-    // library's S2C-first profile (the one the Runtime adapter uses) instead
-    // of the degree-59 stages below: same Q6/2^40 -> Q31/2^40 contract, with
-    // the sparse ephemeral secret and the low-degree EvalMod. The defaults are
-    // the measured degree-22 / DA3 / K=12 / h=32 profile; each can be set with
+    // By default (POSEIDON_S2C_LIBRARY_BOOT unset or 1) the performance path
+    // runs GpuEvaluator::bootstrap on the GPU library's S2C-first profile (the
+    // one the Runtime adapter uses): same Q6/2^40 -> Q31/2^40 contract as the
+    // degree-59 stages below, with the sparse ephemeral secret and the
+    // low-degree EvalMod. Its parameters are the measured degree-22 / DA3 /
+    // K=12 / h=32 profile; each can be set with
     // POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}.
+    // POSEIDON_S2C_LIBRARY_BOOT=0 runs the application's degree-59 stages.
     std::optional<GpuBootstrapProfile> library;
     GpuBootstrapWorkspace library_workspace;
     GpuResNet20ManualOptions library_options;
@@ -374,7 +376,7 @@ class ContinuousBootstrap {
 public:
     static bool library_boot_requested() {
         const char *raw=std::getenv("POSEIDON_S2C_LIBRARY_BOOT");
-        if(!raw || !*raw)return false;
+        if(!raw || !*raw)return true;
         const std::string value(raw);
         if(value!="0" && value!="1")
             throw std::invalid_argument("POSEIDON_S2C_LIBRARY_BOOT must be 0 or 1");

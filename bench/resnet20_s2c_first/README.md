@@ -5,9 +5,14 @@
 ```text
 27 x prepared encrypted input patches (Q32) -> stem (Q31) -> ReLU (Q9)
   -> 9 BasicBlocks
-  -> 18 x (S2C-first degree-59 bootstrap + ReLU)
+  -> 18 x (S2C-first bootstrap + ReLU)
   -> global average pool -> FC -> encrypted logits
 ```
+
+性能模式的 Bootstrap 默认用 GPU 库的 S2C-first profile（22 阶 EvalMod、稀疏临时
+秘密，与 Runtime adapter 相同）；`POSEIDON_S2C_LIBRARY_BOOT=0` 改回应用自带的
+59 阶实现。两者的契约都是 Q6/2^40 → Q31/2^40。`--unsafe-accuracy-only` 的逐阶段
+正确性回归只有 59 阶实现。
 
 输入 patch 直接在 Q32、scale `2^40` 编码和加密；Stem 的一次明文乘法与
 rescale 自然得到 Q31、scale `2^40`。入口不再先生成 Q50 patch，也不存在原来的
@@ -40,6 +45,19 @@ logits；区间内没有逐阶段 `cudaDeviceSynchronize()`、H2D/D2H、中间�
 指定工具和构建目录，默认并行度为 2。`CUDA_ARCHITECTURES` 指定 GPU 架构，默认
 `70`（V100），RTX 4090 用 `89`。应用是 opt-in，不改变默认 CPU/mGPU 构建。
 
+脚本配置的是离线工程（不下载依赖），spdlog 必须能被 `find_package` 找到；静态库
+要用 `-fPIC` 编译，安装前缀用 `CMAKE_PREFIX_PATH` 传进去。没有现成的 spdlog 时
+也可以从顶层工程构建（依赖由 FetchContent 获取，无法访问 GitHub 时用
+`FETCHCONTENT_SOURCE_DIR_{SPDLOG,ZLIB,ZSTD,MSGSL}` 指向本地源码）：
+
+```bash
+cmake -S . -B build_resnet20_s2c_first -G Ninja -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CUDA_ARCHITECTURES=89 -DPOSEIDON_BUILD_EXAMPLES=OFF \
+  -DPOSEIDON_BUILD_GPU=ON -DPOSEIDON_BUILD_RESNET20_S2C_FIRST=ON
+cmake --build build_resnet20_s2c_first --target poseidon_resnet20_s2c_first
+# 可执行文件在 build_resnet20_s2c_first/bin/poseidon_resnet20_s2c_first
+```
+
 ```bash
 bash bench/resnet20_s2c_first/build.sh /tmp/poseidon_resnet20_s2c_first
 
@@ -66,26 +84,27 @@ CUDA_VISIBLE_DEVICES=0 /tmp/poseidon_resnet20_s2c_first \
 
 ## RTX 4090 推荐配置（2026-11-10）
 
-24 GB 卡要缩小常驻池（默认 30 GiB 是按 32 GB V100 定的），并打开库 Boot 与
-giant 步 c0 留在 QP 两个开关：
+24 GB 卡要缩小常驻池（默认 30 GiB 是按 32 GB V100 定的），再打开 giant 步 c0
+留在 QP 的开关：
 
 ```bash
 CUDA_ARCHITECTURES=89 bash bench/resnet20_s2c_first/build.sh /tmp/poseidon_resnet20_s2c_first
 
 CUDA_VISIBLE_DEVICES=0 CUDA_MODULE_LOADING=EAGER \
 POSEIDON_S2C_POOL_MIB=22528 \
-POSEIDON_S2C_LIBRARY_BOOT=1 POSEIDON_DOUBLE_HOIST_QP_C0=1 POSEIDON_S2C_CUPTI=0 \
+POSEIDON_DOUBLE_HOIST_QP_C0=1 POSEIDON_S2C_CUPTI=0 \
   /tmp/poseidon_resnet20_s2c_first --unsafe-performance-only \
   Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt 0
 ```
 
-结果看 `CONTINUOUS_TIMING_RESULT` 行的 `wall_ms`、`accuracy`、`max_logit_error`。
-一次进程约 5 分钟，大部分是计时前的密钥和明文准备。
+结果看 `CONTINUOUS_TIMING_RESULT` 行的 `wall_ms`、`accuracy`、`max_logit_error`
+和 `bootstrap_implementation`。一次进程约 5 分钟，大部分是计时前的密钥和明文准备。
+`summarize_performance.py` 只验收挂 CUPTI 的日志（`POSEIDON_S2C_CUPTI` 不设为 0）。
 
 | 环境变量 | 默认 | 作用 |
 | --- | --- | --- |
 | `POSEIDON_S2C_POOL_MIB` / `POSEIDON_S2C_POOL_HEADROOM_MIB` | 30720 / 1024 | 连续模式 RMM 池及要求的额外空闲显存 |
-| `POSEIDON_S2C_LIBRARY_BOOT` | 0 | 1：18 次 Boot 改用 GPU 库的 S2C-first profile（与 Runtime adapter 相同），稀疏临时秘密 + 22 阶 EvalMod，契约仍是 Q6/2^40 → Q31/2^40；0：应用自带的 59 阶 Boot |
+| `POSEIDON_S2C_LIBRARY_BOOT` | 1 | 1：18 次 Boot 用 GPU 库的 S2C-first profile（与 Runtime adapter 相同），稀疏临时秘密 + 22 阶 EvalMod；0：应用自带的 59 阶 Boot。契约都是 Q6/2^40 → Q31/2^40 |
 | `POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}` | 22, 3, 12, 2, 1, 32 | 库 Boot 的参数 |
 | `POSEIDON_DOUBLE_HOIST_QP_C0` | 0 | 1：double hoist 的 giant 步把 c0 留在 QP，省掉一次 ModDown 再抬回（Boot 约 −7%） |
 | `POSEIDON_S2C_CUPTI` | 1 | 0：不挂应用自带的 CUPTI 采集（在线时间少 4–5%，nsys 采集时也要设 0） |
@@ -99,9 +118,14 @@ RTX 4090（AutoDL，单卡，每组一个进程，均 PASS、预测类别 3）�
 
 | 配置 | 挂 CUPTI `wall_ms` | `POSEIDON_S2C_CUPTI=0` `wall_ms` | `max_logit_error` |
 | --- | --- | --- | --- |
-| 应用 59 阶 Boot | 1946.6（3 次中位数） | 1857.1 | 0.010 |
-| `POSEIDON_S2C_LIBRARY_BOOT=1` | 1703.2（3 次中位数） | 1628.6 | 0.011 |
-| 再加 `POSEIDON_DOUBLE_HOIST_QP_C0=1` | 1622.9（2 次均值） | 1549.6 | 0.011 |
+| `POSEIDON_S2C_LIBRARY_BOOT=0`（应用 59 阶 Boot） | 1946.6（3 次中位数） | 1857.1 | 0.010 |
+| 默认（库 22 阶 Boot） | 1703.2（3 次中位数） | 1628.6 | 0.011 |
+| 默认 + `POSEIDON_DOUBLE_HOIST_QP_C0=1` | 1622.9（2 次均值） | 1549.6 | 0.011 |
+
+以上是 11-10 开发树的测量。本分支在同一台机器上复测（`POSEIDON_S2C_CUPTI=0`）：
+59 阶 1864.3 ms；22 阶 + QP c0 1552.3 ms（顶层工程构建）、1557.3 ms（`build.sh`
+构建），均 PASS。11-10 三种配置挂 CUPTI 的日志都能通过 `summarize_performance.py`
+验收。
 
 安全性：除 Q50/P25、`dnum=2` 本身未获批准外，库 Boot 的 dense→sparse 切换密钥
 （h=32）是在完整 Q50+P25 模数上生成的，按这个模数 h=32 不安全；只能用于性能

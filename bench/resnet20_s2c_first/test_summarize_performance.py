@@ -114,6 +114,40 @@ class PerformanceSummaryTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             summarize(GOOD.replace("parameter_levels=19", "parameter_levels=20"))
 
+    def test_accepts_library_boot_and_smaller_resident_pool(self):
+        stages = "".join(
+            line + "\n" for line in GOOD.splitlines()
+            if line.startswith("GPU_ACTIVITY_BREAKDOWN category=bootstrap."))
+        library = (GOOD.replace(stages, "GPU_ACTIVITY_BREAKDOWN "
+                                "category=bootstrap.library gpu_ms=5500 calls=18\n")
+                   .replace("MEMORY pool_cap_GiB=30 pool_initial_GiB=30",
+                            "MEMORY pool_cap_GiB=22 pool_initial_GiB=22")
+                   .replace("CONTINUOUS_PREPARED ",
+                            "CONTINUOUS_PREPARE_BOOTSTRAP implementation=library_degree22_k12_h32 "
+                            "degree=22 evalmod_q_out=31\nCONTINUOUS_PREPARED ")
+                   .replace("security_approved=false",
+                            "security_approved=false "
+                            "bootstrap_implementation=library_degree22_k12_h32"))
+        summary = summarize(library)
+        self.assertEqual(summary["bootstrap_implementation"], "library_degree22_k12_h32")
+        self.assertAlmostEqual(summary["bootstrap_gpu_ms"], 5500)
+        self.assertEqual(summarize(GOOD)["bootstrap_implementation"], "application_degree59")
+        # The library breakdown needs the library implementation and vice versa.
+        with self.assertRaises(ValueError):
+            summarize(library.replace(
+                " bootstrap_implementation=library_degree22_k12_h32", ""))
+        with self.assertRaises(ValueError):
+            summarize(GOOD.replace(
+                "security_approved=false",
+                "security_approved=false bootstrap_implementation=library_degree22_k12_h32"))
+        with self.assertRaises(ValueError):
+            summarize(library.replace("implementation=library_degree22_k12_h32 degree=22",
+                                      "implementation=library_degree30_k12_h32 degree=30"))
+
+    def test_rejects_pool_not_reserved_at_start_up(self):
+        with self.assertRaises(ValueError):
+            summarize(GOOD.replace("pool_initial_GiB=30", "pool_initial_GiB=0"))
+
     def test_rejects_missing_breakdown_or_wrong_call_count(self):
         with self.assertRaises(ValueError):
             summarize(GOOD.replace(
