@@ -169,6 +169,20 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
             "POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS requires "
             "POSEIDON_BUILD_CKKS_RUNTIME_TESTS=ON")
     endif()
+    add_executable(poseidon_gpu_boot_optimization_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_boot_optimizations_test.cpp)
+    target_link_libraries(poseidon_gpu_boot_optimization_tests PRIVATE poseidon_runtime_gpu_api)
+    add_test(NAME poseidon_gpu_boot_optimization_tests
+        COMMAND ${CMAKE_COMMAND} -E env --unset=CUDA_LAUNCH_BLOCKING
+            $<TARGET_FILE:poseidon_gpu_boot_optimization_tests>)
+    set_tests_properties(poseidon_gpu_boot_optimization_tests PROPERTIES SKIP_RETURN_CODE 77)
+
+    add_executable(poseidon_gpu_key_view_cache_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_key_view_cache_test.cpp)
+    target_link_libraries(poseidon_gpu_key_view_cache_tests PRIVATE poseidon_runtime_gpu_api)
+    add_test(NAME poseidon_gpu_key_view_cache_tests COMMAND poseidon_gpu_key_view_cache_tests)
+    set_tests_properties(poseidon_gpu_key_view_cache_tests PROPERTIES SKIP_RETURN_CODE 77)
+
     add_executable(poseidon_runtime_gpu_api_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp
     )
@@ -262,4 +276,34 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
     )
     set_tests_properties(poseidon_runtime_gpu_bootstrap_e2e
         PROPERTIES SKIP_RETURN_CODE 77)
+    foreach(_boot_variant IN ITEMS compressed qp_c0)
+        if(_boot_variant STREQUAL "qp_c0")
+            set(_qp_c0 1)
+        else()
+            set(_qp_c0 0)
+        endif()
+        add_test(
+            NAME poseidon_runtime_gpu_bootstrap_${_boot_variant}_e2e
+            COMMAND ${CMAKE_COMMAND} -E env
+                --unset=POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50
+                --unset=POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_RATIO
+                --unset=POSEIDON_RUNTIME_BOOTSTRAP_SKIP_OUTPUT_SCALE
+                --unset=POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_SCALE
+                --unset=POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_SCALE_LOG2
+                POSEIDON_RUNTIME_BOOTSTRAP_DEGREE=16384
+                POSEIDON_RUNTIME_BOOTSTRAP_LINEAR_MODE=double
+                POSEIDON_RUNTIME_BOOTSTRAP_COMPRESS_LINEAR=1
+                POSEIDON_GPU_KEY_VIEW_CACHE=1
+                POSEIDON_GPU_LAZY_BASECONV=1
+                POSEIDON_GPU_MODDOWN_FOURSTEP=1
+                POSEIDON_GPU_QP_FOURSTEP_ANY_P=1
+                POSEIDON_DOUBLE_HOIST_QP_C0=${_qp_c0}
+                POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE=1
+                $<TARGET_FILE:poseidon_runtime_gpu_bootstrap_e2e>
+        )
+        set_tests_properties(poseidon_runtime_gpu_bootstrap_${_boot_variant}_e2e
+            PROPERTIES SKIP_RETURN_CODE 77)
+    endforeach()
+    unset(_boot_variant)
+    unset(_qp_c0)
 endif()

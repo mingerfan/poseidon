@@ -102,12 +102,16 @@ void copy_gpu_words_to_device_field_offset(
 
     gpu_check_cuda(cudaSetDevice(dst.device_id), "cudaSetDevice");
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             dst.data() + dst_offset,
             src,
             count * sizeof(GpuWord),
-            cudaMemcpyHostToDevice),
-        "cudaMemcpyHostToDevice shard");
+            cudaMemcpyHostToDevice,
+            gpu_execution_stream()),
+        "cudaMemcpyAsyncHostToDevice shard");
+    // The packed host buffer may be destroyed as soon as this helper returns.
+    gpu_check_cuda(cudaStreamSynchronize(gpu_execution_stream()),
+                   "cudaStreamSynchronize HostToDevice shard");
 }
 
 void copy_device_field_to_uint64(
@@ -152,12 +156,16 @@ void copy_device_field_offset_to_gpu_words(
 
     gpu_check_cuda(cudaSetDevice(src.device_id), "cudaSetDevice");
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             dst,
             src.data() + src_offset,
             count * sizeof(GpuWord),
-            cudaMemcpyDeviceToHost),
-        "cudaMemcpyDeviceToHost shard");
+            cudaMemcpyDeviceToHost,
+            gpu_execution_stream()),
+        "cudaMemcpyAsyncDeviceToHost shard");
+    // A legacy/default-stream D2H does not wait for a nonblocking producer.
+    gpu_check_cuda(cudaStreamSynchronize(gpu_execution_stream()),
+                   "cudaStreamSynchronize DeviceToHost shard");
 }
 
 void ciphertext_limb_shape(

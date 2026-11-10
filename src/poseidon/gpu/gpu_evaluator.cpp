@@ -99,6 +99,20 @@ bool use_double_hoist_direct_giant_accumulate()
            value != "FALSE";
 }
 
+// Keep giant-group c0 in QP; only non-identity c1 is ModDown'ed for the
+// giant key switch. Rounding differs, so this remains explicitly opt-in.
+bool use_double_hoist_qp_c0()
+{
+    const char *raw = std::getenv("POSEIDON_DOUBLE_HOIST_QP_C0");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+    const std::string value(raw);
+    return value != "0" && value != "OFF" && value != "off" &&
+           value != "false" && value != "FALSE";
+}
+
 bool use_double_hoist_qp_mac_direct_init()
 {
     const char *raw =
@@ -3045,8 +3059,8 @@ void GpuEvaluator::relinearize(
 
     auto source_view = source_ciphertext.make_const_view();
     auto destination_view = result->make_view();
-    auto relin_keys_view =
-        relin_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &relin_keys_view =
+        relin_keys.const_view(source_ciphertext.meta.q_count);
     const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
     /* 通过dnum分解的方式进行重线性化 */
@@ -3165,8 +3179,8 @@ void GpuEvaluator::relinearize_rescale_x2_hybrid(
 
     auto source_view = source_ciphertext.make_const_view();
     auto destination_view = result->make_view();
-    auto relin_keys_view =
-        relin_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &relin_keys_view =
+        relin_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.relinearize_hybrid_ciphertext_rescale_x2(
         destination_view,
         source_view,
@@ -3274,8 +3288,8 @@ void GpuEvaluator::rotate(
             level_info,
             staged.source_hoist,
             staged.keyswitch);
-        const auto key_view =
-            galois_keys.make_const_view(source_ciphertext.meta.q_count);
+        const auto &key_view =
+            galois_keys.const_view(source_ciphertext.meta.q_count);
         keyswitch_handler_.keyswitch_multsum_no_moddown(
             staged.source_hoist,
             galois_elt,
@@ -3349,8 +3363,8 @@ void GpuEvaluator::rotate(
     zero_poly(destination_view.polys[1], "GpuEvaluator::rotate zero c1");
 
     auto rotated_c1_const_view = rotated_c1.make_const_view();
-    auto galois_keys_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &galois_keys_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         rotated_c1_const_view.polys[0],
@@ -3423,8 +3437,8 @@ void GpuEvaluator::rotate_many_hoisted(
         level_info,
         workspace.source_hoist,
         workspace.keyswitch);
-    const auto key_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &key_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
 
     for (std::size_t index = 0; index < steps.size(); ++index)
     {
@@ -3491,7 +3505,7 @@ void GpuEvaluator::rotate_inplace(
             ciphertext.meta.q_count, galois_keys.meta.p_count, 1);
         keyswitch_handler_.hoist_decompose_modup_ntt(source_view.polys[1],
             level_info, staged.source_hoist, staged.keyswitch);
-        const auto key_view = galois_keys.make_const_view(ciphertext.meta.q_count);
+        const auto &key_view = galois_keys.const_view(ciphertext.meta.q_count);
         keyswitch_handler_.keyswitch_multsum_no_moddown(staged.source_hoist,
             galois_elt, key_view, galois_keys, key_index,
             staged.outer_accumulator, 0, true, level_info, staged.keyswitch);
@@ -3535,7 +3549,7 @@ void GpuEvaluator::rotate_inplace(
         source_view.polys[1].shards.front(), galois_elt, ciphertext.meta.degree);
     zero_poly(destination_view.polys[1], "GpuEvaluator::rotate_inplace zero c1");
     auto temporary_const_view = temporary.make_const_view();
-    const auto key_view = galois_keys.make_const_view(ciphertext.meta.q_count);
+    const auto &key_view = galois_keys.const_view(ciphertext.meta.q_count);
     keyswitch_handler_.switch_key_hybrid_ciphertext(destination_view,
         temporary_const_view.polys[0], key_view, galois_keys, key_index,
         level_info, &workspace.key_switch);
@@ -3632,8 +3646,8 @@ void GpuEvaluator::conjugate(
     zero_poly(destination_view.polys[1], "GpuEvaluator::conjugate zero c1");
 
     auto conjugated_c1_const_view = conjugated_c1.make_const_view();
-    auto galois_keys_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &galois_keys_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         conjugated_c1_const_view.polys[0],
@@ -3684,8 +3698,8 @@ void GpuEvaluator::conjugate_pre_rotated(
         level_info,
         workspace.source_hoist,
         workspace.keyswitch);
-    const auto key_view =
-        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+    const auto &key_view =
+        galois_keys.const_view(source_ciphertext.meta.q_count);
     keyswitch_handler_.keyswitch_multsum_no_moddown(
         workspace.source_hoist,
         galois_elt,
@@ -4164,8 +4178,8 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         workspace.keyswitch);
     workspace.last_counts.source_decompose_count = 1;
 
-    const auto galois_keys_view =
-        galois_keys.make_const_view(q_count);
+    const auto &galois_keys_view =
+        galois_keys.const_view(q_count);
     const bool fused_baby_keyswitch_c0 =
         use_double_hoist_fused_baby_keyswitch_c0() &&
         dnum == 1 &&
@@ -4438,21 +4452,37 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         }
         return;
     }
+    const bool qp_c0 = direct_giant_accumulate && use_double_hoist_qp_c0();
     if (grouped_outer_moddown)
     {
-        /*
-         * All group accumulators have the same shape. Batch their P-side
-         * INTT/P->Q/forward-NTT/ModDown instead of completing one full
-         * pipeline before launching the next group.
-         */
-        keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
-            workspace.group_accumulators,
-            group_count,
-            workspace.inner_q_batch,
-            level_info,
-            workspace.batch_p_coeff,
-            workspace.batch_converted_q);
-        workspace.last_counts.inner_moddown_count += group_count;
+        if (qp_c0)
+        {
+            std::vector<std::uint32_t> c1_groups;
+            c1_groups.reserve(group_count);
+            for (std::size_t group = 0; group < group_count; ++group)
+            {
+                if (matrix.plan.giant_steps[group] != 0)
+                {
+                    c1_groups.push_back(static_cast<std::uint32_t>(group));
+                }
+            }
+            keyswitch_handler_.moddown_qp_c1_groups_to_q(
+                workspace.group_accumulators, c1_groups, group_count,
+                workspace.inner_q_batch, level_info,
+                workspace.batch_p_coeff, workspace.batch_converted_q);
+            workspace.last_counts.inner_moddown_count += c1_groups.size();
+            workspace.last_counts.inner_moddown_component_count += c1_groups.size();
+        }
+        else
+        {
+            // Original path: complete both components for each giant group.
+            keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
+                workspace.group_accumulators, group_count,
+                workspace.inner_q_batch, level_info,
+                workspace.batch_p_coeff, workspace.batch_converted_q);
+            workspace.last_counts.inner_moddown_count += group_count;
+            workspace.last_counts.inner_moddown_component_count += 2 * group_count;
+        }
 
         bool batched_giant_intt =
             requested_batched_giant_intt &&
@@ -4591,7 +4621,28 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         const std::size_t active_group_count = group_indices.size();
         if (active_group_count != 0)
         {
-            if (direct_giant_accumulate)
+            if (qp_c0)
+            {
+                workspace.outer_accumulator.ensure_capacity(
+                    source_shard0.device_id, degree, q_count, p_count, 1);
+                kernel::launch_double_hoist_pre_rotated_giant_group_accumulate_qp_c0(
+                    workspace.outer_accumulator.q_component(0, 0),
+                    workspace.outer_accumulator.q_component(0, 1),
+                    workspace.outer_accumulator.p_component(0, 0),
+                    workspace.outer_accumulator.p_component(0, 1),
+                    workspace.group_accumulators.q.data(),
+                    workspace.group_accumulators.p.data(),
+                    identity_group_index,
+                    digit_q_ptrs.data(), digit_p_ptrs.data(),
+                    group_indices.data(), galois_elts.data(), key_indices.data(),
+                    galois_keys.galois_key_q0_ptrs.data(),
+                    galois_keys.galois_key_p0_ptrs.data(),
+                    galois_keys.galois_key_q1_ptrs.data(),
+                    galois_keys.galois_key_p1_ptrs.data(),
+                    active_group_count, dnum, galois_keys.meta.decomposition_count,
+                    *parameter_shard, degree);
+            }
+            else if (direct_giant_accumulate)
             {
                 workspace.outer_accumulator.ensure_capacity(
                     source_shard0.device_id,
@@ -4667,6 +4718,7 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
                 level_info,
                 workspace.keyswitch);
             ++workspace.last_counts.inner_moddown_count;
+            workspace.last_counts.inner_moddown_component_count += 2;
 
             const auto inner_view = workspace.inner_q.make_const_view();
             const auto &inner0 = inner_view.polys[0].shards.front();

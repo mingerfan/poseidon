@@ -511,13 +511,15 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
                 coeff_to_slot,
                 context,
                 cuda_device_id,
-                std::max(coeff_to_slot.step(), std::uint32_t{1}));
+                std::max(coeff_to_slot.step(), std::uint32_t{1}),
+                config.compress_linear_plaintexts);
         bootstrap_data.slot_to_coeff_matrix_qp =
             GpuUploader::upload_linear_matrix_group_qp(
                 slot_to_coeff,
                 context,
                 cuda_device_id,
-                std::max(slot_to_coeff.step(), std::uint32_t{1}));
+                std::max(slot_to_coeff.step(), std::uint32_t{1}),
+                config.compress_linear_plaintexts);
     }
     else
     {

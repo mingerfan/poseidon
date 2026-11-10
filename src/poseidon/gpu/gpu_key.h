@@ -6,6 +6,10 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <list>
+#include <map>
+#include <mutex>
+#include <utility>
 #include <vector>
 
 namespace poseidon
@@ -115,10 +119,23 @@ public:
 public:
     GpuEvaluationKeyData() = default;
 
+    /**
+     * Deep-copy storage on the current execution stream and synchronize it;
+     * rebase in-owner device pointer table entries and start with no views.
+     * Order any prior source writes on other streams before copying.
+     */
+    GpuEvaluationKeyData(const GpuEvaluationKeyData &other);
+    GpuEvaluationKeyData &operator=(const GpuEvaluationKeyData &other);
+
+    /** Moving storage preserves device addresses and transfers cached views. */
+    GpuEvaluationKeyData(GpuEvaluationKeyData &&other) noexcept = default;
+    GpuEvaluationKeyData &operator=(GpuEvaluationKeyData &&other) noexcept;
+
     bool empty() const;
 
     /**
-     * @brief Create mutable view of evaluation key data.
+     * @brief Create mutable view of evaluation key data, invalidating cached
+     * const views before exposing mutable access.
      */
     GpuEvaluationKeyView make_view();
 
@@ -136,6 +153,73 @@ public:
      */
     GpuConstEvaluationKeyView make_const_view(
         std::size_t active_q_count) const;
+
+    /**
+     * @brief Cache the same non-owning view as make_const_view(active_q_count).
+     *
+     * References remain valid across lookups at other Q counts and follow the
+     * storage on move. POSEIDON_GPU_KEY_VIEW_CACHE=0 builds a fresh snapshot on
+     * every lookup for A/B testing; these snapshots are retained until explicit
+     * invalidation (so this diagnostic mode can consume growing host memory).
+     * Changing the environment requires external synchronization as usual.
+     * References are invalidated by invalidate_const_view_cache(),
+     * make_view(), assignment replacing their storage, or owner destruction.
+     * Concurrent lookups on an otherwise immutable key are supported; mutation,
+     * invalidation, copy/move and destruction must not overlap lookups or use of
+     * any outstanding views (including asynchronous device work using them).
+     */
+    const GpuConstEvaluationKeyView &const_view(std::size_t active_q_count) const;
+
+    /**
+     * @brief Discard non-owning cached views before changing public key state.
+     *
+     * Public meta/fields_/polys_ cannot automatically intercept mutations.
+     * Call this BEFORE changing metadata, shards, device IDs or allocations,
+     * including replacing/resizing/reuploading fields, and retire all outstanding
+     * views first. Cache invalidation does not rebuild the setup-time Galois
+     * device pointer tables: allocation/layout changes require rebuilding those
+     * too. In-place residue writes with unchanged layout do not stale pointers.
+     * make_const_view() remains an uncached snapshot for setup-time callers.
+     */
+    void invalidate_const_view_cache() const;
+
+private:
+    struct ViewCache
+    {
+        ViewCache() = default;
+        ViewCache(const ViewCache &) {}
+        ViewCache &operator=(const ViewCache &)
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            views.clear();
+            uncached_views.clear();
+            return *this;
+        }
+        ViewCache(ViewCache &&other) noexcept
+        {
+            std::lock_guard<std::mutex> lock(other.mutex);
+            views.swap(other.views);
+            uncached_views.swap(other.uncached_views);
+        }
+        ViewCache &operator=(ViewCache &&other) noexcept
+        {
+            if (this != &other)
+            {
+                std::scoped_lock lock(mutex, other.mutex);
+                views.clear();
+                uncached_views.clear();
+                views.swap(other.views);
+                uncached_views.swap(other.uncached_views);
+            }
+            return *this;
+        }
+
+        std::mutex mutex;
+        std::map<std::size_t, GpuConstEvaluationKeyView> views;
+        std::list<GpuConstEvaluationKeyView> uncached_views;
+    };
+
+    mutable ViewCache view_cache_;
 };
 
 using GpuRelinKeysData = GpuEvaluationKeyData;

@@ -1,5 +1,7 @@
 #include "poseidon/gpu/gpu_key.h"
 
+#include <cstdlib>
+#include <cstring>
 #include <limits>
 #include <stdexcept>
 
@@ -65,7 +67,133 @@ void validate_shard(
     }
 }
 
+// Pointer tables are themselves device allocations, but their entries refer to
+// the key fields. A byte-for-byte table copy would keep referring to the source
+// allocations (and dangle after their destruction), even with an empty cache.
+const GpuWord *rebase_key_pointer(
+    const GpuWord *pointer,
+    const std::vector<GpuFieldData> &source_fields,
+    const std::vector<GpuFieldData> &destination_fields)
+{
+    if (pointer == nullptr)
+    {
+        return nullptr;
+    }
+
+    const auto address = reinterpret_cast<std::uintptr_t>(pointer);
+    const GpuWord *one_past_end = nullptr;
+    for (std::size_t i = 0; i < source_fields.size(); ++i)
+    {
+        const auto &source = source_fields[i];
+        if (source.empty())
+        {
+            continue;
+        }
+        const auto begin = reinterpret_cast<std::uintptr_t>(source.data());
+        const auto bytes = checked_mul(
+            source.size(), sizeof(GpuWord), "GPU key pointer range overflow");
+        if (address < begin)
+        {
+            continue;
+        }
+        const auto offset = address - begin;
+        if (offset < bytes && offset % sizeof(GpuWord) == 0)
+        {
+            return destination_fields[i].data() + offset / sizeof(GpuWord);
+        }
+        if (offset == bytes)
+        {
+            // A zero-length P segment may be represented by a one-past pointer.
+            // Prefer an actual in-allocation match if allocations are adjacent.
+            one_past_end = destination_fields[i].data() + source.size();
+        }
+    }
+    if (one_past_end != nullptr)
+    {
+        return one_past_end;
+    }
+    throw std::invalid_argument(
+        "GpuEvaluationKeyData copy: pointer table entry is outside key storage");
+}
+
+void copy_key_pointer_table(
+    const DeviceVector<const GpuWord *> &source,
+    DeviceVector<const GpuWord *> &destination,
+    const std::vector<GpuFieldData> &source_fields,
+    const std::vector<GpuFieldData> &destination_fields)
+{
+    std::vector<const GpuWord *> pointers(source.size());
+    source.copy_to_host(pointers.data(), pointers.size());
+    for (auto &pointer : pointers)
+    {
+        pointer = rebase_key_pointer(pointer, source_fields, destination_fields);
+    }
+    destination.allocate(source.size(), source.device_id());
+    destination.copy_from_host(pointers.data(), pointers.size());
+}
+
 }  // namespace
+
+GpuEvaluationKeyData::GpuEvaluationKeyData(const GpuEvaluationKeyData &other)
+    : meta(other.meta), polys_(other.polys_),
+      poly_metadata_(other.poly_metadata_),
+      galois_elts_by_key_index(other.galois_elts_by_key_index)
+{
+    fields_.reserve(other.fields_.size());
+    for (const auto &field : other.fields_)
+    {
+        fields_.emplace_back(field.device_id, field.size());
+        if (!field.empty())
+        {
+            gpu_check_cuda(
+                cudaMemcpyAsync(
+                    fields_.back().data(), field.data(),
+                    checked_mul(field.size(), sizeof(GpuWord), "GPU key copy size overflow"),
+                    cudaMemcpyDeviceToDevice, gpu_execution_stream()),
+                "GpuEvaluationKeyData copy cudaMemcpyAsync");
+            gpu_check_cuda(
+                cudaStreamSynchronize(gpu_execution_stream()),
+                "GpuEvaluationKeyData copy cudaStreamSynchronize");
+        }
+    }
+    copy_key_pointer_table(
+        other.galois_key_q0_ptrs, galois_key_q0_ptrs, other.fields_, fields_);
+    copy_key_pointer_table(
+        other.galois_key_p0_ptrs, galois_key_p0_ptrs, other.fields_, fields_);
+    copy_key_pointer_table(
+        other.galois_key_q1_ptrs, galois_key_q1_ptrs, other.fields_, fields_);
+    copy_key_pointer_table(
+        other.galois_key_p1_ptrs, galois_key_p1_ptrs, other.fields_, fields_);
+    // view_cache_ starts empty: its pointers must be rebuilt from our fields_.
+}
+
+GpuEvaluationKeyData &GpuEvaluationKeyData::operator=(const GpuEvaluationKeyData &other)
+{
+    if (this != &other)
+    {
+        GpuEvaluationKeyData copy(other);
+        *this = std::move(copy);
+    }
+    return *this;
+}
+
+GpuEvaluationKeyData &GpuEvaluationKeyData::operator=(GpuEvaluationKeyData &&other) noexcept
+{
+    if (this != &other)
+    {
+        meta = other.meta;
+        fields_ = std::move(other.fields_);
+        polys_ = std::move(other.polys_);
+        poly_metadata_ = std::move(other.poly_metadata_);
+        galois_elts_by_key_index = std::move(other.galois_elts_by_key_index);
+        galois_key_q0_ptrs = std::move(other.galois_key_q0_ptrs);
+        galois_key_p0_ptrs = std::move(other.galois_key_p0_ptrs);
+        galois_key_q1_ptrs = std::move(other.galois_key_q1_ptrs);
+        galois_key_p1_ptrs = std::move(other.galois_key_p1_ptrs);
+        view_cache_ = std::move(other.view_cache_);
+    }
+    return *this;
+}
 
 bool GpuEvaluationKeyData::empty() const
 {
@@ -74,6 +202,7 @@ bool GpuEvaluationKeyData::empty() const
 
 GpuEvaluationKeyView GpuEvaluationKeyData::make_view()
 {
+    invalidate_const_view_cache();
     GpuEvaluationKeyView result;
     result.meta = meta;
     result.polys.reserve(polys_.size());
@@ -151,6 +280,34 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view(
     auto result = make_const_view();
     result.meta.q_count = active_q_count;
     return result;
+}
+
+const GpuConstEvaluationKeyView &GpuEvaluationKeyData::const_view(
+    std::size_t active_q_count) const
+{
+    std::lock_guard<std::mutex> lock(view_cache_.mutex);
+    const char *cache_setting = std::getenv("POSEIDON_GPU_KEY_VIEW_CACHE");
+    if (cache_setting != nullptr && std::strcmp(cache_setting, "0") == 0)
+    {
+        // Never replace a previously returned snapshot: readers may still hold
+        // it after this lock is released, including across concurrent lookups.
+        view_cache_.uncached_views.push_back(make_const_view(active_q_count));
+        return view_cache_.uncached_views.back();
+    }
+    auto it = view_cache_.views.find(active_q_count);
+    if (it == view_cache_.views.end())
+    {
+        it = view_cache_.views.emplace(
+            active_q_count, make_const_view(active_q_count)).first;
+    }
+    return it->second;
+}
+
+void GpuEvaluationKeyData::invalidate_const_view_cache() const
+{
+    std::lock_guard<std::mutex> lock(view_cache_.mutex);
+    view_cache_.views.clear();
+    view_cache_.uncached_views.clear();
 }
 
 }  // namespace gpu

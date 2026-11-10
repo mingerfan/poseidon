@@ -6,7 +6,9 @@
 #include "poseidon/gpu/gpu_parameter.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <vector>
 
 namespace poseidon
 {
@@ -109,6 +111,26 @@ public:
     void moddown_qp_ciphertext_batch_to_q(
         GpuQPCiphertextBuffer &source,
         std::size_t batch_count,
+        GpuQCiphertextBatchBuffer &destination,
+        const GpuLevelInfo &level_info,
+        DeviceVector<GpuWord> &p_coeff,
+        DeviceVector<GpuWord> &converted_q) const;
+
+    /**
+     * ModDown only component 1 of the listed groups: destination
+     * q_component(g, 1) = ModDown(source group g, component 1). Component 0
+     * and unlisted groups are untouched provided destination already has
+     * sufficient capacity. Used when giant-step c0 stays in QP.
+     * Scratch has slots = groups.size() rounded up to even, with contiguous
+     * [slot][limb][coeff] P coefficients and converted Q NTT residues.
+     * Scratch vectors must be distinct from each other and from source Q/P
+     * and destination Q storage; owned-vector aliases are rejected early.
+     * groups must be nonempty, unique, and contain at most 64 entries.
+     */
+    void moddown_qp_c1_groups_to_q(
+        GpuQPCiphertextBuffer &source,
+        const std::vector<std::uint32_t> &groups,
+        std::size_t destination_batch_count,
         GpuQCiphertextBatchBuffer &destination,
         const GpuLevelInfo &level_info,
         DeviceVector<GpuWord> &p_coeff,

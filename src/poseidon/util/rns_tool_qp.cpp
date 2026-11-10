@@ -179,7 +179,7 @@ void RNSToolQP::mod_up_from_one_base_p(ConstRNSIter input, size_t base_idx, RNSI
 
     for (auto i = 0; i < base_p_size; ++i)
     {
-        if (modulus_q[i] >= modulus_q[base_last_index - 1])
+        if (modulus_p[i] >= modulus_q[base_last_index - 1])
         {
             set_uint(*(base_input_iter), coeff_count, *(base_dest_iter + i));
         }

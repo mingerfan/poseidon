@@ -224,7 +224,9 @@ struct GpuDoubleHoistOperationCounts
     std::size_t source_decompose_count = 0;
     std::size_t outer_decompose_count = 0;
     std::size_t keymul_count = 0;
+    // Group operations: two components normally, selected c1 only in QP-c0.
     std::size_t inner_moddown_count = 0;
+    std::size_t inner_moddown_component_count = 0;
     std::size_t outer_moddown_count = 0;
     std::size_t qp_pmult_count = 0;
     std::size_t permute_count = 0;

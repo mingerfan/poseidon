@@ -46,6 +46,9 @@ struct GpuBootstrapProfileConfig
     bool project_real = false;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::DoubleHoistBsgs;
+    // Store periodic DoubleHoistBsgs QP diagonals exactly, without redundant
+    // residues. This changes storage only, not EvalMod or the secret key.
+    bool compress_linear_plaintexts = false;
 };
 
 /**

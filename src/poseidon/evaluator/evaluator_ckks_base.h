@@ -138,6 +138,12 @@ public:
     void rotate_inplace(Ciphertext &ciph, int step, const GaloisKeys &galois_keys) const;
     virtual void rotate(const Ciphertext &ciph, Ciphertext &result, int step,
                         const GaloisKeys &galois_keys) const override;
+    // Share one HYBRID decomposition across direct rotations of the same
+    // size-2 NTT ciphertext. Missing direct keys use ordinary NAF rotation;
+    // BV/GHS use ordinary rotations throughout. Outputs may contain the source.
+    void rotate_many_hoisted(const Ciphertext &ciph, const std::vector<int> &steps,
+                             const GaloisKeys &galois_keys, CpuHoistWorkspace &workspace,
+                             std::vector<Ciphertext> &results) const;
     virtual void rotate_row(const Ciphertext &ciph, Ciphertext &result, int step,
                             const GaloisKeys &galois_keys) const override;
     virtual void rotate_col(const Ciphertext &ciph, Ciphertext &result,

@@ -6418,6 +6418,41 @@ void launch_forward_ntt_poly_shard_fourstep_65536(
         parameter_shard);
 }
 
+void launch_forward_ntt_limbs_inplace_fourstep_65536(
+    GpuWord *values,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *name = "launch_forward_ntt_limbs_inplace_fourstep_65536";
+    // Division/subtraction avoids overflow in (offset + count) * degree.
+    const std::size_t root_limbs = parameter_shard.ntt_tables.size() / 65536;
+    if (values == nullptr || limb_count == 0 || limb_count > 65535 ||
+        modulus_offset > root_limbs || limb_count > root_limbs - modulus_offset ||
+        modulus_offset > parameter_shard.rns_primes.size() ||
+        limb_count > parameter_shard.rns_primes.size() - modulus_offset ||
+        modulus_offset > parameter_shard.rns_modulus_constants.size() ||
+        limb_count > parameter_shard.rns_modulus_constants.size() - modulus_offset)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shape");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    forward_ntt_cheddar_phase1_65536_kernel<<<
+        dim3(32, static_cast<unsigned int>(limb_count)), 128,
+        128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        values, values, parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(), parameter_shard.ntt_tables.data(),
+        modulus_offset, limb_count);
+    gpu_check_cuda(cudaGetLastError(), "in-place forward NTT phase1");
+    forward_ntt_cheddar_phase2_65536_kernel<<<
+        dim3(128, static_cast<unsigned int>(limb_count)), 64,
+        64 * 8 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        values, parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(), parameter_shard.ntt_tables.data(),
+        modulus_offset, limb_count);
+    gpu_check_cuda(cudaGetLastError(), "in-place forward NTT phase2");
+}
+
 void launch_forward_ntt_qp_active_fourstep_65536(
     GpuWord *destination_q,
     GpuWord *destination_p,

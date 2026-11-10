@@ -75,7 +75,7 @@ poseidon::PoseidonContext make_context(std::size_t degree)
         log_n,
         log_n - 1,
         kLogScale,
-        /*hamming_weight=*/std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50") ? 192 : 0,
+        /*hamming_weight=*/std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50") ? 192 : 5,
         kQ0Level,
         poseidon::Modulus(0),
         {},
@@ -257,6 +257,8 @@ int main()
             std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_MANUAL_Q50") ? 65536 : 16384);
         auto context = make_context(degree);
         poseidon::KeyGenerator key_generator(context);
+        if (key_generator.secret_key().data().is_zero())
+            throw std::runtime_error("bootstrap regression requires a nonzero secret key");
         poseidon::PublicKey public_key;
         key_generator.create_public_key(public_key);
         poseidon::Encryptor encryptor(context, public_key);
@@ -271,6 +273,10 @@ int main()
         profile_config.eval_mod_generation_degree = 59;
         profile_config.eval_mod_truncate_degree.reset();
         profile_config.eval_mod_double_angle = 2;
+        const char *compress_linear =
+            std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_COMPRESS_LINEAR");
+        profile_config.compress_linear_plaintexts =
+            compress_linear != nullptr && std::string(compress_linear) == "1";
         const char *linear_mode =
             std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_LINEAR_MODE");
         if (linear_mode != nullptr && std::string(linear_mode) == "classic")
@@ -282,6 +288,32 @@ int main()
         auto profile = manual
             ? poseidon::gpu::GpuBootstrapProfileBuilder::build_resnet20_manual(context, key_generator, kCudaDevice)
             : poseidon::gpu::GpuBootstrapProfileBuilder::build(context, key_generator, kCudaDevice, profile_config);
+        if (profile_config.compress_linear_plaintexts && !manual)
+        {
+            std::size_t full_words = 0, compact_words = 0;
+            for (const auto *group : {&profile.bootstrap_data.coeff_to_slot_matrix_qp,
+                                      &profile.bootstrap_data.slot_to_coeff_matrix_qp})
+            {
+                if (group->data().empty())
+                    throw std::runtime_error("compressed Boot requires DoubleHoistBsgs matrices");
+                for (const auto &matrix : group->data())
+                {
+                    if (!matrix.plan.compressed_plaintexts || !matrix.plain_vec_qp.empty() ||
+                        matrix.compressed_plain_vec_qp.empty())
+                        throw std::runtime_error("Boot did not use compressed QP diagonals");
+                    for (const auto &[diagonal, plain] : matrix.compressed_plain_vec_qp)
+                    {
+                        if (!plain.exact_device_reconstruction ||
+                            plain.compact_word_count() > plain.full_word_count())
+                            throw std::runtime_error("invalid compressed QP diagonal");
+                        full_words += plain.full_word_count();
+                        compact_words += plain.compact_word_count();
+                    }
+                }
+            }
+            std::cout << "[INFO] exact QP diagonal words full=" << full_words
+                      << " compact=" << compact_words << '\n';
+        }
         if (!manual && (profile.input_level_min != static_cast<int>(kQ0Level + 1) ||
             profile.output_level != 22 || profile.output_scale_log2 != 45))
             throw std::runtime_error("validated scale45 Boot contract changed");
@@ -344,8 +376,12 @@ int main()
         {
             const auto reference = manual ? std::complex<double>(
                 poseidon::test::manual_bootstrap_reference(context, message[index].real()), 0) : message[index];
-            max_abs_error = std::max(max_abs_error, std::abs(decoded.at(index) - reference));
-            max_identity_error = std::max(max_identity_error, std::abs(decoded.at(index) - message[index]));
+            const double reference_error = std::abs(decoded.at(index) - reference);
+            const double identity_error = std::abs(decoded.at(index) - message[index]);
+            if (!std::isfinite(reference_error) || !std::isfinite(identity_error))
+                throw std::runtime_error("Runtime native bootstrap produced nonfinite output");
+            max_abs_error = std::max(max_abs_error, reference_error);
+            max_identity_error = std::max(max_identity_error, identity_error);
         }
         if (max_abs_error > (manual ? 1e-4 : kTolerance))
         {

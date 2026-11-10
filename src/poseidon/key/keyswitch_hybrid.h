@@ -36,6 +36,9 @@ class KSwitchHybrid : public KSwitchBase
 {
 public:
     explicit KSwitchHybrid(const PoseidonContext &context) : KSwitchBase(context) {}
+    void rotate_many_hoisted(const Ciphertext &encrypted, const std::vector<int> &steps,
+                             const GaloisKeys &galois_keys, CpuHoistWorkspace &workspace,
+                             std::vector<Ciphertext> &destination) const override;
     void apply_galois_inplace(Ciphertext &encrypted, uint32_t galois_elt,
                               const GaloisKeys &galois_keys, MemoryPoolHandle pool) const override;
     void relinearize_internal(Ciphertext &encrypted, const RelinKeys &relin_keys,
