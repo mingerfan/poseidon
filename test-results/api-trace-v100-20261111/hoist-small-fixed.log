@@ -1,0 +1,10 @@
+PASS switch_key active-level override all_RNS_exact=true layout_negatives=true
+PASS split-hoist N=4096 Q=4 P=2 standard dnum=2 bytes=262144 all_RNS_exact=true
+PASS split-hoist N=4096 Q=3 P=2 standard dnum=2 bytes=212992 all_RNS_exact=true
+PASS split-hoist N=4096 Q=4 P=2 inverse-pre-rotated dnum=2 bytes=262144 all_RNS_exact=true
+PASS split-hoist N=4096 Q=3 P=2 inverse-pre-rotated dnum=2 bytes=212992 all_RNS_exact=true
+PASS split-hoist N=4096 Q=10 P=9 standard dnum=2 bytes=786432 all_RNS_exact=true
+PASS split-hoist N=4096 Q=3 P=9 standard dnum=1 bytes=245760 all_RNS_exact=true
+PASS split-hoist N=4096 Q=10 P=9 inverse-pre-rotated dnum=2 bytes=786432 all_RNS_exact=true
+PASS split-hoist N=4096 Q=3 P=9 inverse-pre-rotated dnum=1 bytes=245760 all_RNS_exact=true
+GPU split-hoist regressions passed

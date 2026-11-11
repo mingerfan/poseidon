@@ -1,0 +1,92 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "buffer_accounting": "Declared opaque buffer bytes are included exactly; workspace not declared as a buffer remains excluded.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "gpu_api_trace",
+  "memory_planned": true,
+  "places": [
+    {
+      "distinct_allocation_bytes": 0,
+      "peak": {
+        "buffer_bytes": 0,
+        "ciphertext_bytes": 0,
+        "instruction_ordinal": null,
+        "largest_objects": [],
+        "operation": "external_inputs",
+        "phase": "external_inputs",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 0,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 0
+    },
+    {
+      "distinct_allocation_bytes": 56814469120,
+      "peak": {
+        "buffer_bytes": 0,
+        "ciphertext_bytes": 610795520,
+        "instruction_ordinal": 4629,
+        "largest_objects": [
+          {
+            "bytes": 16252928,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 16252928,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "1"
+          },
+          {
+            "bytes": 16252928,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "2"
+          },
+          {
+            "bytes": 16252928,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "3"
+          },
+          {
+            "bytes": 16252928,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "4"
+          }
+        ],
+        "operation": "ckks.apicall",
+        "phase": "execution",
+        "plaintext_bytes": 0
+      },
+      "peak_bytes": 610795520,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 440401920
+    }
+  ],
+  "poly_degree": 65536,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

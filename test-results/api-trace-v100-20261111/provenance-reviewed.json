@@ -1,0 +1,29 @@
+{
+  "implementation_commit": "9acdbf1fdafb5192d827b482bbfdc0b16517d673",
+  "runtime_commit": "4829bff88d46f1b552988200d76ae8a30748dba6",
+  "compiler_commit": "5e91402de4c04c59e43c1ee5c9817d78e78bd6a2",
+  "upstream_gpu_api": "SL640/FHE_GPU_Agent@55e51804fb6ade2c420c75d3d2f3c727eb52e6de",
+  "server": "188Server",
+  "server_dir": "/home/xuming/poseidon-api-trace-20261111",
+  "gpu": "Tesla V100-SXM2-32GB",
+  "network_physical_gpu": 0,
+  "independent_extended_hoist_and_boot_tests_physical_gpu": 3,
+  "cuda": "12.2",
+  "gcc": "11",
+  "llvm_mlir": "18.1.8",
+  "compiler_sha256": "2b5da4d635f862885a30e085e685a1744093b4fb8811719c9bc45d1ec31e428f",
+  "source_hashes_match_server": true,
+  "artifacts_sha256": {
+    "trace.mlir": "17c20fdd11ea47b084d481299d96d02d4aeb4d5e3dcb024c56ec3af898145e18",
+    "operator-spec.json": "d573087ffd961f201646f9bf29e53609b9f32c4a2f7334326d9bfb420bce9cad",
+    "scheduled.gpu_api_trace.runtime-plan.json": "4db77cf19c206da9affd950395fc68798425d7fb1f91c051e3f1e72f7577a84d",
+    "scheduled.gpu_api_trace.memory.json": "89b7e8dc2393a4637910f4938f5a2e352b57f0cc56e6c5d08753ce540249d302",
+    "binary/scheduled.gpu_api_trace.runtime-plan.bin": "ca344797427eb4d7b8a6b01c32507050c19b8e10cb69ec481fb32caa49e755f1"
+  },
+  "runtime_ctests": "11/11",
+  "compiler_ctests": "36/36",
+  "python_unittests": "35 pass, 8 skipped (missing optional GPU evidence logs)",
+  "model_security_approved": false,
+  "gpu_json_replay": true,
+  "binary_gpu_replay": false
+}

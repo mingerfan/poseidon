@@ -1,0 +1,77 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon-api-trace/third_party/ckks-runtime/third_party/dacapo/build/trace
+      Start 21: DacapoThresholdGraphs
+      Start 17: DacapoRegionalAllCandidates
+      Start 16: DacapoRegionalOptimized
+      Start 14: DacapoOptimizedHoistScaleAlignment
+ 1/36 Test #14: DacapoOptimizedHoistScaleAlignment ...   Passed    2.07 sec
+      Start 13: DacapoRegionalHoistScaleAlignment
+ 2/36 Test #16: DacapoRegionalOptimized ..............   Passed    2.13 sec
+      Start 15: DacapoRegionalScale
+ 3/36 Test #17: DacapoRegionalAllCandidates ..........   Passed    2.26 sec
+      Start 20: DacapoPolynomialArithmetic
+ 4/36 Test #15: DacapoRegionalScale ..................   Passed    1.48 sec
+      Start 27: DacapoRuntimeScale
+ 5/36 Test #13: DacapoRegionalHoistScaleAlignment ....   Passed    1.56 sec
+      Start 18: DacapoReductionRescales
+ 6/36 Test #20: DacapoPolynomialArithmetic ...........   Passed    1.49 sec
+      Start 12: DacapoGraphScaleAlignment
+ 7/36 Test #18: DacapoReductionRescales ..............   Passed    0.83 sec
+      Start  5: DacapoScaleBootReferences
+ 8/36 Test #12: DacapoGraphScaleAlignment ............   Passed    0.75 sec
+      Start  6: DacapoScaleBootLarge
+ 9/36 Test #27: DacapoRuntimeScale ...................   Passed    1.03 sec
+      Start 30: DacapoGreedyBootstrap
+10/36 Test  #5: DacapoScaleBootReferences ............   Passed    0.65 sec
+      Start 11: DacapoHoistScaleAlignment
+11/36 Test  #6: DacapoScaleBootLarge .................   Passed    0.64 sec
+      Start 35: DacapoOptimizedNativeScale45
+12/36 Test #30: DacapoGreedyBootstrap ................   Passed    0.61 sec
+      Start  2: DacapoPreparedApiBuffer
+13/36 Test #35: DacapoOptimizedNativeScale45 .........   Passed    0.52 sec
+      Start 31: DacapoManualPrecompile
+14/36 Test #11: DacapoHoistScaleAlignment ............   Passed    0.57 sec
+      Start  7: DacapoScaleBootGraphs
+15/36 Test  #2: DacapoPreparedApiBuffer ..............   Passed    0.62 sec
+      Start 19: DacapoNativePlanning
+16/36 Test #31: DacapoManualPrecompile ...............   Passed    0.49 sec
+      Start 26: DacapoUnitPlaintext
+17/36 Test  #7: DacapoScaleBootGraphs ................   Passed    0.56 sec
+      Start 32: DacapoRuntimePlanPipeline
+18/36 Test #19: DacapoNativePlanning .................   Passed    0.40 sec
+      Start  3: DacapoScaleBootVerifier
+19/36 Test  #3: DacapoScaleBootVerifier ..............   Passed    0.25 sec
+      Start 34: DacapoPlaintextWaterline
+20/36 Test #26: DacapoUnitPlaintext ..................   Passed    0.38 sec
+      Start  1: DacapoPreparedApiRuntimePlan
+21/36 Test #32: DacapoRuntimePlanPipeline ............   Passed    0.33 sec
+      Start 25: DacapoRuntimePlanIO
+22/36 Test  #1: DacapoPreparedApiRuntimePlan .........   Passed    0.18 sec
+      Start 33: DacapoRuntimeMemory
+23/36 Test #34: DacapoPlaintextWaterline .............   Passed    0.20 sec
+      Start 10: DacapoScaleAlignmentPlanner
+24/36 Test #25: DacapoRuntimePlanIO ..................   Passed    0.18 sec
+      Start 22: DacapoNativeScale40
+25/36 Test #22: DacapoNativeScale40 ..................   Passed    0.14 sec
+      Start 23: DacapoNativeScale45
+26/36 Test #10: DacapoScaleAlignmentPlanner ..........   Passed    0.16 sec
+      Start  8: DacapoScaleBootCompiler
+27/36 Test #33: DacapoRuntimeMemory ..................   Passed    0.21 sec
+      Start  4: DacapoScaleAlignmentVerifier
+28/36 Test  #8: DacapoScaleBootCompiler ..............   Passed    0.13 sec
+      Start 36: DacapoOptimizedSchedule
+29/36 Test #23: DacapoNativeScale45 ..................   Passed    0.15 sec
+      Start 29: DacapoFrontendBytecode
+30/36 Test  #4: DacapoScaleAlignmentVerifier .........   Passed    0.14 sec
+      Start 24: DacapoRuntimePlanBinary
+31/36 Test #29: DacapoFrontendBytecode ...............   Passed    0.10 sec
+      Start 28: DacapoFrontendLocations
+32/36 Test #36: DacapoOptimizedSchedule ..............   Passed    0.11 sec
+      Start  9: DacapoModulusChain
+33/36 Test  #9: DacapoModulusChain ...................   Passed    0.00 sec
+34/36 Test #24: DacapoRuntimePlanBinary ..............   Passed    0.08 sec
+35/36 Test #28: DacapoFrontendLocations ..............   Passed    0.04 sec
+36/36 Test #21: DacapoThresholdGraphs ................   Passed    8.70 sec
+
+100% tests passed out of 36
+
+Total Test time (real) =   8.73 sec

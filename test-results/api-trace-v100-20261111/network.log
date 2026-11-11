@@ -1,0 +1,146 @@
+RESNET20_LEVELS chain_q=49 input_q=31 stem_output_q=30 relu_output_q=8 conv_input_q=8 conv_merged_masks=true removed_q_prime_index=8
+BASELINE profile=q50-fixed45 dataset=grid N=65536 Q=49 P=25 global_dnum=2 secret_hamming_weight=32768 application_boot_degree=59 application_boot_DA=2 arcsine_degree=0 output_fold=false c2s_log_scale=45 linear_mode=double_hoist metadata_only=0
+BOOTSTRAP_BRANCH mode=lcdnn_s2c_first_real active_log_slots=15 evalmod_calls=2 output_real_projection=true
+Q_PRIMES 4255252481 4255645697 4258922497 4260364289 4261675009 4264427521 4265476097 4266393601 1040842753 1042415617 1043464193 1045430273 1048707073 1049100289 1051721729 1052508161 1053818881 1054212097 1055260673 1056178177 1056440321 1060765697 1062469633 1062862849 1064697857 1065484289 1068236801 1070727169 1071513601 1073479681 2135162881 4272291841 4272685057 1040056321 2135818241 4273340417 2142502913 4274126849 4276092929 2144468993 2146041857 2146959361 4277403649 4279369729 2147352577 4280025089 4280156161 4281204737 1038745601
+P_PRIMES 4293918721 4291952641 4289462273 4288806913 4286709761 4286054401 4284874753 4284088321 4283301889 4271505409 4271374337 4269015041 4253024257 4252631041 4252106753 4251844609 4247388161 4245553153 4245422081 4243980289 4241883137 4241620993 4241489921 4240310273 4240048129
+CONTRACT preparation_target_log_scale=59 c2s_log_scale=45 periods_per_integer=1
+PLAN C2S stage=1 q_in=49 q_out=48 output_log_scale=60.04780477869699
+PLAN C2S stage=2 q_in=48 q_out=47 output_log_scale=73.05243509455039
+PLAN C2S stage=3 q_in=47 q_out=45 output_log_scale=54.06244669887172
+PLAN EvalMod q_in=45 q_out=30 output_log_scale=53.03094629532367 effective_degree=58
+FOLD_PLAN q_in=45 q_out=30 alpha=0.0001194797467008398 seed=0.1045498883353879 native_log_scale=53.03094629532367 application_log_scale=40 same_DAG=true extra_Q=0 identity_max=2.214970828279261e-15 source_reference_max=1.188014530500991e-16
+RELU_PLAN stage=1 degree=15 q_in=30 q_out=24 input_log_scale=40 output_log_scale=40.1
+RELU_PLAN stage=2 degree=15 q_in=24 q_out=18 input_log_scale=40.1 output_log_scale=44
+RELU_PLAN stage=3 degree=27 q_in=18 q_out=11 input_log_scale=44 output_log_scale=89.87112238710051
+CONTINUATION_PLAN bootstrap_out=30 relu_out=8 relu_Q_consumed=22 output_log_scale=40 no_reencryption=true security_approved=false
+NETWORK_METADATA topology_blocks=9 bootstrap_points=18 chain_q=49 input_q=31 stem_output_q=30 relu_output_q=8 conv_input_q=8 conv_merged_masks=true oracle=independent_original_CHW input_boundary=40 status=PASS
+MEMORY pool_cap_GiB=30 pool_initial_GiB=30 startup_free_GiB=31.4378662109375
+SECRET h=32768 positive=16384 negative=16384 source=OS_random nonzero=true
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=6.354102357122859e-17 rms=6.78218007006825e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=5.605325231750058e-17 rms=3.683006944833643e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=9.201149499434014e-17 rms=7.096048168871095e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=7.995313395722792e-17 rms=4.479342181180217e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.063466805936719e-16 rms=8.439418945673468e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=8.760353553682876e-17 rms=6.338485995311248e-18
+[GPU multiplexed conv] input_replicas=2 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=9.542334370588046e-17 rms=6.566097663504374e-18
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.158876597115444e-16 rms=5.532445278282728e-18
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.445241495923177e-16 rms=7.1165339966843e-18
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=5.212979570581866e-17 rms=3.445301127768283e-18
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.46150452851046e-16 rms=6.776166561995543e-18
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.147966812754808e-16 rms=4.28928513243542e-18
+[GPU multiplexed conv] input_replicas=4 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=9.522683206211746e-17 rms=4.632783657616019e-18
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.424438366738612e-16 rms=7.585347320614468e-18
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.094027754673654e-16 rms=5.882094479181266e-18
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.554610390072653e-16 rms=7.061354573150581e-18
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=1.164636421156773e-16 rms=5.242866107377825e-18
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+ORACLE network/conv_SIMD_vs_CHW_oracle max_abs=4.460678788148487e-16 rms=1.399246515093835e-17
+APPLICATION_KEY_PLAN kind=rotation q=3 p=3 dnum=1 keys=9 payload_MiB=27
+APPLICATION_KEY_PLAN kind=rotation q=4 p=4 dnum=1 keys=7 payload_MiB=28
+APPLICATION_KEY_PLAN kind=rotation q=5 p=5 dnum=1 keys=3 payload_MiB=15
+APPLICATION_KEY_PLAN kind=rotation q=6 p=6 dnum=1 keys=3 payload_MiB=18
+APPLICATION_KEY_PLAN kind=rotation q=7 p=7 dnum=1 keys=3 payload_MiB=21
+APPLICATION_KEY_PLAN kind=rotation q=8 p=8 dnum=1 keys=92 payload_MiB=736
+APPLICATION_KEY_PREFLIGHT old_global_rotation_MiB=8066 level_rotation_MiB=845 level_relin_MiB=315 level_total_MiB=1160 active_parameter_ntt_MiB=841.75 resident=true swaps=false
+APPLICATION_KEYS_READY rotation_levels=6 relin_levels=13 relin_contexts=10 parameter_levels=19 payload_MiB=1160 dnum=1_upto_q9_else_2 resident=true swaps=false
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.971963235568 ephemeral_h=32
+GPU_BOOT_LEVEL_P galois_level q=4 elements=11
+GPU_BOOT_LEVEL_P galois_level q=5 elements=15
+GPU_BOOT_LEVEL_P galois_level q=6 elements=15
+GPU_BOOT_LEVEL_P galois_level q=30 elements=1
+GPU_BOOT_LEVEL_P galois_level q=45 elements=1
+GPU_BOOT_LEVEL_P galois_level q=47 elements=15
+GPU_BOOT_LEVEL_P galois_level q=48 elements=15
+GPU_BOOT_LEVEL_P galois_level q=49 elements=11
+GPU_BOOT_LEVEL_P p=4 dnum=1 top_q=4 levels=1 galois_levels=1 elements=11 relin_levels=0 key_modulus_bits=255.9442130918132
+GPU_BOOT_LEVEL_P p=5 dnum=1 top_q=5 levels=1 galois_levels=1 elements=15 relin_levels=0 key_modulus_bits=319.9302101189768
+GPU_BOOT_LEVEL_P p=6 dnum=1 top_q=6 levels=1 galois_levels=1 elements=15 relin_levels=0 key_modulus_bits=383.9169180682054
+GPU_BOOT_LEVEL_P p=15 dnum=2 top_q=30 levels=1 galois_levels=1 elements=1 relin_levels=0 key_modulus_bits=1395.313790931037
+GPU_BOOT_LEVEL_P p=16 dnum=2 top_q=32 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1490.283294696291
+GPU_BOOT_LEVEL_P p=17 dnum=2 top_q=34 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1584.213733852077
+GPU_BOOT_LEVEL_P p=18 dnum=2 top_q=35 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1647.189180973085
+GPU_BOOT_LEVEL_P p=19 dnum=2 top_q=38 levels=2 galois_levels=0 elements=0 relin_levels=2 key_modulus_bits=1774.154791521956
+GPU_BOOT_LEVEL_P p=20 dnum=2 top_q=40 levels=2 galois_levels=0 elements=0 relin_levels=2 key_modulus_bits=1869.129181702124
+GPU_BOOT_LEVEL_P p=21 dnum=2 top_q=42 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1963.10991823786
+GPU_BOOT_LEVEL_P p=22 dnum=2 top_q=43 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=2027.085975019017
+GPU_BOOT_LEVEL_P p=23 dnum=2 top_q=45 levels=1 galois_levels=1 elements=1 relin_levels=1 key_modulus_bits=2122.062562133846
+GPU_BOOT_LEVEL_P p=24 dnum=2 top_q=48 levels=2 galois_levels=2 elements=29 relin_levels=0 key_modulus_bits=2250.029442901536
+GPU_BOOT_LEVEL_P p=25 dnum=2 top_q=49 levels=1 galois_levels=1 elements=11 relin_levels=0 key_modulus_bits=2311.963071617811 shared_with_main=true
+GPU_BOOT_LEVEL_P mode=performance groups=14 adopted_levels=16 main_galois_elements=11 max_key_modulus_bits=2311.963071617811
+BOOTSTRAP_QP_COMPRESSION enabled=true exact=true stc_diagonals=158 cts_diagonals=158 full_MiB=4068.5 compact_MiB=876.279541015625 ratio=4.64292478549086
+CONTINUOUS_PREPARE_BOOTSTRAP implementation=library_degree22_k12_h32 degree=22 double_angle=3 k=12 log_split=2 full_coefficients=true sparse_secret_h=32 stc_diagonals=158 cts_diagonals=158 evalmod_q_out=30
+CONTINUOUS_PREPARE_DIRECT rotations=109 levels=6 hoisted=true level_aware_p=true dnum=2
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=2 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=4 output_groups=16 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+[GPU multiplexed conv] input_replicas=8 output_groups=8 lazy_plain_accumulate=on output_bsgs=on merged_masks=on
+API_TRACE_READY path=/home/xuming/poseidon-api-trace-20261111/trace-run-reviewed/trace.mlir calls=7448 trace_exact_residues=393216
+GPU_ACTIVITY_TIMING gpu_total_ms=3615.510919 activities=70576 host_transfers=0 host_transfer_bytes=0
+API_TRACE_RESULT accuracy=PASS exact_rns=true exact_residues=393216 trace_exact_residues=393216 calls=7448 bootstraps=18 hoists=38 rotation_suffixes=214 hoist_releases=38 hoist_peak_bytes=6291456 hoist_live_bytes=0 runtime_compute_calls=7448 runtime_online_ms=3677.478634 wall_ms=3689.549495 manual_wall_ms=3614.88214 max_logit_error=0.008689606454706178 prediction=3 reference_prediction=3 encrypted_logits_q=3 cupti=true devices=1 security_approved=false

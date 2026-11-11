@@ -1,0 +1,17 @@
+PASS split-hoist N=65536 Q=4 P=2 standard dnum=2 bytes=4194304 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=2 standard dnum=2 bytes=3407872 all_RNS_exact=true
+PASS split-hoist N=65536 Q=4 P=2 inverse-pre-rotated dnum=2 bytes=4194304 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=2 inverse-pre-rotated dnum=2 bytes=3407872 all_RNS_exact=true
+PASS split-hoist N=65536 Q=10 P=9 standard dnum=2 bytes=12582912 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=9 standard dnum=1 bytes=3932160 all_RNS_exact=true
+PASS split-hoist N=65536 Q=10 P=9 inverse-pre-rotated dnum=2 bytes=12582912 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=9 inverse-pre-rotated dnum=1 bytes=3932160 all_RNS_exact=true
+PASS split-hoist N=65536 Q=13 P=10 standard dnum=2 bytes=15466496 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=10 standard dnum=1 bytes=4194304 all_RNS_exact=true
+PASS split-hoist N=65536 Q=13 P=10 inverse-pre-rotated dnum=2 bytes=15466496 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=10 inverse-pre-rotated dnum=1 bytes=4194304 all_RNS_exact=true
+PASS split-hoist N=65536 Q=28 P=25 standard dnum=2 bytes=35127296 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=25 standard dnum=1 bytes=8126464 all_RNS_exact=true
+PASS split-hoist N=65536 Q=28 P=25 inverse-pre-rotated dnum=2 bytes=35127296 all_RNS_exact=true
+PASS split-hoist N=65536 Q=3 P=25 inverse-pre-rotated dnum=1 bytes=8126464 all_RNS_exact=true
+GPU split-hoist regressions passed

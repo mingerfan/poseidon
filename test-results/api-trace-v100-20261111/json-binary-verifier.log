@@ -1,0 +1,1 @@
+PASS compiler V8 JSON/binary: buffers=38 calls=7448 readers=1,4 verified=1

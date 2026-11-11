@@ -1,0 +1,27 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon-api-trace/third_party/ckks-runtime/build-api-trace
+      Start  1: runtime_binary_plan_tests
+ 1/11 Test  #1: runtime_binary_plan_tests ........   Passed    0.15 sec
+      Start  2: runtime_prepared_api_tests
+ 2/11 Test  #2: runtime_prepared_api_tests .......   Passed    0.01 sec
+      Start  3: runtime_buffer_tests
+ 3/11 Test  #3: runtime_buffer_tests .............   Passed    0.04 sec
+      Start  4: runtime_waterline_tests
+ 4/11 Test  #4: runtime_waterline_tests ..........   Passed    4.79 sec
+      Start  5: pack_plaintext_bundle_tests
+ 5/11 Test  #5: pack_plaintext_bundle_tests ......   Passed    0.27 sec
+      Start  6: runtime_tests
+ 6/11 Test  #6: runtime_tests ....................   Passed    0.12 sec
+      Start  7: runtime_plan_json_tests
+ 7/11 Test  #7: runtime_plan_json_tests ..........   Passed    0.32 sec
+      Start  8: runtime_plan_memory_tests
+ 8/11 Test  #8: runtime_plan_memory_tests ........   Passed    0.07 sec
+      Start  9: runtime_release_tests
+ 9/11 Test  #9: runtime_release_tests ............   Passed    1.37 sec
+      Start 10: runtime_host_worker_tests
+10/11 Test #10: runtime_host_worker_tests ........   Passed    0.01 sec
+      Start 11: thread_trace_tests
+11/11 Test #11: thread_trace_tests ...............   Passed    0.00 sec
+
+100% tests passed out of 11
+
+Total Test time (real) =   7.18 sec

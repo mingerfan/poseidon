@@ -1,0 +1,2 @@
+[PASS] cache reuse/switch/invalidation/concurrent host lookups
+[PASS] independent deep copies, preserved moves, low-Q/trimmed P offsets
