@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <chrono>
 #include <future>
+#include <cstdlib>
 #include <cmath>
 #include <complex>
 #include <iostream>
@@ -204,8 +205,10 @@ void check_parallel_frozen_polynomial()
 
 void check_prepared_shared_rotations()
 {
-    for(std::size_t p_count:{1U,2U}){
-        auto context=PoseidonFactory::get_instance()->create_poseidon_context(parameters(5,p_count));
+    for(const auto [q_count,p_count]:std::vector<std::pair<std::size_t,std::size_t>>{{5,1},{5,2},{21,1}}){
+        auto params=parameters(q_count,p_count,q_count>5?10:12);
+        if(q_count>5)params.set_log_modulus(std::vector<std::uint32_t>(q_count,60),{60});
+        auto context=PoseidonFactory::get_instance()->create_poseidon_context(params);
         auto evaluator=PoseidonFactory::get_instance()->create_ckks_evaluator(context);
         CKKSEncoder encoder(context);KeyGenerator generator(context);PublicKey pk;generator.create_public_key(pk);
         Encryptor encryptor(context,pk);Decryptor decryptor(context,generator.secret_key());
@@ -229,6 +232,19 @@ void check_prepared_shared_rotations()
                 workers[w]->rotate_many_prepared(prepared,batches[w],keys,scratch[w],outputs[w]);
             }));
             for(auto& t:tasks)t.get();
+            // Compare the identical ciphertext/key batch with per-digit and
+            // bounded 128-bit deferred reductions. Every output word must match.
+            const auto* prior_lazy=std::getenv("POSEIDON_HOIST_LAZY_REDUCTION");
+            const bool had_lazy=prior_lazy!=nullptr;const std::string saved_lazy=prior_lazy?prior_lazy:"";
+            setenv("POSEIDON_HOIST_LAZY_REDUCTION","0",1);
+            std::vector<Ciphertext> eager;CpuHoistWorkspace eager_scratch;
+            evaluator->rotate_many_prepared(prepared,batches[0],keys,eager_scratch,eager);
+            setenv("POSEIDON_HOIST_LAZY_REDUCTION","1",1);
+            std::vector<Ciphertext> lazy;CpuHoistWorkspace lazy_scratch;
+            evaluator->rotate_many_prepared(prepared,batches[0],keys,lazy_scratch,lazy);
+            for(size_t i=0;i<eager.size();++i)check_equal(eager[i],lazy[i],"lazy hoist changed ciphertext words");
+            if(had_lazy)setenv("POSEIDON_HOIST_LAZY_REDUCTION",saved_lazy.c_str(),1);
+            else unsetenv("POSEIDON_HOIST_LAZY_REDUCTION");
             for(int w=0;w<3;++w){
                 require(scratch[w].last_counts.source_decompose_count==0,"worker decomposed a shared source");
                 for(size_t i=0;i<batches[w].size();++i){

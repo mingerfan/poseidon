@@ -1,6 +1,7 @@
 #include "keyswitch_hybrid.h"
 #include "poseidon/evaluator/evaluator_ckks_base.h"
 #include <future>
+#include <cstdlib>
 
 #include <algorithm>
 #include <stdexcept>
@@ -114,7 +115,14 @@ void keyswitch_multsum_no_moddown(const PoseidonContext &context,
   workspace.permuted_p.resize(p * n);
   workspace.accumulator_q.resize(2 * q * n);
   workspace.accumulator_p.resize(2 * p * n);
-  workspace.product.resize(n);
+  // Canonical NTT residues are below 2^60. Up to 256 products sum
+  // strictly below 2^128; reduce once per coefficient, rather than once
+  // per decomposition digit. Wider moduli/digit counts retain the old path.
+  const char* lazy_env=std::getenv("POSEIDON_HOIST_LAZY_REDUCTION");
+  bool lazy=(!lazy_env || std::string(lazy_env)!="0") && hoisted.dnum<=256;
+  for(const auto& modulus:moduli_q)lazy=lazy && modulus.bit_count()<=60;
+  for(const auto& modulus:moduli_p)lazy=lazy && modulus.bit_count()<=60;
+  workspace.product.resize(lazy ? 4*(q+p)*n : n);
 
   for (std::size_t digit = 0; digit < hoisted.dnum; ++digit) {
     galois->apply_galois_ntt(
@@ -125,6 +133,21 @@ void keyswitch_multsum_no_moddown(const PoseidonContext &context,
         RNSIter(workspace.permuted_p.data(), n));
     for (std::size_t component = 0; component < 2; ++component) {
       const auto *key = key_digits[digit].data().data(component);
+      if(lazy){
+        for(std::size_t limb=0;limb<q+p;++limb){
+          const auto* left=limb<q ? workspace.permuted_q.data()+limb*n
+                                  : workspace.permuted_p.data()+(limb-q)*n;
+          const auto* right=key+(limb<q ? limb : p_offset+limb-q)*n;
+          auto* wide=workspace.product.data()+2*(component*(q+p)+limb)*n;
+          for(std::size_t i=0;i<n;++i){
+            unsigned __int128 value=static_cast<unsigned __int128>(left[i])*right[i];
+            if(digit)value+=(static_cast<unsigned __int128>(wide[2*i+1])<<64)|wide[2*i];
+            wide[2*i]=static_cast<std::uint64_t>(value);
+            wide[2*i+1]=static_cast<std::uint64_t>(value>>64);
+          }
+        }
+        continue;
+      }
       for (std::size_t limb = 0; limb < q; ++limb) {
         auto *acc = workspace.accumulator_q.data() + (component * q + limb) * n;
         auto *product = digit == 0 ? acc : workspace.product.data();
@@ -145,6 +168,16 @@ void keyswitch_multsum_no_moddown(const PoseidonContext &context,
         }
       }
     }
+  }
+  if(lazy){
+    for(std::size_t component=0;component<2;++component)
+      for(std::size_t limb=0;limb<q+p;++limb){
+        const auto& modulus=limb<q?moduli_q[limb]:moduli_p[limb-q];
+        auto* output=limb<q?workspace.accumulator_q.data()+(component*q+limb)*n
+                            :workspace.accumulator_p.data()+(component*p+limb-q)*n;
+        const auto* wide=workspace.product.data()+2*(component*(q+p)+limb)*n;
+        for(std::size_t i=0;i<n;++i)output[i]=barrett_reduce_128(wide+2*i,modulus);
+      }
   }
   ++workspace.last_counts.key_switch_count;
 }
