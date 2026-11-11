@@ -458,9 +458,11 @@ def _inside(args):
                     report['tune_policy'] = getattr(args, 'tune_policy', 'new_best')
                     ctx = build_context(info, calibration, samples=samples,
                                         normalization=getattr(zm, 'normalization', None))
-                    client = LLMClient(args.budget_path, model=args.llm_model, reasoning_effort=args.llm_reasoning,
-                                       max_tokens=args.llm_max_tokens,
-                                       max_total_calls=getattr(args, 'llm_call_limit', 300))
+                    if getattr(args, 'placement', None) is not None:
+                        ctx.placement = report['placement'] = args.placement
+                    client = getattr(args, 'llm_client', None) or LLMClient(
+                        args.budget_path, model=args.llm_model, reasoning_effort=args.llm_reasoning,
+                        max_tokens=args.llm_max_tokens, max_total_calls=getattr(args, 'llm_call_limit', 300))
                     from .planners.prompts import (PROMPT_VERSION, build_system_prompt, initial_message,
                                                    select_examples, target_features)
                     from .intake.patterns import annotate
