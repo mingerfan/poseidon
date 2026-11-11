@@ -119,13 +119,8 @@ public:
     /**
      * ModDown only component 1 of the listed groups: destination
      * q_component(g, 1) = ModDown(source group g, component 1). Component 0
-     * and unlisted groups are untouched provided destination already has
-     * sufficient capacity. Used when giant-step c0 stays in QP.
-     * Scratch has slots = groups.size() rounded up to even, with contiguous
-     * [slot][limb][coeff] P coefficients and converted Q NTT residues.
-     * Scratch vectors must be distinct from each other and from source Q/P
-     * and destination Q storage; owned-vector aliases are rejected early.
-     * groups must be nonempty, unique, and contain at most 64 entries.
+     * and unlisted groups of destination are left untouched. Used when the
+     * giant-step c0 stays in QP (POSEIDON_DOUBLE_HOIST_QP_C0).
      */
     void moddown_qp_c1_groups_to_q(
         GpuQPCiphertextBuffer &source,

@@ -51,6 +51,18 @@ class GpuUploader
 {
 public:
     /**
+     * @brief Upload an NTT-form CPU plaintext with its exact Q->P extension.
+     *
+     * The signed coefficient integer is composed once on the host and reduced
+     * into every special prime, so a QP plaintext MAC followed by one ModDown
+     * equals the Q-only product (one [Q|P] allocation, q limbs first).
+     */
+    static GpuPlaintextData upload_plaintext_qp_exact(
+        const Plaintext &src,
+        const PoseidonContext &context,
+        int device_id);
+
+    /**
      * @brief Upload CPU Ciphertext to GPU.
      *
      * - Read shape and metadata from CPU Ciphertext.
@@ -139,6 +151,20 @@ public:
         bool compress_plaintexts = false);
 
     /**
+     * @brief One single-group matrix per BSGS giant group of `matrix`.
+     *
+     * Each view keeps only that group's terms and the baby steps they use,
+     * and points at `matrix`'s QP plaintexts, so the double-hoist executor
+     * computes exactly that group: one ModUp of the input, the group's baby
+     * rotations accumulated in QP, one ModDown, then the giant rotation. The
+     * views own no plaintexts and must not outlive `matrix`. Used by the
+     * bsgs_group step of an expanded Boot (RuntimePlan V6).
+     */
+    static std::vector<GpuMatrixPlainQP> upload_double_hoist_group_views(
+        const GpuMatrixPlainQP &matrix,
+        int device_id);
+
+    /**
      * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
      *
      * Polynomial splitting, level simulation, plaintext encoding and all
@@ -181,12 +207,11 @@ public:
         int device_id);
 
     /**
-     * @brief Upload relinearization keys with a physically cropped Q prefix.
+     * @brief Upload relinearization keys and validate a runtime Q-prefix view.
      *
-     * Store Q[0, q_count) followed by all original P limbs, retaining only
-     * ceil(q_count / P_count) original HYBRID digits, or q_count BV digits
-     * when P_count is zero. The key parms_id is unchanged. Smaller runtime
-     * Q prefixes use zero-copy views of this owner.
+     * The owning allocation keeps the full [Q_storage | P] layout required by
+     * the optimized key-switch path. Runtime operations select q_count through
+     * a zero-copy view instead of compacting the key allocation.
      */
     static GpuRelinKeysData upload_relin_keys(
         const RelinKeys &src,
@@ -203,21 +228,13 @@ public:
         const GaloisKeys &src,
         int device_id);
 
-    /**
-     * @brief Upload Galois keys with the same physical Q/digit crop as relin keys.
-     *
-     * All original P limbs and the original key parms_id are preserved.
-     */
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
         int device_id,
         std::size_t q_count);
 
     /**
-     * @brief Upload only the requested rotations with physical Q/digit cropping.
-     *
-     * q_count is shared by every selected rotation; sparse CPU key indices
-     * are preserved in the GPU owner.
+     * @brief Upload only the requested rotations and validate a Q-prefix view.
      */
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
@@ -233,12 +250,19 @@ public:
         const GaloisKeys &src,
         int device_id);
 
+    /** Selected keys only, as the selective upload_galois_keys overload. */
+    static GpuGaloisKeysData upload_double_hoist_galois_keys(
+        const GaloisKeys &src,
+        int device_id,
+        std::size_t q_count,
+        const std::vector<std::uint32_t> &galois_elts);
+
     /**
      * @brief Validate setup-time zero-copy views over one [Q_storage | P] key.
      *
      * No device allocation or device-to-device copy is performed. At runtime
      * KeySwitch reads the active Q prefix and addresses P through its fixed
-     * offset Q_storage * degree in the owning allocation.
+     * offset in the original full-level key allocation.
      */
     static void prepare_key_views_for_q_counts(
         const GpuEvaluationKeyData &keys,

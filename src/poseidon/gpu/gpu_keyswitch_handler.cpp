@@ -288,8 +288,9 @@ bool use_p9_fourstep_qp(
            value != "FALSE";
 }
 
-// Generic two-phase QP NTT (+ optional phase2 key MAC), N=65536.
-// P=9 retains its existing dedicated gate and ModUp dispatch.
+// Monolithic KeySwitch: the two-phase QP NTT (+ fused key MAC) for any
+// special-prime count at N=65536 (POSEIDON_GPU_QP_FOURSTEP_ANY_P=0 keeps
+// P!=9 on the stage-by-stage path).
 bool use_fourstep_qp_any_p(
     std::size_t degree,
     std::size_t base_p_size)
@@ -302,7 +303,7 @@ bool use_fourstep_qp_any_p(
     {
         return false;
     }
-    // Dynamic read permits same-process A/B switching with the same keys.
+    // Read per dispatch so same-process A/B runs can change the setting.
     const char *raw = std::getenv("POSEIDON_GPU_QP_FOURSTEP_ANY_P");
     return raw == nullptr || *raw == '\0' || std::string(raw) != "0";
 }
@@ -409,7 +410,7 @@ bool use_double_hoist_p9_qp_fourstep(
     }
     if (base_p_size != 9)
     {
-        // Surrounding P=9-only ModUp/P->Q kernels keep their own gates.
+        // Surrounding P=9-only kernels keep their own gates.
         return use_fourstep_qp_any_p(degree, base_p_size);
     }
 
@@ -598,6 +599,22 @@ bool use_fourstep_c2_intt()
            value != "off" &&
            value != "false" &&
            value != "FALSE";
+}
+
+// Small special modulus (3 <= P <= 8; P=2 and P=9 have tuned paths): run the
+// key-switch finalize as two-component launches, i.e. one P-side inverse NTT
+// for c0 and c1 together, one lazy P->Q conversion and one in-place Q NTT for
+// both components, instead of per-component INTTs and the stage-by-stage Q
+// NTT. On by default; POSEIDON_GPU_SMALL_P_FOURSTEP=0 restores the
+// per-component path.
+bool use_small_p_fourstep(std::size_t degree, std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size < 3 || base_p_size > 8)
+    {
+        return false;
+    }
+    const char *raw = std::getenv("POSEIDON_GPU_SMALL_P_FOURSTEP");
+    return raw == nullptr || *raw == '\0' || std::string(raw) != "0";
 }
 
 bool use_fourstep_all_ntt(
@@ -1124,10 +1141,10 @@ void process_hybrid_decomposition_block(
         scratch.degree,
         scratch.base_q_size,
         scratch.base_p_size);
-    const bool fourstep_qp = use_fourstep_qp_any_p(
+    const bool p9_fourstep_qp = use_fourstep_qp_any_p(
         scratch.degree,
         scratch.base_p_size);
-    if (fourstep_all_ntt || fourstep_qp)
+    if (fourstep_all_ntt || p9_fourstep_qp)
     {
         const bool fuse_phase2_mac = use_fourstep_phase2_mac();
         const bool compact_preweight =
@@ -1509,6 +1526,46 @@ void finalize_hybrid_relinearize(
                 add_source_shard0,
                 add_source_shard1);
         }
+        return;
+    }
+
+    if (use_small_p_fourstep(scratch.degree, scratch.base_p_size) &&
+        parameter_shard->limb_begin == 0 &&
+        scratch.fourstep_p0.size() >= scratch.p_word_count &&
+        scratch.fourstep_p1.size() >= scratch.p_word_count)
+    {
+        NvtxRange range("keyswitch.finalize.small_p_fourstep");
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            scratch.fourstep_p0.data(),
+            scratch.fourstep_p1.data(),
+            scratch.accum_p0.data(),
+            scratch.accum_p1.data(),
+            scratch.base_q_size,
+            scratch.base_p_size,
+            *parameter_shard);
+        kernel::launch_hybrid_convert_p_to_q_coeff_lazy(
+            scratch.c2_intt.data(),
+            scratch.modup_q.data(),
+            scratch.fourstep_p0.data(),
+            scratch.fourstep_p1.data(),
+            *parameter_shard,
+            scratch.degree);
+        kernel::launch_forward_ntt_two_components_inplace_fourstep_65536(
+            scratch.c2_intt.data(),
+            scratch.modup_q.data(),
+            scratch.base_q_size,
+            *parameter_shard);
+        kernel::launch_hybrid_apply_moddown_ntt_add_back(
+            destination_shard0,
+            destination_shard1,
+            scratch.accum_q0.data(),
+            scratch.accum_q1.data(),
+            scratch.c2_intt.data(),
+            scratch.modup_q.data(),
+            *parameter_shard,
+            scratch.degree,
+            add_source_shard0,
+            add_source_shard1);
         return;
     }
 
@@ -2476,7 +2533,7 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
         if (qp_fourstep)
         {
             NvtxRange ntt_range(
-                "double_hoist.decompose.qp_forward_ntt.fourstep");
+                "double_hoist.decompose.qp_forward_ntt.fourstep_p9");
             kernel::launch_forward_ntt_qp_active_fourstep_65536(
                 digit_q,
                 digit_p,
@@ -2578,9 +2635,14 @@ void GpuKeySwitchHandler::keyswitch_multsum_no_moddown(
         (key_storage.galois_elts_by_key_index.size() <= key_index ||
          key_storage.galois_elts_by_key_index[key_index] != galois_elt))
     {
+        std::string present;
+        for (const auto element : key_storage.galois_elts_by_key_index)
+            if (element != 0) present += " " + std::to_string(element);
         throw std::invalid_argument(
             "GpuKeySwitchHandler::keyswitch_multsum_no_moddown: "
-            "pre-rotated key/Galois-element mismatch");
+            "pre-rotated key/Galois-element mismatch (galois_elt=" +
+            std::to_string(galois_elt) + " level q=" + std::to_string(level_info.q_count) +
+            " key P=" + std::to_string(key_storage.meta.p_count) + " key elements:" + present + ")");
     }
     if (inverse_pre_rotated)
     {
@@ -2983,8 +3045,7 @@ void GpuKeySwitchHandler::moddown_qp_c1_groups_to_q(
 {
     NvtxRange range("double_hoist.moddown_c1_batch");
     const char *name = "GpuKeySwitchHandler::moddown_qp_c1_groups_to_q";
-    // Reject owned-vector aliases before ensure_capacity can reallocate an
-    // input or any conversion can overwrite an unselected Q component.
+    // Reject aliases before destination or scratch allocation can invalidate inputs.
     if (&p_coeff == &converted_q ||
         &p_coeff == &source.q || &p_coeff == &source.p ||
         &p_coeff == &destination.q ||
@@ -3031,19 +3092,29 @@ void GpuKeySwitchHandler::moddown_qp_c1_groups_to_q(
         throw std::invalid_argument(std::string(name) + ": no matching parameter shard");
     }
 
-    destination.ensure_capacity(
-        source.device_id,
-        source.degree,
-        source.q_count,
-        destination_batch_count);
-    // P->Q conversion operates on pairs; duplicate the last odd slot, whose
-    // converted result is not applied to destination.
+    // Check all allocation and indexed component extents before allocating.
+    // The conversion works on pairs; an odd count gets a padded last slot.
     const std::size_t count = groups.size();
     const std::size_t slots = count + (count & 1);
     const std::size_t p_component_words = checked_mul(source.p_count, source.degree, name);
     const std::size_t q_component_words = checked_mul(source.q_count, source.degree, name);
     const std::size_t p_words = checked_mul(slots, p_component_words, name);
     const std::size_t q_words = checked_mul(slots, q_component_words, name);
+    const std::size_t p_component_bytes = checked_mul(p_component_words, sizeof(GpuWord), name);
+    checked_mul(p_words, sizeof(GpuWord), name);
+    checked_mul(q_words, sizeof(GpuWord), name);
+    const std::size_t destination_components = checked_mul(destination_batch_count, 2, name);
+    checked_mul(checked_mul(destination_components, q_component_words, name), sizeof(GpuWord), name);
+    const std::size_t source_components =
+        checked_mul(static_cast<std::size_t>(*std::max_element(groups.begin(), groups.end())) + 1, 2, name);
+    checked_mul(checked_mul(source_components, p_component_words, name), sizeof(GpuWord), name);
+    checked_mul(checked_mul(source_components, q_component_words, name), sizeof(GpuWord), name);
+
+    destination.ensure_capacity(
+        source.device_id,
+        source.degree,
+        source.q_count,
+        destination_batch_count);
     if (p_coeff.size() < p_words || p_coeff.device_id() != source.device_id)
     {
         p_coeff.allocate(p_words, source.device_id);
@@ -3081,7 +3152,7 @@ void GpuKeySwitchHandler::moddown_qp_c1_groups_to_q(
             cudaMemcpyAsync(
                 p_coeff.data() + count * p_component_words,
                 p_coeff.data() + (count - 1) * p_component_words,
-                p_component_words * sizeof(GpuWord),
+                p_component_bytes,
                 cudaMemcpyDeviceToDevice,
                 gpu_execution_stream()),
             name);

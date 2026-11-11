@@ -181,8 +181,24 @@ std::size_t environment_mib(const char *name,std::size_t fallback) {
     return end && *end=='\0' && value!=0 ? static_cast<std::size_t>(value) : fallback;
 }
 
+// Main secret: fixed-weight ternary. The application's own degree-59 Boot
+// needs the historical sparse h=192 (its EvalMod range assumes it); the
+// library Boot (the default) encapsulates into an h=32 ephemeral secret, so
+// the main secret is dense (h=N/2, as Cerium) unless POSEIDON_S2C_LIBRARY_BOOT=0.
+// POSEIDON_S2C_SECRET_H overrides both. (h=0 would sample a zero secret.)
+std::uint32_t main_secret_hamming_weight() {
+    if(const char *raw=std::getenv("POSEIDON_S2C_SECRET_H"); raw && *raw) {
+        char *end=nullptr;const auto value=std::strtoull(raw,&end,10);
+        if(end==raw || *end!='\0' || value==0 || value>65536)
+            throw std::invalid_argument("POSEIDON_S2C_SECRET_H must be in [1, 65536]");
+        return static_cast<std::uint32_t>(value);
+    }
+    const char *library=std::getenv("POSEIDON_S2C_LIBRARY_BOOT");
+    return library && *library && std::string(library)=="0" ? 192U : 32768U;
+}
+
 ParametersLiteral baseline_parameters(const std::string &profile, const std::string &fixture) {
-    ParametersLiteral p(CKKS,16,15,40,192,1,Modulus(0),{}, {},sec_level_type::none);
+    ParametersLiteral p(CKKS,16,15,40,main_secret_hamming_weight(),1,Modulus(0),{}, {},sec_level_type::none);
     if (profile=="historical-q34") {
         // Same constructor and prime generation as make_test_parameters(),
         // except h=192. Never call the historical h=0 test entry point.
@@ -196,6 +212,7 @@ ParametersLiteral baseline_parameters(const std::string &profile, const std::str
             if (!(in>>v)) throw std::runtime_error("truncated fixture primes");
             (i<nq?q:aux).emplace_back(v);
         }
+        apply_removed_q_prime(q);
         p.set_modulus(q,aux);
     } else throw std::runtime_error("unknown baseline profile");
     return p;
@@ -229,7 +246,7 @@ int run_bootstrap_baseline(int argc, char **argv,
         if (argc<4 || argc>5) throw std::runtime_error("usage: bootstrap_baseline_precision --unsafe-accuracy-only|--unsafe-performance-only|--metadata-only historical-q34|q50-fixed45 historical|grid [q50_fixture]");
         const std::string mode=argv[1], profile=argv[2], dataset=argv[3];
         const bool metadata=mode=="--metadata-only";
-        const bool performance=mode=="--unsafe-performance-only";
+        const bool performance=mode=="--unsafe-performance-only" || mode=="--unsafe-trace-plan";
         const bool continuous=performance;
         if (!metadata && mode!="--unsafe-accuracy-only" && !performance)
             throw std::runtime_error("explicit accuracy-only or performance-only flag required");
@@ -247,7 +264,8 @@ int run_bootstrap_baseline(int argc, char **argv,
         const auto nq=parms.q().size(), np=parms.p().size();
         std::cout<<std::unitbuf<<std::setprecision(16)
             <<"BASELINE profile="<<profile<<" dataset="<<dataset<<" N=65536 Q="<<nq<<" P="<<np
-            <<" global_dnum="<<(nq+np-1)/np<<" secret_hamming_weight=192 degree=59 DA=2 arcsine_degree=0"
+            <<" global_dnum="<<(nq+np-1)/np<<" secret_hamming_weight="<<parms.hamming_weight()
+            <<" application_boot_degree=59 application_boot_DA=2 arcsine_degree=0"
             <<" output_fold=false c2s_log_scale=45 linear_mode=double_hoist metadata_only="<<metadata<<'\n';
         std::cout<<"BOOTSTRAP_BRANCH mode="<<(output_real_projection?"lcdnn_s2c_first_real":"generic_complex")
             <<" active_log_slots=15 evalmod_calls=2"
@@ -348,20 +366,26 @@ int run_bootstrap_baseline(int argc, char **argv,
                 if(!std::isfinite(value) || std::abs(value)>1)
                     throw std::runtime_error("application encryption requires finite slots within [-1,1]");
             // The encrypted stem consumes exactly one Q prime and its ReLU
-            // requires Q31. Start each prepared image patch directly at Q32;
-            // carrying it through Q50 only to discard Q49..Q31 after the stem
-            // wastes limbs without contributing multiplicative depth.
-            const auto input_id=ctx.crt_context()->parms_id_map().at(31);
+            // requires Q31 (entry_q). Start each prepared image patch directly
+            // at Q32; carrying it through Q50 only to discard Q49..Q31 after
+            // the stem wastes limbs without contributing multiplicative depth.
+            const auto input_id=ctx.crt_context()->parms_id_map().at(entry_q);
             Plaintext plain;encoder.encode(slots,input_id,std::exp2(40),plain);
             Ciphertext encrypted;encryptor.encrypt(plain,encrypted);
-            if(encrypted.coeff_modulus_size()!=32)
-                throw std::logic_error("application input encryption did not produce Q32");
+            if(encrypted.coeff_modulus_size()!=static_cast<std::size_t>(entry_q+1))
+                throw std::logic_error("application input encryption did not produce Q(entry_q+1)");
             return GpuUploader::upload_ciphertext(encrypted,0);
         };
         ManualBootProfileFactory manual_boot_profile=
             [&](const GpuResNet20ManualOptions &options) {
-                return GpuBootstrapProfileBuilder::build_resnet20_manual(
+                auto profile=GpuBootstrapProfileBuilder::build_resnet20_manual(
                     ctx,generator,0,options);
+                // A level-aware special modulus: the Boot's key-switch levels
+                // use their own P. Adopt those parameter levels into the
+                // evaluator's table before the profile is first used.
+                for(auto &level:profile.level_parameters)parameters.adopt_level(std::move(level));
+                profile.level_parameters.clear();
+                return profile;
             };
         if(session_continuation)
             return session_continuation(BaselineSession{metadata_state,eval,keys,replay,

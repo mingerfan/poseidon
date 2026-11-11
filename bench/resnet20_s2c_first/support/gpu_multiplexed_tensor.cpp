@@ -503,9 +503,16 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
 
         const std::size_t output_groups = ceil_div(
             static_cast<std::size_t>(out_channels), input_replicas);
+        // Merged output masks: the support mask of each group is split by
+        // replica and accumulated into one ciphertext per replica, so the
+        // baby rotation that follows needs no selector. Placement then costs
+        // one mask level instead of two (Q8 -> Q6 instead of Q9 -> Q6), for
+        // out_channels mask products instead of output_groups + replicas.
+        const bool merged_masks = runtime.merged_output_masks();
         std::cout << "[GPU multiplexed conv] input_replicas=" << input_replicas
                   << " output_groups=" << output_groups
-                  << " lazy_plain_accumulate=on output_bsgs=on\n";
+                  << " lazy_plain_accumulate=on output_bsgs=on merged_masks="
+                  << (merged_masks ? "on" : "off") << '\n';
         const long long slot_modulus =
             static_cast<long long>(output.slot_count);
         const auto normalize_step = [slot_modulus](long long step)
@@ -529,6 +536,8 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
         const double support_scale =
             runtime.modulus_value_from_end(input.packs.front(), 1);
         std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> aligned_groups_high;
+        std::vector<std::unique_ptr<GpuCkksRuntime::DeviceCiphertext>> replica_high(
+            merged_masks ? input_replicas : 0);
         for (std::size_t group = 0; group < output_groups; ++group)
         {
             std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> group_sum;
@@ -544,9 +553,49 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                         spatial = rotated_inputs[kernel_index].get();
                     }
 
-                    std::vector<double> compact_weight(input.slot_count, 0.0);
+                    const bool skip_slots = runtime.replay_skips_slots();
+                    std::vector<double> compact_weight(
+                        skip_slots ? 0 : input.slot_count, 0.0);
                     bool nonzero = false;
-                    for (std::size_t replica = 0; replica < input_replicas;
+                    if (skip_slots)
+                    {
+                        // Same decision as the fill below without the slots:
+                        // some coefficient is nonzero and the (kh, kw) tap
+                        // reaches at least one output row and one column.
+                        bool row_ok = false, col_ok = false;
+                        for (int oh = 0; oh < output.h && !row_ok; ++oh)
+                        {
+                            const int ih = oh * stride + kh - pad_h;
+                            row_ok = ih >= 0 && ih < input.h;
+                        }
+                        for (int ow = 0; ow < output.w && !col_ok; ++ow)
+                        {
+                            const int iw = ow * stride + kw - pad_w;
+                            col_ok = iw >= 0 && iw < input.w;
+                        }
+                        for (std::size_t replica = 0;
+                             row_ok && col_ok && !nonzero && replica < input_replicas;
+                             ++replica)
+                        {
+                            const std::size_t output_channel =
+                                group * input_replicas + replica;
+                            if (output_channel >= static_cast<std::size_t>(out_channels))
+                            {
+                                continue;
+                            }
+                            for (int input_channel = 0;
+                                 input_channel < input.c && !nonzero; ++input_channel)
+                            {
+                                const std::size_t weight_index =
+                                    ((output_channel * input.c + input_channel) *
+                                         kernel_h + kh) * kernel_w + kw;
+                                nonzero = weights[weight_index] *
+                                              bn_scale[output_channel] != 0.0;
+                            }
+                        }
+                    }
+                    for (std::size_t replica = 0;
+                         !skip_slots && replica < input_replicas;
                          ++replica)
                     {
                         const std::size_t output_channel =
@@ -598,17 +647,19 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                     }
                     const double plain_scale =
                         runtime.last_modulus_value(*spatial);
+                    const auto &weight_slots =
+                        skip_slots ? runtime.replay_placeholder() : compact_weight;
                     if (group_sum)
                     {
                         runtime.multiply_plain_accumulate(
-                            *spatial, compact_weight, plain_scale, *group_sum);
+                            *spatial, weight_slots, plain_scale, *group_sum);
                     }
                     else
                     {
                         group_sum =
                             std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
                                 runtime.multiply_plain(
-                                    *spatial, compact_weight, plain_scale));
+                                    *spatial, weight_slots, plain_scale));
                     }
                 }
             }
@@ -632,7 +683,9 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 giant_aligned = runtime.rotate_composed(
                     giant_aligned, giant_step);
             }
-            std::vector<double> support_mask(output.slot_count, 0.0);
+            const bool skip_mask = runtime.replay_skips_slots();
+            std::vector<double> support_mask(
+                skip_mask || merged_masks ? 0 : output.slot_count, 0.0);
             for (std::size_t replica = 0; replica < input_replicas; ++replica)
             {
                 const std::size_t output_channel =
@@ -651,7 +704,14 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                     throw std::logic_error(
                         "GPU convolution output placement is not BSGS separable");
                 }
-                for (int oh = 0; oh < output.h; ++oh)
+                // Merged: this replica's part of the support mask, on its own.
+                std::vector<double> replica_mask;
+                if (merged_masks && !skip_mask)
+                {
+                    replica_mask.assign(output.slot_count, 0.0);
+                }
+                auto &mask_target = merged_masks ? replica_mask : support_mask;
+                for (int oh = 0; !skip_mask && oh < output.h; ++oh)
                 {
                     for (int ow = 0; ow < output.w; ++ow)
                     {
@@ -661,14 +721,39 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                              static_cast<std::size_t>(
                                  output_baby_steps[replica])) %
                             output.slot_count;
-                        support_mask[support_slot] = 1.0;
+                        mask_target[support_slot] = 1.0;
+                    }
+                }
+                if (merged_masks)
+                {
+                    const auto &replica_slots =
+                        skip_mask ? runtime.replay_placeholder() : replica_mask;
+                    auto &destination = replica_high[replica];
+                    if (destination)
+                    {
+                        runtime.multiply_plain_accumulate(
+                            giant_aligned, replica_slots, support_scale,
+                            *destination);
+                    }
+                    else
+                    {
+                        destination =
+                            std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                                runtime.multiply_plain(
+                                    giant_aligned, replica_slots, support_scale));
                     }
                 }
             }
+            if (merged_masks)
+            {
+                continue;
+            }
+            const auto &mask_slots =
+                skip_mask ? runtime.replay_placeholder() : support_mask;
             if (aligned_groups_high)
             {
                 runtime.multiply_plain_accumulate(
-                    giant_aligned, support_mask, support_scale,
+                    giant_aligned, mask_slots, support_scale,
                     *aligned_groups_high);
             }
             else
@@ -676,8 +761,65 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 aligned_groups_high =
                     std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
                         runtime.multiply_plain(
-                            giant_aligned, support_mask, support_scale));
+                            giant_aligned, mask_slots, support_scale));
             }
+        }
+        const auto add_bias = [&](const GpuCkksRuntime::DeviceCiphertext &placed)
+        {
+            const bool skip_bias = runtime.replay_skips_slots();
+            std::vector<double> bias_slots(skip_bias ? 0 : output.slot_count, 0.0);
+            for (int output_channel = 0; !skip_bias && output_channel < out_channels;
+                 ++output_channel)
+            {
+                for (int oh = 0; oh < output.h; ++oh)
+                {
+                    for (int ow = 0; ow < output.w; ++ow)
+                    {
+                        bias_slots[output.slot_index(output_channel, oh, ow)] =
+                            bn_bias[output_channel];
+                    }
+                }
+            }
+            return runtime.add_plain(
+                placed, skip_bias ? runtime.replay_placeholder() : bias_slots);
+        };
+        if (merged_masks)
+        {
+            // Replica r's accumulator holds only its own output channels,
+            // already offset by its baby step: one rotation places it. Rotate
+            // before the two rescales (a key switch costs the same at either
+            // scale) so the sum is rescaled once instead of once per replica.
+            std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> placed_high;
+            for (std::size_t replica = 0; replica < input_replicas; ++replica)
+            {
+                if (!replica_high[replica])
+                {
+                    continue;
+                }
+                auto placed = output_baby_steps[replica] == 0
+                    ? std::move(*replica_high[replica])
+                    : runtime.rotate_composed(*replica_high[replica],
+                                              output_baby_steps[replica]);
+                replica_high[replica].reset();
+                if (placed_high)
+                {
+                    *placed_high = runtime.add(*placed_high, placed);
+                }
+                else
+                {
+                    placed_high = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        std::move(placed));
+                }
+            }
+            if (!placed_high)
+            {
+                throw std::runtime_error(
+                    "GPU replicated convolution produced no placed replicas");
+            }
+            auto pack_sum = runtime.rescale(*placed_high, 1);
+            pack_sum = runtime.rescale(pack_sum, 1);
+            output.packs.front() = add_bias(pack_sum);
+            return output;
         }
         if (!aligned_groups_high)
         {
@@ -689,10 +831,11 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
         auto baby_rotations = runtime.rotate_many_composed(
             aligned_groups, output_baby_steps);
         std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum;
+        const bool skip_selector = runtime.replay_skips_slots();
         for (std::size_t replica = 0; replica < input_replicas; ++replica)
         {
-            std::vector<double> selector(output.slot_count, 0.0);
-            for (std::size_t group = 0; group < output_groups; ++group)
+            std::vector<double> selector(skip_selector ? 0 : output.slot_count, 0.0);
+            for (std::size_t group = 0; !skip_selector && group < output_groups; ++group)
             {
                 const std::size_t output_channel =
                     group * input_replicas + replica;
@@ -711,34 +854,23 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
             }
             const double selector_scale =
                 runtime.last_modulus_value(baby_rotations[replica]);
+            const auto &selector_slots =
+                skip_selector ? runtime.replay_placeholder() : selector;
             if (pack_sum)
             {
                 runtime.multiply_plain_accumulate(
-                    baby_rotations[replica], selector, selector_scale,
+                    baby_rotations[replica], selector_slots, selector_scale,
                     *pack_sum);
             }
             else
             {
                 pack_sum = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
                     runtime.multiply_plain(
-                        baby_rotations[replica], selector, selector_scale));
+                        baby_rotations[replica], selector_slots, selector_scale));
             }
         }
         *pack_sum = runtime.rescale(*pack_sum, 1);
-        std::vector<double> bias_slots(output.slot_count, 0.0);
-        for (int output_channel = 0; output_channel < out_channels;
-             ++output_channel)
-        {
-            for (int oh = 0; oh < output.h; ++oh)
-            {
-                for (int ow = 0; ow < output.w; ++ow)
-                {
-                    bias_slots[output.slot_index(output_channel, oh, ow)] =
-                        bn_bias[output_channel];
-                }
-            }
-        }
-        output.packs.front() = runtime.add_plain(*pack_sum, bias_slots);
+        output.packs.front() = add_bias(*pack_sum);
         return output;
     }
 

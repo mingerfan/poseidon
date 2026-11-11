@@ -129,7 +129,7 @@ __device__ __forceinline__ GpuWord lazy_reduce(
     GpuWord result = barrett_reduce_u64_u32(low, modulus, barrett_ratio);
     if (acc.hi != 0)
     {
-        // ratio = floor(2^64 / modulus), so unsigned wrap yields 2^64 mod p.
+        // barrett_ratio = floor(2^64 / modulus): 2^64 mod modulus.
         GpuWide two64 = GpuWide{0} - barrett_ratio * static_cast<GpuWide>(modulus);
         if (two64 >= modulus)
         {
@@ -615,9 +615,11 @@ __global__ void hybrid_modup_qp_kernel(
 }
 
 /*
- * One thread handles two coefficients and a tile of target limbs. Weight
- * each source once per tile and reduce each target once. Q limbs inside
- * the digit stay untouched; key MAC reads their original NTT residues.
+ * ModUp with lazy accumulation. One thread owns one coefficient and a tile of
+ * target limbs: each source residue is weighted by its punctured inverse once
+ * per tile (not once per target) and every target sum is reduced once.
+ * Targets enumerate base Q then base P; the decomposition's own Q limbs are
+ * skipped, as in hybrid_modup_qp_kernel.
  */
 template <int TargetTile>
 __global__ void hybrid_modup_qp_lazy_kernel(
@@ -639,8 +641,11 @@ __global__ void hybrid_modup_qp_lazy_kernel(
     std::size_t degree,
     unsigned int degree_power)
 {
+    // Two coefficients (j, j + N/2) per thread: twice the independent work
+    // per matrix entry and per punctured-inverse weighting.
     const std::size_t half = degree >> 1;
     const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    // Only targets outside the digit: Q limbs before/after it, then P.
     const std::size_t active_q_count = base_q_size - decomp_limb_count;
     const std::size_t target_count = active_q_count + base_p_size;
     const std::size_t tile_count = (target_count + TargetTile - 1) / TargetTile;
@@ -710,7 +715,11 @@ __global__ void hybrid_modup_qp_lazy_kernel(
     }
 }
 
-/* Tiled P->Q conversion, optionally fused with the first forward NTT stage. */
+/*
+ * P->Q conversion plus the first forward NTT stage with lazy accumulation.
+ * One thread owns one butterfly (left/right coefficient, both components) for
+ * a tile of Q limbs; each P residue is loaded and weighted once per tile.
+ */
 template <int QTile, bool FirstStage = true>
 __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel(
     GpuWord *converted_q0,
@@ -796,6 +805,7 @@ __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel(
         const std::size_t q_base = q_limb * degree;
         if constexpr (!FirstStage)
         {
+            // Coefficient form; a separate in-place NTT follows.
             converted_q0[q_base + left_coeff] = left0;
             converted_q0[q_base + right_coeff] = right0;
             converted_q1[q_base + left_coeff] = left1;
@@ -812,7 +822,11 @@ __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel(
     }
 }
 
-/* ModUp + first NTT stage, sharing source weighting across target tiles. */
+/*
+ * ModUp plus the first forward NTT stage with lazy accumulation: one thread
+ * owns one butterfly for a tile of active target limbs (Q outside the digit,
+ * then P); each digit residue pair is weighted once per tile.
+ */
 template <int Tile>
 __global__ void hybrid_modup_qp_forward_ntt_first_stage_lazy_kernel(
     GpuWord *modup_q,
@@ -3424,7 +3438,11 @@ struct SelectedModDownComponents
     std::uint32_t index[kMaxSelectedModDownComponents];
 };
 
-// Converted slot k maps to scattered Q component index[k] in source/dest.
+/*
+ * Out-of-place ModDown apply for a scattered set of components. Converted
+ * slot k belongs to component index[k] of source/destination, both laid out
+ * as consecutive Q components of words_per_component words.
+ */
 __global__ void hybrid_apply_moddown_ntt_selected_kernel(
     GpuWord *destination_q,
     const GpuWord *source_q,
@@ -3440,7 +3458,8 @@ __global__ void hybrid_apply_moddown_ntt_selected_kernel(
 {
     const std::size_t words_per_component = base_q_size * degree;
     const std::size_t total = component_count * words_per_component;
-    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t tid =
+        static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
     if (tid >= total)
     {
         return;
@@ -3449,7 +3468,8 @@ __global__ void hybrid_apply_moddown_ntt_selected_kernel(
     const std::size_t local = tid - slot * words_per_component;
     const std::size_t offset =
         static_cast<std::size_t>(components.index[slot]) *
-            words_per_component + local;
+            words_per_component +
+        local;
     const std::size_t q_limb = local >> degree_power;
     const GpuWord modulus = rns_primes[q_limb];
     destination_q[offset] = mul_mod(
@@ -3663,6 +3683,15 @@ void validate_hybrid_tables(
     }
 }
 
+std::size_t checked_product(std::size_t a, std::size_t b, const char *name)
+{
+    if (b != 0 && a > std::numeric_limits<std::size_t>::max() / b)
+    {
+        throw std::overflow_error(std::string(name) + ": size overflow");
+    }
+    return a * b;
+}
+
 unsigned int checked_log2_degree(std::size_t degree, const char *name)
 {
     if (degree < 2 || (degree & (degree - 1)) != 0)
@@ -3808,8 +3837,7 @@ void launch_hybrid_modup_decomposition(
         constexpr int target_tile = 4;
         const std::size_t tiles =
             (base_q_size - decomp_limb_count + base_p_size + target_tile - 1) / target_tile;
-        const int lazy_grid = static_cast<int>(
-            (tiles * (degree >> 1) + block_size - 1) / block_size);
+        const int lazy_grid = static_cast<int>(((tiles * degree >> 1) + block_size - 1) / block_size);
         hybrid_modup_qp_lazy_kernel<target_tile><<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
             modup_q,
             modup_p,
@@ -5509,6 +5537,49 @@ void launch_hybrid_convert_p_to_q(
         "launch_hybrid_convert_p_to_q kernel launch");
 }
 
+void launch_hybrid_convert_p_to_q_coeff_lazy(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *p_coeff0,
+    const GpuWord *p_coeff1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_hybrid_convert_p_to_q_coeff_lazy";
+    validate_hybrid_tables(name, parameter_shard, degree);
+    if (converted_q0 == nullptr || converted_q1 == nullptr ||
+        p_coeff0 == nullptr || p_coeff1 == nullptr)
+        throw std::invalid_argument(std::string(name) + ": null data pointer");
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    if (base_p_size > std::numeric_limits<std::uint32_t>::max())
+    {
+        throw std::overflow_error(std::string(name) + ": too many source limbs for lazy conversion");
+    }
+    constexpr int block_size = 256;
+    constexpr int q_tile = 4;
+    const std::size_t tiles = (base_q_size + q_tile - 1) / q_tile;
+    const int grid = static_cast<int>((tiles * (degree >> 1) + block_size - 1) / block_size);
+    hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel<q_tile, false>
+        <<<grid, block_size, 0, gpu_execution_stream()>>>(
+            converted_q0,
+            converted_q1,
+            p_coeff0,
+            p_coeff1,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.ntt_tables.data(),
+            parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+            parameter_shard.hybrid_p_inv_punctured.data(),
+            base_q_size,
+            base_p_size,
+            degree,
+            checked_log2_degree(degree, name),
+            false);
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
 void launch_hybrid_convert_p_to_q_forward_ntt(
     GpuWord *converted_q0,
     GpuWord *converted_q1,
@@ -5551,7 +5622,8 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
 
     if (lazy_base_conversion_enabled(base_p_size) && base_p_size > 9)
     {
-        // P=2 and P=9 retain their existing tuned conversion kernels.
+        // Generic P (e.g. 25 special primes): tiled, lazily reduced; P=2 and
+        // P=9 keep their tuned kernels below.
         constexpr int q_tile = 4;
         const std::size_t tiles = (base_q_size + q_tile - 1) / q_tile;
         const int lazy_grid = static_cast<int>(
@@ -5560,7 +5632,8 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
         const bool fourstep = raw == nullptr || *raw == '\0' || std::string(raw) != "0";
         if (fourstep && degree == 65536)
         {
-            // Coefficient conversion followed by two-phase in-place Q NTT.
+            // Convert into coefficient form, then two-phase NTT per
+            // component instead of the stage-by-stage tail.
             hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel<q_tile, false>
                 <<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
                     converted_q0,
@@ -6087,8 +6160,9 @@ void launch_hybrid_apply_moddown_ntt_selected(
     {
         throw std::invalid_argument(std::string(name) + ": invalid argument");
     }
-    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
     SelectedModDownComponents components{};
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t words_per_component = checked_product(base_q_size, degree, name);
     for (std::size_t slot = 0; slot < component_count; ++slot)
     {
         for (std::size_t previous = 0; previous < slot; ++previous)
@@ -6098,13 +6172,27 @@ void launch_hybrid_apply_moddown_ntt_selected(
                 throw std::invalid_argument(std::string(name) + ": duplicate component");
             }
         }
+        // Check the entire scattered component, including its last word.
+        const std::size_t index = component_indices[slot];
+        if (index == std::numeric_limits<std::size_t>::max())
+        {
+            throw std::overflow_error(std::string(name) + ": component index overflow");
+        }
+        const std::size_t scattered_words =
+            checked_product(index + 1, words_per_component, name);
+        checked_product(scattered_words, sizeof(GpuWord), name);
         components.index[slot] = component_indices[slot];
     }
-    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
-    const std::size_t total = component_count * base_q_size * degree;
+    const std::size_t total = checked_product(component_count, words_per_component, name);
+    checked_product(total, sizeof(GpuWord), name);
     constexpr int block_size = 256;
-    const int grid_size =
-        static_cast<int>((total + block_size - 1) / block_size);
+    const std::size_t blocks = total / block_size + (total % block_size != 0);
+    if (blocks > static_cast<std::size_t>(std::numeric_limits<int>::max()))
+    {
+        throw std::overflow_error(std::string(name) + ": grid size overflow");
+    }
+    const int grid_size = static_cast<int>(blocks);
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
     hybrid_apply_moddown_ntt_selected_kernel
         <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             destination_q,

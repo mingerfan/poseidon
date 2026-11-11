@@ -55,6 +55,7 @@ void switches(bool optimized, bool qp_c0 = false)
     for (const char *name : {"POSEIDON_GPU_KEY_VIEW_CACHE", "POSEIDON_GPU_LAZY_BASECONV",
                              "POSEIDON_GPU_MODDOWN_FOURSTEP", "POSEIDON_GPU_QP_FOURSTEP_ANY_P"})
         setenv(name, value, 1);
+    setenv("POSEIDON_GPU_SMALL_P_FOURSTEP", value, 1);
     setenv("POSEIDON_DOUBLE_HOIST_QP_C0", qp_c0 ? "1" : "0", 1);
     setenv("POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE", "1", 1);
     setenv("POSEIDON_NTT_ALGO", "fourstep", 1);
@@ -341,6 +342,10 @@ int main()
             for (const auto [q, p] : std::vector<std::pair<std::size_t, std::size_t>>{
                      {4, 2}, {10, 9}, {13, 10}, {28, 25}})
                 key_switch_case(log_n, q, p);
+        // Exercise every new N65536 small-P two-component path against the
+        // unfused reference with the same inputs/keys in the same process.
+        for (std::size_t p = 3; p <= 8; ++p)
+            key_switch_case(16, 10, p);
         qp_c0_case(12, 7, 2);
         qp_c0_case(16, 13, 10);
         qp_c0_case(16, 28, 25);

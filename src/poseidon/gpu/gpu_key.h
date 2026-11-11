@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <list>
 #include <map>
+#include <memory>
 #include <mutex>
 #include <utility>
 #include <vector>
@@ -69,17 +70,51 @@ struct GpuConstEvaluationKeyView
 };
 
 /**
+ * @brief Per-object cache of key views by active Q count. A copy starts
+ * empty, so a deep-copied key never shares views with its source; a move
+ * keeps them, since moving the owning fields does not move device memory.
+ */
+struct GpuKeyViewCache
+{
+    GpuKeyViewCache() = default;
+    GpuKeyViewCache(const GpuKeyViewCache &) {}
+    GpuKeyViewCache &operator=(const GpuKeyViewCache &)
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        views.clear();
+        uncached_views.clear();
+        return *this;
+    }
+    GpuKeyViewCache(GpuKeyViewCache &&other) noexcept
+    {
+        std::lock_guard<std::mutex> lock(other.mutex);
+        views.swap(other.views);
+        uncached_views.swap(other.uncached_views);
+    }
+    GpuKeyViewCache &operator=(GpuKeyViewCache &&other) noexcept
+    {
+        if (this != &other)
+        {
+            std::scoped_lock lock(mutex, other.mutex);
+            views.clear();
+            uncached_views.clear();
+            views.swap(other.views);
+            uncached_views.swap(other.uncached_views);
+        }
+        return *this;
+    }
+
+    std::mutex mutex;
+    std::map<std::size_t, std::unique_ptr<GpuConstEvaluationKeyView>> views;
+    std::list<GpuConstEvaluationKeyView> uncached_views;
+};
+
+/**
  * @brief Generic GPU-side evaluation key container.
  *
- * Intended to represent:
- * - relinearization keys;
- * - Galois/rotation keys;
- * - other key-switching keys.
- *
- * The key data also uses the same field/shard/poly model:
- * - fields_ owns GPU memory;
- * - polys_ describes logical key polynomials;
- * - each key polynomial can be sharded across GPUs.
+ * Intended to represent relinearization, Galois/rotation, and other
+ * key-switching keys. fields_ owns GPU memory, while polys_ describes
+ * logical key polynomials that may be sharded across GPUs.
  */
 class GpuEvaluationKeyData
 {
@@ -122,7 +157,8 @@ public:
     /**
      * Deep-copy storage on the current execution stream and synchronize it;
      * rebase in-owner device pointer table entries and start with no views.
-     * Order any prior source writes on other streams before copying.
+     * Immutable level_keys overrides remain shared. Order any prior source
+     * writes on other streams before copying.
      */
     GpuEvaluationKeyData(const GpuEvaluationKeyData &other);
     GpuEvaluationKeyData &operator=(const GpuEvaluationKeyData &other);
@@ -134,8 +170,7 @@ public:
     bool empty() const;
 
     /**
-     * @brief Create mutable view of evaluation key data, invalidating cached
-     * const views before exposing mutable access.
+     * @brief Create mutable view, invalidating cached const views first.
      */
     GpuEvaluationKeyView make_view();
 
@@ -183,43 +218,20 @@ public:
      */
     void invalidate_const_view_cache() const;
 
+    /**
+     * @brief Optional per-level key sets for a level-aware special modulus.
+     *
+     * A level-aware Boot generates, for each Q level it switches at, a key
+     * on that level's own P prefix (see GpuParameterData::adopt_level). Every
+     * key-switching entry point resolves for_level(input q count) first; a
+     * key without overrides resolves to itself.
+     */
+    std::shared_ptr<const std::map<std::size_t,
+        std::shared_ptr<const GpuEvaluationKeyData>>> level_keys;
+    const GpuEvaluationKeyData &for_level(std::size_t q_count) const;
+
 private:
-    struct ViewCache
-    {
-        ViewCache() = default;
-        ViewCache(const ViewCache &) {}
-        ViewCache &operator=(const ViewCache &)
-        {
-            std::lock_guard<std::mutex> lock(mutex);
-            views.clear();
-            uncached_views.clear();
-            return *this;
-        }
-        ViewCache(ViewCache &&other) noexcept
-        {
-            std::lock_guard<std::mutex> lock(other.mutex);
-            views.swap(other.views);
-            uncached_views.swap(other.uncached_views);
-        }
-        ViewCache &operator=(ViewCache &&other) noexcept
-        {
-            if (this != &other)
-            {
-                std::scoped_lock lock(mutex, other.mutex);
-                views.clear();
-                uncached_views.clear();
-                views.swap(other.views);
-                uncached_views.swap(other.uncached_views);
-            }
-            return *this;
-        }
-
-        std::mutex mutex;
-        std::map<std::size_t, GpuConstEvaluationKeyView> views;
-        std::list<GpuConstEvaluationKeyView> uncached_views;
-    };
-
-    mutable ViewCache view_cache_;
+    mutable GpuKeyViewCache view_cache_;
 };
 
 using GpuRelinKeysData = GpuEvaluationKeyData;

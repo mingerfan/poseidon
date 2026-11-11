@@ -67,9 +67,8 @@ void validate_shard(
     }
 }
 
-// Pointer tables are themselves device allocations, but their entries refer to
-// the key fields. A byte-for-byte table copy would keep referring to the source
-// allocations (and dangle after their destruction), even with an empty cache.
+// Device tables contain pointers into fields_, so copying their bytes alone
+// would leave entries pointing into the source owner.
 const GpuWord *rebase_key_pointer(
     const GpuWord *pointer,
     const std::vector<GpuFieldData> &source_fields,
@@ -103,8 +102,8 @@ const GpuWord *rebase_key_pointer(
         }
         if (offset == bytes)
         {
-            // A zero-length P segment may be represented by a one-past pointer.
-            // Prefer an actual in-allocation match if allocations are adjacent.
+            // A zero-length P segment can be one-past. Prefer an actual
+            // in-allocation match when allocations are adjacent.
             one_past_end = destination_fields[i].data() + source.size();
         }
     }
@@ -137,7 +136,8 @@ void copy_key_pointer_table(
 GpuEvaluationKeyData::GpuEvaluationKeyData(const GpuEvaluationKeyData &other)
     : meta(other.meta), polys_(other.polys_),
       poly_metadata_(other.poly_metadata_),
-      galois_elts_by_key_index(other.galois_elts_by_key_index)
+      galois_elts_by_key_index(other.galois_elts_by_key_index),
+      level_keys(other.level_keys)
 {
     fields_.reserve(other.fields_.size());
     for (const auto &field : other.fields_)
@@ -190,6 +190,7 @@ GpuEvaluationKeyData &GpuEvaluationKeyData::operator=(GpuEvaluationKeyData &&oth
         galois_key_p0_ptrs = std::move(other.galois_key_p0_ptrs);
         galois_key_q1_ptrs = std::move(other.galois_key_q1_ptrs);
         galois_key_p1_ptrs = std::move(other.galois_key_p1_ptrs);
+        level_keys = std::move(other.level_keys);
         view_cache_ = std::move(other.view_cache_);
     }
     return *this;
@@ -289,8 +290,7 @@ const GpuConstEvaluationKeyView &GpuEvaluationKeyData::const_view(
     const char *cache_setting = std::getenv("POSEIDON_GPU_KEY_VIEW_CACHE");
     if (cache_setting != nullptr && std::strcmp(cache_setting, "0") == 0)
     {
-        // Never replace a previously returned snapshot: readers may still hold
-        // it after this lock is released, including across concurrent lookups.
+        // Keep every snapshot alive until invalidation, including across lookups.
         view_cache_.uncached_views.push_back(make_const_view(active_q_count));
         return view_cache_.uncached_views.back();
     }
@@ -298,9 +298,10 @@ const GpuConstEvaluationKeyView &GpuEvaluationKeyData::const_view(
     if (it == view_cache_.views.end())
     {
         it = view_cache_.views.emplace(
-            active_q_count, make_const_view(active_q_count)).first;
+            active_q_count, std::make_unique<GpuConstEvaluationKeyView>(
+                                make_const_view(active_q_count))).first;
     }
-    return it->second;
+    return *it->second;
 }
 
 void GpuEvaluationKeyData::invalidate_const_view_cache() const
@@ -308,6 +309,19 @@ void GpuEvaluationKeyData::invalidate_const_view_cache() const
     std::lock_guard<std::mutex> lock(view_cache_.mutex);
     view_cache_.views.clear();
     view_cache_.uncached_views.clear();
+}
+
+const GpuEvaluationKeyData &GpuEvaluationKeyData::for_level(std::size_t q_count) const
+{
+    if (level_keys)
+    {
+        const auto found = level_keys->find(q_count);
+        if (found != level_keys->end() && found->second)
+        {
+            return *found->second;
+        }
+    }
+    return *this;
 }
 
 }  // namespace gpu

@@ -15,6 +15,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -125,6 +126,8 @@ std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
  * stores objects that have already been uploaded to GPU memory and scalar
  * parameters needed by the GPU bootstrapping scheduler.
  */
+class GpuEvaluator;
+
 struct GpuBootstrapData
 {
     std::size_t allocated_bytes() const;
@@ -254,6 +257,10 @@ struct GpuBootstrapData
     GpuLinearMatrixGroup slot_to_coeff_matrix;
     GpuLinearMatrixGroupQP coeff_to_slot_matrix_qp;
     GpuLinearMatrixGroupQP slot_to_coeff_matrix_qp;
+    /* Double-hoist only: [layer][giant group] views of the QP matrices above,
+     * for the bsgs_group step of an expanded Boot. */
+    std::vector<std::vector<GpuMatrixPlainQP>> coeff_to_slot_groups_qp;
+    std::vector<std::vector<GpuMatrixPlainQP>> slot_to_coeff_groups_qp;
     GpuPlaintextData minus_i_plaintext;
     GpuPlaintextData plus_i_plaintext;
 
@@ -262,13 +269,33 @@ struct GpuBootstrapData
     std::uint32_t output_ratio = 1;
     double slot_to_coeff_output_scale = 0.0;
 
-    /* Dense -> ephemeral at q0, ModRaise, then ephemeral -> dense at full Q.
-     * Single KSwitch keys in key-index-zero layout. Both absent disables it.
-     * Full-modulus dense->sparse keys are for unsafe research/performance use. */
+    /*
+     * Sparse-secret encapsulation (Bossuat et al.; Cerium's toEphemeral): at
+     * q0 the ModRaise input is switched from the dense secret to a sparse
+     * ephemeral one, so the ModRaise overflow I stays within a small K and
+     * EvalMod can use a low-degree polynomial; right after ModRaise it is
+     * switched back to the dense secret. Both are single-key KSwitch keys
+     * (key index 0). Absent keys mean no encapsulation.
+     */
     std::shared_ptr<const GpuEvaluationKeyData> sparse_switch_to_ephemeral;
     std::shared_ptr<const GpuEvaluationKeyData> sparse_switch_to_dense;
+    /*
+     * Optional small-modulus runtime for the dense -> ephemeral switch. Its
+     * context keeps only the q0 primes and a few special primes, and
+     * sparse_switch_to_ephemeral is then generated on that modulus alone, so
+     * the dense secret is never published under the h-sparse ephemeral
+     * secret at the full Q*P modulus. The owner keeps the context, GPU tables
+     * and evaluator alive; the evaluator pointer is null when unused.
+     */
+    const GpuEvaluator *sparse_low_evaluator = nullptr;
+    std::shared_ptr<const void> sparse_low_owner;
 
-    // Optional EvalMod surplus-Q drop before S2C (or the S2C-first final merge).
+    /*
+     * When non-zero, the EvalMod outputs are mod-switched down to this Q
+     * count before SlotToCoeff, so a profile whose EvalMod consumes fewer
+     * levels keeps the output level its OperatorSpec declares and runs
+     * SlotToCoeff on fewer limbs.
+     */
     std::size_t slot_to_coeff_input_q_count = 0;
     parms_id_type slot_to_coeff_input_parms_id{};
 };
@@ -368,6 +395,21 @@ struct GpuRotateWorkspace
     GpuCiphertextData permutation;
     GpuDoubleHoistWorkspace pre_rotated;
     std::shared_ptr<void> key_switch;
+};
+
+/**
+ * @brief The HYBRID decomposition/ModUp of one source ciphertext's c1, kept
+ * for later rotations of the same source (runtime hoisting). The caller names
+ * the source with a tag that it never reuses for different data; zero means
+ * empty. Only inverse-pre-rotated Galois keys rotate from a hoisted source.
+ */
+struct GpuRotationHoistCache
+{
+    std::uintptr_t source_tag = 0;
+    std::shared_ptr<const void> source_owner;
+    GpuHoistedDecomposition decomposition;
+    std::size_t hits = 0;
+    std::size_t misses = 0;
 };
 
 class GpuEvaluator
@@ -620,16 +662,37 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuCiphertextData &destination_ciphertext) const;
 
-    /** Switch a size-2 NTT ciphertext using a single HYBRID key at index zero.
-     * The caller must generate the key in this evaluator's cryptographic context. */
-    void switch_key(
+    /**
+     * As rotate(), reusing @p hoist_cache's decomposition when it holds
+     * @p source_tag (and refilling it otherwise). Keys that are not
+     * inverse-pre-rotated ignore the cache.
+     */
+    void rotate(
         const GpuCiphertextData &source_ciphertext,
-        const GpuEvaluationKeyData &switch_key,
-        GpuCiphertextData &destination_ciphertext) const;
+        int step,
+        const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_ciphertext,
+        GpuRotationHoistCache *hoist_cache,
+        std::uintptr_t source_tag) const;
 
     void rotate_inplace(GpuCiphertextData &ciphertext, int step,
                         const GpuGaloisKeysData &galois_keys,
                         GpuRotateWorkspace &workspace) const;
+    /** As above; a pre-rotated rotation reads @p hoist_cache when it holds @p source_tag. */
+    void rotate_inplace(GpuCiphertextData &ciphertext, int step,
+                        const GpuGaloisKeysData &galois_keys,
+                        GpuRotateWorkspace &workspace,
+                        const GpuRotationHoistCache *hoist_cache,
+                        std::uintptr_t source_tag) const;
+
+    /**
+     * @brief Switch a size-2 ciphertext to another secret with a single
+     * KSwitch key (key index 0), at the ciphertext's own level.
+     */
+    void switch_key(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuEvaluationKeyData &switch_key,
+        GpuCiphertextData &destination_ciphertext) const;
     /**
      * @brief Rotate one ciphertext by several direct steps with one shared
      * HYBRID decomposition/ModUp of c1.
@@ -643,6 +706,42 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuDoubleHoistWorkspace &workspace,
         std::vector<GpuCiphertextData> &destination_ciphertexts) const;
+
+    /**
+     * @brief Materialize an immutable, reusable HYBRID c1 decomposition.
+     *
+     * Requires one full shard, two Q-only NTT components and compatible
+     * active-level Galois keys. The result must be independently owned, not a
+     * scratch hoist member of any reusable workspace. It owns its retained
+     * buffers and may be consumed by multiple rotate_from_hoist calls.
+     * Keep source's SSA version alive and unchanged until its last suffix;
+     * allocation/metadata guards cannot detect in-place writes or recycled
+     * addresses. Keys are immutable after upload. Calls on different streams
+     * require the caller's usual producer/consumer synchronization.
+     */
+    void rotation_hoist(
+        const GpuCiphertextData &source,
+        const GpuGaloisKeysData &keys,
+        GpuHoistedDecomposition &destination,
+        GpuDoubleHoistWorkspace &workspace) const;
+
+    /**
+     * @brief Rotate using a previously materialized rotation_hoist result.
+     *
+     * Reads (never refills) hoisted and source; requires the same source
+     * allocation/metadata and active-level key parameters/format as the prefix.
+     * A nonzero direct step is required. destination must not alias source.
+     * With an independently owned H, scratch may be reused/interleaved with
+     * other hoists; concurrent suffixes
+     * need separate workspaces and the usual stream synchronization.
+     */
+    void rotate_from_hoist(
+        const GpuCiphertextData &source,
+        const GpuHoistedDecomposition &hoisted,
+        int step,
+        const GpuGaloisKeysData &keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &destination) const;
 
     /**
      * @brief Conjugate ciphertext.
@@ -805,6 +904,70 @@ public:
         GpuBootstrapWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
+    /*
+     * The steps of bootstrap(), one call each, for a Boot the compiler
+     * expanded (RuntimePlan V6 boot_step). Each reproduces the corresponding
+     * part of bootstrap() on the same profile data; with eval_mod_high_precision
+     * and the ordinary rotate/add/sub/multiply_scalar/rescale_many they compose
+     * to it.
+     */
+
+    /** ModRaise: prepare, raise to the full Q and apply raised_scale_override. */
+    void bootstrap_raise(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** One CoeffToSlot or SlotToCoeff layer with its rescale, in the profile's linear mode. */
+    void bootstrap_linear_layer(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        bool coeff_to_slot,
+        std::size_t layer,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * One giant group of a double-hoist layer: the group's hoisted baby
+     * rotations, its plaintext products accumulated in QP, one ModDown and the
+     * giant rotation. Not rescaled: the layer's rescale follows the sum of
+     * its groups.
+     */
+    void bootstrap_bsgs_group(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        bool coeff_to_slot,
+        std::size_t layer,
+        std::size_t group,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Conjugation with the profile's keys, pre-rotated when they are. */
+    void bootstrap_conjugate(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** A copy of the ciphertext whose scale metadata is `scale`. */
+    void bootstrap_set_scale(
+        const GpuCiphertextData &source_ciphertext,
+        double scale,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * multiply_plain with the Q prefix of the plaintext. A double-hoist
+     * profile keeps its diagonals as exact [Q|P] plaintexts; their Q part is
+     * the ordinary diagonal, so no second copy is needed.
+     */
+    void multiply_plain_q_view(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuPlaintextData &source_plaintext,
+        GpuCiphertextData &destination_ciphertext) const;
+
     /**
      * @brief Evaluate the setup-time high-precision EvalMod plan on GPU.
      *
@@ -829,6 +992,15 @@ private:
     GpuKeySwitchHandler keyswitch_handler_;
     GpuNTTHandler ntt_handler_;
     GpuModSwitchHandler modswitch_handler_;
+    // Pre-rotated rotate() scratch reused across calls
+    // (POSEIDON_GPU_PERSISTENT_ROTATE_WORKSPACE=1): calls on one device are
+    // ordered on its stream, so a later call may overwrite it.
+    struct RotateScratch
+    {
+        std::mutex mutex;
+        GpuDoubleHoistWorkspace workspace;
+    };
+    std::shared_ptr<RotateScratch> rotate_scratch_ = std::make_shared<RotateScratch>();
 };
 
 }  // namespace gpu

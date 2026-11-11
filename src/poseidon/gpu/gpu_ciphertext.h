@@ -61,6 +61,10 @@ class GpuCiphertextData
 public:
     GpuCiphertextMeta meta;
 
+    // Logical SSA identity used only while an application API recorder is active.
+    // It follows the move-only storage; GPU arithmetic never interprets it.
+    mutable std::uint64_t api_trace_value_id = 0;
+
     /**
      * @brief Real GPU memory blocks.
      *

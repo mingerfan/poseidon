@@ -14,9 +14,6 @@ namespace gpu
 namespace kernel
 {
 
-// Generic multi-limb ModUp uses 96-bit lazy arithmetic unless
-// POSEIDON_GPU_LAZY_BASECONV=0. The switch is read on every dispatch.
-// As on the legacy path, Q limbs inside the digit are not written.
 void launch_hybrid_modup_decomposition(
     GpuWord *modup_q,
     GpuWord *modup_p,
@@ -156,11 +153,6 @@ void launch_hybrid_convert_p_to_q(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
-// For P>9, POSEIDON_GPU_LAZY_BASECONV enables tiled 96-bit conversion.
-// With lazy conversion and N=65536, POSEIDON_GPU_MODDOWN_FOURSTEP selects
-// coefficient conversion + two-phase NTT instead of the fused head/tail.
-// Both default on, read the environment per call, and accept 0 for A/B off.
-// source_preweighted=true skips the punctured-P inverse multiplication.
 void launch_hybrid_convert_p_to_q_forward_ntt(
     GpuWord *converted_q0,
     GpuWord *converted_q1,
@@ -217,6 +209,18 @@ void launch_hybrid_apply_moddown_ntt_out_of_place_batch(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * P->Q basis conversion of both components into coefficient form (lazy
+ * 96-bit accumulation, any P); the caller runs the Q forward NTT.
+ */
+void launch_hybrid_convert_p_to_q_coeff_lazy(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *p_coeff0,
+    const GpuWord *p_coeff1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 /** Most components launch_hybrid_apply_moddown_ntt_selected accepts. */
 inline constexpr std::size_t kMaxSelectedModDownComponents = 64;
 
@@ -224,9 +228,6 @@ inline constexpr std::size_t kMaxSelectedModDownComponents = 64;
  * ModDown apply (source - converted) * P^{-1} for scattered components:
  * converted slot k is component component_indices[k] of source/destination
  * (consecutive Q components of hybrid_base_q_count * degree words).
- * component_indices is a host array of unique in-range indices; the caller
- * owns source/destination capacity validation. Unselected components are
- * untouched. Destination may alias source, but not converted_q.
  */
 void launch_hybrid_apply_moddown_ntt_selected(
     GpuWord *destination_q,

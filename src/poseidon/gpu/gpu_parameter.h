@@ -306,6 +306,23 @@ public:
      */
     const GpuLevelInfo &get_first_q_level() const;
 
+    /**
+     * @brief Move one q-only level out of this table (by q limb count).
+     *
+     * For a donor built on a context with the same Q prefix and another P
+     * prefix; the donor is not used afterwards.
+     */
+    GpuLevelInfo take_level_by_q_count(std::size_t q_count);
+
+    /**
+     * @brief Replace the level with the same parms_id by @p level.
+     *
+     * Used by a level-aware special modulus: the donor level has the same Q
+     * primes (so the same parms_id and Q tables) and its own P prefix, i.e.
+     * its own hybrid key-switch tables. Order and every other level stay.
+     */
+    void adopt_level(GpuLevelInfo level);
+
     bool empty() const;
 
     /**

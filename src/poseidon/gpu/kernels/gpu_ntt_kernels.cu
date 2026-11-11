@@ -20,6 +20,19 @@ namespace kernel
 namespace
 {
 
+// The two-component launches access limb_count contiguous 65536-word limbs
+// per pointer. Compare distances rather than end addresses to avoid wraparound.
+bool ntt_component_ranges_overlap(
+    const GpuWord *left, const GpuWord *right, std::size_t limb_count)
+{
+    const auto left_address = reinterpret_cast<std::uintptr_t>(left);
+    const auto right_address = reinterpret_cast<std::uintptr_t>(right);
+    const std::size_t bytes = limb_count * 65536 * sizeof(GpuWord);
+    return left_address <= right_address
+        ? right_address - left_address < bytes
+        : left_address - right_address < bytes;
+}
+
 enum class NttAlgorithm
 {
     Stage,
@@ -1405,15 +1418,27 @@ __global__ void forward_ntt_cheddar_phase1_65536_kernel(
     const GpuWord *roots,
     std::size_t modulus_offset,
     std::size_t limb_count,
-    std::size_t batch_stride = 0)
+    std::size_t batch_stride = 0,
+    GpuWord *destination1 = nullptr,
+    const GpuWord *source1 = nullptr)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
     constexpr int kRadix = 16;
     extern __shared__ GpuWord shared_values[];
 
-    destination += blockIdx.z * batch_stride;
-    source += blockIdx.z * batch_stride;
+    // destination1/source1: blockIdx.z == 1 processes a second, separately
+    // allocated component (two-component launches); otherwise batch_stride.
+    if (destination1 != nullptr && blockIdx.z == 1)
+    {
+        destination = destination1;
+        source = source1;
+    }
+    else
+    {
+        destination += blockIdx.z * batch_stride;
+        source += blockIdx.z * batch_stride;
+    }
 
     const std::size_t local_limb = blockIdx.y;
     if (local_limb >= limb_count)
@@ -2660,7 +2685,9 @@ __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     const GpuWord *roots,
     std::size_t modulus_offset,
     std::size_t limb_count,
-    std::size_t batch_count)
+    std::size_t batch_count,
+    GpuWord *destination1 = nullptr,
+    const GpuWord *source1 = nullptr)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
@@ -2672,6 +2699,15 @@ __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     if (local_limb >= limb_count || batch_index >= batch_count)
     {
         return;
+    }
+    if constexpr (!Batched)
+    {
+        // Two-component launch: blockIdx.z == 1 is a second allocation.
+        if (destination1 != nullptr && blockIdx.z == 1)
+        {
+            destination = destination1;
+            source = source1;
+        }
     }
 
     if constexpr (Batched)
@@ -2761,7 +2797,8 @@ __global__ void inverse_ntt_cheddar_phase2_65536_kernel(
     const GpuWord *inv_degree_modulo,
     std::size_t modulus_offset,
     std::size_t limb_count,
-    std::size_t batch_count)
+    std::size_t batch_count,
+    GpuWord *values1 = nullptr)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
@@ -2773,6 +2810,13 @@ __global__ void inverse_ntt_cheddar_phase2_65536_kernel(
     if (local_limb >= limb_count || batch_index >= batch_count)
     {
         return;
+    }
+    if constexpr (!Batched)
+    {
+        if (values1 != nullptr && blockIdx.z == 1)
+        {
+            values = values1;
+        }
     }
 
 
@@ -6436,7 +6480,8 @@ void launch_forward_ntt_limbs_inplace_fourstep_65536(
     {
         throw std::invalid_argument(std::string(name) + ": invalid shape");
     }
-    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id),
+                   "launch_forward_ntt_limbs_inplace_fourstep_65536 cudaSetDevice");
     forward_ntt_cheddar_phase1_65536_kernel<<<
         dim3(32, static_cast<unsigned int>(limb_count)), 128,
         128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
@@ -6451,6 +6496,92 @@ void launch_forward_ntt_limbs_inplace_fourstep_65536(
         parameter_shard.rns_modulus_constants.data(), parameter_shard.ntt_tables.data(),
         modulus_offset, limb_count);
     gpu_check_cuda(cudaGetLastError(), "in-place forward NTT phase2");
+}
+
+void launch_forward_ntt_two_components_inplace_fourstep_65536(
+    GpuWord *values0,
+    GpuWord *values1,
+    std::size_t limb_count,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *name = "launch_forward_ntt_two_components_inplace_fourstep_65536";
+    if (values0 == nullptr || values1 == nullptr || limb_count == 0 || limb_count > 32767 ||
+        limb_count > std::numeric_limits<std::size_t>::max() / 65536 / sizeof(GpuWord) ||
+        limb_count > parameter_shard.ntt_tables.size() / 65536 ||
+        limb_count > parameter_shard.rns_primes.size() ||
+        limb_count > parameter_shard.rns_modulus_constants.size() ||
+        ntt_component_ranges_overlap(values0, values1, limb_count))
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shape");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    forward_ntt_cheddar_phase1_65536_kernel<<<
+        dim3(32, static_cast<unsigned int>(limb_count), 2), 128,
+        128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        values0, values0, parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(), parameter_shard.ntt_tables.data(),
+        0, limb_count, 0, values1, values1);
+    gpu_check_cuda(cudaGetLastError(), "two-component in-place forward NTT phase1");
+    forward_ntt_cheddar_two_components_phase2_65536_kernel<<<
+        dim3(128, static_cast<unsigned int>(2 * limb_count)), 64,
+        64 * 8 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        values0, values1, parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(), parameter_shard.ntt_tables.data(),
+        limb_count);
+    gpu_check_cuda(cudaGetLastError(), "two-component in-place forward NTT phase2");
+}
+
+void launch_inverse_ntt_two_components_fourstep_65536(
+    GpuWord *destination0,
+    GpuWord *destination1,
+    const GpuWord *source0,
+    const GpuWord *source1,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *name = "launch_inverse_ntt_two_components_fourstep_65536";
+    const std::size_t root_limbs = parameter_shard.fourstep_intt_tables.size() / 65536;
+    // Sources are read-only and may alias each other, but neither may overlap
+    // a destination, and the two destinations must be disjoint.
+    if (destination0 == nullptr || destination1 == nullptr || source0 == nullptr ||
+        source1 == nullptr || limb_count == 0 || limb_count > 65535 ||
+        limb_count > std::numeric_limits<std::size_t>::max() / 65536 / sizeof(GpuWord) ||
+        parameter_shard.limb_begin != 0 ||
+        parameter_shard.fourstep_intt_tables.data() == nullptr ||
+        modulus_offset > root_limbs || limb_count > root_limbs - modulus_offset ||
+        modulus_offset > parameter_shard.rns_primes.size() ||
+        limb_count > parameter_shard.rns_primes.size() - modulus_offset ||
+        modulus_offset > parameter_shard.rns_modulus_constants.size() ||
+        limb_count > parameter_shard.rns_modulus_constants.size() - modulus_offset ||
+        modulus_offset > parameter_shard.inv_degree_modulo.size() ||
+        limb_count > parameter_shard.inv_degree_modulo.size() - modulus_offset ||
+        ntt_component_ranges_overlap(destination0, destination1, limb_count) ||
+        ntt_component_ranges_overlap(destination0, source0, limb_count) ||
+        ntt_component_ranges_overlap(destination0, source1, limb_count) ||
+        ntt_component_ranges_overlap(destination1, source0, limb_count) ||
+        ntt_component_ranges_overlap(destination1, source1, limb_count))
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shape");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    inverse_ntt_cheddar_phase1_65536_kernel<false><<<
+        dim3(128, static_cast<unsigned int>(limb_count), 2), 64,
+        64 * 8 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        destination0, source0, parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(),
+        parameter_shard.fourstep_intt_tables.data(), modulus_offset, limb_count, 1,
+        destination1, source1);
+    gpu_check_cuda(cudaGetLastError(), "two-component inverse NTT phase1");
+    inverse_ntt_cheddar_phase2_65536_kernel<false><<<
+        dim3(32, static_cast<unsigned int>(limb_count), 2), 128,
+        128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        destination0, parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(),
+        parameter_shard.fourstep_intt_tables.data(),
+        parameter_shard.inv_degree_modulo.data(), modulus_offset, limb_count, 1,
+        destination1);
+    gpu_check_cuda(cudaGetLastError(), "two-component inverse NTT phase2");
 }
 
 void launch_forward_ntt_qp_active_fourstep_65536(

@@ -54,11 +54,16 @@ public:
     };
     bool plain_batch_enabled=false;
     mutable PlainBatchStats plain_batch_stats;
+    // Kernel products: at the convolution input level, encoded at its last prime.
     bool batch_eligible(const DeviceCiphertext &x,double scale) const {
+        const auto level=static_cast<std::size_t>(conv_input_q());
         return plain_batch_enabled && eval && prepared_mode!=PreparedMode::uncached &&
-            x.meta.q_count==9 &&
-            scale==double(m.ctx.parameters_literal()->q().at(8).value());
+            x.meta.q_count==level &&
+            scale==double(m.ctx.parameters_literal()->q().at(level-1).value());
     }
+    // One placement mask level instead of a support mask and a selector
+    // (gpu_multiplexed_tensor.cpp, replicated convolution).
+    bool merged_output_masks() const {return conv_merged_masks;}
     void flush_plain_batch(const DeviceCiphertext &destination) const {
         if(!destination.pending || destination.pending->sources.empty())return;
         auto &batch=*destination.pending;
@@ -70,12 +75,12 @@ public:
         // preparation only. Replay performs no downloads or synchronization.
         if(prepared_mode==PreparedMode::capture) {
             std::size_t begin=0;
-            if(accumulate)eval->drop_modulus(*destination.gpu,reference,destination.meta.parms_id);
-            else {eval->multiply_plain(*sources[0],*batch.plains[0],reference);begin=1;}
+            if(accumulate)trace_gpu(*eval).drop_modulus(*destination.gpu,reference,destination.meta.parms_id);
+            else {trace_gpu(*eval).multiply_plain(*sources[0],*batch.plains[0],reference);begin=1;}
             for(std::size_t i=begin;i<sources.size();++i)
-                eval->multiply_plain_accumulate(*sources[i],*batch.plains[i],reference);
+                trace_gpu(*eval).multiply_plain_accumulate(*sources[i],*batch.plains[i],reference);
         }
-        eval->multiply_plain_sum_q_prefix(sources,batch.plains,*destination.gpu,accumulate);
+        trace_gpu(*eval).multiply_plain_sum_q_prefix(sources,batch.plains,*destination.gpu,accumulate);
         ++plain_batch_stats.calls;
         if(prepared_mode==PreparedMode::capture) {
             plain_batch_stats.exact_residues+=require_exact_ciphertexts(
@@ -132,8 +137,24 @@ public:
     std::size_t prepared_plaintext_count() const {return prepared_plains.size();}
     std::size_t prepared_input_count() const {return prepared_inputs.size();}
     std::size_t slot_count() const {return 32768;}
+    // During prepared replay plain() returns the captured plaintext and only
+    // checks the vector length, so layout code may skip building slot values
+    // (POSEIDON_S2C_REPLAY_SKIP_SLOTS=0 keeps building them, for A/B).
+    bool replay_skips_slots() const {
+        static const bool enabled=[] {
+            const char *raw=std::getenv("POSEIDON_S2C_REPLAY_SKIP_SLOTS");
+            return !(raw && *raw && std::string(raw)=="0");
+        }();
+        return enabled && eval && prepared_mode==PreparedMode::replay;
+    }
+    const std::vector<double> &replay_placeholder() const {
+        static const std::vector<double> placeholder(32768,0.0);
+        return placeholder;
+    }
     parms_id_type id(std::size_t q) const {return m.ctx.crt_context()->parms_id_map().at(q-1);}
-    DeviceCiphertext host(const Values &v,std::size_t q=9,double scale=std::exp2(40)) const {
+    // q=0: the ReLU output level, where an activation enters a layer.
+    DeviceCiphertext host(const Values &v,std::size_t q=0,double scale=std::exp2(40)) const {
+        if(!q)q=static_cast<std::size_t>(relu_output_q());
         if (eval || v.size()!=slot_count()) throw std::runtime_error("invalid plaintext probe input");
         DeviceCiphertext x;x.meta.q_count=q;x.meta.scale=scale;x.meta.parms_id=id(q);
         x.values=std::make_shared<Values>(v);return x;
@@ -161,12 +182,12 @@ public:
     DeviceCiphertext drop_to_q_count(const DeviceCiphertext &x,std::size_t q) const {
         validate(x);if(!q || q>x.meta.q_count)throw std::runtime_error("invalid modulus drop");
         ++counts["drop_or_clone"];
-        if(eval){CT y;eval->drop_modulus(*x.gpu,y,id(q));return device(std::move(y));}
+        if(eval){CT y;trace_gpu(*eval).drop_modulus(*x.gpu,y,id(q));return device(std::move(y));}
         return host(*x.values,q,x.meta.scale);
     }
     DeviceCiphertext add(const DeviceCiphertext &a,const DeviceCiphertext &b) const {
         aligned(a,b);++counts["add"];
-        if(eval){CT y;eval->add(*a.gpu,*b.gpu,y);return device(std::move(y));}
+        if(eval){CT y;trace_gpu(*eval).add(*a.gpu,*b.gpu,y);return device(std::move(y));}
         auto y=host(*a.values,a.meta.q_count,a.meta.scale);
         for(std::size_t i=0;i<slot_count();++i)(*y.values)[i]+=(*b.values)[i];return y;
     }
@@ -203,7 +224,7 @@ public:
             ++plain_batch_stats.chains;
             enqueue_plain_product(x,plain(x,v,s),out);return out;
         }
-        if(eval){CT y;eval->multiply_plain(*x.gpu,plain(x,v,s),y);return device(std::move(y));}
+        if(eval){CT y;trace_gpu(*eval).multiply_plain(*x.gpu,plain(x,v,s),y);return device(std::move(y));}
         auto y=host(*x.values,x.meta.q_count,x.meta.scale*s);
         for(std::size_t i=0;i<slot_count();++i)(*y.values)[i]*=v[i];return y;
     }
@@ -220,7 +241,7 @@ public:
                 enqueue_plain_product(x,plain(x,v,s),destination);return;
             }
             flush_plain_batch(destination);
-            eval->multiply_plain_accumulate(*x.gpu,plain(x,v,s),*destination.gpu);
+            trace_gpu(*eval).multiply_plain_accumulate(*x.gpu,plain(x,v,s),*destination.gpu);
             destination.meta=destination.gpu->meta;
         }else{
             if(!destination.values.unique())destination.values=std::make_shared<Values>(*destination.values);
@@ -231,8 +252,8 @@ public:
         validate(x);if(!count || count>=x.meta.q_count)throw std::runtime_error("invalid rescale count");
         counts["rescale"]+=count;
         if(eval){
-            CT y;eval->rescale(*x.gpu,y);
-            for(std::size_t i=1;i<count;++i){CT next;eval->rescale(y,next);y=std::move(next);}
+            CT y;trace_gpu(*eval).rescale(*x.gpu,y);
+            for(std::size_t i=1;i<count;++i){CT next;trace_gpu(*eval).rescale(y,next);y=std::move(next);}
             return device(std::move(y));
         }
         double s=x.meta.scale;for(std::size_t i=0;i<count;++i)s/=modulus_value_from_end(x,i);
@@ -244,7 +265,7 @@ public:
     DeviceCiphertext add_plain(const DeviceCiphertext &x,const std::vector<double> &v) const {
         validate(x);if(v.size()!=slot_count())throw std::runtime_error("invalid add_plain shape");
         ++counts["add_plain"];
-        if(eval){CT y;eval->add_plain(*x.gpu,plain(x,v,x.meta.scale),y);return device(std::move(y));}
+        if(eval){CT y;trace_gpu(*eval).add_plain(*x.gpu,plain(x,v,x.meta.scale),y);return device(std::move(y));}
         auto y=host(*x.values,x.meta.q_count,x.meta.scale);
         for(std::size_t i=0;i<slot_count();++i)(*y.values)[i]+=v[i];return y;
     }
@@ -256,8 +277,8 @@ public:
             CT y;
             if(rotation_backend) {
                 auto backend=rotation_backend(x.meta.q_count);
-                backend.evaluator->rotate(*x.gpu,step,*backend.keys,y);
-            } else eval->rotate(*x.gpu,step,*keys,y);
+                trace_gpu(*backend.evaluator).rotate(*x.gpu,step,*backend.keys,y);
+            } else trace_gpu(*eval).rotate(*x.gpu,step,*keys,y);
             return device(std::move(y));
         }
         auto y=host(*x.values,x.meta.q_count,x.meta.scale);
@@ -289,7 +310,7 @@ public:
             if(!backend.evaluator || !backend.keys || !backend.workspace)
                 throw std::logic_error("incomplete hoisted rotation backend");
             std::vector<CT> rotated;
-            backend.evaluator->rotate_many_hoisted(*x.gpu,direct_steps,
+            trace_gpu(*backend.evaluator).rotate_many_hoisted(*x.gpu,direct_steps,
                 *backend.keys,*backend.workspace,rotated);
             if(rotated.size()!=direct_steps.size())
                 throw std::logic_error("hoisted rotation output count mismatch");

@@ -14,6 +14,9 @@ struct ReluFixture {
         in>>magic>>nq>>np;
         if (magic!="RELU_PRECISION_V1" || nq!=50 || np!=25) throw std::runtime_error("Q50/P25 fixture required");
         q.resize(nq);p.resize(np); for(auto &v:q) in>>v; for(auto &v:p) in>>v;
+        // The stage schedule below is relative to entry_q, so it is unchanged
+        // when the chain leaves out a convolution prime.
+        apply_removed_q_prime(q);
         in>>ns; if (!in || ns!=3) throw std::runtime_error("three ReLU stages required");
         stages.resize(ns);
         const int degrees[]={15,15,27}, starts[]={0,6,12}, ends[]={6,12,19};
@@ -76,8 +79,9 @@ struct FoldSpec {
     explicit FoldSpec(const BaselineMetadata &m)
         : alpha(std::exp2(40)/m.native_plan.output_scale),seed(std::pow(alpha,0.25)),
           da_base(m.poly.sqrt_2pi()*seed),coefficients(m.poly.sine_poly()) {
-        if (m.native_plan.output_q_count!=31 || m.poly.double_angle()!=2 || !(alpha>0 && alpha<1))
-            throw std::runtime_error("fold requires Q31 native degree59/DA2 contract");
+        if (m.native_plan.output_q_count!=static_cast<std::size_t>(entry_q) ||
+            m.poly.double_angle()!=2 || !(alpha>0 && alpha<1))
+            throw std::runtime_error("fold requires Q31 (entry_q) native degree59/DA2 contract");
         for(auto &v:coefficients.data())v*=seed;
     }
     auto upload(const BaselineMetadata &m,GpuRelinKeysData *keys=nullptr) const {
@@ -111,13 +115,14 @@ void check_continuation_metadata(const BaselineMetadata &m,const ReluFixture &f)
         source_error=std::max(source_error,std::abs(f.reference(v)-original_application_relu(v)));
     }
     if (!std::isfinite(identity) || identity>1e-10 || source_error>1e-10) throw std::runtime_error("fold identity or original ReLU reference mismatch");
-    std::cout<<"FOLD_PLAN q_in=46 q_out="<<plan.output_q_count<<" alpha="<<fold.alpha<<" seed="<<fold.seed
+    std::cout<<"FOLD_PLAN q_in="<<parms.q().size()-4<<" q_out="<<plan.output_q_count<<" alpha="<<fold.alpha<<" seed="<<fold.seed
         <<" native_log_scale="<<std::log2(plan.output_scale)<<" application_log_scale=40 same_DAG=true extra_Q=0"
         <<" identity_max="<<identity<<" source_reference_max="<<source_error<<'\n';
     for(std::size_t i=0;i<f.stages.size();++i){const auto &s=f.stages[i];
-        std::cout<<"RELU_PLAN stage="<<i+1<<" degree="<<s.degree<<" q_in="<<31-s.start<<" q_out="<<31-s.end
+        std::cout<<"RELU_PLAN stage="<<i+1<<" degree="<<s.degree<<" q_in="<<entry_q-s.start<<" q_out="<<entry_q-s.end
             <<" input_log_scale="<<s.input_scale<<" output_log_scale="<<s.output_scale<<'\n';}
-    std::cout<<"CONTINUATION_PLAN bootstrap_out=31 relu_out=9 relu_Q_consumed=22 output_log_scale=40"
+    std::cout<<"CONTINUATION_PLAN bootstrap_out="<<entry_q<<" relu_out="<<relu_output_q()
+        <<" relu_Q_consumed=22 output_log_scale=40"
         <<" no_reencryption=true security_approved=false\n";
 }
 
@@ -154,7 +159,7 @@ int continue_to_relu(const BaselineContinuation &b,const ReluFixture &f,
         eval.multiply_scalar(combined,32,output);
     }
     replay.scale_check(output,std::log2(m.native_plan.output_scale));
-    if(output.meta.q_count!=31)throw std::runtime_error("fold lost Q");
+    if(output.meta.q_count!=static_cast<std::size_t>(entry_q))throw std::runtime_error("fold lost Q");
     Values scaled_reference=b.bootstrap_polynomial;
     for(auto &v:scaled_reference)v*=fold.alpha;
     replay.check("fold_before_scale_reconciliation",output,scaled_reference);
@@ -166,7 +171,7 @@ int continue_to_relu(const BaselineContinuation &b,const ReluFixture &f,
     const double restore=replay.check("fold40_vs_original_input",output,b.input);
     const bool fold_pass=differential<=1e-4 && arithmetic<=1e-4 && restore<=0.002;
     std::cout<<"FOLD_RESULT integration="<<(fold_pass?"PASS":"FAIL")<<" differential_max="<<differential
-        <<" arithmetic_max="<<arithmetic<<" restore_max="<<restore<<" q=31 log_scale=40 extra_Q=0\n";
+        <<" arithmetic_max="<<arithmetic<<" restore_max="<<restore<<" q="<<entry_q<<" log_scale=40 extra_Q=0\n";
     if(!fold_pass){std::cout<<"STOP first_failed_boundary=fold40 full_network_tested=false\n";return 1;}
     const Values relu_input=decoded_values(replay,output);
     gpu_check_cuda(cudaDeviceSynchronize(),"release folded EvalMod scratch");
@@ -201,7 +206,8 @@ int continue_to_relu(const BaselineContinuation &b,const ReluFixture &f,
     replay.check("chain_final_vs_ideal_ReLU",result,ideal);
     compare_values("bootstrap_approximation_propagation_through_ReLU",chain,original);
     replay.scale_check(result,40);
-    if(result.meta.q_count!=9)throw std::runtime_error("continuous ReLU did not consume exactly 22 Q");
+    if(result.meta.q_count!=static_cast<std::size_t>(relu_output_q()))
+        throw std::runtime_error("continuous ReLU did not consume exactly 22 Q");
     const bool pass=max_local_stage<=1e-5 && local_error<=1e-5 && chain_arithmetic<=1e-4;
     std::cout<<"CHAIN_RESULT integration="<<(pass?"PASS":"FAIL")<<" local_stage_max="<<max_local_stage
         <<" local_final_max="<<local_error<<" chain_arithmetic_max="<<chain_arithmetic

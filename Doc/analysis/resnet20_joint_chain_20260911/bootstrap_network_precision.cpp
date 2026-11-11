@@ -14,11 +14,72 @@
 #include <optional>
 #include <type_traits>
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
-#include "../../../bench/resnet20_s2c_first/gpu_activity_timing.h"
-#include "../../../bench/resnet20_s2c_first/prepared_gpu_api.h"
-#include "runtime/plan_reader.hpp"
+#include "../../../bench/resnet20_s2c_first/gpu_api_trace.h"
 #include "runtime/operator_spec_reader.hpp"
+#include "runtime/plan_reader.hpp"
+#include <chrono>
+#include <filesystem>
+#include <fstream>
+#include <thread>
 #endif
+#ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
+#include "../../../bench/resnet20_s2c_first/gpu_activity_timing.h"
+#endif
+
+// Level layout of the ResNet20 chain (see entry_q in relu_precision.cpp):
+//   POSEIDON_S2C_CONV_MERGED_MASK=1  convolutions place their output channels
+//       with one merged mask level and run Q8 -> Q6. On the saved Q50 chain
+//       the ReLU still ends at Q9 and the convolution drops that spare prime.
+//   POSEIDON_S2C_SHORT_CHAIN=1  (needs the merged masks and the library Boot)
+//       leaves the spare prime (saved index 8) out of the chain: Q50 -> Q49.
+//       Every level above Q8 moves down by one and keeps its physical prime,
+//       so the ReLU and Boot scale schedules are unchanged: input patches
+//       Q31, stem and Boot output Q30, ReLU Q30 -> Q8, convolution Q8 -> Q6.
+// Both are on by default (=0 restores the historical Q50 layout, for A/B).
+// Left unset, the short chain also stays off where it cannot apply: with the
+// merged masks off, with the degree-59 Boot (POSEIDON_S2C_LIBRARY_BOOT=0), or
+// in the staged accuracy path; an explicit =1 there is an error. Runs once,
+// before any fixture or context is built.
+void configure_resnet20_levels(const std::string &mode) {
+    // 0 or 1 from the environment; nullopt when unset.
+    const auto setting=[](const char *name)->std::optional<bool> {
+        const char *raw=std::getenv(name);
+        if(!raw || !*raw)return std::nullopt;
+        const std::string value(raw);
+        if(value!="0" && value!="1")
+            throw std::invalid_argument(std::string(name)+" must be 0 or 1");
+        return value=="1";
+    };
+    conv_merged_masks=setting("POSEIDON_S2C_CONV_MERGED_MASK").value_or(true);
+    const char *library=std::getenv("POSEIDON_S2C_LIBRARY_BOOT");
+    const bool library_boot=!(library && std::string(library)=="0");
+    const bool accuracy=mode=="--unsafe-accuracy-only";
+    const auto requested=setting("POSEIDON_S2C_SHORT_CHAIN");
+    if(requested.value_or(conv_merged_masks && library_boot && !accuracy)) {
+        if(!conv_merged_masks)
+            throw std::invalid_argument(
+                "POSEIDON_S2C_SHORT_CHAIN=1 requires POSEIDON_S2C_CONV_MERGED_MASK=1");
+        if(!library_boot)
+            throw std::invalid_argument(
+                "POSEIDON_S2C_SHORT_CHAIN=1 requires the library Boot");
+        if(accuracy)
+            throw std::invalid_argument(
+                "POSEIDON_S2C_SHORT_CHAIN=1: the staged accuracy path still uses the degree-59 Boot");
+        removed_q_prime=8;
+        entry_q=30;
+    }
+    if(conv_input_q()>relu_output_q())
+        throw std::logic_error("ResNet20 convolution starts above the ReLU output");
+}
+
+std::string resnet20_levels_summary() {
+    return " chain_q="+std::to_string(50-(removed_q_prime>=0))+
+        " input_q="+std::to_string(entry_q+1)+
+        " stem_output_q="+std::to_string(entry_q)+
+        " relu_output_q="+std::to_string(relu_output_q())+
+        " conv_input_q="+std::to_string(conv_input_q())+
+        " conv_merged_masks="+(conv_merged_masks?"true":"false");
+}
 
 namespace network_probe {
 namespace app=poseidon::benchmark::resnet20_gpu::core;
@@ -46,8 +107,9 @@ Values pack_chw(const std::vector<double> &values,int h,int w,int c,int k) {
     return packed;
 }
 
+// q=0: the ReLU output level (Q9, or Q8 on the short chain).
 Tensor tensor_from_host(const BaselineMetadata &m,const Values &packed,
-    int h,int w,int c,int k,std::size_t q=9) {
+    int h,int w,int c,int k,std::size_t q=0) {
     Runtime runtime(m);auto tensor=app::make_shape(h,w,c,k,32768);
     if(tensor.packs.size()!=1)throw std::runtime_error("host tensor unexpectedly spans ciphertexts");
     tensor.packs[0]=runtime.host(packed,q,std::exp2(40));return tensor;
@@ -92,6 +154,14 @@ auto run_direct(const BaselineSession &s,const DirectPlan &plan,const std::strin
 Tensor apply_conv(const Runtime &runtime,Tensor input,const ApplicationLayerFixture &layer) {
     if(input.h!=layer.input_h || input.w!=layer.input_w || input.c!=layer.input_channels)
         throw std::runtime_error("network convolution input shape mismatch");
+    // A merged-mask convolution needs two levels (Q8 -> Q6). On the saved Q50
+    // chain the ReLU still ends at Q9; its spare prime is dropped here.
+    if(input.packs.size()!=1)throw std::runtime_error("network convolution expects one ciphertext");
+    const auto conv_q=static_cast<std::size_t>(conv_input_q());
+    if(input.packs[0].meta.q_count<conv_q)
+        throw std::runtime_error("network convolution input is below its first level");
+    if(input.packs[0].meta.q_count>conv_q)
+        input.packs[0]=runtime.drop_to_q_count(input.packs[0],conv_q);
     auto output=app::conv2d_bn(input,layer.output_channels,layer.stride,3,3,
         layer.weights,layer.bn_scale,layer.bn_bias,runtime);
     if(output.packs.size()!=1 || output.packs[0].meta.q_count!=6 ||
@@ -111,7 +181,8 @@ DirectPlan trace_conv(const BaselineMetadata &m,const Values &input,
 
 OwnedActivation relu_existing_q31(const BaselineSession &s,const ReluFixture &fixture,
     const CT &input,const Values &reference,const std::string &label) {
-    if(input.meta.q_count!=31)throw std::runtime_error(label+" ReLU input must be Q31");
+    if(input.meta.q_count!=static_cast<std::size_t>(entry_q))
+        throw std::runtime_error(label+" ReLU input must be Q31 (entry_q)");
     s.replay.scale_check(input,40);
     const Values decoded=decoded_values(s.replay,input);
     double domain=0,imag=0;for(auto value:decoded) {
@@ -141,11 +212,12 @@ OwnedActivation relu_existing_q31(const BaselineSession &s,const ReluFixture &fi
     const double local_error=s.replay.check(label+".relu_local_final",output,local);
     const double boundary_error=s.replay.check(label+".relu_CHW_oracle",output,original);
     s.replay.scale_check(output,40);
-    if(output.meta.q_count!=9 || max_local>1e-5 || local_error>1e-5)
+    if(output.meta.q_count!=static_cast<std::size_t>(relu_output_q()) ||
+        max_local>1e-5 || local_error>1e-5)
         throw std::runtime_error(label+" ReLU arithmetic guard failed");
     std::cout<<"NETWORK_RELU stage="<<label<<" domain="<<domain<<" max_imag="<<imag
         <<" local_max="<<std::max(max_local,local_error)<<" oracle_max="<<boundary_error
-        <<" q=9 log_scale=40\n";
+        <<" q="<<relu_output_q()<<" log_scale=40\n";
     return {std::move(output),std::move(original)};
 }
 
@@ -164,7 +236,7 @@ OwnedActivation refresh_relu(const BaselineSession &s,const ReluFixture &fixture
         },&offline_cache);
     if(rc || !owned)throw std::runtime_error(label+" bootstrap/ReLU failed");
     gpu_check_cuda(cudaDeviceSynchronize(),("release "+label+" bootstrap temporaries").c_str());
-    std::cout<<"NETWORK_REFRESH stage="<<label<<" bounded_lifetime=true q=9 log_scale=40\n";
+    std::cout<<"NETWORK_REFRESH stage="<<label<<" bounded_lifetime=true q="<<relu_output_q()<<" log_scale=40\n";
     return std::move(*owned);
 }
 
@@ -221,7 +293,8 @@ CT evaluate_relu_no_observer(Replay &replay,const ReluFixture &fixture,const CT 
         current=replay.component(fixture.stages[index],std::move(current),unused,index+1,stage_error);
     auto output=replay.tail(input,current,fixture.tail_work,fixture.tail_drop);
     replay.scale_check(output,40);
-    if(output.meta.q_count!=9)throw std::runtime_error("prepared ReLU did not produce Q9");
+    if(output.meta.q_count!=static_cast<std::size_t>(relu_output_q()))
+        throw std::runtime_error("prepared ReLU did not produce Q9 (entry_q-22)");
     return output;
 }
 
@@ -315,14 +388,13 @@ class ContinuousBootstrap {
     GpuDoubleHoistWorkspace stc_workspace,cts_workspace;
     GpuBootstrapWorkspace evalmod_workspace;
     double alpha=1;
-    // By default (POSEIDON_S2C_LIBRARY_BOOT unset or 1) the performance path
-    // runs GpuEvaluator::bootstrap on the GPU library's S2C-first profile (the
-    // one the Runtime adapter uses): same Q6/2^40 -> Q31/2^40 contract as the
-    // degree-59 stages below, with the sparse ephemeral secret and the
-    // low-degree EvalMod. Its parameters are the measured degree-22 / DA3 /
-    // K=12 / h=32 profile; each can be set with
+    // By default (POSEIDON_S2C_LIBRARY_BOOT unset or 1) GpuEvaluator::bootstrap
+    // runs the GPU library's S2C-first profile (the one the Runtime adapter
+    // uses) instead of the degree-59 stages below (POSEIDON_S2C_LIBRARY_BOOT=0):
+    // same Q6/2^40 -> Q31/2^40 contract, with
+    // the sparse ephemeral secret and the low-degree EvalMod. The defaults are
+    // the measured degree-22 / DA3 / K=12 / h=32 profile; each can be set with
     // POSEIDON_S2C_BOOT_{DEGREE,DOUBLE_ANGLE,K,LOG_SPLIT,FULL_COEFFICIENTS,SPARSE_H}.
-    // POSEIDON_S2C_LIBRARY_BOOT=0 runs the application's degree-59 stages.
     std::optional<GpuBootstrapProfile> library;
     GpuBootstrapWorkspace library_workspace;
     GpuResNet20ManualOptions library_options;
@@ -345,6 +417,17 @@ class ContinuousBootstrap {
             environment_u32("POSEIDON_S2C_BOOT_FULL_COEFFICIENTS",1)!=0;
         library_options.sparse_secret_hamming_weight=
             environment_u32("POSEIDON_S2C_BOOT_SPARSE_H",32);
+        // POSEIDON_S2C_BOOT_LEVEL_P: 0 = the context's P for every Boot switch,
+        // 1 = performance, the default (dnum 2, P = ceil(q/2); P = q up to
+        // POSEIDON_S2C_BOOT_DNUM1_MAX_Q; -84 ms on the 4090), 2 = secure
+        // (smallest dnum with log2(Q_q) + log2(P) <= POSEIDON_S2C_BOOT_SECURE_BITS,
+        // default 1772; its high-dnum CtS keys need ~5 GB more than a 24 GB card has).
+        const auto level_p=environment_u32("POSEIDON_S2C_BOOT_LEVEL_P",1);
+        if(level_p>2)throw std::invalid_argument("POSEIDON_S2C_BOOT_LEVEL_P must be 0, 1 or 2");
+        library_options.level_special_modulus=
+            static_cast<GpuResNet20ManualOptions::LevelSpecialModulus>(level_p);
+        library_options.dnum1_max_q=environment_u32("POSEIDON_S2C_BOOT_DNUM1_MAX_Q",9);
+        library_options.secure_modulus_bits=environment_u32("POSEIDON_S2C_BOOT_SECURE_BITS",1772);
         library=s.manual_boot_profile(library_options);
         const auto &boot=library->bootstrap_data;
         if(!boot.slot_to_coeff_first || boot.input_q_count!=6 ||
@@ -377,6 +460,8 @@ class ContinuousBootstrap {
             <<" evalmod_q_out="<<boot.eval_mod.output_q_count<<'\n';
     }
 public:
+    // The library degree-22 Boot is the default; POSEIDON_S2C_LIBRARY_BOOT=0
+    // selects the application's historical degree-59 Boot.
     static bool library_boot_requested() {
         const char *raw=std::getenv("POSEIDON_S2C_LIBRARY_BOOT");
         if(!raw || !*raw)return true;
@@ -386,16 +471,12 @@ public:
         return value=="1";
     }
     bool library_boot() const {return library.has_value();}
-    static std::string requested_implementation() {
-        if(!library_boot_requested())return "application_degree59";
-        return "library_degree"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_DEGREE",22))+
-            "_da"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_DOUBLE_ANGLE",3))+
-            "_k"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_K",12))+
-            "_h"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_SPARSE_H",32))+
-            "_split"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_LOG_SPLIT",2))+
-            "_full"+std::to_string(environment_u32("POSEIDON_S2C_BOOT_FULL_COEFFICIENTS",1));
+    std::string implementation() const {
+        if(!library)return "application_degree59";
+        return "library_degree"+std::to_string(library_options.sine_degree)+
+            "_k"+std::to_string(library_options.k)+
+            "_h"+std::to_string(library_options.sparse_secret_hamming_weight);
     }
-    std::string implementation() const {return requested_implementation();}
 
     explicit ContinuousBootstrap(const BaselineSession &session):s(session) {
         if(library_boot_requested()) {prepare_library();return;}
@@ -466,13 +547,13 @@ public:
         if(library) {
             CT refreshed;
             run_activity(timing,"bootstrap.library",[&]{
-                eval.bootstrap(encrypted_input,library->bootstrap_data,
+                trace_gpu(eval).bootstrap(encrypted_input,library->bootstrap_data,
                     *library->relin_keys,*library->galois_keys,
                     library_workspace,refreshed);
             });
             s.replay.scale_check(refreshed,40);
-            if(refreshed.meta.q_count!=31)
-                throw std::runtime_error("library bootstrap output must be Q31");
+            if(refreshed.meta.q_count!=static_cast<std::size_t>(entry_q))
+                throw std::runtime_error("library bootstrap output must be Q31 (entry_q)");
             return refreshed;
         }
         CT stc_out,prepared,raised,real,imag,eval_real,eval_imag;
@@ -508,8 +589,8 @@ public:
         });
         output.meta.scale*=alpha;
         s.replay.scale_check(output,40);
-        if(output.meta.q_count!=31)
-            throw std::runtime_error("continuous bootstrap output must be Q31");
+        if(output.meta.q_count!=static_cast<std::size_t>(entry_q))
+            throw std::runtime_error("continuous bootstrap output must be Q31 (entry_q)");
         return output;
     }
 
@@ -576,11 +657,14 @@ private:
     }
 };
 
-poseidon::benchmark::s2c_first::PreparedApiGraph make_prepared_api_graph(
-    const ApplicationNetworkFixture &fixture,const std::string &implementation) {
-    std::vector<int> strides;
-    for(const auto &block:fixture.blocks)strides.push_back(block.conv1.stride);
-    return poseidon::benchmark::s2c_first::PreparedApiGraph::resnet20(strides,implementation);
+// Application keys use one digit (P=q) up to POSEIDON_S2C_APP_DNUM1_MAX_Q
+// (default 9) and dnum=2 above; POSEIDON_S2C_APP_DNUM1=0 keeps dnum=2 throughout.
+bool application_dnum1_enabled() {
+    static const bool enabled=[] {
+        const char *raw=std::getenv("POSEIDON_S2C_APP_DNUM1");
+        return !(raw && *raw && std::string(raw)=="0");
+    }();
+    return enabled;
 }
 
 class FixedDnum2ApplicationKeys {
@@ -590,7 +674,40 @@ class FixedDnum2ApplicationKeys {
     std::map<std::size_t,std::size_t> relin_q_to_p;
     bool prepared=false;
 
-    static std::size_t p_for_q(std::size_t q) {return std::max<std::size_t>(2,(q+1)/2);}
+    // dnum=2 with P=ceil(q/2) by default. POSEIDON_S2C_APP_DNUM1=1 follows
+    // Cerium for small levels: one digit (P=q) while q fits the 25 global P
+    // primes, dnum=2 above.
+    static bool dnum1_enabled() {return application_dnum1_enabled();}
+    // POSEIDON_S2C_APP_DNUM1_MAX_Q bounds the dnum=1 levels (default 9; at most
+    // 25, the global P count): one digit is cheaper only at small q, since the
+    // P->Q conversion grows with q*P (q<=25 slowed ReLU by 27 ms on the 4090).
+    static std::size_t dnum1_max_q() {
+        static const std::size_t limit=[] {
+            const char *raw=std::getenv("POSEIDON_S2C_APP_DNUM1_MAX_Q");
+            if(!raw || !*raw)return std::size_t{9};
+            char *end=nullptr;const auto value=std::strtoull(raw,&end,10);
+            if(end==raw || *end!='\0' || value<2 || value>25)
+                throw std::invalid_argument("POSEIDON_S2C_APP_DNUM1_MAX_Q must be in [2, 25]");
+            return static_cast<std::size_t>(value);
+        }();
+        return limit;
+    }
+    static std::size_t p_for_q(std::size_t q) {
+        if(dnum1_enabled() && q>=2 && q<=dnum1_max_q())return q;
+        return std::max<std::size_t>(2,(q+1)/2);
+    }
+    static bool dnum_allowed(std::size_t q,std::size_t p) {
+        const auto dnum=(q+p-1)/p;
+        return dnum==2 || (dnum1_enabled() && dnum==1);
+    }
+    // Relinearization keys are shared per P: the context covers the largest
+    // level that needs this P (2P for dnum=2 levels, P for dnum=1 levels).
+    std::size_t relin_context_q(std::size_t p,std::size_t global_q) const {
+        bool needs_two_digits=false;
+        for(auto q:relin_q_counts_for_p.at(p))needs_two_digits|=q>p;
+        return needs_two_digits?std::min(global_q,2*p):p;
+    }
+    std::map<std::size_t,std::vector<std::size_t>> relin_q_counts_for_p;
     static std::size_t key_payload_bytes(std::size_t q,std::size_t p,
         std::size_t key_count) {
         const std::size_t dnum=(q+p-1)/p;
@@ -645,25 +762,26 @@ public:
         std::size_t planned_parameter_ntt_bytes=0;
         for(const auto &[q,steps]:rotation_plan) {
             const auto p=p_for_q(q);
-            if(p>global_p || (q+p-1)/p!=2 || steps.empty())
-                throw std::logic_error("rotation plan cannot preserve fixed dnum=2");
+            if(p>global_p || !dnum_allowed(q,p) || steps.empty())
+                throw std::logic_error("rotation plan cannot preserve the application dnum");
             const auto bytes=key_payload_bytes(q,p,steps.size());
             planned_rotation_bytes+=bytes;
             planned_parameter_ntt_bytes+=active_parameter_ntt_bytes(q,p);
             std::cout<<"APPLICATION_KEY_PLAN kind=rotation q="<<q<<" p="<<p
-                <<" dnum=2 keys="<<steps.size()
+                <<" dnum="<<(q+p-1)/p<<" keys="<<steps.size()
                 <<" payload_MiB="<<double(bytes)/(1ULL<<20)<<'\n';
         }
         for(auto q:relin_plan) {
             const auto p=p_for_q(q);
-            if(p>global_p || (q+p-1)/p!=2)
-                throw std::logic_error("relinearization plan cannot preserve fixed dnum=2");
+            if(p>global_p || !dnum_allowed(q,p))
+                throw std::logic_error("relinearization plan cannot preserve the application dnum");
             relin_q_to_p.emplace(q,p);relin_p_counts.insert(p);
             relin_q_counts_by_p[p].push_back(q);
             planned_parameter_ntt_bytes+=active_parameter_ntt_bytes(q,p);
         }
+        relin_q_counts_for_p=relin_q_counts_by_p;
         for(auto p:relin_p_counts) {
-            const auto context_q=std::min(global_q,2*p);
+            const auto context_q=relin_context_q(p,global_q);
             planned_relin_bytes+=key_payload_bytes(context_q,p,1);
         }
         const auto old_global_rotation_bytes=key_payload_bytes(global_q,global_p,109);
@@ -685,15 +803,15 @@ public:
             std::vector<int> level_steps(steps.begin(),steps.end());
             auto runtime=s.application_keyswitch(q,p,{q},level_steps,false);
             verify_compatible(*runtime,q);
-            if(runtime->effective_dnum!=2)
+            if(runtime->effective_dnum!=(q+p-1)/p)
                 throw std::logic_error("rotation runtime effective dnum changed");
             rotations.emplace(q,std::move(runtime));
         }
         for(auto p:relin_p_counts) {
-            const auto context_q=std::min(global_q,2*p);
+            const auto context_q=relin_context_q(p,global_q);
             auto runtime=s.application_keyswitch(
                 context_q,p,relin_q_counts_by_p.at(p),{},true);
-            if(runtime->effective_dnum!=2)
+            if(runtime->effective_dnum!=(context_q+p-1)/p)
                 throw std::logic_error("relinearization runtime effective dnum changed");
             relin_by_p.emplace(p,std::move(runtime));
         }
@@ -714,7 +832,8 @@ public:
             <<" relin_contexts="<<relin_by_p.size()
             <<" parameter_levels="<<rotations.size()+relin_q_to_p.size()
             <<" payload_MiB="<<double(actual_rotation_bytes+actual_relin_bytes)/(1ULL<<20)
-            <<" dnum=2 resident=true swaps=false\n";
+            <<" dnum="<<(dnum1_enabled()?"1_upto_q"+std::to_string(dnum1_max_q())+"_else_2":std::string("2"))
+            <<" resident=true swaps=false\n";
         prepared=true;
     }
 
@@ -734,7 +853,7 @@ public:
         if(planned==relin_q_to_p.end())
             throw std::logic_error("unplanned application relinearization Q level");
         auto &runtime=*relin_by_p.at(planned->second);
-        runtime.gpu_evaluator->relinearize(source,runtime.gpu_relin_keys,destination);
+        trace_gpu(*runtime.gpu_evaluator).relinearize(source,runtime.gpu_relin_keys,destination);
     }
 };
 
@@ -755,12 +874,17 @@ class ContinuousNetwork {
     void report_relu_basis_fusion(bool preparation) const {
         const auto &stats=s.replay.get_moddrop_stats();
         const bool enabled=s.replay.basis_fusion_enabled();
+        // 285 checks of two-component ciphertexts (2*N*q words each); with
+        // entry_q one lower every checked Q is one lower.
+        const std::size_t basis_residues=824311808-
+            std::size_t(31-entry_q)*285*2*65536;
         if(stats.fused_basis_calls!=(enabled?285:0) ||
             stats.fused_basis_constants!=(enabled?190:0) ||
             stats.fused_basis_products!=(enabled?95:0) ||
             stats.exact_basis_checks!=(enabled && preparation?285:0) ||
-            stats.exact_basis_residues!=(enabled && preparation?824311808:0))
-            throw std::runtime_error("continuous ReLU basis fusion inventory changed");
+            stats.exact_basis_residues!=(enabled && preparation?basis_residues:0))
+            throw std::runtime_error("continuous ReLU basis fusion inventory changed: residues="+
+                std::to_string(stats.exact_basis_residues));
         std::cout<<(preparation?"RELU_BASIS_FUSION_PREPARED":"RELU_BASIS_FUSION")
             <<" enabled="<<(enabled?"true":"false")<<" calls="<<stats.fused_basis_calls
             <<" constants="<<stats.fused_basis_constants<<" products="<<stats.fused_basis_products
@@ -776,12 +900,16 @@ class ContinuousNetwork {
             total.exact_checks+=stats.exact_checks;total.exact_residues+=stats.exact_residues;
             total.pending_terms+=stats.pending_terms;
         }
+        // 480 batched calls on two-component ciphertexts at the Conv input Q.
+        const std::size_t conv_residues=std::size_t(480)*2*65536*conv_input_q();
         if(total.chains!=(conv_plain_batch?160:0) ||
             total.terms!=(conv_plain_batch?1440:0) ||
             total.calls!=(conv_plain_batch?480:0) || total.pending_terms ||
             total.exact_checks!=(conv_plain_batch && preparation?480:0) ||
-            total.exact_residues!=(conv_plain_batch && preparation?566231040:0))
-            throw std::runtime_error("continuous Conv plain batch inventory changed");
+            total.exact_residues!=(conv_plain_batch && preparation?conv_residues:0))
+            throw std::runtime_error("continuous Conv plain batch inventory changed: chains="+
+                std::to_string(total.chains)+" calls="+std::to_string(total.calls)+
+                " residues="+std::to_string(total.exact_residues));
         std::cout<<(preparation?"CONV_PLAIN_BATCH_PREPARED":"CONV_PLAIN_BATCH")
             <<" enabled="<<(conv_plain_batch?"true":"false")
             <<" chains="<<total.chains<<" terms="<<total.terms<<" calls="<<total.calls
@@ -842,9 +970,10 @@ class ContinuousNetwork {
         });
         if(capture)stem_runtime->finish_prepared_capture();
         else stem_runtime->finish_prepared_replay();
-        if(stem.packs.size()!=1 || stem.packs[0].meta.q_count!=31 ||
+        if(stem.packs.size()!=1 ||
+            stem.packs[0].meta.q_count!=static_cast<std::size_t>(entry_q) ||
             std::abs(std::log2(stem.packs[0].meta.scale)-40)>1e-7)
-            throw std::runtime_error("continuous stem did not produce Q31/scale40");
+            throw std::runtime_error("continuous stem did not produce Q31 (entry_q)/scale40");
         CT stem_q31=std::move(*stem.packs[0].gpu);
         CT active=execute_relu(stem_q31,capture && !relu_ready,timing);
         relu_ready=true;
@@ -852,7 +981,7 @@ class ContinuousNetwork {
         for(std::size_t block_index=0;block_index<fixture.blocks.size();++block_index) {
             const auto &block=fixture.blocks[block_index];
             CT shortcut;run_activity(timing,"residual.clone",[&]{
-                s.eval.drop_modulus(active,shortcut,active.meta.parms_id);
+                trace_gpu(s.eval).drop_modulus(active,shortcut,active.meta.parms_id);
             });
             auto first=execute_conv(conv_index++,std::move(active),block.conv1,
                 h,w,c,k,capture,timing);
@@ -934,116 +1063,98 @@ public:
 
     ~ContinuousNetwork() {s.replay.clear_relinearize_callback();}
 
-    CT dispatch_prepared_api(const poseidon::benchmark::s2c_first::PreparedApiTask &task,
-        std::vector<CT> inputs) {
-        if(task.callee=="stem") {
-            stem_runtime->begin_prepared_replay();
-            auto output=app::encrypted_stem_conv2d_bn(fixture.image,32,32,3,16,1,3,3,
-                fixture.stem.weights,fixture.stem.bn_scale,fixture.stem.bn_bias,*stem_runtime);
-            stem_runtime->finish_prepared_replay();
-            return std::move(*output.packs[0].gpu);
-        }
-        if(task.callee=="clone")return std::move(inputs.at(0));
-        if(task.callee=="relu")return execute_relu(inputs.at(0),false,nullptr);
-        if(task.callee.rfind("bootstrap.",0)==0)return bootstrap->run(inputs.at(0),nullptr);
-        if(task.callee=="conv") {
-            const auto &block=fixture.blocks.at(task.index/2);
-            const auto &layer=task.index%2?block.conv2:block.conv1;
-            return execute_conv(task.index,std::move(inputs.at(0)),layer,
-                task.h,task.w,task.c,task.k,false,nullptr);
-        }
-        if(task.callee=="shortcut")
-            return execute_shortcut(task.index,std::move(inputs.at(0)),
-                task.h,task.w,task.c,task.k,false,nullptr);
-        if(task.callee=="residual_add") {
-            auto left=tensor_from_device(s.metadata,std::move(inputs.at(0)),
-                task.h,task.w,task.c,task.k,no_keys,s.eval);
-            auto right=tensor_from_device(s.metadata,std::move(inputs.at(1)),
-                task.h,task.w,task.c,task.k,no_keys,s.eval);
-            auto output=app::residual_add(left,right,*add_runtime);
-            return std::move(*output.packs[0].gpu);
-        }
-        if(task.callee=="head") {
-            head_runtime->begin_prepared_replay();
-            auto tensor=tensor_from_device(s.metadata,std::move(inputs.at(0)),
-                task.h,task.w,task.c,task.k,no_keys,s.eval);
-            auto features=app::global_average_pool(tensor,40,*head_runtime);
-            auto output=app::fully_connected(features,64,fixture.linear_weight,
-                fixture.linear_bias,10,*head_runtime);
-            head_runtime->finish_prepared_replay();
-            return std::move(*output.gpu);
-        }
-        throw std::runtime_error("unregistered prepared GPU API: "+task.callee);
-    }
-
-    int run_runtime_plan(const std::string &plan_path,const std::string &spec_path) {
-        using Api=poseidon::benchmark::s2c_first::PreparedGpuApi;
-        const auto graph=make_prepared_api_graph(fixture,bootstrap->implementation());
-        const auto plan=fhegpu::RuntimePlanReader::read_file(plan_path);
-        const auto spec=fhegpu::OperatorSpecReader::read_file(spec_path);
-        Api api(graph,plan.plan,s.metadata.ctx,s.eval,[this](const auto &task,auto inputs) {
-            return dispatch_prepared_api(task,std::move(inputs));
-        });
+    // Trace the actual prepared replay, then keep the same keys, constants and
+    // encrypted inputs alive while a separate compiler produces RuntimePlan.
+    int run_trace_plan(const std::string &directory) {
+        using namespace poseidon::gpu;
+        if(!bootstrap->library_boot())
+            throw std::runtime_error("API tracing currently requires the complete native library Boot");
+        const std::filesystem::path dir=directory;
+        std::filesystem::create_directories(dir);
+        for(const auto *name:{"trace.mlir","trace.mlir.ready","plan.json","operator-spec.json","ready","error"})
+            if(std::filesystem::exists(dir/name))
+                throw std::runtime_error("trace plan directory must not contain stale artifacts: "+(dir/name).string());
+        s.replay.reset_moddrop_stats();
         s.replay.set_basis_preparation_checks(true);
         auto warm=execute_graph(true);
         s.replay.set_basis_preparation_checks(false);
-        gpu_check_cuda(cudaDeviceSynchronize(),"prepared API warmup");
+        gpu_check_cuda(cudaDeviceSynchronize(),"API trace prepared warmup");
         warm=CT{};
-        const auto direct_begin=std::chrono::steady_clock::now();
-        auto direct=execute_graph(false);
-        gpu_check_cuda(cudaDeviceSynchronize(),"manual API reference completion");
-        const double direct_ms=std::chrono::duration<double,std::milli>(
-            std::chrono::steady_clock::now()-direct_begin).count();
-        s.replay.reset_moddrop_stats();
-        fhegpu::SequentialRuntime<Api> runtime(0,1,1,api);
-        cudaEvent_t begin,end;
-        gpu_check_cuda(cudaEventCreate(&begin),"prepared start event");
-        gpu_check_cuda(cudaEventCreate(&end),"prepared stop event");
-        struct Events {cudaEvent_t a,b;~Events(){cudaEventDestroy(a);cudaEventDestroy(b);}} events{begin,end};
+        const auto reference_begin=std::chrono::steady_clock::now();
+        auto reference=execute_graph(false);
+        gpu_check_cuda(cudaDeviceSynchronize(),"manual API trace reference");
+        const double reference_ms=std::chrono::duration<double,std::milli>(
+            std::chrono::steady_clock::now()-reference_begin).count();
+
+        ApiTraceRecorder recorder(s.metadata.ctx,s.eval);
+        if(stem_runtime->prepared_inputs.size()!=27)
+            throw std::runtime_error("API trace expected 27 prepared input patches");
+        for(const auto &input:stem_runtime->prepared_inputs)recorder.register_input(input);
+        CT traced;
+        {
+            ScopedApiTrace active(recorder);
+            traced=execute_graph(false);
+            recorder.finish(traced);
+        }
+        gpu_check_cuda(cudaDeviceSynchronize(),"API trace forward completion");
+        const auto trace_residues=require_exact_ciphertexts(s.metadata.ctx,reference,traced,"manual_vs_API_trace");
+        traced=CT{};
+        {
+            std::ofstream mlir(dir/"trace.mlir");
+            if(!mlir)throw std::runtime_error("cannot create trace.mlir");
+            recorder.write_mlir(mlir);
+            if(!mlir)throw std::runtime_error("cannot write trace.mlir");
+        }
+        {std::ofstream marker(dir/"trace.mlir.ready");if(!marker)throw std::runtime_error("cannot publish trace marker");}
+        std::cout<<"API_TRACE_READY path="<<(dir/"trace.mlir").string()
+            <<" calls="<<recorder.nodes().size()<<" trace_exact_residues="<<trace_residues<<'\n';
+        const auto deadline=std::chrono::steady_clock::now()+std::chrono::minutes(60);
+        while(!std::filesystem::exists(dir/"ready")) {
+            if(std::filesystem::exists(dir/"error"))throw std::runtime_error("external MLIR compiler reported failure");
+            if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error("timed out waiting for compiled RuntimePlan");
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        }
+        const auto plan=fhegpu::RuntimePlanReader::read_file((dir/"plan.json").string());
+        const auto spec=fhegpu::OperatorSpecReader::read_file((dir/"operator-spec.json").string());
+        TracedPlanApi api(recorder,plan.plan,s.metadata.ctx,s.eval);
+        fhegpu::SequentialRuntime<TracedPlanApi> runtime(0,1,1,api);
         const char *cupti_raw=std::getenv("POSEIDON_S2C_CUPTI");
         const bool cupti=cupti_raw && std::string(cupti_raw)=="1";
         std::optional<ActivityTiming> activity;
         if(cupti) {activity.emplace();activity->begin_continuous();activity->stage("runtime",true);}
-        gpu_check_cuda(cudaEventRecord(begin),"prepared record start");
+        gpu_check_cuda(cudaDeviceSynchronize(),"trace RuntimePlan timing start");
         const auto wall_begin=std::chrono::steady_clock::now();
-        auto artifact=runtime.run(plan,fhegpu::RuntimeResources{spec,std::nullopt,false},{});
+        auto artifact=runtime.run(plan,fhegpu::RuntimeResources{spec,std::nullopt,false},api.external_inputs());
         const double wall_ms=std::chrono::duration<double,std::milli>(
             std::chrono::steady_clock::now()-wall_begin).count();
-        gpu_check_cuda(cudaEventRecord(end),"prepared record stop");
-        gpu_check_cuda(cudaEventSynchronize(end),"prepared timing completion");
-        float event_ms=0;gpu_check_cuda(cudaEventElapsedTime(&event_ms,begin,end),"prepared elapsed");
-        if(cupti) {
-            activity->stage("runtime",false);
-            auto result=activity->finish();result.print();
-        }
-        std::cout<<"PREPARED_RUNTIME_CALL_ORDER";
-        for(auto id:api.dispatch_order())std::cout<<' '<<id;
-        std::cout<<'\n';
-        const auto &logits=*artifact.values.at(plan.plan.final_outputs.at(0)).value;
-        const auto residues=require_exact_ciphertexts(s.metadata.ctx,direct,logits,"manual_vs_RuntimePlan");
+        if(cupti) {activity->stage("runtime",false);auto result=activity->finish();result.print();}
+        const auto &logits=TracedPlanApi::result_ciphertext(
+            artifact.values.at(plan.plan.final_outputs.at(0)).value);
+        const auto residues=require_exact_ciphertexts(s.metadata.ctx,reference,logits,"manual_vs_traced_RuntimePlan");
         const auto decoded=s.replay.decoded_after_timing(logits);
         double error=0;int prediction=0,reference_prediction=0;
         for(std::size_t i=0;i<fixture.reference_logits.size();++i) {
             if(!std::isfinite(decoded.at(i).real()) || !std::isfinite(decoded.at(i).imag()))
-                throw std::runtime_error("RuntimePlan produced a non-finite logit");
-            error=std::max(error,std::abs(decoded.at(i).real()-fixture.reference_logits[i]));
+                throw std::runtime_error("traced RuntimePlan produced a non-finite logit");
+            error=std::max(error,std::abs(decoded[i].real()-fixture.reference_logits[i]));
             if(decoded[i].real()>decoded[prediction].real())prediction=int(i);
             if(fixture.reference_logits[i]>fixture.reference_logits[reference_prediction])reference_prediction=int(i);
         }
+        if(api.boot_calls()!=18 || api.hoist_calls()==0 || api.rotation_suffix_calls()<=api.hoist_calls() ||
+            api.live_hoist_bytes()!=0 || api.hoist_releases()!=api.hoist_calls())
+            throw std::runtime_error("API trace Boot/hoist dispatch or hoisted-buffer lifecycle mismatch");
         const bool pass=std::isfinite(error) && error<=0.1 && prediction==reference_prediction;
-        std::cout<<"PREPARED_RUNTIME_RESULT accuracy="<<(pass?"PASS":"FAIL")
-            <<" exact_rns=true exact_residues="<<residues
-            <<" tasks="<<api.calls()<<" bootstraps="<<api.boot_calls()
+        std::cout<<"API_TRACE_RESULT accuracy="<<(pass?"PASS":"FAIL")
+            <<" exact_rns=true exact_residues="<<residues<<" trace_exact_residues="<<trace_residues
+            <<" calls="<<api.calls()<<" bootstraps="<<api.boot_calls()<<" hoists="<<api.hoist_calls()
+            <<" rotation_suffixes="<<api.rotation_suffix_calls()<<" hoist_releases="<<api.hoist_releases()
+            <<" hoist_peak_bytes="<<api.peak_hoist_bytes()<<" hoist_live_bytes="<<api.live_hoist_bytes()
             <<" runtime_compute_calls="<<artifact.timing.compute_calls
             <<" runtime_online_ms="<<double(artifact.timing.online_execution_nanoseconds)/1e6
-            <<" wall_ms="<<wall_ms<<" cuda_event_ms="<<event_ms<<" manual_wall_ms="<<direct_ms
+            <<" wall_ms="<<wall_ms<<" manual_wall_ms="<<reference_ms
             <<" max_logit_error="<<error<<" prediction="<<prediction
-            <<" reference_prediction="<<reference_prediction
-            <<" bootstrap_implementation="<<bootstrap->implementation()
-            <<" encrypted_logits_q="<<logits.meta.q_count
-            <<" intermediate_reencryptions=0 cupti="<<(cupti?"true":"false")
-            <<" task_granularity=prepared_api"
-            <<" scale_planning=false boot_planning=false devices=1 security_approved=false\n";
+            <<" reference_prediction="<<reference_prediction<<" encrypted_logits_q="<<logits.meta.q_count
+            <<" cupti="<<(cupti?"true":"false")<<" devices=1 security_approved=false\n";
         return pass?0:1;
     }
 
@@ -1064,9 +1175,14 @@ public:
         for(const auto &runtime:conv_runtimes)conv_plaintexts+=runtime->prepared_plaintext_count();
         for(const auto &runtime:shortcut_runtimes)if(runtime)
             shortcut_plaintexts+=runtime->prepared_plaintext_count();
-        if(conv_plaintexts!=1696 || shortcut_plaintexts!=48 ||
+        // 1440 kernel taps and 18 biases, plus the placement masks: 160 support
+        // masks and 78 selectors, or 672 merged masks (one per output channel).
+        const std::size_t expected_conv_plaintexts=1440+18+(conv_merged_masks?672:160+78);
+        if(conv_plaintexts!=expected_conv_plaintexts || shortcut_plaintexts!=48 ||
             head_runtime->prepared_plaintext_count()!=93)
-            throw std::runtime_error("continuous public plaintext inventory changed");
+            throw std::runtime_error("continuous public plaintext inventory changed: conv="+
+                std::to_string(conv_plaintexts)+" shortcut="+std::to_string(shortcut_plaintexts)+
+                " head="+std::to_string(head_runtime->prepared_plaintext_count()));
         std::size_t free_bytes=0,total_bytes=0;
         gpu_check_cuda(cudaMemGetInfo(&free_bytes,&total_bytes),"continuous prepared memory");
         const auto c2s_tile_batches=bootstrap->c2s_tile_batches();
@@ -1120,8 +1236,6 @@ public:
                 throw std::runtime_error("post-timing logits are truncated");
             double max_logit_error=0;int gpu_prediction=0,plain_prediction=0;
             for(std::size_t index=0;index<fixture.reference_logits.size();++index) {
-                if(!std::isfinite(decoded[index].real()) || !std::isfinite(decoded[index].imag()))
-                    throw std::runtime_error("manual network produced a non-finite logit");
                 max_logit_error=std::max(max_logit_error,
                     std::abs(decoded[index].real()-fixture.reference_logits[index]));
                 if(decoded[index].real()>decoded[gpu_prediction].real())
@@ -1140,7 +1254,8 @@ public:
                 <<" prediction="<<gpu_prediction
                 <<" accuracy="<<(accuracy_pass?"PASS":"FAIL")
                 <<" max_logit_error="<<max_logit_error
-                <<" bootstrap_implementation="<<bootstrap->implementation()<<'\n';
+                <<" bootstrap_implementation="<<bootstrap->implementation()
+                <<resnet20_levels_summary()<<'\n';
             return accuracy_pass?0:1;
         }
         auto &activity=*activity_storage;
@@ -1248,8 +1363,6 @@ public:
         std::vector<double> gpu_logits(fixture.reference_logits.size());
         double max_logit_error=0,max_logit_imag=0;
         for(std::size_t index=0;index<gpu_logits.size();++index) {
-            if(!std::isfinite(decoded[index].real()) || !std::isfinite(decoded[index].imag()))
-                throw std::runtime_error("manual network produced a non-finite logit");
             gpu_logits[index]=decoded[index].real();
             max_logit_error=std::max(max_logit_error,
                 std::abs(gpu_logits[index]-fixture.reference_logits[index]));
@@ -1281,8 +1394,12 @@ public:
             <<" host_enqueue_ms="<<enqueue_ms
             <<" activities="<<result.activities
             <<" host_transfers="<<result.host_transfers
-            <<" blocks=9 bootstraps=18 dnum=2 input_q=32 stem_output_q=31"
-            <<" application_keyswitch=fixed_dnum2 hoisted_rotation=true"
+            <<" blocks=9 bootstraps=18 dnum="
+            <<(application_dnum1_enabled()?"1_upto_q25_else_2":"2")
+            <<resnet20_levels_summary()
+            <<" application_keyswitch="
+            <<(application_dnum1_enabled()?"level_dnum1":"fixed_dnum2")
+            <<" hoisted_rotation=true"
             <<" input_upload_included=false public_material_upload_included=false"
             <<" per_stage_sync=false observer_decryptions=0"
             <<" post_timing_decryptions=1 accuracy="<<(accuracy_pass?"PASS":"FAIL")
@@ -1334,7 +1451,7 @@ public:
         if(max_blocks>fixture.blocks.size())throw std::runtime_error("max-blocks exceeds 9");
         std::cout<<"NETWORK_PLAN topology=resnet20 blocks="<<max_blocks
             <<" full_blocks=9 expected_bootstraps="<<2*max_blocks
-            <<" input_q=32 stem_output_q=31"
+            <<resnet20_levels_summary()
             <<" encrypted_stem=true intermediate_reencryption=false observer_decryption_only=true\n";
 
         GpuGaloisKeysData unused;
@@ -1344,7 +1461,8 @@ public:
         auto stem=app::encrypted_stem_conv2d_bn(fixture.image,32,32,3,16,1,3,3,
             fixture.stem.weights,fixture.stem.bn_scale,fixture.stem.bn_bias,stem_runtime);
         gpu_check_cuda(cudaDeviceSynchronize(),"finish encrypted ResNet20 stem");
-        if(stem.packs.size()!=1 || stem.packs[0].meta.q_count!=31 ||
+        if(stem.packs.size()!=1 ||
+            stem.packs[0].meta.q_count!=static_cast<std::size_t>(entry_q) ||
             std::abs(std::log2(stem.packs[0].meta.scale)-40)>1e-7 || input_encryptions!=27)
             throw std::runtime_error("encrypted stem contract mismatch");
         auto stem_reference=pack_chw(fixture.stem_output,32,32,16,1);
@@ -1409,7 +1527,7 @@ public:
             h=next_h;w=next_w;c=block.conv2.output_channels;k=next_k;
             std::size_t free_bytes=0,total_bytes=0;gpu_check_cuda(cudaMemGetInfo(&free_bytes,&total_bytes),"network memory checkpoint");
             std::cout<<"NETWORK_BLOCK_RESULT block="<<prefix<<" completed="<<index+1
-                <<" free_GiB="<<double(free_bytes)/(1ULL<<30)<<" q=9 log_scale=40\n";
+                <<" free_GiB="<<double(free_bytes)/(1ULL<<30)<<" q="<<relu_output_q()<<" log_scale=40\n";
         }
 
         if(max_blocks<fixture.blocks.size()) {
@@ -1469,11 +1587,10 @@ int run_s2c_first_resnet20_application(int argc,char **argv) {
         const std::string mode=argc>1?argv[1]:"";
         bool valid_mode=mode=="--metadata-only" || mode=="--unsafe-accuracy-only";
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
-        valid_mode=valid_mode || mode=="--unsafe-performance-only" ||
-            mode=="--emit-mlir" || mode=="--unsafe-runtime-plan";
+        valid_mode=valid_mode || mode=="--unsafe-performance-only" || mode=="--unsafe-trace-plan";
 #endif
-        if(argc<4 || argc>6 || !valid_mode)
-            throw std::runtime_error("usage: bootstrap_network_precision --metadata-only|--unsafe-accuracy-only|--unsafe-performance-only fixture image [--max-blocks N]; --emit-mlir fixture image output.mlir; --unsafe-runtime-plan fixture image plan operator-spec");
+        if(argc<4 || argc>6 || !valid_mode || (mode=="--unsafe-trace-plan" && argc!=5))
+            throw std::runtime_error("usage: --metadata-only|--unsafe-accuracy-only|--unsafe-performance-only fixture image [--max-blocks N]; --unsafe-trace-plan fixture image empty-plan-dir");
 #ifndef POSEIDON_S2C_FIRST_ENABLE_TIMING
         if(mode=="--unsafe-performance-only")
             throw std::runtime_error("performance mode is available only in the dedicated bench entry");
@@ -1481,11 +1598,8 @@ int run_s2c_first_resnet20_application(int argc,char **argv) {
         std::size_t parsed=0;const int image=std::stoi(argv[3],&parsed);
         if(parsed!=std::string(argv[3]).size() || image<0 || image>=10000)
             throw std::runtime_error("invalid CIFAR image id");
-        const bool emit=mode=="--emit-mlir",runtime_plan=mode=="--unsafe-runtime-plan";
-        if((emit && argc!=5) || (runtime_plan && argc!=6))
-            throw std::runtime_error("usage: --emit-mlir fixture image output.mlir OR --unsafe-runtime-plan fixture image plan.json operator-spec.json");
         std::size_t max_blocks=9;
-        if(argc>4 && !emit && !runtime_plan) {
+        if(argc>4 && mode!="--unsafe-trace-plan") {
             if(std::string(argv[4])!="--max-blocks" || argc!=6)
                 throw std::runtime_error("expected --max-blocks N");
             parsed=0;max_blocks=std::stoul(argv[5],&parsed);
@@ -1494,33 +1608,24 @@ int run_s2c_first_resnet20_application(int argc,char **argv) {
         }
         if(mode=="--unsafe-performance-only" && max_blocks!=9)
             throw std::runtime_error("performance mode always runs the complete 9-block network");
+        configure_resnet20_levels(mode);
+        std::cout<<"RESNET20_LEVELS"<<resnet20_levels_summary()
+            <<" removed_q_prime_index="<<removed_q_prime<<'\n';
         ReluFixture relu(argv[2]);auto fixture=load_application_network_fixture(image);
         std::string profile="q50-fixed45",dataset="grid";
-        std::string baseline_mode=emit?"--metadata-only":runtime_plan?"--unsafe-performance-only":mode;
-        char *args[]={argv[0],baseline_mode.data(),profile.data(),dataset.data(),argv[2]};
+        char *args[]={argv[0],argv[1],profile.data(),dataset.data(),argv[2]};
         return run_bootstrap_baseline(5,args,[&](const BaselineMetadata &m) {
             check_continuation_metadata(m,relu);
             if(fixture.blocks.size()!=9 || fixture.stem_output.size()!=16384 ||
                 fixture.reference_logits.size()!=10)
                 throw std::runtime_error("ResNet20 fixture is incomplete");
-#ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
-            if(emit) {
-                auto graph=network_probe::make_prepared_api_graph(fixture,
-                    network_probe::ContinuousBootstrap::requested_implementation());
-                std::vector<std::uint64_t> q;
-                for(const auto &prime:m.ctx.parameters_literal()->q())q.push_back(prime.value());
-                graph.write_mlir(argv[4],q);
-                std::cout<<"PREPARED_MLIR output="<<argv[4]<<" tasks="<<graph.tasks.size()
-                    <<" bootstrap_implementation="<<graph.bootstrap_implementation<<'\n';
-            }
-#endif
             std::cout<<"NETWORK_METADATA topology_blocks=9 bootstrap_points=18"
-                <<" input_q=32 stem_output_q=31"
+                <<resnet20_levels_summary()
                 <<" oracle=independent_original_CHW input_boundary=40 status=PASS\n";
         },{},nullptr,true,[&](const BaselineSession &session) {
 #ifdef POSEIDON_S2C_FIRST_ENABLE_TIMING
-            if(runtime_plan)
-                return network_probe::ContinuousNetwork(session,relu,fixture).run_runtime_plan(argv[4],argv[5]);
+            if(mode=="--unsafe-trace-plan")
+                return network_probe::ContinuousNetwork(session,relu,fixture).run_trace_plan(argv[4]);
             if(mode=="--unsafe-performance-only")
                 return network_probe::ContinuousNetwork(session,relu,fixture).run();
 #endif

@@ -46,20 +46,32 @@ struct GpuBootstrapProfileConfig
     bool project_real = false;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::DoubleHoistBsgs;
-    /* Nonzero selects the ephemeral secret's Hamming weight (e.g. 32).
-     * WARNING: the dense->sparse key uses the full key modulus; this is an
-     * unsafe performance/research profile, not a secure deployment scheme. */
+
+    /*
+     * Sparse-secret encapsulation: a non-zero value is the Hamming weight of
+     * the ephemeral secret ModRaise runs under (Cerium uses 32). With h=32
+     * the ModRaise overflow stays within K=12 often enough for the degree-22
+     * fit (about 2^-29 failure per Boot, versus 2^-14 for h=192/K=25).
+     * The dense->sparse key is generated over the full key modulus, which a
+     * secure deployment must replace with a small-modulus key.
+     */
     std::uint32_t sparse_secret_hamming_weight = 0;
-    // Include odd Chebyshev coefficients of the discrete cosine fit.
+    /* Evaluate odd Chebyshev terms too (the discrete fit is not even). */
     bool eval_mod_full_coefficients = false;
-    // Store periodic DoubleHoistBsgs QP diagonals exactly, without redundant residues.
+    /* Periodic compression of the double-hoist DFT diagonals. */
     bool compress_linear_plaintexts = false;
-    // Drop surplus EvalMod limbs before S2C to retain a declared output level.
+    /*
+     * Declared output level. A cheaper EvalMod leaves surplus Q limbs; they
+     * are dropped before SlotToCoeff so the profile still matches the
+     * OperatorSpec, and SlotToCoeff runs on fewer limbs.
+     */
     std::optional<int> output_level;
 };
 
-/** Manual S2C-first Boot options. Defaults retain degree59/DA2/K25.
- * The optimized research profile uses {22, 3, 12, 2, true, 32}. */
+/**
+ * @brief EvalMod choices of the manual S2C-first ResNet20 Boot. The defaults
+ * are the original degree-59/DA2/K=25 profile.
+ */
 struct GpuResNet20ManualOptions
 {
     std::uint32_t sine_degree = 59;
@@ -67,8 +79,28 @@ struct GpuResNet20ManualOptions
     std::uint32_t k = 25;
     std::uint32_t log_split = 3;
     bool full_coefficients = false;
-    // See the full-modulus sparse-key security warning above.
     std::uint32_t sparse_secret_hamming_weight = 0;
+
+    /**
+     * Special modulus of the Boot's key switches, per Q level:
+     *   Global      every switch uses the context's full P (P25, dnum 2);
+     *   Performance P = ceil(q/2) (dnum 2), and P = q (dnum 1) up to
+     *               dnum1_max_q -- the measured fastest choice per level;
+     *   Secure      the smallest dnum, starting from the Performance one,
+     *               with log2(Q_q) + log2(P) <= secure_modulus_bits.
+     * Per-level keys are generated on Q prefix + P prefix sub-contexts and
+     * the matching parameter levels are returned in
+     * GpuBootstrapProfile::level_parameters for the caller to adopt.
+     */
+    enum class LevelSpecialModulus : std::uint32_t
+    {
+        Global = 0,
+        Performance = 1,
+        Secure = 2,
+    };
+    LevelSpecialModulus level_special_modulus = LevelSpecialModulus::Global;
+    std::uint32_t dnum1_max_q = 9;
+    double secure_modulus_bits = 1772.0;
 };
 
 /**
@@ -88,6 +120,15 @@ struct GpuBootstrapProfile
     GpuBootstrapData bootstrap_data;
     std::shared_ptr<const GpuRelinKeysData> relin_keys;
     std::shared_ptr<const GpuGaloisKeysData> galois_keys;
+
+    /**
+     * Parameter levels built on a level-aware special modulus (see
+     * GpuResNet20ManualOptions::level_special_modulus). The caller must
+     * GpuParameterData::adopt_level each of them into the parameter table of
+     * the evaluator that runs this Boot before its first use; the keys above
+     * resolve to the matching per-level keys.
+     */
+    std::vector<GpuLevelInfo> level_parameters;
 };
 
 /**

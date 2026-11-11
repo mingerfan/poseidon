@@ -26,10 +26,10 @@ def spec_from_mlir(input_path):
         raise ValueError("expected one module ckks.rns_moduli = array<i64: ...>")
     moduli = [int(value.strip()) for value in arrays[0].split(",")]
     bits = [value.bit_length() for value in moduli]
-    if (len(moduli) != 50 or len(set(moduli)) != 50 or
+    if (len(moduli) not in (49, 50) or len(set(moduli)) != len(moduli) or
             any(width not in (30, 31, 32) for width in bits) or
             any(value % (2 * 65536) != 1 for value in moduli)):
-        raise ValueError("prepared ResNet20 requires 50 distinct 30/31/32-bit N65536 Q moduli")
+        raise ValueError("prepared ResNet20 requires 49 or 50 distinct 30/31/32-bit N65536 Q moduli")
     digest = "sha256:" + hashlib.sha256(source).hexdigest()
     ordinary = ("add_cc", "add_cp", "sub_cc", "sub_cp", "mul_cc", "mul_cp",
                 "negate", "rotate", "rescale", "mod_switch", "relinearize")
@@ -53,14 +53,14 @@ def spec_from_mlir(input_path):
             "source_sha256": digest,
         },
         "context": {
-            "context_id": "manual-resnet20-q50",
+            "context_id": f"manual-resnet20-q{len(moduli)}",
             "poly_degree": 65536,
             "rns_moduli_log2": bits,
             "rns_moduli": moduli,
             "max_modulus_log2": max(bits),
             "default_scale_log2": 40,
         },
-        "levels": {"lower_bound": 0, "upper_bound": 49},
+        "levels": {"lower_bound": 0, "upper_bound": len(moduli) - 1},
         "operators": operators,
         "boot_profiles": [],
     }
@@ -70,7 +70,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path, help="MLIR emitted by the prepared API graph")
     parser.add_argument("--operator-spec", type=Path,
-                        help="OperatorSpec V2; default: import Q50 from MLIR into output-dir/operator-spec.json")
+                        help="OperatorSpec V2; default: import Q49/Q50 from MLIR into output-dir/operator-spec.json")
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--devices", choices=("1",), default="1",
                         help="Only one GPU is supported (default: 1)")

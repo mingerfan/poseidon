@@ -125,14 +125,9 @@ void launch_double_hoist_pre_rotated_giant_group_accumulate(
 
 /**
  * Like launch_double_hoist_pre_rotated_giant_group_accumulate, but c0 of each
- * giant group and both identity-group components are read directly from the
- * QP accumulators (group_q / group_p, [group][component][limb][coeff]).
- * Only c1 of non-identity groups needs inner ModDown before decomposition.
- * Host group/key indices must be in range, and identity must not appear in
- * the active groups. Outputs must not alias group or digit inputs. At least
- * one active group is required; an identity-only result needs no giant MAC.
- * This changes rounding relative to ModDown followed by lifting, not a
- * bit-exact replacement. Key pointers retain their physical-storage P offset.
+ * giant group and the identity group are read from the QP group accumulators
+ * (group_q / group_p, [group][component] layout), so only c1 of the
+ * non-identity groups needs the inner ModDown.
  */
 void launch_double_hoist_pre_rotated_giant_group_accumulate_qp_c0(
     GpuWord *destination_q0,

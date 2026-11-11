@@ -564,9 +564,12 @@ __global__ void pre_rotated_giant_group_accumulate_kernel(
 }
 
 /*
- * Preserve QP c0 of every giant group and both identity components. Only
- * non-identity c1 leaves QP for decomposition and the giant key switch.
- * Launched separately for Q and P [group][component][limb][coeff] storage.
+ * Same output as pre_rotated_giant_group_accumulate_kernel, but c0 of every
+ * giant group (and both components of the identity group) is read from the
+ * QP group accumulators instead of from ModDown(accumulator) lifted back by P.
+ * Only c1 of the non-identity groups has to leave QP (it is decomposed for the
+ * giant key switch). The kernel runs once per side (Q limbs, then P limbs);
+ * qp_groups points at that side's [group][component][limb][coeff] storage.
  */
 __global__ void pre_rotated_giant_group_accumulate_qp_c0_kernel(
     GpuWord *destination0,

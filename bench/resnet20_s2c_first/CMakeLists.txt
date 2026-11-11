@@ -35,6 +35,30 @@ add_test(NAME resnet20_s2c_first_metadata
     COMMAND poseidon_resnet20_s2c_first --metadata-only
     "${POSEIDON_INCLUDES_DIR}/Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt" 0)
 
+add_executable(gpu_trace_plan_validation_test
+    "${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_trace_plan_validation_test.cpp")
+target_link_libraries(gpu_trace_plan_validation_test PRIVATE poseidon::gpu ckks_runtime::plan_json)
+set_target_properties(gpu_trace_plan_validation_test PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+add_test(NAME gpu_trace_plan_validation_test COMMAND gpu_trace_plan_validation_test)
+set_tests_properties(gpu_trace_plan_validation_test PROPERTIES SKIP_RETURN_CODE 77)
+
+add_executable(test_gpu_split_hoist
+    "${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_split_hoist_test.cpp")
+target_link_libraries(test_gpu_split_hoist PRIVATE poseidon::gpu)
+set_target_properties(test_gpu_split_hoist PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+add_test(NAME gpu_split_hoist COMMAND test_gpu_split_hoist --small-only)
+set_tests_properties(gpu_split_hoist PROPERTIES SKIP_RETURN_CODE 77)
+
+foreach(_gpu_test IN ITEMS gpu_selected_prerotated_crop_test gpu_uploader_stream_order_test gpu_key_view_cache_test gpu_boot_optimizations_test)
+    add_executable(${_gpu_test} "${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/${_gpu_test}.cpp")
+    target_link_libraries(${_gpu_test} PRIVATE poseidon::gpu)
+    set_target_properties(${_gpu_test} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    add_test(NAME ${_gpu_test} COMMAND ${_gpu_test})
+    set_tests_properties(${_gpu_test} PROPERTIES SKIP_RETURN_CODE 77)
+endforeach()
+
 add_executable(test_resnet20_manual_boot
     "${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/manual_low_boot_test.cpp")
 target_link_libraries(test_resnet20_manual_boot PRIVATE poseidon::gpu)

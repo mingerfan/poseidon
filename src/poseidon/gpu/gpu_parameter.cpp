@@ -2502,6 +2502,39 @@ const GpuLevelInfo &GpuParameterData::get_level_by_q_count(
     throw std::out_of_range("GpuParameterData level not found for q_count");
 }
 
+GpuLevelInfo GpuParameterData::take_level_by_q_count(std::size_t q_count)
+{
+    for (auto &level : levels_)
+    {
+        if (level.q_count == q_count && level.p_count == 0)
+        {
+            GpuLevelInfo result = std::move(level);
+            level = GpuLevelInfo{};
+            return result;
+        }
+    }
+    throw std::out_of_range("GpuParameterData::take_level_by_q_count: level not found");
+}
+
+void GpuParameterData::adopt_level(GpuLevelInfo level)
+{
+    for (auto &existing : levels_)
+    {
+        if (existing.parms_id == level.parms_id && existing.p_count == level.p_count)
+        {
+            if (existing.degree != level.degree || existing.q_count != level.q_count ||
+                level.shards.size() != existing.shards.size())
+            {
+                throw std::invalid_argument(
+                    "GpuParameterData::adopt_level: level shape differs from the replaced level");
+            }
+            existing = std::move(level);
+            return;
+        }
+    }
+    throw std::out_of_range("GpuParameterData::adopt_level: no level with this parms_id");
+}
+
 const GpuLevelInfo &GpuParameterData::get_first_q_level() const
 {
     const GpuLevelInfo *best = nullptr;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "poseidon/gpu/gpu_ciphertext.h"
+#include "poseidon/gpu/gpu_key.h"
 #include "poseidon/gpu/gpu_linear_transform.h"
 #include "poseidon/gpu/gpu_memory.h"
 
@@ -88,6 +89,12 @@ struct GpuMatrixPlainQP
     std::map<int, GpuPlaintextData> plain_vec_qp;
     std::map<int, GpuCompressedPlaintextQP> compressed_plain_vec_qp;
     GpuDoubleHoistMatrixPlan plan;
+    /*
+     * One giant group of another matrix (GpuUploader::upload_double_hoist_group_views):
+     * its plan addresses that matrix's plaintexts, so it owns none. It must
+     * not outlive the matrix it was made from.
+     */
+    bool group_view = false;
 };
 
 class GpuLinearMatrixGroupQP
@@ -120,7 +127,10 @@ private:
 };
 
 /**
- * Hoisted HYBRID decomposition in [digit][limb][coeff] order.
+ * Hoisted HYBRID decomposition. source_intt_q retains [Q limb][coefficient]
+ * source coefficients; digits_q_ntt and digits_p_ntt retain independent
+ * [digit][Q or P limb][coefficient] NTT arrays, respectively. These three
+ * allocations belong to this result, not to a suffix's scratch workspace.
  */
 struct GpuHoistedDecomposition
 {
@@ -134,6 +144,24 @@ struct GpuHoistedDecomposition
     DeviceVector<GpuWord> source_intt_q;
     DeviceVector<GpuWord> digits_q_ntt;
     DeviceVector<GpuWord> digits_p_ntt;
+
+    // Set by GpuEvaluator::rotation_hoist only. Pointer/metadata guards detect
+    // a different allocation or level, not in-place writes/address recycling.
+    // The caller must keep this source SSA version immutable and alive.
+    const GpuWord *rotation_source_c0 = nullptr;
+    const GpuWord *rotation_source_c1 = nullptr;
+    GpuCiphertextMeta rotation_source_meta{};
+    parms_id_type rotation_key_parms_id{};
+    GpuGaloisKeyFormat rotation_key_format = GpuGaloisKeyFormat::Standard;
+
+    // Count live DeviceVector allocations, including any retained excess
+    // capacity, rather than inferring bytes from the current logical shape.
+    // RMM pool/allocator overhead is not part of these buffer allocations.
+    std::size_t allocated_bytes() const noexcept
+    {
+        return source_intt_q.allocated_bytes() + digits_q_ntt.allocated_bytes() +
+               digits_p_ntt.allocated_bytes();
+    }
 };
 
 /**
@@ -224,7 +252,6 @@ struct GpuDoubleHoistOperationCounts
     std::size_t source_decompose_count = 0;
     std::size_t outer_decompose_count = 0;
     std::size_t keymul_count = 0;
-    // Group operations: two components normally, selected c1 only in QP-c0.
     std::size_t inner_moddown_count = 0;
     std::size_t inner_moddown_component_count = 0;
     std::size_t outer_moddown_count = 0;

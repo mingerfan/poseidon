@@ -27,7 +27,10 @@ void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
                                       const PoseidonContext &context, parms_id_type id,
                                       uint64_t *destination);
 
-/** Explicit weight for the ephemeral secret used by sparse-secret encapsulation. */
+/**
+Same as above with an explicit Hamming weight instead of the context's, e.g.
+for the sparse ephemeral secret of sparse-secret encapsulation in bootstrapping.
+*/
 void sample_poly_ternary_with_hamming(shared_ptr<UniformRandomGenerator> prng,
                                       const PoseidonContext &context, parms_id_type id,
                                       std::size_t hamming_weight, uint64_t *destination);

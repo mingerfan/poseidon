@@ -11,6 +11,7 @@
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/gpu/gpu_parameter.h"
 #include "secure_sparse_secret.h"
+#include "../../../bench/resnet20_s2c_first/traced_gpu_evaluator.h"
 #include <rmm/mr/device/cuda_memory_resource.hpp>
 #include <rmm/mr/device/pool_memory_resource.hpp>
 #include <algorithm>
@@ -31,7 +32,38 @@ using CT = GpuCiphertextData;
 using Ref = std::vector<long double>;
 using Complex = std::complex<long double>;
 double original_application_relu(double x);
-constexpr int entry_q = 31;
+
+// Level layout of the hand-written ResNet20 chain. Every other diagnostic
+// keeps the saved Q50 layout below; the ResNet20 application switches to the
+// merged-mask Q49 layout by default, once at start-up and before any fixture
+// or context is built (configure_resnet20_levels in
+// bootstrap_network_precision.cpp).
+//   entry_q              Q of the ReLU input, i.e. the Boot output (Q31).
+//   conv_merged_masks    a convolution places its output channels with one
+//                        mask level instead of a support mask and a selector,
+//                        so it runs Q8 -> Q6 instead of Q9 -> Q6.
+//   removed_q_prime      index of the saved Q50 prime left out of the chain,
+//                        or -1. With merged masks the convolution's third
+//                        prime (index 8) is unused; removing it gives Q49,
+//                        and every level above Q8 keeps its physical prime.
+int entry_q = 31;
+bool conv_merged_masks = false;
+int removed_q_prime = -1;
+
+// The ReLU consumes 22 Q (three stages and the tail): Q31 -> Q9.
+int relu_output_q() {return entry_q-22;}
+// The convolution ends at the Boot input Q6: one kernel level plus one
+// (merged) or two (support mask + selector) placement levels.
+int conv_input_q() {return 6+(conv_merged_masks?2:3);}
+
+// Removes removed_q_prime from a saved Q prime list.
+template<class T>
+void apply_removed_q_prime(std::vector<T> &q) {
+    if(removed_q_prime<0)return;
+    if(static_cast<std::size_t>(removed_q_prime)>=q.size())
+        throw std::logic_error("removed Q prime is outside the saved chain");
+    q.erase(q.begin()+removed_q_prime);
+}
 
 bool use_relu_zero_copy_moddrop() {
     const char *raw=std::getenv("POSEIDON_RELU_ZERO_COPY_MODDROP");
@@ -138,11 +170,14 @@ SecretKey nonzero_secret(const PoseidonContext &ctx) {
     const auto level = ctx.crt_context()->key_context_data();
     const auto &moduli = level->coeff_modulus();
     const auto n = level->parms().degree();
+    const auto h = ctx.parameters_literal()->hamming_weight();
     RandomToStandardAdapter engine(ctx.random_generator()->create());
-    auto c = benchmark::resnet20_gpu::core::sample_balanced_sparse_secret(n, 192, engine);
+    auto c = benchmark::resnet20_gpu::core::sample_balanced_sparse_secret(n, h, engine);
     struct Wipe { std::vector<std::int8_t> &v;
         ~Wipe() { util::poseidon_memzero(v.data(), v.size()); } } wipe{c};
-    if (std::count(c.begin(), c.end(), 1) != 96 || std::count(c.begin(), c.end(), -1) != 96)
+    const auto positive = std::count(c.begin(), c.end(), 1);
+    const auto negative = std::count(c.begin(), c.end(), -1);
+    if (positive != h / 2 || negative != h / 2)
         throw std::runtime_error("secret support verification failed");
     SecretKey key;
     key.data().resize(ctx, id, n*moduli.size());
@@ -151,7 +186,9 @@ SecretKey nonzero_secret(const PoseidonContext &ctx) {
             key.data().data()[j*n+i] = c[i] < 0 ? moduli[j].value()-1 : c[i];
     util::ntt_negacyclic_harvey(util::RNSIter(key.data().data(), n), moduli.size(), ctx.crt_context()->small_ntt_tables());
     key.parms_id() = id;
-    std::cout << "SECRET h=192 positive=96 negative=96 source=OS_random nonzero=true\n";
+    std::cout << "SECRET h=" << positive + negative
+              << " positive=" << positive << " negative=" << negative
+              << " source=OS_random nonzero=true\n";
     return key;
 }
 
@@ -265,7 +302,7 @@ public:
         if (consumed<0 || consumed>=entry_q || x.meta.q_count < entry_q-consumed)
             throw std::runtime_error("invalid Q alignment");
         ++moddrop_stats.materialized_calls;
-        CT y; eval.drop_modulus(x, y, parameters.get_level_by_q_count(entry_q-consumed).parms_id); return y;
+        CT y; trace_gpu(eval).drop_modulus(x, y, parameters.get_level_by_q_count(entry_q-consumed).parms_id); return y;
     }
     CT drop_owned(CT x, int consumed) {
         if (consumed<0 || consumed>=entry_q || x.meta.q_count < entry_q-consumed)
@@ -273,7 +310,7 @@ public:
         if(!zero_copy_moddrop)return drop(x,consumed);
         const auto target_q=static_cast<std::size_t>(entry_q-consumed);
         moddrop_stats.inplace_discarded_q_limbs+=x.meta.q_count-target_q;
-        eval.drop_modulus_inplace(
+        trace_gpu(eval).drop_modulus_inplace(
             x,parameters.get_level_by_q_count(target_q).parms_id);
         ++moddrop_stats.inplace_calls;
         return x;
@@ -304,9 +341,9 @@ public:
         return scalar_at(value,x.meta.q_count,x.meta.parms_id,scale);
     }
     CT mul(const CT &a, const CT &b) {
-        CT raw,out;eval.multiply(a,b,raw);
+        CT raw,out;trace_gpu(eval).multiply(a,b,raw);
         if(relinearize_callback)relinearize_callback(raw,out);
-        else eval.relinearize(raw,keys,out);
+        else trace_gpu(eval).relinearize(raw,keys,out);
         return out;
     }
     CT mul_q_prefix(const CT &a,const CT &b,int consumed,
@@ -330,10 +367,10 @@ public:
         if(view_a)moddrop_stats.prefix_discarded_q_limbs+=a.meta.q_count-target_q;
         if(view_b)moddrop_stats.prefix_discarded_q_limbs+=b.meta.q_count-target_q;
         CT raw,out;
-        eval.multiply_q_prefix(a,b,raw,
+        trace_gpu(eval).multiply_q_prefix(a,b,raw,
             parameters.get_level_by_q_count(target_q).parms_id);
         if(relinearize_callback)relinearize_callback(raw,out);
-        else eval.relinearize(raw,keys,out);
+        else trace_gpu(eval).relinearize(raw,keys,out);
         return out;
     }
     CT multiply_plain_q_prefix(const CT &source,int consumed,
@@ -348,25 +385,25 @@ public:
         CT product;
         if(!q_prefix_views) {
             auto materialized=drop(source,consumed);
-            eval.multiply_plain(materialized,plain,product);
+            trace_gpu(eval).multiply_plain(materialized,plain,product);
             return product;
         }
         ++moddrop_stats.prefix_multiply_plain_calls;
         ++moddrop_stats.prefix_source_views;
         moddrop_stats.prefix_discarded_q_limbs+=source.meta.q_count-target_q;
-        eval.multiply_plain_q_prefix(source,plain,product);
+        trace_gpu(eval).multiply_plain_q_prefix(source,plain,product);
         return product;
     }
     CT rescale(CT x, int output, double expected) {
         int count = static_cast<int>(x.meta.q_count)-(entry_q-output);
         if (count<0) throw std::runtime_error("negative rescale count");
-        if (count) { CT y; eval.rescale_many(x, y, count); x=std::move(y); }
+        if (count) { CT y; trace_gpu(eval).rescale_many(x, y, count); x=std::move(y); }
         scale_check(x, expected); return x;
     }
     // Only floating-roundoff metadata reconciliation before add/sub; cannot
     // change a physical scale by a meaningful amount to make a test pass.
     void reconcile(const CT &a, CT &b) {
-        scale_check(b, std::log2(a.meta.scale)); b.meta.scale=a.meta.scale;
+        scale_check(b, std::log2(a.meta.scale)); set_trace_scale(eval,b,a.meta.scale);
     }
     std::vector<std::complex<double>> decoded(const CT &x) {
         if(!observe)throw std::logic_error("observer disabled for performance replay");
@@ -423,17 +460,17 @@ public:
             ++moddrop_stats.prefix_source_views;
             moddrop_stats.prefix_discarded_q_limbs+=term.meta.q_count-q;
         }
-        CT out;eval.multiply_plain_sum_q_prefix(terms,plains,out);
+        CT out;trace_gpu(eval).multiply_plain_sum_q_prefix(terms,plains,out);
         ++moddrop_stats.fused_leaf_calls;
         moddrop_stats.fused_leaf_terms+=terms.size();
         moddrop_stats.fused_leaf_adds_removed+=terms.size()-1;
         if(observe) {
             CT reference;
             for(std::size_t i=0;i<terms.size();++i) {
-                CT product;eval.multiply_plain_q_prefix(*terms[i],*plains[i],product);
+                CT product;trace_gpu(eval).multiply_plain_q_prefix(*terms[i],*plains[i],product);
                 if(i==0)reference=std::move(product);
                 else {reconcile(reference,product);CT sum;
-                    eval.add(reference,product,sum);reference=std::move(sum);}
+                    trace_gpu(eval).add(reference,product,sum);reference=std::move(sum);}
             }
             moddrop_stats.exact_leaf_residues+=require_exact_ciphertexts(
                 ctx,out,reference,"ReLU fused leaf");
@@ -451,7 +488,7 @@ public:
                 auto product=multiply_plain_q_prefix(term,n.work,
                     n.coefficients[i],std::exp2(n.pre)/term.meta.scale);
                 if (i==0) out=std::move(product);
-                else { reconcile(out, product); CT sum; eval.add(out,product,sum); out=std::move(sum); }
+                else { reconcile(out, product); CT sum; trace_gpu(eval).add(out,product,sum); out=std::move(sum); }
             }
         } else {
             auto quotient=node(*n.quotient,2*heap+1), remainder=node(*n.remainder,2*heap);
@@ -460,7 +497,7 @@ public:
             auto product=mul_q_prefix(
                 basis.at(n.split),quotient,n.work,true,false);
             reconcile(product,remainder);
-            eval.add(product,remainder,out);
+            trace_gpu(eval).add(product,remainder,out);
         }
         scale_check(out,n.pre); out=rescale(std::move(out),n.output,n.scale);
         if(observe) {
@@ -481,14 +518,14 @@ public:
             moddrop_stats.prefix_discarded_q_limbs+=correction->meta.q_count-product.meta.q_count;
             ++moddrop_stats.fused_basis_products;
         } else ++moddrop_stats.fused_basis_constants;
-        CT out;eval.double_sub_plain_q_prefix(product,plain,out,correction);
+        CT out;trace_gpu(eval).double_sub_plain_q_prefix(product,plain,out,correction);
         ++moddrop_stats.fused_basis_calls;
         if(observe || basis_preparation_checks) {
-            CT twice,reference;eval.add(product,product,twice);
+            CT twice,reference;trace_gpu(eval).add(product,product,twice);
             if(correction) {
-                CT aligned;eval.multiply_plain_q_prefix(*correction,plain,aligned);
-                reconcile(twice,aligned);eval.sub(twice,aligned,reference);
-            } else eval.sub_plain(twice,plain,reference);
+                CT aligned;trace_gpu(eval).multiply_plain_q_prefix(*correction,plain,aligned);
+                reconcile(twice,aligned);trace_gpu(eval).sub(twice,aligned,reference);
+            } else trace_gpu(eval).sub_plain(twice,plain,reference);
             moddrop_stats.exact_basis_residues+=require_exact_ciphertexts(
                 ctx,out,reference,"ReLU basis correction");
             ++moddrop_stats.exact_basis_checks;
@@ -511,15 +548,15 @@ public:
             if(basis_fusion) {
                 corrected=fused_basis_correction(product,diff,b.work);
             } else {
-                CT twice; eval.add(product,product,twice);
+                CT twice; trace_gpu(eval).add(product,product,twice);
                 if (diff==0) {
-                    const auto &p=scalar(1,twice,twice.meta.scale); eval.sub_plain(twice,p,corrected);
+                    const auto &p=scalar(1,twice,twice.meta.scale); trace_gpu(eval).sub_plain(twice,p,corrected);
                 } else {
                     const auto &d=basis.at(diff);
                     auto aligned=multiply_plain_q_prefix(
                         d,b.work,1,twice.meta.scale/d.meta.scale);
                     reconcile(twice,aligned);
-                    eval.sub(twice,aligned,corrected);
+                    trace_gpu(eval).sub(twice,aligned,corrected);
                 }
             }
             scale_check(corrected,b.pre);
@@ -539,7 +576,7 @@ public:
         basis.clear(); return out;
     }
     CT tail(const CT &original, const CT &last, int work, int drops) {
-        CT shifted; const auto &half=scalar(0.5,last,last.meta.scale); eval.add_plain(last,half,shifted);
+        CT shifted; const auto &half=scalar(0.5,last,last.meta.scale); trace_gpu(eval).add_plain(last,half,shifted);
         auto b=drop_owned(std::move(shifted),work);
         return rescale(
             mul_q_prefix(original,b,work,true,false),work+drops,40);

@@ -61,10 +61,29 @@ void launch_forward_ntt_poly_shard_batch_fourstep_65536(
     std::size_t batch_count);
 
 // In-place two-phase forward NTT of `limb_count` contiguous coefficient-form
-// N=65536 limbs whose tables start at `modulus_offset`, relative to the shard
-// tables (each block of phase 1 reads and writes the same coefficients).
+// limbs whose tables start at `modulus_offset` (each block of phase 1 reads
+// and writes the same coefficients).
 void launch_forward_ntt_limbs_inplace_fourstep_65536(
     GpuWord *values,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    const GpuParameterShard &parameter_shard);
+
+// Both components of a ciphertext in one launch per phase (grid.z = 2), for
+// small limb counts where one component alone underfills the GPU.
+// In place, Q tables from index 0 (`limb_count` Q limbs per component).
+void launch_forward_ntt_two_components_inplace_fourstep_65536(
+    GpuWord *values0,
+    GpuWord *values1,
+    std::size_t limb_count,
+    const GpuParameterShard &parameter_shard);
+
+// Out of place; tables start at `modulus_offset` (P limbs: base_q_size).
+void launch_inverse_ntt_two_components_fourstep_65536(
+    GpuWord *destination0,
+    GpuWord *destination1,
+    const GpuWord *source0,
+    const GpuWord *source1,
     std::size_t modulus_offset,
     std::size_t limb_count,
     const GpuParameterShard &parameter_shard);
