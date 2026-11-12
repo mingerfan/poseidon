@@ -5658,6 +5658,42 @@ void drop_to_slot_to_coeff_input(
 
 } // namespace
 
+GpuLinearTransformMode bootstrap_validate_schedule(
+    const GpuCiphertextData &source, const GpuBootstrapData &data)
+{
+    const auto mode = data.allow_environment_linear_transform_override
+        ? gpu_linear_transform_mode_from_environment(data.linear_transform_mode)
+        : data.linear_transform_mode;
+    const bool dh = mode == GpuLinearTransformMode::DoubleHoistBsgs;
+    if (mode == GpuLinearTransformMode::SingleHoistBsgs)
+        throw std::invalid_argument("GpuEvaluator::bootstrap: single_hoist mode is reserved for staged validation; select classic, double_hoist, loose_coupled, or no_hoist");
+    if ((!dh && data.coeff_to_slot_matrix.data().empty()) ||
+        (dh && data.coeff_to_slot_matrix_qp.data().empty()))
+        throw std::invalid_argument("GpuEvaluator::bootstrap: empty CoeffToSlot matrix group");
+    if ((!dh && data.slot_to_coeff_matrix.data().empty()) ||
+        (dh && data.slot_to_coeff_matrix_qp.data().empty()))
+        throw std::invalid_argument("GpuEvaluator::bootstrap: empty SlotToCoeff matrix group");
+    if (data.minus_i_plaintext.empty())
+        throw std::invalid_argument("GpuEvaluator::bootstrap: empty minus-i plaintext");
+    if (data.plus_i_plaintext.empty())
+        throw std::invalid_argument("GpuEvaluator::bootstrap: empty plus-i plaintext");
+    if (!(data.q0_over_message_ratio > 0.0) || !std::isfinite(data.q0_over_message_ratio))
+        throw std::invalid_argument("GpuEvaluator::bootstrap: invalid q0/message ratio");
+    if (data.slot_to_coeff_first &&
+        (source.meta.q_count != data.input_q_count || !(source.meta.scale > 0.0) ||
+         std::abs(std::log2(source.meta.scale / data.input_scale)) > 1e-8 || !dh))
+        throw std::invalid_argument("S2C-first Boot requires its declared input Q/scale and double-hoist mode");
+    // dft variants used to validate the dynamic rescale plan before the first layer.
+    const auto check = [](const auto &group) {
+        if (group.rescale_min_scale() > 0.0 &&
+            group.rescale_counts().size() != group.data().size())
+            throw std::invalid_argument("GpuEvaluator::bootstrap: dynamic rescale plan size mismatch");
+    };
+    if (dh) { check(data.coeff_to_slot_matrix_qp); check(data.slot_to_coeff_matrix_qp); }
+    else { check(data.coeff_to_slot_matrix); check(data.slot_to_coeff_matrix); }
+    return mode;
+}
+
 void GpuEvaluator::bootstrap(
     const GpuCiphertextData &source_ciphertext,
     const GpuBootstrapData &bootstrap_data,
@@ -5932,6 +5968,43 @@ void GpuEvaluator::bootstrap(
             workspace.scratch0);
         destination_ciphertext = std::move(workspace.scratch0);
     }
+}
+
+void GpuEvaluator::bootstrap_raise_stage(
+    const GpuCiphertextData &source, const GpuBootstrapData &data,
+    GpuBootstrapWorkspace &workspace, GpuCiphertextData &destination) const
+{
+    NvtxRange range("ModRaise");
+    if (data.slot_to_coeff_first)
+    {
+        if (source.meta.parms_id != data.q0_parms_id)
+            throw std::runtime_error("S2C-first Boot S2C output level differs from q0");
+        const double multiplier = std::round(data.q0_over_message_ratio / source.meta.scale);
+        if (!std::isfinite(multiplier) || multiplier < 1.0 || multiplier > std::ldexp(1.0, 53))
+            throw std::runtime_error("S2C-first Boot preparation multiplier is outside [1, 2^53]");
+        multiply_scalar(source, static_cast<std::uint64_t>(multiplier), workspace.modraise_input);
+        workspace.modraise_input.meta.scale = source.meta.scale * multiplier;
+    }
+    else
+    {
+        bootstrap_prepare_modraise_input(source, workspace.modraise_input,
+                                        data.q0_parms_id, data.q0_over_message_ratio);
+        if (data.raised_scale_override > 0.0)
+            require_modraise_scale(workspace.modraise_input, data.q0_over_message_ratio,
+                                   "GpuEvaluator::bootstrap");
+    }
+    GpuCiphertextData raised;
+    raise_modulus_encapsulated(*this, workspace.modraise_input, data, workspace, raised);
+    if (data.raised_scale_override > 0.0) raised.meta.scale = data.raised_scale_override;
+    if (data.post_raise_integer_multiplier > 1)
+    {
+        multiply_scalar(raised, data.post_raise_integer_multiplier, destination);
+        destination.meta.scale = raised.meta.scale * data.post_raise_scale_multiplier;
+    }
+    else if (!data.post_raise_plaintext.empty())
+        multiply_plain(raised, data.post_raise_plaintext, destination);
+    else
+        destination = std::move(raised);
 }
 
 void GpuEvaluator::bootstrap_raise(

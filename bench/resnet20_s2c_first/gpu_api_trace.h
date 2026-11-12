@@ -172,6 +172,14 @@ public:
         input_ids_.push_back(id);
         return id;
     }
+    // External inputs are the original resident handles used for replay.
+    // Never let capture overwrite one, even if its metadata stays unchanged:
+    // the replay would otherwise read the captured output instead of the input.
+    void reject_registered_output(const CT &ct) const {
+        for (const auto &input : registered_inputs_)
+            if (input.get() == &ct)
+                throw std::runtime_error("API trace cannot overwrite a registered external input");
+    }
     ValueId input(const CT &ct) const {
         const auto id = ct.api_trace_value_id;
         const auto found = values_.find(id);
@@ -473,7 +481,9 @@ public:
         if (output.is_ciphertext()) output->api_trace_value_id = node.output;
         validate_value(output, descriptors_.at(op.output));
         ++calls_;
-        if (node.opcode == "bootstrap") ++boots_;
+        if (node.opcode == "bootstrap_raise") ++boots_;
+        if (node.opcode == "bootstrap_linear_layer") ++boot_layers_;
+        if (node.opcode == "eval_mod_high_precision") ++boot_eval_mods_;
         if (node.opcode == "rotation_hoist") ++hoists_;
         if (node.opcode == "rotate_from_hoist") ++suffixes_;
         dispatch_order_.push_back(attrs.call_id);
@@ -504,7 +514,7 @@ public:
         execution_thread_ = std::this_thread::get_id();
         execution_stream_ = gpu_execution_stream();
         remaining_ = initial_remaining_;
-        calls_ = boots_ = hoists_ = suffixes_ = 0;
+        calls_ = boots_ = boot_layers_ = boot_eval_mods_ = hoists_ = suffixes_ = 0;
         *stats_ = HoistStats{};
         dispatch_order_.clear();
     }
@@ -523,7 +533,10 @@ public:
         throw std::runtime_error("single-GPU API trace does not support communication");
     }
     std::size_t calls() const { return calls_; }
+    // One raise stage occurs per complete traced Boot.
     std::size_t boot_calls() const { return boots_; }
+    std::size_t boot_layer_calls() const { return boot_layers_; }
+    std::size_t boot_eval_mod_calls() const { return boot_eval_mods_; }
     std::size_t hoist_calls() const { return hoists_; }
     std::size_t rotation_suffix_calls() const { return suffixes_; }
     std::uint64_t peak_hoist_bytes() const { return stats_->peak_bytes; }
@@ -559,7 +572,8 @@ private:
     std::shared_ptr<HoistStats> stats_;
     std::thread::id execution_thread_{};
     cudaStream_t execution_stream_ = nullptr;
-    std::size_t calls_ = 0, boots_ = 0, hoists_ = 0, suffixes_ = 0;
+    std::size_t calls_ = 0, boots_ = 0, boot_layers_ = 0, boot_eval_mods_ = 0,
+        hoists_ = 0, suffixes_ = 0;
     std::vector<std::uint64_t> dispatch_order_;
 };
 

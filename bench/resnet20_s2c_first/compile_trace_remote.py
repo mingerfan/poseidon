@@ -28,10 +28,15 @@ def main():
     deadline = time.monotonic() + args.timeout
     try:
         while True:
-            status = subprocess.run(["ssh", args.server, "test", "-f", quoted + "/trace.mlir.ready"],
-                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+            status = subprocess.run(
+                ["ssh", args.server,
+                 f"if test -f {quoted}/error; then exit 2; "
+                 f"elif test -f {quoted}/trace.mlir.ready; then exit 0; else exit 1; fi"],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
             if status == 0:
                 break
+            if status == 2:
+                raise RuntimeError("remote trace application reported failure before publishing MLIR")
             if time.monotonic() >= deadline:
                 raise TimeoutError("trace.mlir.ready not produced before timeout")
             time.sleep(3)

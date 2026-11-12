@@ -12,11 +12,14 @@
 #include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/gpu_modswitch_handler.h"
 
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace poseidon
@@ -912,6 +915,13 @@ public:
      * to it.
      */
 
+    /** Full scheduler ModRaise, including S2C-first integer preparation and post-raise adjustment. */
+    void bootstrap_raise_stage(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
     /** ModRaise: prepare, raise to the full Q and apply raised_scale_override. */
     void bootstrap_raise(
         const GpuCiphertextData &source_ciphertext,
@@ -1002,6 +1012,128 @@ private:
     };
     std::shared_ptr<RotateScratch> rotate_scratch_ = std::make_shared<RotateScratch>();
 };
+
+// Validate the original bootstrap preconditions before any stage executes.
+GpuLinearTransformMode bootstrap_validate_schedule(
+    const GpuCiphertextData &source, const GpuBootstrapData &data);
+
+/**
+ * Recording schedule mirroring the native bootstrap. Facade has the
+ * GpuEvaluator stage and arithmetic methods, plus set_scale(CT&, double) and
+ * drop_modulus_inplace. Keep this schedule covered by same-key comparisons
+ * against the independent native bootstrap implementation.
+ * Each layer returns owned storage, never a view into mutable workspace.
+ * Calls using one workspace must be serialized, including the EvalMod branches.
+ */
+template<class Facade>
+void bootstrap_schedule(
+    const Facade &ops, const GpuCiphertextData &source,
+    const GpuBootstrapData &data, const GpuRelinKeysData &relin,
+    const GpuGaloisKeysData &galois, GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination)
+{
+    using CT = GpuCiphertextData;
+    const auto mode = bootstrap_validate_schedule(source, data);
+    const bool double_hoist = mode == GpuLinearTransformMode::DoubleHoistBsgs;
+    const auto c2s_count = double_hoist ? data.coeff_to_slot_matrix_qp.data().size()
+                                        : data.coeff_to_slot_matrix.data().size();
+    const auto s2c_count = double_hoist ? data.slot_to_coeff_matrix_qp.data().size()
+                                        : data.slot_to_coeff_matrix.data().size();
+    // Move local results only after their consumers have seen their trace IDs.
+    auto layers = [&](const CT &input, bool c2s, std::size_t count) {
+        CT current;
+        ops.bootstrap_linear_layer(input, data, c2s, 0, galois, workspace, current);
+        for (std::size_t i = 1; i < count; ++i)
+        {
+            CT next;
+            ops.bootstrap_linear_layer(current, data, c2s, i, galois, workspace, next);
+            current = std::move(next);
+        }
+        return current;
+    };
+    CT raised;
+    if (data.slot_to_coeff_first)
+    {
+        CT s2c = layers(source, false, s2c_count);
+        ops.bootstrap_raise_stage(s2c, data, workspace, raised);
+    }
+    else
+    {
+        ops.bootstrap_raise_stage(source, data, workspace, raised);
+    }
+    CT transformed = layers(raised, true, c2s_count);
+    raised = CT{};
+    CT conjugated, real, difference, imag;
+    ops.bootstrap_conjugate(transformed, galois, workspace, conjugated);
+    ops.add(transformed, conjugated, real);
+    ops.sub(transformed, conjugated, difference);
+    transformed = CT{};
+    conjugated = CT{};
+    ops.multiply_plain(difference, data.minus_i_plaintext, imag);
+    difference = CT{};
+    CT eval_real, eval_imag;
+    ops.eval_mod_high_precision(real, data, relin, workspace, eval_real);
+    real = CT{};
+    ops.eval_mod_high_precision(imag, data, relin, workspace, eval_imag);
+    imag = CT{};
+    if (!data.slot_to_coeff_first && data.slot_to_coeff_input_scale > 0.0)
+    {
+        ops.set_scale(eval_real, data.slot_to_coeff_input_scale);
+        ops.set_scale(eval_imag, data.slot_to_coeff_input_scale);
+    }
+    auto drop = [&](CT &value) {
+        if (data.slot_to_coeff_input_q_count == 0 ||
+            value.meta.q_count == data.slot_to_coeff_input_q_count) return;
+        if (value.meta.q_count < data.slot_to_coeff_input_q_count)
+            throw std::runtime_error("GPU bootstrap EvalMod output is below the SlotToCoeff input level");
+        ops.drop_modulus_inplace(value, data.slot_to_coeff_input_parms_id);
+    };
+    drop(eval_real);
+    drop(eval_imag);
+    if (data.slot_to_coeff_first && (!data.project_real || data.output_ratio != 32))
+        throw std::invalid_argument("manual S2C-first Boot requires real projection and ratio 32");
+    CT scaled_imag, merged;
+    ops.multiply_plain(eval_imag, data.plus_i_plaintext, scaled_imag);
+    // The original normal path adds (scaled_imag, real); S2C-first uses the reverse.
+    if (data.slot_to_coeff_first) ops.add(eval_real, scaled_imag, merged);
+    else ops.add(scaled_imag, eval_real, merged);
+    eval_real = CT{};
+    eval_imag = CT{};
+    scaled_imag = CT{};
+    if (data.slot_to_coeff_first)
+    {
+        CT scaled, projected, result;
+        ops.multiply_scalar(merged, 16, scaled);
+        ops.bootstrap_conjugate(scaled, galois, workspace, projected);
+        ops.add(scaled, projected, result);
+        const double scale = result.meta.scale * data.output_scale_multiplier;
+        if (std::abs(std::log2(scale / data.slot_to_coeff_output_scale)) > 1e-8)
+            throw std::runtime_error("manual S2C-first Boot output scale disagrees with its coefficient fold");
+        ops.set_scale(result, data.slot_to_coeff_output_scale);
+        destination = std::move(result);
+        return;
+    }
+    CT result = layers(merged, false, s2c_count);
+    if (data.slot_to_coeff_output_scale > 0.0)
+        ops.set_scale(result, data.slot_to_coeff_output_scale);
+    if (data.project_real)
+    {
+        CT projected, sum;
+        ops.bootstrap_conjugate(result, galois, workspace, projected);
+        ops.add(result, projected, sum);
+        result = std::move(sum);
+    }
+    if (data.output_ratio == 0 || (data.project_real && (data.output_ratio & 1U)))
+        throw std::invalid_argument("GpuEvaluator::bootstrap: invalid output ratio");
+    const auto ratio = data.project_real ? data.output_ratio / 2 : data.output_ratio;
+    if (ratio > 1)
+    {
+        CT normalized;
+        ops.multiply_scalar(result, ratio, normalized);
+        result = std::move(normalized);
+    }
+    destination = std::move(result);
+}
 
 }  // namespace gpu
 }  // namespace poseidon

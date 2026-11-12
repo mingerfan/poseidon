@@ -35,13 +35,18 @@ CUDA_VISIBLE_DEVICES=0 POSEIDON_S2C_CUPTI=0 /tmp/poseidon_resnet20_s2c_first \
 - `rotate_many_hoisted` 录为一次 `rotation_hoist` 和每个旋转各一条
   `rotate_from_hoist`。前者产生独立只读 Buffer（含 Q/P/dnum/布局和分配字节），
   后者同时消费原密文与 Buffer；原有 Galois、key乘加和 ModDown 内核保留。
-- 完整 native Boot 以一条 `ckks.apicall` 保留，绑定已准备的 Boot profile，
-  不展开 Boot，也不重新规划 scale、rescale 或 Boot 位置。
+- native Boot 按实际执行顺序展开为每个 S2C/C2S 线性层、ModRaise、两路 EvalMod
+  和实虚拆分/重构算术等 `ckks.apicall`。线性层保留内部 double-hoist 和融合内核，
+  EvalMod 仍是单独的完整 API；每一步使用同一份已准备的 profile，不重新规划
+  scale、rescale 或 Boot 位置。手写默认 S2C-first profile 每个 Boot 有 6 个线性层。
 - 编译器执行单卡 HEFT placement、通信物化、内存生命周期规划；V8 RuntimePlan
   把 Hoist Buffer 作为一等值，在最后一个消费者之后 Release。ApiCall 不启用输入复用。
 - runtime `SequentialRuntime<TracedPlanApi>` 对计划逐条 dispatch 到原 GPU API，
   绝不把准备阶段或 Boot 替换成解密/重加密。单 rank、单卡、单流；不支持将 Hoist
-  Buffer 跨设备搬运，也未测试并行 stream。
+  Buffer 跨设备搬运，也未测试并行 stream。该拆分用于本进程的 API Trace，通用
+  `PoseidonGpuApi` 的 native Boot 仍是独立接口。
+- 已注册的外部输入是回放时使用的同一份 GPU 密文，必须保持不变；Trace 禁止将
+  GPU API 的输出写回注册输入。需要原位操作时，先通过受追踪 API 生成中间值。
 - 密钥、常量及 Boot 内部 workspace 仍为进程内常驻资源，**不在编译器图值内存报告中**；
   报告不是完整进程显存上界。计划与该次 trace 的本进程资源绑定，不能作为其他
   密钥/模型进程的通用可移植程序。
@@ -76,13 +81,14 @@ python3 bench/resnet20_s2c_first/compile_trace_remote.py 188Server \
 ```
 
 最终 `API_TRACE_RESULT` 报告相同输入及密钥下手写/trace/计划的精确 RNS 对照、
-Boot 和 Hoist 数及 Hoist 实际释放统计。开启 CUPTI 时还检查在线 H2D/D2H；
+Boot ModRaise、线性层、EvalMod 和 Hoist 数及 Hoist 实际释放统计。开启 CUPTI 时还检查在线 H2D/D2H；
 最终解密在计时之后，仅检查前10个 logits 与参考预测，不代表全槽或数据集精度。
 离线编译和准备时间不属于在线执行时间。
 
 ## 测试
 
 ```bash
+ctest --test-dir build-runtime-gpu-api-release -R '^poseidon_gpu_bootstrap_trace_e2e$' --output-on-failure
 ctest --test-dir third_party/ckks-runtime/build-api-trace --output-on-failure
 ctest --test-dir third_party/ckks-runtime/third_party/dacapo/build/trace --output-on-failure
 CUDA_VISIBLE_DEVICES=0 build/bin/test_gpu_split_hoist --extended

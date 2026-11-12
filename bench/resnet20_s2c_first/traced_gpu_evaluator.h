@@ -203,17 +203,62 @@ public:
     }
     void bootstrap(const CT &a, const GpuBootstrapData &data, const GpuRelinKeysData &relin,
         const GpuGaloisKeysData &galois, GpuBootstrapWorkspace &workspace, CT &out) const {
-        const auto *e = eval_; const auto *d = &data; const auto *r = &relin;
-        const auto *g = &galois; auto *w = &workspace;
-        capture("bootstrap", {&a}, {{"boot_data", d}, {"relin", r}, {"galois", g}, {"boot_workspace", w}}, "", out,
-            [e, d, r, g, w](const std::vector<Value> &v, CT) {
-                CT result; e->bootstrap(*v[0], *d, *r, *g, *w, result); return Value(std::move(result));
-            }, [&] { e->bootstrap(a, data, relin, galois, workspace, out); });
+        if (!active_api_trace_recorder) {
+            eval_->bootstrap(a, data, relin, galois, workspace, out);
+            return;
+        }
+        active_api_trace_recorder->reject_registered_output(out);
+        bootstrap_schedule(*this, a, data, relin, galois, workspace, out);
     }
 
-    // Old diagnostic/expanded-Boot entry points still compile and behave
-    // identically outside tracing. Online capture intentionally admits only
-    // native bootstrap as one atomic API, never a synthetic expanded fallback.
+    // Individual Boot stages are captured with the same immutable resident
+    // profile and keys as the native scheduler. Each output is an independent
+    // SSA ciphertext, not a view into the reusable Boot workspace.
+    void bootstrap_raise_stage(const CT &a, const GpuBootstrapData &data,
+        GpuBootstrapWorkspace &workspace, CT &out) const {
+        const auto *e = eval_; const auto *d = &data; auto *w = &workspace;
+        capture("bootstrap_raise", {&a}, {{"boot_data", d}, {"boot_workspace", w}}, "", out,
+            [e, d, w](const std::vector<Value> &v, CT) {
+                CT result; e->bootstrap_raise_stage(*v[0], *d, *w, result); return Value(std::move(result));
+            }, [&] { e->bootstrap_raise_stage(a, data, workspace, out); });
+    }
+    void bootstrap_linear_layer(const CT &a, const GpuBootstrapData &data,
+        bool coeff_to_slot, std::size_t layer, const GpuGaloisKeysData &keys,
+        GpuBootstrapWorkspace &workspace, CT &out) const {
+        const auto *e = eval_; const auto *d = &data; const auto *k = &keys; auto *w = &workspace;
+        capture("bootstrap_linear_layer", {&a}, {{"boot_data", d}, {"galois", k}, {"boot_workspace", w}},
+            ".cts" + std::to_string(coeff_to_slot) + ".layer" + std::to_string(layer), out,
+            [e, d, k, w, coeff_to_slot, layer](const std::vector<Value> &v, CT) {
+                CT result; e->bootstrap_linear_layer(*v[0], *d, coeff_to_slot, layer, *k, *w, result);
+                return Value(std::move(result));
+            }, [&] { e->bootstrap_linear_layer(a, data, coeff_to_slot, layer, keys, workspace, out); });
+    }
+    void eval_mod_high_precision(const CT &a, const GpuBootstrapData &data,
+        const GpuRelinKeysData &keys, GpuBootstrapWorkspace &workspace, CT &out) const {
+        const auto *e = eval_; const auto *d = &data; const auto *k = &keys; auto *w = &workspace;
+        capture("eval_mod_high_precision", {&a}, {{"boot_data", d}, {"relin", k}, {"boot_workspace", w}}, "", out,
+            [e, d, k, w](const std::vector<Value> &v, CT) {
+                CT result; e->eval_mod_high_precision(*v[0], *d, *k, *w, result);
+                return Value(std::move(result));
+            }, [&] { e->eval_mod_high_precision(a, data, keys, workspace, out); });
+    }
+    void bootstrap_conjugate(const CT &a, const GpuGaloisKeysData &keys,
+        GpuBootstrapWorkspace &workspace, CT &out) const {
+        const auto *e = eval_; const auto *k = &keys; auto *w = &workspace;
+        capture("bootstrap_conjugate", {&a}, {{"galois", k}, {"boot_workspace", w}}, "", out,
+            [e, k, w](const std::vector<Value> &v, CT) {
+                CT result; e->bootstrap_conjugate(*v[0], *k, *w, result); return Value(std::move(result));
+            }, [&] { e->bootstrap_conjugate(a, keys, workspace, out); });
+    }
+    void multiply_scalar(const CT &a, std::uint64_t scalar, CT &out) const {
+        const auto *e = eval_;
+        capture("multiply_scalar", {&a}, {}, ".scalar" + std::to_string(scalar), out,
+            [e, scalar](const std::vector<Value> &v, CT) {
+                CT result; e->multiply_scalar(*v[0], scalar, result); return Value(std::move(result));
+            }, [&] { e->multiply_scalar(a, scalar, out); });
+    }
+    // Other diagnostic/expanded-Boot entry points remain unsupported while
+    // tracing until they have an explicit SSA and resource contract.
 #define POSEIDON_TRACE_LEGACY(NAME) \
     template<class... Args> decltype(auto) NAME(Args &&...args) const { \
         reject_legacy(#NAME); return eval_->NAME(std::forward<Args>(args)...); \
@@ -225,15 +270,10 @@ public:
     POSEIDON_TRACE_LEGACY(coeff_to_slot_loose)
     POSEIDON_TRACE_LEGACY(coeff_to_slot_double_hoist)
     POSEIDON_TRACE_LEGACY(raise_modulus)
-    POSEIDON_TRACE_LEGACY(eval_mod_high_precision)
     POSEIDON_TRACE_LEGACY(conjugate)
     POSEIDON_TRACE_LEGACY(conjugate_pre_rotated)
-    POSEIDON_TRACE_LEGACY(multiply_scalar)
     POSEIDON_TRACE_LEGACY(bootstrap_prepare_modraise_input)
-    POSEIDON_TRACE_LEGACY(bootstrap_raise)
-    POSEIDON_TRACE_LEGACY(bootstrap_linear_layer)
     POSEIDON_TRACE_LEGACY(bootstrap_bsgs_group)
-    POSEIDON_TRACE_LEGACY(bootstrap_conjugate)
     POSEIDON_TRACE_LEGACY(bootstrap_set_scale)
     POSEIDON_TRACE_LEGACY(multiply_plain_q_view)
     POSEIDON_TRACE_LEGACY(multiply_by_diag_matrix_bsgs)
@@ -264,6 +304,7 @@ private:
         CT &out, Replay replay, Run run, bool mutates_first = false) const {
         auto *recorder = active_api_trace_recorder;
         if (!recorder) { run(); return; }
+        recorder->reject_registered_output(out); // before any aliased/in-place write
         auto dependencies = recorder->inputs(sources); // before any aliased/in-place write
         auto callee = recorder->signature(opcode, eval_, resources, parameters);
         const auto start = Clock::now();

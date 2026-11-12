@@ -1140,13 +1140,16 @@ public:
             if(decoded[i].real()>decoded[prediction].real())prediction=int(i);
             if(fixture.reference_logits[i]>fixture.reference_logits[reference_prediction])reference_prediction=int(i);
         }
-        if(api.boot_calls()!=18 || api.hoist_calls()==0 || api.rotation_suffix_calls()<=api.hoist_calls() ||
+        if(api.boot_calls()!=18 || api.boot_layer_calls()!=18*6 || api.boot_eval_mod_calls()!=18*2 ||
+            api.hoist_calls()==0 || api.rotation_suffix_calls()<=api.hoist_calls() ||
             api.live_hoist_bytes()!=0 || api.hoist_releases()!=api.hoist_calls())
-            throw std::runtime_error("API trace Boot/hoist dispatch or hoisted-buffer lifecycle mismatch");
+            throw std::runtime_error("API trace Boot stages/hoist dispatch or hoisted-buffer lifecycle mismatch");
         const bool pass=std::isfinite(error) && error<=0.1 && prediction==reference_prediction;
         std::cout<<"API_TRACE_RESULT accuracy="<<(pass?"PASS":"FAIL")
             <<" exact_rns=true exact_residues="<<residues<<" trace_exact_residues="<<trace_residues
-            <<" calls="<<api.calls()<<" bootstraps="<<api.boot_calls()<<" hoists="<<api.hoist_calls()
+            <<" calls="<<api.calls()<<" bootstraps="<<api.boot_calls()
+            <<" boot_layers="<<api.boot_layer_calls()<<" boot_eval_mods="<<api.boot_eval_mod_calls()
+            <<" hoists="<<api.hoist_calls()
             <<" rotation_suffixes="<<api.rotation_suffix_calls()<<" hoist_releases="<<api.hoist_releases()
             <<" hoist_peak_bytes="<<api.peak_hoist_bytes()<<" hoist_live_bytes="<<api.live_hoist_bytes()
             <<" runtime_compute_calls="<<artifact.timing.compute_calls

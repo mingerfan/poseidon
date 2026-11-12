@@ -169,6 +169,12 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
             "POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS requires "
             "POSEIDON_BUILD_CKKS_RUNTIME_TESTS=ON")
     endif()
+    add_executable(poseidon_gpu_bootstrap_trace_e2e
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_bootstrap_trace_e2e.cpp)
+    target_link_libraries(poseidon_gpu_bootstrap_trace_e2e PRIVATE poseidon_runtime_gpu_api)
+    add_test(NAME poseidon_gpu_bootstrap_trace_e2e COMMAND poseidon_gpu_bootstrap_trace_e2e)
+    set_tests_properties(poseidon_gpu_bootstrap_trace_e2e PROPERTIES SKIP_RETURN_CODE 77 TIMEOUT 1800)
+
     add_executable(poseidon_gpu_boot_optimization_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_boot_optimizations_test.cpp)
     target_link_libraries(poseidon_gpu_boot_optimization_tests PRIVATE poseidon_runtime_gpu_api)
