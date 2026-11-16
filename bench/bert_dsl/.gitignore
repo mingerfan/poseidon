@@ -1,0 +1,27 @@
+# Private experiments, copied source snapshots and per-window orchestration.
+# Retain local files; publish only maintained code and small result summaries.
+/cerium_full12/
+/cerium_full12_validation/
+/qp_startup/
+/public_rns_cache/
+/test-results/
+/test_gpu_admission.py
+/full_inference/*
+!/full_inference/RESULTS.md
+/full_inference_packed/*
+!/full_inference_packed/RESULTS.md
+/full_inference_v6/*
+!/full_inference_v6/GPU_RESULTS.md
+/packing_validation/*
+!/packing_validation/DIAGNOSTIC_RESULTS.md
+/multi_plan_validation/*
+!/multi_plan_validation/GPU_RESULTS.md
+/v4_validation/*
+!/v4_validation/GPU_RESULTS.md
+/v6_validation/*
+!/v6_validation/GPU_RESULTS.md
+/unoptimized/*
+!/unoptimized/README.md
+*.tar.gz
+*.tar.xz
+*.zip
