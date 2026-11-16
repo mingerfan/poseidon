@@ -14,6 +14,8 @@
 #include <cuda_runtime_api.h>
 
 #include <algorithm>
+#include <chrono>
+#include <cstdio>
 #include <cmath>
 #include <cstdlib>
 #include <complex>
@@ -31,6 +33,29 @@ namespace gpu
 {
 namespace
 {
+
+class KeyloadPhaseTimer
+{
+    using Clock = std::chrono::steady_clock;
+    bool enabled_ = false;
+    Clock::time_point previous_;
+public:
+    KeyloadPhaseTimer()
+    {
+        const auto *setting = std::getenv("POSEIDON_GPU_KEYLOAD_TRACE");
+        enabled_ = setting != nullptr && std::string(setting) == "1";
+        if (enabled_) previous_ = Clock::now();
+    }
+    void mark(const char *phase)
+    {
+        if (!enabled_) return;
+        const auto now = Clock::now();
+        std::fprintf(stderr, "BOOT_SETUP_PHASE {\"phase\":\"%s\",\"wall_s\":%.9f}\n",
+            phase, std::chrono::duration<double>(now - previous_).count());
+        std::fflush(stderr);
+        previous_ = Clock::now();
+    }
+};
 
 std::uint32_t log2_power_of_two(std::uint32_t value, const char *name)
 {
@@ -939,6 +964,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     const PoseidonContext &context, KeyGenerator &key_generator, int cuda_device_id,
     const GpuResNet20ManualOptions &options)
 {
+    KeyloadPhaseTimer phase_timer;
     const auto parameters = context.parameters_literal();
     // The saved Q50 chain, or Q49 when the application leaves out one of the
     // convolution primes below the Boot (its merged-mask convolution uses two
@@ -962,6 +988,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
                            options.k, 0, options.sine_degree);
     if (options.full_coefficients)
         polynomial.enable_full_cosine_coefficients();
+    phase_timer.mark("encoder_and_polynomial_cpu");
     GpuBootstrapProfileConfig config;
     const double c2s_scaling = polynomial.q_div() /
         (polynomial.k() * polynomial.sc_fac() * polynomial.q_diff());
@@ -971,6 +998,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
         config, working_scale, working_scale);
     auto s2c = make_slot_to_coeff_matrix_group(context, encoder, 5, 1.0,
         config, application_scale, working_scale);
+    phase_timer.mark("dft_matrices_cpu");
     const std::vector<std::uint32_t> expected_drops{1, 1, 2};
     if (dft_stage_rescale_counts(c2s) != expected_drops ||
         dft_stage_rescale_counts(s2c) != expected_drops)
@@ -1000,10 +1028,13 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     Polynomial coefficients = polynomial.sine_poly();
     for (auto &coefficient : coefficients.data()) coefficient *= seed;
 
+    phase_timer.mark("evalmod_metadata_and_fold_cpu");
     RelinKeys cpu_relin;
     key_generator.create_relin_keys(cpu_relin);
+    phase_timer.mark("relin_keygen_cpu");
     auto relin = std::make_shared<GpuRelinKeysData>(
         GpuUploader::upload_relin_keys(cpu_relin, cuda_device_id));
+    phase_timer.mark("relin_upload");
     auto eval_mod = GpuUploader::upload_eval_mod_high_precision(
         polynomial, encoder, c2s_id, cuda_device_id, relin.get(), parms_id_zero, 1,
         &coefficients, true, std::numeric_limits<std::uint32_t>::max(),
@@ -1011,9 +1042,12 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     if (eval_mod.output_q_count != native.output_q_count ||
         std::abs(eval_mod.output_scale / native.output_scale - 1) > 1e-12)
         throw std::runtime_error("manual ResNet20 output fold changed the Q/scale schedule");
+    phase_timer.mark("evalmod_constants_encode_and_upload");
     auto cpu_rotations = make_galois_keys(context, key_generator, c2s, s2c);
+    phase_timer.mark("galois_keygen_cpu");
     auto rotations = std::make_shared<GpuGaloisKeysData>(
         GpuUploader::upload_double_hoist_galois_keys(cpu_rotations, cuda_device_id));
+    phase_timer.mark("galois_upload_and_inverse_prerotation");
     GpuUploader::prepare_key_views_for_q_counts(*rotations,
         merge_q_counts(required_dft_key_q_counts(full_q, c2s, true),
             merge_q_counts(required_dft_key_q_counts(6, s2c, false), {output_q})));
@@ -1032,10 +1066,13 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
     data.project_real = true;
     data.output_ratio = 32;
     data.eval_mod = std::move(eval_mod);
+    phase_timer.mark("key_views_and_metadata");
     data.coeff_to_slot_matrix_qp = GpuUploader::upload_linear_matrix_group_qp(
         c2s, context, cuda_device_id, 1, true);
+    phase_timer.mark("c2s_qp_diagonals_pack_and_upload");
     data.slot_to_coeff_matrix_qp = GpuUploader::upload_linear_matrix_group_qp(
         s2c, context, cuda_device_id, 1, true);
+    phase_timer.mark("s2c_qp_diagonals_pack_and_upload");
     // Pointer tables only, over the compressed diagonals: what an expanded
     // Boot's bsgs_group steps run.
     for (const auto &matrix : data.coeff_to_slot_matrix_qp.data())
@@ -1104,6 +1141,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build_resnet20_manual(
             galois_by_level, data.eval_mod.required_relin_q_counts, *rotations, *relin,
             result.level_parameters);
     }
+    phase_timer.mark("remaining_constants_and_optional_special_modulus");
     result.profile_id = "poseidon-resnet20-manual-q" + std::to_string(full_q) + "-scale40";
     result.cuda_device_id = cuda_device_id;
     result.input_level_min = result.input_level_max = 5;

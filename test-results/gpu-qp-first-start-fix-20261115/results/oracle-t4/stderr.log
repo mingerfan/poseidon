@@ -1,0 +1,17 @@
+context_s=5.32323
+BOOT_SETUP_PHASE {"phase":"encoder_and_polynomial_cpu","wall_s":0.069722206}
+BOOT_SETUP_PHASE {"phase":"dft_matrices_cpu","wall_s":16.252873927}
+BOOT_SETUP_PHASE {"phase":"evalmod_metadata_and_fold_cpu","wall_s":0.001295670}
+BOOT_SETUP_PHASE {"phase":"relin_keygen_cpu","wall_s":0.891361060}
+KEYUPLOAD_PROFILE {"keys":1,"digits":2,"shards":4,"h2d_bytes":78643200,"packing_s":0.032597552,"copy_and_wait_s":0.007521462,"total_s":0.041306245}
+BOOT_SETUP_PHASE {"phase":"relin_upload","wall_s":0.041837785}
+BOOT_SETUP_PHASE {"phase":"evalmod_constants_encode_and_upload","wall_s":9.351698866}
+BOOT_SETUP_PHASE {"phase":"galois_keygen_cpu","wall_s":31.992781009}
+KEYUPLOAD_PROFILE {"keys":39,"digits":78,"shards":156,"h2d_bytes":3067084800,"packing_s":1.269807949,"copy_and_wait_s":0.297967280,"total_s":1.907252705}
+BOOT_SETUP_PHASE {"phase":"galois_upload_and_inverse_prerotation","wall_s":1.921452211}
+BOOT_SETUP_PHASE {"phase":"key_views_and_metadata","wall_s":0.000219940}
+QP_UPLOAD_PROFILE {"diagonals":158,"full_equivalent_u32_bytes":3056861184,"uploaded_bytes":668514048,"exact_host_s":230.511625395,"period_search_s":0.963013439,"compact_pack_s":0.271450810,"h2d_and_wait_s":1.320328303,"readback_and_check_s":0.210099391,"fast_plaintexts":158,"full_crt_plaintexts":0,"reference_verified_plaintexts":158,"worker_limit":4,"host_timings_are_task_sums":true}
+BOOT_SETUP_PHASE {"phase":"c2s_qp_diagonals_pack_and_upload","wall_s":63.159706029}
+QP_UPLOAD_PROFILE {"diagonals":158,"full_equivalent_u32_bytes":1250689024,"uploaded_bytes":259252480,"exact_host_s":23.686484575,"period_search_s":0.403414256,"compact_pack_s":0.129442922,"h2d_and_wait_s":0.159661074,"readback_and_check_s":0.089466178,"fast_plaintexts":158,"full_crt_plaintexts":0,"reference_verified_plaintexts":158,"worker_limit":4,"host_timings_are_task_sums":true}
+BOOT_SETUP_PHASE {"phase":"s2c_qp_diagonals_pack_and_upload","wall_s":6.428366456}
+BOOT_SETUP_PHASE {"phase":"remaining_constants_and_optional_special_modulus","wall_s":0.146139654}

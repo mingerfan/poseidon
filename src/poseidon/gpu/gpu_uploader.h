@@ -53,9 +53,13 @@ public:
     /**
      * @brief Upload an NTT-form CPU plaintext with its exact Q->P extension.
      *
-     * The signed coefficient integer is composed once on the host and reduced
-     * into every special prime, so a QP plaintext MAC followed by one ModDown
-     * equals the Q-only product (one [Q|P] allocation, q limbs first).
+     * The exact centered coefficient integer is reduced into every special
+     * prime, so delayed ModDown preserves the Q-only product. Small-integer
+     * reconstruction is accepted only after checking every Q residue; otherwise
+     * full CRT is used. Canonical Q NTT residues are retained without re-NTT.
+     * POSEIDON_GPU_QP_PREPARE=reference selects the original full-CRT oracle;
+     * POSEIDON_GPU_QP_VERIFY_REFERENCE=1 additionally compares all Q/P words
+     * during optimized preparation (expensive; not for latency measurements).
      */
     static GpuPlaintextData upload_plaintext_qp_exact(
         const Plaintext &src,
@@ -142,6 +146,16 @@ public:
     /**
      * Upload a linear matrix group with exact Q->P extended diagonals and a
      * compact immutable BSGS plan for double hoisting.
+     *
+     * Compressed diagonals use bounded CPU-only async preparation. All device
+     * allocation, upload, exact compact readback and pointer-table assembly stay
+     * on the calling thread to preserve its stream/resource override. Set
+     * POSEIDON_GPU_QP_PREPARE_THREADS (1..64) chooses concurrency; default is
+     * at most four. Affinity and cgroup-v2 root quota caps are best effort,
+     * not a cross-process CPU or memory guarantee. Background worker slots are
+     * shared process-wide; callers fall back to their own thread if slots are
+     * busy or thread creation fails. The reference mode remains serial. No
+     * disk cache or reused secret key is required.
      */
     static GpuLinearMatrixGroupQP upload_linear_matrix_group_qp(
         const LinearMatrixGroup &src,

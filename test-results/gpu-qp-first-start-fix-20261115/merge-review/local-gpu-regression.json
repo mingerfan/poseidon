@@ -1,0 +1,27 @@
+{
+  "date_utc": "2026-11-16T08:55:29.022465+00:00",
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "gpu_uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914",
+  "gpu_executed": true,
+  "configurations": 24,
+  "cases": 264,
+  "caller_nondefault_stream": true,
+  "thread_failure_injection": {
+    "injected_failures": 17,
+    "serial_fallbacks": 17,
+    "later_async_launches": 660
+  },
+  "additional_cases": [
+    "two concurrent QP callers with independent nondefault streams; overlap not asserted",
+    "wide lazy [2q,4q) with full-CRT oracle verification enabled",
+    "last coefficient / last-Q-limb alias fallback"
+  ],
+  "online_bootstrapping_executed": false,
+  "source_sha256": {
+    "src/poseidon/gpu/gpu_uploader.cpp": "2cdd1718cfc6ba3fd84e33e0f90998b9b74759e0ed2392c5fc656ac5d5171196",
+    "src/poseidon/gpu/gpu_uploader.h": "f99a49515ec950ba14465f4d7895f0ede03de4b4c6ee0e3e53a71b277bd95284",
+    "bench/qp_prepare/main.cpp": "abe2e9d4a86a9c47d002fadf5da9c7b2731b8fe234f3ad7fcc4b4999d770e9cc",
+    "bench/qp_prepare/check_failure_trace.py": "cb53e161bfa9190600dab671d954640926b79b506ba75aa472f405d78f7396b9"
+  },
+  "runtime_notes": "OMP_NUM_THREADS=1; optimized 1/4 workers; Release build POSEIDON_USE_OPENMP=ON; genuine exact GPU memory comparison; no online GPU kernels claimed"
+}

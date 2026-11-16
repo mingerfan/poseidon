@@ -1,0 +1,25 @@
+PASS GPU exact N=1024 Q=1 P=2 bits=28
+PASS GPU exact N=1024 Q=2 P=2 bits=28
+PASS GPU exact N=1024 Q=4 P=2 bits=28
+PASS GPU exact N=1024 Q=1 P=3 bits=30
+PASS GPU exact N=1024 Q=2 P=3 bits=30
+PASS GPU exact N=1024 Q=4 P=3 bits=30
+PASS GPU exact N=1024 Q=1 P=2 bits=32
+PASS GPU exact N=1024 Q=2 P=2 bits=32
+PASS GPU exact N=1024 Q=4 P=2 bits=32
+PASS GPU exact N=1024 Q=1 P=3 bits=0
+PASS GPU exact N=1024 Q=2 P=3 bits=0
+PASS GPU exact N=1024 Q=4 P=3 bits=0
+PASS GPU exact N=4096 Q=1 P=2 bits=28
+PASS GPU exact N=4096 Q=2 P=2 bits=28
+PASS GPU exact N=4096 Q=4 P=2 bits=28
+PASS GPU exact N=4096 Q=1 P=3 bits=30
+PASS GPU exact N=4096 Q=2 P=3 bits=30
+PASS GPU exact N=4096 Q=4 P=3 bits=30
+PASS GPU exact N=4096 Q=1 P=2 bits=32
+PASS GPU exact N=4096 Q=2 P=2 bits=32
+PASS GPU exact N=4096 Q=4 P=2 bits=32
+PASS GPU exact N=4096 Q=1 P=3 bits=0
+PASS GPU exact N=4096 Q=2 P=3 bits=0
+PASS GPU exact N=4096 Q=4 P=3 bits=0
+PASS configurations=24 cases=264 gpu_executed=true caller_nondefault_stream=true

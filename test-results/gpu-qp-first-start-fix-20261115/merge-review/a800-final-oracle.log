@@ -1,0 +1,17 @@
+context_s=5.31466
+BOOT_SETUP_PHASE {"phase":"encoder_and_polynomial_cpu","wall_s":0.069417866}
+BOOT_SETUP_PHASE {"phase":"dft_matrices_cpu","wall_s":16.176933615}
+BOOT_SETUP_PHASE {"phase":"evalmod_metadata_and_fold_cpu","wall_s":0.001089371}
+BOOT_SETUP_PHASE {"phase":"relin_keygen_cpu","wall_s":0.888114718}
+KEYUPLOAD_PROFILE {"keys":1,"digits":2,"shards":4,"h2d_bytes":78643200,"packing_s":0.032682032,"copy_and_wait_s":0.007704443,"total_s":0.041570976}
+BOOT_SETUP_PHASE {"phase":"relin_upload","wall_s":0.042070876}
+BOOT_SETUP_PHASE {"phase":"evalmod_constants_encode_and_upload","wall_s":9.396428542}
+BOOT_SETUP_PHASE {"phase":"galois_keygen_cpu","wall_s":32.250303068}
+KEYUPLOAD_PROFILE {"keys":39,"digits":78,"shards":156,"h2d_bytes":3067084800,"packing_s":1.829779185,"copy_and_wait_s":0.302724509,"total_s":2.546825791}
+BOOT_SETUP_PHASE {"phase":"galois_upload_and_inverse_prerotation","wall_s":2.566938019}
+BOOT_SETUP_PHASE {"phase":"key_views_and_metadata","wall_s":0.002068090}
+QP_UPLOAD_PROFILE {"diagonals":158,"full_equivalent_u32_bytes":3056861184,"uploaded_bytes":668514048,"exact_host_s":235.183731859,"period_search_s":1.011986944,"compact_pack_s":0.527416767,"h2d_and_wait_s":0.565721743,"readback_and_check_s":0.206426369,"fast_plaintexts":158,"full_crt_plaintexts":0,"reference_verified_plaintexts":158,"worker_limit":4,"async_launched":158,"serial_fallbacks":0,"async_launch_failures":0,"host_timings_are_task_sums":true}
+BOOT_SETUP_PHASE {"phase":"c2s_qp_diagonals_pack_and_upload","wall_s":64.216637592}
+QP_UPLOAD_PROFILE {"diagonals":158,"full_equivalent_u32_bytes":1250689024,"uploaded_bytes":259252480,"exact_host_s":23.712206538,"period_search_s":0.427564149,"compact_pack_s":0.171052885,"h2d_and_wait_s":0.293335336,"readback_and_check_s":0.079925290,"fast_plaintexts":158,"full_crt_plaintexts":0,"reference_verified_plaintexts":158,"worker_limit":4,"async_launched":158,"serial_fallbacks":0,"async_launch_failures":0,"host_timings_are_task_sums":true}
+BOOT_SETUP_PHASE {"phase":"s2c_qp_diagonals_pack_and_upload","wall_s":6.523829814}
+BOOT_SETUP_PHASE {"phase":"remaining_constants_and_optional_special_modulus","wall_s":0.148019124}

@@ -17,12 +17,23 @@
 #include "poseidon/util/rns_tool_qp.h"
 
 #include <algorithm>
+#include <atomic>
+#include <bit>
+#include <chrono>
+#include <cstdio>
 #include <cmath>
 #include <complex>
 #include <cstdlib>
 #include <cuda_runtime_api.h>
 #include <cstdint>
 #include <functional>
+#include <future>
+#include <deque>
+#include <fstream>
+#include <thread>
+#ifdef __linux__
+#include <sched.h>
+#endif
 #include <limits>
 #include <map>
 #include <memory>
@@ -47,6 +58,86 @@ std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
     }
     return a * b;
 }
+
+// Opt-in diagnostic only: no key material is logged. Ordinary uploads retain
+// their original packing, allocation and synchronization behavior.
+struct KeyUploadProfile;
+thread_local KeyUploadProfile *active_key_upload_profile = nullptr;
+
+struct KeyUploadProfile
+{
+    using Clock = std::chrono::steady_clock;
+    bool enabled = false;
+    KeyUploadProfile *previous = nullptr;
+    Clock::time_point start;
+    double packing_s = 0.0;
+    double copy_and_wait_s = 0.0;
+    std::size_t bytes = 0;
+    std::size_t shards = 0;
+    std::size_t digits = 0;
+    std::size_t keys = 0;
+
+    KeyUploadProfile()
+    {
+        const char *setting = std::getenv("POSEIDON_GPU_KEYLOAD_TRACE");
+        enabled = setting != nullptr && std::string(setting) == "1";
+        if (enabled)
+        {
+            previous = active_key_upload_profile;
+            active_key_upload_profile = this;
+            start = Clock::now();
+        }
+    }
+    ~KeyUploadProfile()
+    {
+        if (!enabled) return;
+        active_key_upload_profile = previous;
+        const double total_s = std::chrono::duration<double>(Clock::now() - start).count();
+        std::fprintf(stderr,
+            "KEYUPLOAD_PROFILE {\"keys\":%zu,\"digits\":%zu,\"shards\":%zu,"
+            "\"h2d_bytes\":%zu,\"packing_s\":%.9f,\"copy_and_wait_s\":%.9f,"
+            "\"total_s\":%.9f}\n",
+            keys, digits, shards, bytes, packing_s, copy_and_wait_s, total_s);
+        std::fflush(stderr);
+    }
+};
+
+struct QpUploadProfile;
+thread_local QpUploadProfile *active_qp_upload_profile = nullptr;
+struct QpUploadProfile
+{
+    using Clock = std::chrono::steady_clock;
+    bool enabled = false;
+    QpUploadProfile *previous = nullptr;
+    std::size_t diagonals = 0, full_bytes = 0, uploaded_bytes = 0;
+    std::size_t fast_plaintexts = 0, full_crt_plaintexts = 0, reference_verified_plaintexts = 0, worker_limit = 1;
+    std::size_t async_launched = 0, serial_fallbacks = 0, async_launch_failures = 0;
+    double exact_host_s = 0, period_search_s = 0, compact_pack_s = 0;
+    double h2d_and_wait_s = 0, readback_and_check_s = 0;
+    QpUploadProfile()
+    {
+        const auto *setting = std::getenv("POSEIDON_GPU_KEYLOAD_TRACE");
+        enabled = setting != nullptr && std::string(setting) == "1";
+        if (enabled) { previous = active_qp_upload_profile; active_qp_upload_profile = this; }
+    }
+    ~QpUploadProfile()
+    {
+        if (!enabled) return;
+        active_qp_upload_profile = previous;
+        std::fprintf(stderr,
+            "QP_UPLOAD_PROFILE {\"diagonals\":%zu,\"full_equivalent_u32_bytes\":%zu,"
+            "\"uploaded_bytes\":%zu,\"exact_host_s\":%.9f,\"period_search_s\":%.9f,"
+            "\"compact_pack_s\":%.9f,\"h2d_and_wait_s\":%.9f,\"readback_and_check_s\":%.9f,"
+            "\"fast_plaintexts\":%zu,\"full_crt_plaintexts\":%zu,\"reference_verified_plaintexts\":%zu,\"worker_limit\":%zu,"
+            "\"async_launched\":%zu,\"serial_fallbacks\":%zu,\"async_launch_failures\":%zu,"
+            "\"host_timings_are_task_sums\":true}\n",
+            diagonals, full_bytes, uploaded_bytes, exact_host_s, period_search_s,
+            compact_pack_s, h2d_and_wait_s, readback_and_check_s,
+            fast_plaintexts, full_crt_plaintexts, reference_verified_plaintexts, worker_limit,
+            async_launched, serial_fallbacks, async_launch_failures);
+        std::fflush(stderr);
+    }
+};
 
 GpuWord checked_gpu_word(std::uint64_t value, const char *what)
 {
@@ -225,6 +316,10 @@ void upload_ciphertext_component_shards(
             shard.limb_count,
             shard.coeff_count,
             "ciphertext shard word count overflow");
+        auto *profile = active_key_upload_profile;
+        const auto pack_start = profile != nullptr
+                                    ? KeyUploadProfile::Clock::now()
+                                    : KeyUploadProfile::Clock::time_point{};
         std::vector<GpuWord> packed(shard_word_count);
 
         for (std::size_t local_limb = 0; local_limb < shard.limb_count; ++local_limb)
@@ -253,11 +348,22 @@ void upload_ciphertext_component_shards(
             }
         }
 
+        const auto copy_start = profile != nullptr
+                                    ? KeyUploadProfile::Clock::now()
+                                    : KeyUploadProfile::Clock::time_point{};
         copy_gpu_words_to_device_field_offset(
             packed.data(),
             packed.size(),
             fields.at(shard.field_index),
             shard.field_offset);
+        if (profile != nullptr)
+        {
+            profile->packing_s += std::chrono::duration<double>(copy_start - pack_start).count();
+            profile->copy_and_wait_s += std::chrono::duration<double>(
+                KeyUploadProfile::Clock::now() - copy_start).count();
+            profile->bytes += packed.size() * sizeof(GpuWord);
+            ++profile->shards;
+        }
     }
 }
 
@@ -388,6 +494,7 @@ GpuEvaluationKeyData upload_kswitch_keys(
     std::optional<std::size_t> q_count = std::nullopt,
     const std::vector<std::size_t> *selected_key_indices = nullptr)
 {
+    KeyUploadProfile profile;
     GpuEvaluationKeyData dst;
     dst.meta.key_parms_id = src.parms_id();
     dst.meta.key_count = src.data().size();
@@ -398,6 +505,7 @@ GpuEvaluationKeyData upload_kswitch_keys(
         {
             throw std::invalid_argument("selected evaluation key does not exist");
         }
+        if (profile.enabled) ++profile.keys;
         const auto &decompositions = src.data()[key_index];
         auto decomposition_count = decompositions.size();
         if (q_count)
@@ -421,6 +529,7 @@ GpuEvaluationKeyData upload_kswitch_keys(
 
         for (std::size_t decomp_index = 0; decomp_index < decomposition_count; ++decomp_index)
         {
+            if (profile.enabled) ++profile.digits;
             const auto &ciphertext = decompositions[decomp_index].data();
             auto uploaded = q_count
                                 ? upload_key_ciphertext_q_prefix(ciphertext, device_id, *q_count)
@@ -1003,9 +1112,60 @@ struct ExactQpPlaintextHost
     std::size_t q_count = 0;
     std::size_t p_count = 0;
     std::vector<std::uint64_t> values;
+    bool fast_reconstruction = false;
+    bool reference_verified = false;
 };
 
-ExactQpPlaintextHost make_qp_plaintext_exact_host(
+bool reference_qp_prepare_requested()
+{
+    const char *setting = std::getenv("POSEIDON_GPU_QP_PREPARE");
+    if (setting == nullptr || std::string(setting) == "optimized") return false;
+    if (std::string(setting) == "reference") return true;
+    throw std::invalid_argument("POSEIDON_GPU_QP_PREPARE must be reference or optimized");
+}
+
+// Bound additional host workers across all concurrent callers in this process.
+// Each caller can still make serial progress, as it did before parallelization.
+std::atomic<std::size_t> qp_background_workers{0};
+
+bool try_acquire_qp_worker(std::size_t limit)
+{
+    auto count = qp_background_workers.load(std::memory_order_relaxed);
+    while (count < limit)
+        if (qp_background_workers.compare_exchange_weak(count, count + 1,
+                std::memory_order_acquire, std::memory_order_relaxed)) return true;
+    return false;
+}
+
+std::size_t qp_prepare_worker_limit()
+{
+    std::size_t available = std::max(1U, std::thread::hardware_concurrency());
+#ifdef __linux__
+    cpu_set_t affinity;
+    CPU_ZERO(&affinity);
+    if (sched_getaffinity(0, sizeof(affinity), &affinity) == 0)
+        available = std::min(available, static_cast<std::size_t>(CPU_COUNT(&affinity)));
+    std::ifstream quota_file("/sys/fs/cgroup/cpu.max");
+    std::string quota;
+    std::uint64_t period = 0;
+    if (quota_file >> quota >> period && quota != "max" && period != 0)
+    {
+        try { available = std::min(available, std::max<std::size_t>(1, std::stoull(quota) / period)); }
+        catch (const std::exception &) { available = 1; }
+    }
+#endif
+    const char *setting = std::getenv("POSEIDON_GPU_QP_PREPARE_THREADS");
+    if (setting == nullptr) return std::max<std::size_t>(1, std::min<std::size_t>(4, available));
+    const std::string text(setting);
+    if (text.empty() || text.find_first_not_of("0123456789") != std::string::npos)
+        throw std::invalid_argument("POSEIDON_GPU_QP_PREPARE_THREADS must be an integer in [1,64]");
+    const auto requested = std::stoull(text);
+    if (requested == 0 || requested > 64)
+        throw std::invalid_argument("POSEIDON_GPU_QP_PREPARE_THREADS must be in [1,64]");
+    return std::max<std::size_t>(1, std::min<std::size_t>(requested, available));
+}
+
+ExactQpPlaintextHost make_qp_plaintext_exact_host_reference(
     const Plaintext &src,
     const PoseidonContext &context)
 {
@@ -1132,6 +1292,142 @@ ExactQpPlaintextHost make_qp_plaintext_exact_host(
     return result;
 }
 
+// A candidate reconstructed from one/two small primes is accepted ONLY after
+// checking every Q residue. Both it and the full-Q representative are centered,
+// so CRT uniqueness proves equality; larger coefficients take the exact fallback.
+bool reconstruct_small_centered_coefficients(
+    const std::vector<std::uint64_t> &coefficients,
+    std::size_t degree, const util::RNSBase &base,
+    std::vector<std::uint64_t> &magnitudes, std::vector<std::uint8_t> &negative)
+{
+    const std::size_t q_count = base.size();
+    if (q_count == 0) return false;
+    for (std::size_t limb = 0; limb < q_count; ++limb)
+        if (base[limb].value() > std::numeric_limits<GpuWord>::max()) return false;
+    const auto q0 = base[0].value();
+    std::uint64_t product = q0, inverse = 0;
+    if (q_count > 1)
+    {
+        const auto q1 = base[1].value();
+        if (!util::try_invert_uint_mod(q0 % q1, base[1], inverse)) return false;
+        product *= q1; // Two <=32-bit primes: product and reconstruction fit uint64.
+    }
+    const auto half_threshold = product / 2 + 1;
+    magnitudes.resize(degree);
+    negative.resize(degree);
+    for (std::size_t coefficient = 0; coefficient < degree; ++coefficient)
+    {
+        auto value = coefficients[coefficient];
+        if (q_count > 1)
+        {
+            const auto delta = util::sub_uint_mod(
+                coefficients[degree + coefficient],
+                util::barrett_reduce_64(value, base[1]), base[1]);
+            value += q0 * util::multiply_uint_mod(delta, inverse, base[1]);
+        }
+        const bool sign = value >= half_threshold;
+        const auto magnitude = sign ? product - value : value;
+        for (std::size_t limb = 0; limb < q_count; ++limb)
+        {
+            const auto residue = util::barrett_reduce_64(magnitude, base[limb]);
+            const auto expected = sign && residue != 0 ? base[limb].value() - residue : residue;
+            if (expected != coefficients[limb * degree + coefficient]) return false;
+        }
+        magnitudes[coefficient] = magnitude;
+        negative[coefficient] = sign;
+    }
+    return true;
+}
+
+ExactQpPlaintextHost make_qp_plaintext_exact_host(
+    const Plaintext &src, const PoseidonContext &context)
+{
+    if (reference_qp_prepare_requested()) return make_qp_plaintext_exact_host_reference(src, context);
+    if (!src.is_ntt_form()) throw std::invalid_argument("QP preparation requires NTT plaintext");
+    const auto level = context.crt_context()->get_context_data(src.parms_id());
+    if (!level || !level->qp_rns_tool() || !level->qp_rns_tool()->base_q() ||
+        !level->qp_rns_tool()->base_p())
+        throw std::invalid_argument("QP preparation requires valid Q/P bases");
+    const auto *tool = level->qp_rns_tool();
+    const auto &q = *tool->base_q();
+    const auto &p = *tool->base_p();
+    const std::size_t n = level->parms().degree(), nq = q.size(), np = p.size();
+    if (nq == 0 || np == 0 || src.coeff_count() != checked_mul(nq, n, "QP shape overflow"))
+        throw std::invalid_argument("QP preparation plaintext shape mismatch");
+    const auto *tables = context.crt_context()->small_ntt_tables();
+    const auto key_level = context.crt_context()->key_context_data();
+    if (!tables || !key_level) throw std::invalid_argument("QP preparation NTT tables unavailable");
+    ExactQpPlaintextHost result;
+    result.parms_id = src.parms_id(); result.scale = src.scale();
+    result.degree = n; result.q_count = nq; result.p_count = np;
+    result.values.resize(checked_mul(nq + np, n, "QP allocation overflow"));
+    std::vector<std::uint64_t> coefficients(nq * n);
+    // Preserve canonical Q NTT. Never reuse lazy residues as GPU coefficients.
+    for (std::size_t limb = 0; limb < nq; ++limb)
+    {
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            const auto raw = src.data()[limb * n + i];
+            const auto canonical = raw < q[limb].value() ? raw : util::barrett_reduce_64(raw, q[limb]);
+            result.values[limb * n + i] = canonical;
+            coefficients[limb * n + i] = canonical;
+        }
+        util::inverse_ntt_negacyclic_harvey(coefficients.data() + limb * n, tables[limb]);
+    }
+    std::vector<std::uint64_t> magnitudes;
+    std::vector<std::uint8_t> negative;
+    result.fast_reconstruction = reconstruct_small_centered_coefficients(coefficients, n, q, magnitudes, negative);
+    if (result.fast_reconstruction)
+    {
+        for (std::size_t limb = 0; limb < np; ++limb)
+            for (std::size_t i = 0; i < n; ++i)
+            {
+                const auto residue = util::barrett_reduce_64(magnitudes[i], p[limb]);
+                result.values[(nq + limb) * n + i] = negative[i] && residue != 0 ? p[limb].value() - residue : residue;
+            }
+    }
+    else
+    {
+        // Private pool and scratch for this invocation, including async workers.
+        q.compose_array(coefficients.data(), n, MemoryPoolHandle::New());
+        std::vector<std::uint64_t> magnitude(nq);
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            const auto *value = coefficients.data() + i * nq;
+            const bool sign = util::is_greater_than_or_equal_uint(value, level->upper_half_threshold(), nq);
+            if (sign) { util::sub_uint(level->total_coeff_modulus(), value, nq, magnitude.data()); value = magnitude.data(); }
+            std::size_t words = nq;
+            while (words != 0 && value[words - 1] == 0) --words;
+            for (std::size_t limb = 0; limb < np; ++limb)
+            {
+                const auto residue = words == 0 ? 0 : util::modulo_uint(value, words, p[limb]);
+                result.values[(nq + limb) * n + i] = sign && residue != 0 ? p[limb].value() - residue : residue;
+            }
+        }
+    }
+    const auto p_offset = key_level->parms().q().size();
+    for (std::size_t limb = 0; limb < np; ++limb)
+        util::ntt_negacyclic_harvey(result.values.data() + (nq + limb) * n, tables[p_offset + limb]);
+    // Expensive opt-in regression oracle, never enabled for latency samples.
+    const char *verify = std::getenv("POSEIDON_GPU_QP_VERIFY_REFERENCE");
+    if (verify != nullptr && std::string(verify) == "1")
+    {
+        // The reference INTT only promises inputs in [0,2q), whereas this path
+        // accepts wider lazy residues. Feed it the canonical Q we retained.
+        Plaintext canonical(nq * n, MemoryPoolHandle::New());
+        std::copy_n(result.values.data(), nq * n, canonical.data());
+        canonical.parms_id() = src.parms_id();
+        canonical.scale() = src.scale();
+        auto reference = make_qp_plaintext_exact_host_reference(canonical, context);
+        if (result.values != reference.values || result.parms_id != reference.parms_id ||
+            std::bit_cast<std::uint64_t>(result.scale) != std::bit_cast<std::uint64_t>(reference.scale) || result.degree != reference.degree ||
+            result.q_count != reference.q_count || result.p_count != reference.p_count)
+            throw std::runtime_error("optimized exact QP preparation differs from full CRT oracle");
+        result.reference_verified = true;
+    }
+    return result;
+}
+
 GpuPlaintextData upload_qp_plaintext_exact(
     const Plaintext &src,
     const PoseidonContext &context,
@@ -1224,7 +1520,10 @@ GpuCompressedPlaintextQP upload_qp_plaintext_exact_compressed(
     const PoseidonContext &context,
     int device_id)
 {
+    auto *profile = active_qp_upload_profile;
+    const auto start = profile ? QpUploadProfile::Clock::now() : QpUploadProfile::Clock::time_point{};
     auto host = make_qp_plaintext_exact_host(src, context);
+    const auto exact_done = profile ? QpUploadProfile::Clock::now() : QpUploadProfile::Clock::time_point{};
     const auto bit_reversed = bit_reversed_indices(host.degree);
     std::size_t period = 1;
     while (period < host.degree &&
@@ -1238,6 +1537,7 @@ GpuCompressedPlaintextQP upload_qp_plaintext_exact_compressed(
             "compressed QP plaintext period did not reconstruct exactly");
     }
 
+    const auto period_done = profile ? QpUploadProfile::Clock::now() : QpUploadProfile::Clock::time_point{};
     const std::size_t limb_count = host.q_count + host.p_count;
     std::vector<GpuWord> compact(limb_count * period);
     std::vector<bool> initialized(period);
@@ -1277,8 +1577,10 @@ GpuCompressedPlaintextQP upload_qp_plaintext_exact_compressed(
     result.meta.q_count = host.q_count;
     result.meta.p_count = host.p_count;
     result.period = period;
+    const auto pack_done = profile ? QpUploadProfile::Clock::now() : QpUploadProfile::Clock::time_point{};
     result.residues.allocate(compact.size(), device_id);
     result.residues.copy_from_host(compact.data(), compact.size());
+    const auto upload_done = profile ? QpUploadProfile::Clock::now() : QpUploadProfile::Clock::time_point{};
 
     // Compression is a setup-time, exact representation change.  Read the
     // actual device allocation back once and require every Q/P residue to
@@ -1313,6 +1615,101 @@ GpuCompressedPlaintextQP upload_qp_plaintext_exact_compressed(
     {
         throw std::runtime_error(
             "compressed QP device round-trip was not bit-exact");
+    }
+    if (profile)
+    {
+        const auto done = QpUploadProfile::Clock::now();
+        ++profile->diagonals;
+        ++profile->full_crt_plaintexts;
+        profile->full_bytes += host.values.size() * sizeof(GpuWord);
+        profile->uploaded_bytes += compact.size() * sizeof(GpuWord);
+        profile->exact_host_s += std::chrono::duration<double>(exact_done - start).count();
+        profile->period_search_s += std::chrono::duration<double>(period_done - exact_done).count();
+        profile->compact_pack_s += std::chrono::duration<double>(pack_done - period_done).count();
+        profile->h2d_and_wait_s += std::chrono::duration<double>(upload_done - pack_done).count();
+        profile->readback_and_check_s += std::chrono::duration<double>(done - upload_done).count();
+    }
+    return result;
+}
+
+struct PreparedCompressedQpHost
+{
+    parms_id_type parms_id{};
+    double scale = 1;
+    std::size_t degree = 0, q_count = 0, p_count = 0, period = 0;
+    std::size_t full_bytes = 0;
+    bool fast_reconstruction = false, reference_verified = false;
+    double exact_s = 0, period_s = 0, pack_s = 0;
+    std::vector<GpuWord> compact;
+};
+
+// CPU-only stage. It must not allocate GPU owners or use the caller's TLS stream.
+PreparedCompressedQpHost prepare_compressed_qp_host(
+    const Plaintext &src, const PoseidonContext &context,
+    const std::vector<std::uint32_t> &bit_reversed)
+{
+    using Clock = QpUploadProfile::Clock;
+    const auto start = Clock::now();
+    auto host = make_qp_plaintext_exact_host(src, context);
+    const auto exact_done = Clock::now();
+    std::size_t period = 1;
+    // A successful period is proved exactly once. Full degree is the identity
+    // layout and requires no repeated-value test.
+    while (period < host.degree && !exact_qp_has_period(host, period, bit_reversed)) period <<= 1;
+    const auto period_done = Clock::now();
+    PreparedCompressedQpHost result;
+    result.parms_id = host.parms_id; result.scale = host.scale;
+    result.degree = host.degree; result.q_count = host.q_count; result.p_count = host.p_count;
+    result.period = period; result.full_bytes = host.values.size() * sizeof(GpuWord);
+    result.fast_reconstruction = host.fast_reconstruction;
+    result.reference_verified = host.reference_verified;
+    result.compact.resize((host.q_count + host.p_count) * period);
+    for (std::size_t limb = 0; limb < host.q_count + host.p_count; ++limb)
+        for (std::size_t i = 0; i < period; ++i)
+        {
+            // map(reverse_bits_N(i)) == i for i < period < N.
+            const auto source_index = period == host.degree ? i : bit_reversed[i];
+            result.compact[limb * period + i] = checked_gpu_word(
+                host.values[limb * host.degree + source_index], "compressed QP residue exceeds GpuWord");
+        }
+    const auto done = Clock::now();
+    result.exact_s = std::chrono::duration<double>(exact_done - start).count();
+    result.period_s = std::chrono::duration<double>(period_done - exact_done).count();
+    result.pack_s = std::chrono::duration<double>(done - period_done).count();
+    return result;
+}
+
+GpuCompressedPlaintextQP upload_prepared_compressed_qp(
+    PreparedCompressedQpHost &&host, int device_id)
+{
+    const auto start = QpUploadProfile::Clock::now();
+    GpuCompressedPlaintextQP result;
+    result.meta.parms_id = host.parms_id; result.meta.scale = host.scale;
+    result.meta.is_ntt_form = true; result.meta.degree = host.degree;
+    result.meta.q_count = host.q_count; result.meta.p_count = host.p_count;
+    result.period = host.period;
+    result.residues.allocate(host.compact.size(), device_id);
+    result.residues.copy_from_host(host.compact.data(), host.compact.size());
+    const auto uploaded = QpUploadProfile::Clock::now();
+    std::vector<GpuWord> roundtrip(host.compact.size());
+    result.residues.copy_to_host(roundtrip.data(), roundtrip.size());
+    // The host proved all expanded words equal their compact representatives;
+    // exact compact D2H equality therefore proves every expanded device word.
+    if (roundtrip != host.compact) throw std::runtime_error("compressed QP compact round-trip was not bit-exact");
+    result.exact_device_reconstruction = true;
+    if (auto *profile = active_qp_upload_profile)
+    {
+        ++profile->diagonals;
+        profile->full_bytes += host.full_bytes;
+        profile->uploaded_bytes += host.compact.size() * sizeof(GpuWord);
+        profile->exact_host_s += host.exact_s;
+        profile->period_search_s += host.period_s;
+        profile->compact_pack_s += host.pack_s;
+        profile->h2d_and_wait_s += std::chrono::duration<double>(uploaded - start).count();
+        profile->readback_and_check_s += std::chrono::duration<double>(QpUploadProfile::Clock::now() - uploaded).count();
+        if (host.fast_reconstruction) ++profile->fast_plaintexts;
+        else ++profile->full_crt_plaintexts;
+        if (host.reference_verified) ++profile->reference_verified_plaintexts;
     }
     return result;
 }
@@ -1472,12 +1869,16 @@ GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
     std::uint32_t rescale_count,
     bool compress_plaintexts)
 {
+    QpUploadProfile profile;
     GpuLinearMatrixGroupQP result;
     result.rot_index() = src.rot_index();
     result.set_step(src.step());
     result.set_rescale_min_scale(src.rescale_min_scale());
     result.rescale_counts() = src.rescale_counts();
     result.data().reserve(src.data().size());
+    const bool parallel_compressed = compress_plaintexts && !reference_qp_prepare_requested();
+    const auto worker_limit = parallel_compressed ? qp_prepare_worker_limit() : 1;
+    profile.worker_limit = worker_limit;
 
     for (const auto &matrix : src.data())
     {
@@ -1487,25 +1888,87 @@ GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
         uploaded.level = matrix.level;
         uploaded.scale = matrix.scale;
         uploaded.rot_index = matrix.rot_index;
-        for (const auto &entry : matrix.plain_vec)
+        if (parallel_compressed && !matrix.plain_vec.empty())
         {
-            if (compress_plaintexts)
+            const auto first_level = context.crt_context()->get_context_data(matrix.plain_vec.begin()->second.parms_id());
+            if (!first_level) throw std::invalid_argument("QP matrix plaintext has invalid context");
+            auto indices = std::make_shared<const std::vector<std::uint32_t>>(
+                bit_reversed_indices(first_level->parms().degree()));
+            using Pending = std::pair<int, std::future<PreparedCompressedQpHost>>;
+            // Explicit async launch plus a bounded queue: at most worker_limit
+            // host jobs/buffers live. Future destruction joins on every error.
+            std::deque<Pending> pending;
+            auto next = matrix.plain_vec.begin();
+            while (next != matrix.plain_vec.end() || !pending.empty())
             {
-                uploaded.compressed_plain_vec_qp.emplace(
-                    entry.first,
-                    upload_qp_plaintext_exact_compressed(
-                        entry.second,
-                        context,
-                        device_id));
+                while (next != matrix.plain_vec.end() && pending.size() < worker_limit)
+                {
+                    const auto *plaintext = &next->second;
+                    const int diagonal = next->first;
+                    auto work = [plaintext, &context, indices] {
+                        return prepare_compressed_qp_host(*plaintext, context, *indices);
+                    };
+                    bool started = false;
+                    if (worker_limit > 1 && try_acquire_qp_worker(worker_limit))
+                    {
+                        try
+                        {
+                            // Test-only fault injection exercises OS thread exhaustion
+                            // without changing normal scheduling or ciphertext data.
+                            const char *inject = std::getenv("POSEIDON_GPU_QP_TEST_ASYNC_FAILURE");
+                            if (inject != nullptr && std::string(inject) == "1")
+                                throw std::system_error(std::make_error_code(std::errc::resource_unavailable_try_again));
+                            auto async_work = [work] {
+                                struct Release {
+                                    ~Release() { qp_background_workers.fetch_sub(1, std::memory_order_release); }
+                                } release;
+                                return work();
+                            };
+                            // Keep the future separate from deque insertion: if the
+                            // latter throws, its destructor joins the owned worker.
+                            auto task = std::async(std::launch::async, std::move(async_work));
+                            started = true;
+                            pending.emplace_back(diagonal, std::move(task));
+                            ++profile.async_launched;
+                        }
+                        catch (const std::system_error &)
+                        {
+                            if (started) throw;
+                            ++profile.async_launch_failures;
+                            qp_background_workers.fetch_sub(1, std::memory_order_release);
+                        }
+                        catch (...)
+                        {
+                            if (!started) qp_background_workers.fetch_sub(1, std::memory_order_release);
+                            throw;
+                        }
+                    }
+                    if (!started)
+                    {
+                        // No global slot or OS refused a new thread: run lazily
+                        // on the calling thread, including the worker_limit=1 case.
+                        pending.emplace_back(diagonal, std::async(std::launch::deferred, std::move(work)));
+                        ++profile.serial_fallbacks;
+                    }
+                    ++next;
+                }
+                auto host = pending.front().second.get();
+                const int diagonal = pending.front().first;
+                pending.pop_front();
+                uploaded.compressed_plain_vec_qp.emplace(diagonal,
+                    upload_prepared_compressed_qp(std::move(host), device_id));
             }
-            else
+        }
+        else
+        {
+            for (const auto &entry : matrix.plain_vec)
             {
-                uploaded.plain_vec_qp.emplace(
-                    entry.first,
-                    upload_qp_plaintext_exact(
-                        entry.second,
-                        context,
-                        device_id));
+                if (compress_plaintexts)
+                    uploaded.compressed_plain_vec_qp.emplace(entry.first,
+                        upload_qp_plaintext_exact_compressed(entry.second, context, device_id));
+                else
+                    uploaded.plain_vec_qp.emplace(entry.first,
+                        upload_qp_plaintext_exact(entry.second, context, device_id));
             }
         }
         uploaded.plan = make_double_hoist_plan(

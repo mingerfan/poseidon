@@ -1,0 +1,6 @@
+/build*/
+/*.log
+/*.json
+/*.stdout
+/*.stderr
+/__pycache__/

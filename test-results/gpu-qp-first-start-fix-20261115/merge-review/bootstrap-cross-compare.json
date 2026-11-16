@@ -1,0 +1,13 @@
+{
+  "reference_and_optimized_distinct_random_key_processes": true,
+  "mode": "small_N4096_Q50x30_P8x30_hwt5_security_none",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop",
+  "slot_count": 2048,
+  "cross_mode_max_abs_error": 1.0800890789926245e-05,
+  "cross_mode_mean_abs_error": 2.4787940107044993e-06,
+  "cross_mode_rms_abs_error": 2.9043443677618045e-06,
+  "reference_log": "bootstrap-reference.log",
+  "optimized_log": "bootstrap-optimized.log",
+  "is_r20_manual_boot": false,
+  "performance_benchmark": false
+}

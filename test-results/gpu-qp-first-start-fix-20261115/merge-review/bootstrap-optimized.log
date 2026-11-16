@@ -1,0 +1,15 @@
+mode=optimized N=4096 log_slots=11 Q=50x30 P=8x30 q0_level=1 log_input_scale=40 secret_hamming_weight=5 evalmod_scale=45 sine_degree=58 generation_degree=59 double_angle=2 tolerance=0.001 security=none
+stage=profile_begin elapsed_s=0.224075668
+GPU_BOOT_PROFILE id=smoke-degree58-da2-scale45 c2s_output_q=46 evalmod_output_q=28 s2c_input_q=28 output_level=22 sparse_hw=0
+stage=profile_complete elapsed_s=4.069081116
+qp_matrices=6 qp_diagonals=124
+input_q=50 input_scale=1.09951162778e+12 input_log2_scale=40
+stage=bootstrap_begin elapsed_s=4.253299377
+stage=bootstrap_complete elapsed_s=4.313489188
+output_q=23 output_scale=3.51843720888e+13 output_log2_scale=45 slots=2048 max_abs_error=0.000149117877423 mean_abs_error=0.000144410696809 rms_error=0.000144419845583
+sample=0 expected=(0.03125,0.015625) actual=(0.0311057026934,0.0156128242679)
+sample=1 expected=(0.0625,0.03125) actual=(0.0623549535571,0.0312425168377)
+sample=2 expected=(0.09375,0.046875) actual=(0.0936054683235,0.0468699974272)
+sample=3 expected=(0.125,0.0625) actual=(0.124855704558,0.0624969329672)
+stage=decrypt_complete elapsed_s=4.325473379
+PASS native_bootstrap_decrypt
