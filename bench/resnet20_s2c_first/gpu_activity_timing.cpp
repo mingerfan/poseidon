@@ -2,6 +2,7 @@
 #include "gpu_activity_intervals.h"
 
 #include <cupti.h>
+#include <cxxabi.h>
 
 #include <cstdlib>
 #include <iomanip>
@@ -44,6 +45,7 @@ class GpuActivityTiming::Impl
         std::uint64_t start, end, bytes;
         std::uint32_t correlation, device;
         int kind, copy_kind;
+        std::uint32_t kernel_id;
     };
 
     inline static Impl *active = nullptr;
@@ -51,6 +53,9 @@ class GpuActivityTiming::Impl
     std::vector<Activity> activities;
     std::unordered_map<std::uint32_t, std::uint64_t> correlations;
     std::map<std::string, std::uint64_t> labels;
+    std::map<std::string, std::uint64_t> visits;
+    std::unordered_map<std::string, std::uint32_t> kernel_ids;
+    std::vector<std::string> kernel_names;
     std::uint64_t dropped = 0;
     std::string error;
     unsigned enabled = 0;
@@ -109,9 +114,12 @@ class GpuActivityTiming::Impl
                     // The fields used here are in the stable Kernel4 prefix.
                     const auto &activity =
                         *reinterpret_cast<CUpti_ActivityKernel4 *>(record);
+                    const std::string name = activity.name ? activity.name : "unknown";
+                    auto [name_it, inserted] = active->kernel_ids.try_emplace(name, active->kernel_names.size());
+                    if (inserted) active->kernel_names.push_back(name);
                     active->activities.push_back(
                         {activity.start, activity.end, 0,
-                         activity.correlationId, activity.deviceId, 0, 0});
+                         activity.correlationId, activity.deviceId, 0, 0, name_it->second});
                 }
                 else if (record->kind == CUPTI_ACTIVITY_KIND_MEMCPY)
                 {
@@ -120,7 +128,7 @@ class GpuActivityTiming::Impl
                     active->activities.push_back(
                         {activity.start, activity.end, activity.bytes,
                          activity.correlationId, activity.deviceId, 1,
-                         activity.copyKind});
+                         activity.copyKind, 0});
                 }
                 else if (record->kind == CUPTI_ACTIVITY_KIND_MEMSET)
                 {
@@ -128,7 +136,7 @@ class GpuActivityTiming::Impl
                         *reinterpret_cast<CUpti_ActivityMemset *>(record);
                     active->activities.push_back(
                         {activity.start, activity.end, activity.bytes,
-                         activity.correlationId, activity.deviceId, 2, 0});
+                         activity.correlationId, activity.deviceId, 2, 0, 0});
                 }
             }
             if (status != CUPTI_ERROR_MAX_LIMIT_REACHED)
@@ -225,6 +233,7 @@ void GpuActivityTiming::stage(const std::string &label, bool begin)
             throw std::logic_error("nested GPU activity timing stages are not supported");
         auto [iterator, inserted] =
             impl_->labels.try_emplace(label, impl_->labels.size() + 1);
+        ++impl_->visits[label];
         (void)inserted;
         try
         {
@@ -313,6 +322,17 @@ GpuActivityTimingResult GpuActivityTiming::finish()
             !names.count(correlation->second))
             throw std::runtime_error(
                 "GPU activity has no measured-stage attribution");
+        auto &stage = result.stages[names.at(correlation->second)];
+        if (activity.kind == 0)
+        {
+            ++stage.kernels;
+            stage.kernel_sum_ms += static_cast<double>(activity.end - activity.start) / 1.0e6;
+            auto &kernel = result.kernels[{names.at(correlation->second), impl_->kernel_names.at(activity.kernel_id)}];
+            ++kernel.count;
+            kernel.total_ns += activity.end - activity.start;
+        }
+        else if (activity.kind == 1) ++stage.copies;
+        else if (activity.kind == 2) ++stage.memsets;
         attributed.push_back(
             {activity.start, activity.end, correlation->second,
              activity.device, static_cast<GpuActivityType>(activity.kind)});
@@ -324,6 +344,7 @@ GpuActivityTimingResult GpuActivityTiming::finish()
     for (const auto &[stage, nanoseconds] : summary.stage_ns)
         result.stages[names.at(stage)].gpu_ms =
             static_cast<double>(nanoseconds) / 1.0e6;
+    for (const auto &[label, count] : impl_->visits) result.stages[label].visits = count;
     return result;
 }
 
@@ -336,6 +357,21 @@ void GpuActivityTimingResult::print() const
               << " activities=" << activities
               << " host_transfers=" << host_transfers
               << " host_transfer_bytes=" << host_transfer_bytes << '\n';
+    for (const auto &[label, stage] : stages)
+        std::cout << "GPU_STAGE_DETAIL name=" << label << " gpu_union_ms=" << stage.gpu_ms
+                  << " kernel_sum_ms=" << stage.kernel_sum_ms << " kernels=" << stage.kernels
+                  << " copies=" << stage.copies << " memsets=" << stage.memsets
+                  << " visits=" << stage.visits << '\n';
+    for (const auto &[key, kernel] : kernels)
+    {
+        const auto &name = key.second;
+        int status = 0;
+        std::unique_ptr<char, decltype(&std::free)> demangled(
+            abi::__cxa_demangle(name.c_str(), nullptr, nullptr, &status), &std::free);
+        std::cout << "GPU_KERNEL stage=" << key.first << " name=\"" << (status == 0 ? demangled.get() : name.c_str())
+                  << "\" count=" << kernel.count << " gpu_sum_ms="
+                  << static_cast<double>(kernel.total_ns) / 1.0e6 << '\n';
+    }
     std::cout.flags(flags);
     std::cout.precision(precision);
 }

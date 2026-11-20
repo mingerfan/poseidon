@@ -1995,7 +1995,8 @@ void GpuParameterData::build_from_poseidon_context(
         const auto &q = parms.q();
         const auto &p = parms.p();
         const auto *rns_qp = context_data->qp_rns_tool();
-        std::vector<Modulus> parameter_p = p;
+        const bool bv_tables = rns_qp == nullptr && context.key_switch_variant() == BV;
+        std::vector<Modulus> parameter_p = bv_tables ? context.parameters_literal()->p() : p;
         if (parameter_p.empty() && rns_qp != nullptr && rns_qp->base_p() != nullptr)
         {
             parameter_p = copy_rns_base_moduli(*rns_qp->base_p());
@@ -2417,7 +2418,20 @@ void GpuParameterData::build_from_poseidon_context(
                 rns_fused_intt_matrices_fp64.hi,
                 device_id);
 
-        copy_hybrid_key_switch_tables(rns_qp, shard, device_id);
+        if (bv_tables)
+        {
+            // A BV key has one digit per Q prime. The GPU uses the same
+            // decomposition tables as HYBRID with a single-prime base P.
+            const auto pool = MemoryManager::GetPool();
+            const util::RNSBase q_base(q, pool);
+            const util::RNSBase p_base(parameter_p, pool);
+            const util::RNSToolQP bv_rns_qp(level.degree, q_base, p_base, Modulus(0), pool);
+            copy_hybrid_key_switch_tables(&bv_rns_qp, shard, device_id);
+        }
+        else
+        {
+            copy_hybrid_key_switch_tables(rns_qp, shard, device_id);
+        }
         if (level.p_count == 0)
         {
             copy_bootstrap_raise_tables(q, first_q, shard, device_id);

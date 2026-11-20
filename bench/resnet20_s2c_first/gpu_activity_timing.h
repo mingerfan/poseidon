@@ -12,8 +12,12 @@ struct GpuActivityTimingResult
     struct Stage
     {
         double gpu_ms = 0;
+        std::uint64_t kernels = 0, copies = 0, memsets = 0, visits = 0;
+        double kernel_sum_ms = 0;
     };
+    struct Kernel { std::uint64_t count = 0, total_ns = 0; };
     std::map<std::string, Stage> stages;
+    std::map<std::pair<std::string, std::string>, Kernel> kernels;
     // Union(kernel, memcpy, memset) across all streams and measured stages.
     double gpu_total_ms = 0;
     std::uint64_t gpu_total_ns = 0, activities = 0;

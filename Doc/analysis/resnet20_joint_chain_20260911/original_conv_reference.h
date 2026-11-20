@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <vector>
 
 struct ApplicationConvFixture {
@@ -31,6 +32,8 @@ struct ApplicationNetworkFixture {
 };
 
 ApplicationNetworkFixture load_application_network_fixture(int image_id);
+ApplicationNetworkFixture load_application_network_fixture(
+    int image_id, const std::function<double(double)> &activation);
 ApplicationConvFixture load_application_conv_fixture(int image_id,int conv_index=1);
 std::vector<double> original_application_conv(
     const std::vector<double> &input, const ApplicationConvFixture &fixture);

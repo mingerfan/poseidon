@@ -51,6 +51,8 @@ add_library(poseidon_gpu STATIC
     gpu_modswitch_handler.cpp
     gpu_ntt_handler.cpp
     gpu_tensor_core_gemm.cu
+    gpu_wide_ntt.cu
+    gpu_wide_bv.cu
     kernels/gpu_double_hoist_kernels.cu
     kernels/gpu_elementwise_kernels.cu
     kernels/gpu_keyswitch_kernels.cu

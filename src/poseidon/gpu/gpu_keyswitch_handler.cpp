@@ -2304,6 +2304,11 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
         throw std::invalid_argument(
             "GpuKeySwitchHandler::hoist_decompose_modup_ntt: invalid HYBRID base");
     }
+    if (p_count == 1)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::hoist_decompose_modup_ntt: BV hoisting is unsupported");
+    }
     const std::size_t dnum = (q_count + p_count - 1) / p_count;
     const std::size_t q_words = q_count * level_info.degree;
     const std::size_t p_words = p_count * level_info.degree;

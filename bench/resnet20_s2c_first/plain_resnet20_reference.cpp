@@ -248,6 +248,15 @@ double original_application_relu(double input) {
 }
 
 ApplicationNetworkFixture load_application_network_fixture(int image_id) {
+    return load_application_network_fixture(image_id, relu_reference);
+}
+
+ApplicationNetworkFixture load_application_network_fixture(
+    int image_id, const std::function<double(double)> &activation) {
+    const auto activate=[&](PlainTensor &input) {
+        for (double &value : input.values)
+            value=activation(value);
+    };
     const auto weights=model::load_resnet20_weights();
     const auto affine=[&](int i) {return folded_batch_norm(weights.bn_bias.at(i),
         weights.bn_running_mean.at(i),weights.bn_running_var.at(i),weights.bn_weight.at(i));};
@@ -258,7 +267,7 @@ ApplicationNetworkFixture load_application_network_fixture(int image_id) {
     result.stem={32,32,3,16,1,weights.conv_weight.at(0),stem_bn.scale,stem_bn.bias};
     PlainTensor tensor{32,32,3,result.image};
     tensor=plain_conv_bn(tensor,16,1,result.stem.weights,stem_bn);
-    result.stem_output=tensor.values;plain_relu_inplace(tensor);
+    result.stem_output=tensor.values;activate(tensor);
     result.stem_relu_output=tensor.values;
     int channels=16,conv=1,bn=1;
     for(int stage=1;stage<=3;++stage)for(int block=0;block<3;++block) {
@@ -272,7 +281,7 @@ ApplicationNetworkFixture load_application_network_fixture(int image_id) {
         auto shortcut=tensor;
         auto branch=plain_conv_bn(tensor,output_channels,out.conv1.stride,
             out.conv1.weights,first_bn);
-        out.conv1_output=branch.values;plain_relu_inplace(branch);out.act1_output=branch.values;
+        out.conv1_output=branch.values;activate(branch);out.act1_output=branch.values;
         const auto second_bn=affine(bn++);
         out.conv2={branch.h,branch.w,output_channels,output_channels,1,
             weights.conv_weight.at(conv++),second_bn.scale,second_bn.bias};
@@ -281,7 +290,7 @@ ApplicationNetworkFixture load_application_network_fixture(int image_id) {
         if(transition)shortcut=plain_downsample_shortcut(shortcut);
         out.shortcut_output=shortcut.values;
         tensor=plain_add(std::move(branch),shortcut);out.residual_output=tensor.values;
-        plain_relu_inplace(tensor);out.output=tensor.values;
+        activate(tensor);out.output=tensor.values;
         channels=output_channels;result.blocks.push_back(std::move(out));
     }
     result.linear_weight=weights.linear_weight;result.linear_bias=weights.linear_bias;

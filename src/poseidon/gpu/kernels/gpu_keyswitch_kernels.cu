@@ -163,6 +163,18 @@ __device__ __forceinline__ GpuWord hybrid_modup_contribution(
     return mul_mod(weighted, matrix_value, target_modulus, target_barrett);
 }
 
+// BV divides by the single special prime with rounding. Lift its
+// centered coefficient into Q before subtracting it from the accumulator.
+__device__ __forceinline__ GpuWord bv_lift_p_to_q(
+    GpuWord value, GpuWord p, GpuWord q, GpuWide q_barrett)
+{
+    if (value > (p >> 1))
+    {
+        return sub_mod(0, reduce_to_modulus(p - value, q, q_barrett), q);
+    }
+    return reduce_to_modulus(value, q, q_barrett);
+}
+
 __device__ __forceinline__ void hybrid_convert_p_to_q_contribution(
     GpuWord &sum0,
     GpuWord &sum1,
@@ -183,6 +195,12 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_contribution(
 {
     const std::size_t p_table_limb = base_q_size + p_limb;
     const GpuWord p_modulus = rns_primes[p_table_limb];
+    if (base_p_size == 1)
+    {
+        sum0 = bv_lift_p_to_q(accum_p0[coeff], p_modulus, q_modulus, q_barrett);
+        sum1 = bv_lift_p_to_q(accum_p1[coeff], p_modulus, q_modulus, q_barrett);
+        return;
+    }
     const GpuWide p_barrett = rns_modulus_constants[p_table_limb];
     const GpuWord matrix_value =
         moddown_p_to_q_matrix[q_limb * base_p_size + p_limb];
@@ -230,6 +248,15 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_pair_contribution(
     GpuWide q_barrett)
 {
     const std::size_t p_table_limb = base_q_size + p_limb;
+    if (base_p_size == 1)
+    {
+        const GpuWord p = rns_primes[p_table_limb];
+        left0 = bv_lift_p_to_q(accum_p0[left_coeff], p, q_modulus, q_barrett);
+        right0 = bv_lift_p_to_q(accum_p0[right_coeff], p, q_modulus, q_barrett);
+        left1 = bv_lift_p_to_q(accum_p1[left_coeff], p, q_modulus, q_barrett);
+        right1 = bv_lift_p_to_q(accum_p1[right_coeff], p, q_modulus, q_barrett);
+        return;
+    }
     const std::size_t p_base = p_limb * degree;
     const GpuWord matrix_value =
         moddown_p_to_q_matrix[q_limb * base_p_size + p_limb];
@@ -2760,6 +2787,11 @@ __global__ void hybrid_moddown_kernel(
         const GpuWord p_value =
             accum_p[p_limb * degree + coeff];
         const GpuWord p_modulus = rns_primes[p_table_limb];
+        if (base_p_size == 1)
+        {
+            converted_p = bv_lift_p_to_q(p_value, p_modulus, q_modulus, q_barrett);
+            break;
+        }
         const GpuWide p_barrett =
             rns_modulus_constants[p_table_limb];
         const GpuWord weighted = p_inv_punctured[p_limb] == 1
@@ -5804,6 +5836,13 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
     }
     const std::size_t base_p_size =
         parameter_shard.hybrid_base_p_count;
+    if (base_p_size == 1)
+    {
+        launch_hybrid_convert_p_to_q_forward_ntt(
+            converted_q0, converted_q1, accum_p0, accum_p1,
+            parameter_shard, degree, source_preweighted);
+        return;
+    }
     if (base_p_size != 2 && base_p_size != 9)
     {
         throw std::invalid_argument(

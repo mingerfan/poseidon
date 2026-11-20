@@ -37,3 +37,36 @@ target_include_directories(test_resnet20_s2c_support PRIVATE "${CMAKE_CURRENT_SO
 target_compile_definitions(test_resnet20_s2c_support PRIVATE
     POSEIDON_GPU_RESNET20_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/support")
 add_test(NAME resnet20_s2c_support COMMAND test_resnet20_s2c_support)
+
+# Focused gate for the Trident N=32768/P1 migration.
+add_executable(functional_keyswitch_probe EXCLUDE_FROM_ALL functional_keyswitch_probe.cpp)
+target_link_libraries(functional_keyswitch_probe PRIVATE poseidon::gpu)
+set_target_properties(functional_keyswitch_probe PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_executable(functional_wide_ntt_probe EXCLUDE_FROM_ALL functional_wide_ntt_probe.cpp)
+target_link_libraries(functional_wide_ntt_probe PRIVATE poseidon::gpu)
+set_target_properties(functional_wide_ntt_probe PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_executable(functional_wide_bv_probe EXCLUDE_FROM_ALL functional_wide_bv_probe.cpp)
+target_link_libraries(functional_wide_bv_probe PRIVATE poseidon::gpu)
+set_target_properties(functional_wide_bv_probe PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_executable(functional_wide_dft_probe EXCLUDE_FROM_ALL functional_wide_dft_probe.cpp)
+target_link_libraries(functional_wide_dft_probe PRIVATE poseidon::gpu)
+set_target_properties(functional_wide_dft_probe PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
+add_executable(resnet20_wide_functional EXCLUDE_FROM_ALL
+    functional_wide_network.cpp plain_resnet20_reference.cpp support/resnet20_weights.cpp
+    gpu_activity_timing.cpp)
+target_link_libraries(resnet20_wide_functional PRIVATE poseidon::gpu CUDA::cupti ${CMAKE_DL_LIBS})
+target_include_directories(resnet20_wide_functional PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/support"
+    "${POSEIDON_INCLUDES_DIR}/Doc/analysis/resnet20_joint_chain_20260911")
+target_compile_definitions(resnet20_wide_functional PRIVATE
+    POSEIDON_GPU_RESNET20_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/support")
+set_target_properties(resnet20_wide_functional PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
