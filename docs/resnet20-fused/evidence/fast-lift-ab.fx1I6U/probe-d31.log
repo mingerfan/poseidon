@@ -1,0 +1,112 @@
+56-bit key packing round trip PASS
+Barrett word reduction boundaries and random PASS
+D31 N=32768 Q=20 P=1 bits=51
+rotate(1) hoisted Q=20 match=EXACT
+rotate(1) shared_digits Q=20 max_error=6.0732e-07 residue_exact=0
+rotate(1) Q=20 residues=1310720 match=EXACT
+rotate(-3) hoisted Q=20 match=EXACT
+rotate(-3) shared_digits Q=20 max_error=4.55719e-07 residue_exact=0
+rotate(-3) Q=20 residues=1310720 match=EXACT
+rotate(16) hoisted Q=20 match=EXACT
+rotate(16) shared_digits Q=20 max_error=7.18032e-07 residue_exact=0
+rotate(16) Q=20 residues=1310720 match=EXACT
+rotate(-127) hoisted Q=20 match=EXACT
+rotate(-127) shared_digits Q=20 max_error=3.4929e-07 residue_exact=0
+rotate(-127) Q=20 residues=1310720 match=EXACT
+rotate(512) hoisted Q=20 match=EXACT
+rotate(512) shared_digits Q=20 max_error=6.15534e-07 residue_exact=0
+rotate(512) Q=20 residues=1310720 match=EXACT
+rotate(4096) hoisted Q=20 match=EXACT
+rotate(4096) shared_digits Q=20 max_error=4.30912e-07 residue_exact=0
+rotate(4096) Q=20 residues=1310720 match=EXACT
+conjugation hoisted Q=20 match=EXACT
+conjugation shared_digits Q=20 max_error=3.9023e-07 residue_exact=0
+conjugation Q=20 residues=1310720 match=EXACT
+square+relinearization Q=20 residues=1310720 match=EXACT
+rotate(1) hoisted Q=11 match=EXACT
+rotate(1) shared_digits Q=11 max_error=3.41789e-07 residue_exact=0
+rotate(1) Q=11 residues=720896 match=EXACT
+rotate(-3) hoisted Q=11 match=EXACT
+rotate(-3) shared_digits Q=11 max_error=2.69539e-07 residue_exact=0
+rotate(-3) Q=11 residues=720896 match=EXACT
+rotate(16) hoisted Q=11 match=EXACT
+rotate(16) shared_digits Q=11 max_error=3.18091e-07 residue_exact=0
+rotate(16) Q=11 residues=720896 match=EXACT
+rotate(-127) hoisted Q=11 match=EXACT
+rotate(-127) shared_digits Q=11 max_error=1.99778e-07 residue_exact=0
+rotate(-127) Q=11 residues=720896 match=EXACT
+rotate(512) hoisted Q=11 match=EXACT
+rotate(512) shared_digits Q=11 max_error=2.88556e-07 residue_exact=0
+rotate(512) Q=11 residues=720896 match=EXACT
+rotate(4096) hoisted Q=11 match=EXACT
+rotate(4096) shared_digits Q=11 max_error=2.25581e-07 residue_exact=0
+rotate(4096) Q=11 residues=720896 match=EXACT
+conjugation hoisted Q=11 match=EXACT
+conjugation shared_digits Q=11 max_error=4.4705e-07 residue_exact=0
+conjugation Q=11 residues=720896 match=EXACT
+square+relinearization Q=11 residues=720896 match=EXACT
+rotate(1) hoisted Q=5 match=EXACT
+rotate(1) shared_digits Q=5 max_error=1.01336e-07 residue_exact=0
+rotate(1) Q=5 residues=327680 match=EXACT
+rotate(-3) hoisted Q=5 match=EXACT
+rotate(-3) shared_digits Q=5 max_error=1.2875e-07 residue_exact=0
+rotate(-3) Q=5 residues=327680 match=EXACT
+rotate(16) hoisted Q=5 match=EXACT
+rotate(16) shared_digits Q=5 max_error=4.64441e-08 residue_exact=0
+rotate(16) Q=5 residues=327680 match=EXACT
+rotate(-127) hoisted Q=5 match=EXACT
+rotate(-127) shared_digits Q=5 max_error=8.28744e-08 residue_exact=0
+rotate(-127) Q=5 residues=327680 match=EXACT
+rotate(512) hoisted Q=5 match=EXACT
+rotate(512) shared_digits Q=5 max_error=6.22119e-08 residue_exact=0
+rotate(512) Q=5 residues=327680 match=EXACT
+rotate(4096) hoisted Q=5 match=EXACT
+rotate(4096) shared_digits Q=5 max_error=8.85703e-08 residue_exact=0
+rotate(4096) Q=5 residues=327680 match=EXACT
+conjugation hoisted Q=5 match=EXACT
+conjugation shared_digits Q=5 max_error=1.24995e-07 residue_exact=0
+conjugation Q=5 residues=327680 match=EXACT
+square+relinearization Q=5 residues=327680 match=EXACT
+rotate(1) hoisted Q=3 match=EXACT
+rotate(1) shared_digits Q=3 max_error=1.0094e-07 residue_exact=0
+rotate(1) Q=3 residues=196608 match=EXACT
+rotate(-3) hoisted Q=3 match=EXACT
+rotate(-3) shared_digits Q=3 max_error=1.2213e-07 residue_exact=0
+rotate(-3) Q=3 residues=196608 match=EXACT
+rotate(16) hoisted Q=3 match=EXACT
+rotate(16) shared_digits Q=3 max_error=4.94867e-08 residue_exact=0
+rotate(16) Q=3 residues=196608 match=EXACT
+rotate(-127) hoisted Q=3 match=EXACT
+rotate(-127) shared_digits Q=3 max_error=8.37076e-08 residue_exact=0
+rotate(-127) Q=3 residues=196608 match=EXACT
+rotate(512) hoisted Q=3 match=EXACT
+rotate(512) shared_digits Q=3 max_error=7.08704e-08 residue_exact=0
+rotate(512) Q=3 residues=196608 match=EXACT
+rotate(4096) hoisted Q=3 match=EXACT
+rotate(4096) shared_digits Q=3 max_error=9.00335e-08 residue_exact=0
+rotate(4096) Q=3 residues=196608 match=EXACT
+conjugation hoisted Q=3 match=EXACT
+conjugation shared_digits Q=3 max_error=1.18636e-07 residue_exact=0
+conjugation Q=3 residues=196608 match=EXACT
+square+relinearization Q=3 residues=196608 match=EXACT
+rotate(1) hoisted Q=1 match=EXACT
+rotate(1) shared_digits Q=1 max_error=1.05983e-07 residue_exact=0
+rotate(1) Q=1 residues=65536 match=EXACT
+rotate(-3) hoisted Q=1 match=EXACT
+rotate(-3) shared_digits Q=1 max_error=1.24473e-07 residue_exact=0
+rotate(-3) Q=1 residues=65536 match=EXACT
+rotate(16) hoisted Q=1 match=EXACT
+rotate(16) shared_digits Q=1 max_error=4.86698e-08 residue_exact=0
+rotate(16) Q=1 residues=65536 match=EXACT
+rotate(-127) hoisted Q=1 match=EXACT
+rotate(-127) shared_digits Q=1 max_error=8.13458e-08 residue_exact=0
+rotate(-127) Q=1 residues=65536 match=EXACT
+rotate(512) hoisted Q=1 match=EXACT
+rotate(512) shared_digits Q=1 max_error=7.08525e-08 residue_exact=0
+rotate(512) Q=1 residues=65536 match=EXACT
+rotate(4096) hoisted Q=1 match=EXACT
+rotate(4096) shared_digits Q=1 max_error=8.54947e-08 residue_exact=0
+rotate(4096) Q=1 residues=65536 match=EXACT
+conjugation hoisted Q=1 match=EXACT
+conjugation shared_digits Q=1 max_error=1.14392e-07 residue_exact=0
+conjugation Q=1 residues=65536 match=EXACT

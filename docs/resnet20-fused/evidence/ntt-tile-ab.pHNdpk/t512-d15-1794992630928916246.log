@@ -1,0 +1,50 @@
+WIDE_POOL max_gib=60
+image=0 degree=15 N=32768 Q=19 P=1
+CTS log_bsgs_ratio=1
+bootstrap_key_setup steps=53
+BENCHMARK warmup=begin
+ACTIVATION 1 stem L4 scale_bits=40
+ACTIVATION 2 stage1.block0.conv1 L4 scale_bits=40
+ACTIVATION 3 stage1.block0.residual L4 scale_bits=40
+ACTIVATION 4 stage1.block1.conv1 L4 scale_bits=40
+ACTIVATION 5 stage1.block1.residual L4 scale_bits=40
+ACTIVATION 6 stage1.block2.conv1 L4 scale_bits=40
+ACTIVATION 7 stage1.block2.residual L4 scale_bits=40
+ACTIVATION 8 stage2.block0.conv1 L4 scale_bits=40
+ACTIVATION 9 stage2.block0.residual L4 scale_bits=40
+ACTIVATION 10 stage2.block1.conv1 L4 scale_bits=40
+ACTIVATION 11 stage2.block1.residual L4 scale_bits=40
+ACTIVATION 12 stage2.block2.conv1 L4 scale_bits=40
+ACTIVATION 13 stage2.block2.residual L4 scale_bits=40
+ACTIVATION 14 stage3.block0.conv1 L4 scale_bits=40
+ACTIVATION 15 stage3.block0.residual L4 scale_bits=40
+ACTIVATION 16 stage3.block1.conv1 L4 scale_bits=40
+ACTIVATION 17 stage3.block1.residual L4 scale_bits=40
+ACTIVATION 18 stage3.block2.conv1 L4 scale_bits=40
+ACTIVATION 19 stage3.block2.residual L4 scale_bits=40
+BENCHMARK resident_plain_bytes=11412176896 resident_rotation_key_bytes=17882415104
+BENCHMARK memory_free_bytes=36326735872 total_bytes=85094825984
+BENCHMARK warmup=complete
+GPU_ACTIVITY_TIMING gpu_total_ms=3562.836191 activities=442777 host_transfers=0 host_transfer_bytes=0
+GPU_STAGE name=convolution ms=516.198857
+GPU_STAGE name=cts_other ms=20.176858
+GPU_STAGE name=cts_plain_multiply ms=133.693554
+GPU_STAGE name=cts_projection ms=38.273675
+GPU_STAGE name=cts_rotation ms=1324.724647
+GPU_STAGE name=head ms=23.950964
+GPU_STAGE name=modraise ms=4.66412
+GPU_STAGE name=polynomial ms=1100.337365
+GPU_STAGE name=residual ms=2.034142
+GPU_STAGE name=stc ms=398.782009
+ONLINE_TIMING mode=warm_resident wall_ms=4049.858093 cuda_event_ms=4049.801758 input_upload_included=false public_material_upload_included=false
+LOGIT 0 gpu=-9.038150219 plain=-9.038149125
+LOGIT 1 gpu=-2.693666031 plain=-2.693684656
+LOGIT 2 gpu=-0.9880261035 plain=-0.9880426623
+LOGIT 3 gpu=21.99714248 plain=21.99713776
+LOGIT 4 gpu=-4.058264557 plain=-4.058249793
+LOGIT 5 gpu=-2.923552629 plain=-2.923545
+LOGIT 6 gpu=14.38569825 plain=14.38570049
+LOGIT 7 gpu=-9.389957674 plain=-9.389963361
+LOGIT 8 gpu=7.561800208 plain=7.56181806
+LOGIT 9 gpu=-14.85464288 plain=-14.85464091
+NETWORK activations=19 L2 predicted=3 plain=3 label=3 max_logit_error=1.862551637e-05 result=PASS

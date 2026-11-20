@@ -1,0 +1,215 @@
+WIDE_POOL max_gib=60
+image=0 degree=31 N=32768 Q=20 P=1
+CTS log_bsgs_ratio=1
+bootstrap_key_setup steps=53
+BENCHMARK warmup=begin
+ACTIVATION 1 stem L4 scale_bits=40
+ACTIVATION 2 stage1.block0.conv1 L4 scale_bits=40
+ACTIVATION 3 stage1.block0.residual L4 scale_bits=40
+ACTIVATION 4 stage1.block1.conv1 L4 scale_bits=40
+ACTIVATION 5 stage1.block1.residual L4 scale_bits=40
+ACTIVATION 6 stage1.block2.conv1 L4 scale_bits=40
+ACTIVATION 7 stage1.block2.residual L4 scale_bits=40
+ACTIVATION 8 stage2.block0.conv1 L4 scale_bits=40
+ACTIVATION 9 stage2.block0.residual L4 scale_bits=40
+ACTIVATION 10 stage2.block1.conv1 L4 scale_bits=40
+ACTIVATION 11 stage2.block1.residual L4 scale_bits=40
+ACTIVATION 12 stage2.block2.conv1 L4 scale_bits=40
+ACTIVATION 13 stage2.block2.residual L4 scale_bits=40
+ACTIVATION 14 stage3.block0.conv1 L4 scale_bits=40
+ACTIVATION 15 stage3.block0.residual L4 scale_bits=40
+ACTIVATION 16 stage3.block1.conv1 L4 scale_bits=40
+ACTIVATION 17 stage3.block1.residual L4 scale_bits=40
+ACTIVATION 18 stage3.block2.conv1 L4 scale_bits=40
+ACTIVATION 19 stage3.block2.residual L4 scale_bits=40
+BENCHMARK resident_plain_bytes=11512578048 resident_rotation_key_bytes=19573768192
+BENCHMARK memory_free_bytes=36326735872 total_bytes=85094825984
+BENCHMARK warmup=complete
+GPU_ACTIVITY_TIMING gpu_total_ms=3749.636966 activities=434689 host_transfers=0 host_transfer_bytes=0
+GPU_STAGE_DETAIL name=carrier gpu_union_ms=815.547961 kernel_sum_ms=795.500425 kernels=79420 copies=2983 memsets=665 visits=19
+GPU_STAGE_DETAIL name=carrier_squares gpu_union_ms=75.480913 kernel_sum_ms=73.947153 kernels=9063 copies=285 memsets=57 visits=19
+GPU_STAGE_DETAIL name=convolution gpu_union_ms=482.248594 kernel_sum_ms=464.702376 kernels=74296 copies=2687 memsets=1510 visits=19
+GPU_STAGE_DETAIL name=cts gpu_union_ms=0.000000 kernel_sum_ms=0.000000 kernels=0 copies=0 memsets=0 visits=19
+GPU_STAGE_DETAIL name=cts_other gpu_union_ms=20.098289 kernel_sum_ms=15.578063 kernels=1520 copies=76 memsets=494 visits=532
+GPU_STAGE_DETAIL name=cts_plain_multiply gpu_union_ms=140.695070 kernel_sum_ms=140.695070 kernels=7277 copies=0 memsets=0 visits=456
+GPU_STAGE_DETAIL name=cts_projection gpu_union_ms=38.683306 kernel_sum_ms=38.254217 kernels=3420 copies=57 memsets=19 visits=19
+GPU_STAGE_DETAIL name=cts_rotation gpu_union_ms=1357.022662 kernel_sum_ms=1333.524216 kernels=112290 copies=3173 memsets=988 visits=1026
+GPU_STAGE_DETAIL name=harmonic gpu_union_ms=408.516301 kernel_sum_ms=391.965238 kernels=56164 copies=2983 memsets=665 visits=19
+GPU_STAGE_DETAIL name=head gpu_union_ms=22.684985 kernel_sum_ms=21.709809 kernels=3636 copies=151 memsets=84 visits=1
+GPU_STAGE_DETAIL name=modraise gpu_union_ms=4.455574 kernel_sum_ms=4.063344 kernels=494 copies=76 memsets=0 visits=19
+GPU_STAGE_DETAIL name=online gpu_union_ms=0.000000 kernel_sum_ms=0.000000 kernels=0 copies=0 memsets=0 visits=1
+GPU_STAGE_DETAIL name=projection_out gpu_union_ms=8.981260 kernel_sum_ms=8.669677 kernels=1444 copies=57 memsets=19 visits=19
+GPU_STAGE_DETAIL name=residual gpu_union_ms=1.901448 kernel_sum_ms=1.749064 kernels=296 copies=27 memsets=8 visits=9
+GPU_STAGE_DETAIL name=stc gpu_union_ms=373.320603 kernel_sum_ms=355.447509 kernels=63745 copies=3078 memsets=1482 visits=19
+GPU_KERNEL stage=carrier name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=5890 gpu_sum_ms=108.504590
+GPU_KERNEL stage=carrier name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=5890 gpu_sum_ms=43.308443
+GPU_KERNEL stage=carrier name="poseidon::gpu::(anonymous namespace)::add_plain_c0(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=380 gpu_sum_ms=3.232204
+GPU_KERNEL stage=carrier name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=2052 gpu_sum_ms=15.818069
+GPU_KERNEL stage=carrier name="poseidon::gpu::(anonymous namespace)::multiply_ciphertexts(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=285 gpu_sum_ms=6.598172
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=722 gpu_sum_ms=8.722616
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=1330 gpu_sum_ms=13.568483
+GPU_KERNEL stage=carrier name="poseidon::gpu::(anonymous namespace)::square(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=76 gpu_sum_ms=1.285062
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=361 gpu_sum_ms=3.819218
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=304 gpu_sum_ms=6.016861
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=7942 gpu_sum_ms=208.044463
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=2413 gpu_sum_ms=31.014817
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=39710 gpu_sum_ms=289.421993
+GPU_KERNEL stage=carrier name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=12065 gpu_sum_ms=56.145434
+GPU_KERNEL stage=carrier_squares name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=684 gpu_sum_ms=9.216559
+GPU_KERNEL stage=carrier_squares name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=684 gpu_sum_ms=4.418252
+GPU_KERNEL stage=carrier_squares name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=228 gpu_sum_ms=1.504160
+GPU_KERNEL stage=carrier_squares name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=114 gpu_sum_ms=1.056099
+GPU_KERNEL stage=carrier_squares name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=114 gpu_sum_ms=0.908455
+GPU_KERNEL stage=carrier_squares name="poseidon::gpu::(anonymous namespace)::square(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=57 gpu_sum_ms=0.773631
+GPU_KERNEL stage=carrier_squares name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=912 gpu_sum_ms=17.675695
+GPU_KERNEL stage=carrier_squares name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=285 gpu_sum_ms=3.394851
+GPU_KERNEL stage=carrier_squares name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=4560 gpu_sum_ms=28.414405
+GPU_KERNEL stage=carrier_squares name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=1425 gpu_sum_ms=6.585046
+GPU_KERNEL stage=convolution name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=4415 gpu_sum_ms=38.857127
+GPU_KERNEL stage=convolution name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=4415 gpu_sum_ms=21.815892
+GPU_KERNEL stage=convolution name="poseidon::gpu::(anonymous namespace)::add_plain_c0(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=19 gpu_sum_ms=0.096704
+GPU_KERNEL stage=convolution name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=1804 gpu_sum_ms=8.860104
+GPU_KERNEL stage=convolution name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=883 gpu_sum_ms=4.701939
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=1766 gpu_sum_ms=10.208508
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=38 gpu_sum_ms=0.203201
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=608 gpu_sum_ms=3.746009
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=6912 gpu_sum_ms=61.170829
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=6219 gpu_sum_ms=75.267503
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=2687 gpu_sum_ms=29.535421
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=31095 gpu_sum_ms=151.313788
+GPU_KERNEL stage=convolution name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=13435 gpu_sum_ms=58.925351
+GPU_KERNEL stage=cts_other name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=76 gpu_sum_ms=0.624195
+GPU_KERNEL stage=cts_other name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=76 gpu_sum_ms=0.862499
+GPU_KERNEL stage=cts_other name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=456 gpu_sum_ms=6.985696
+GPU_KERNEL stage=cts_other name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=76 gpu_sum_ms=2.013960
+GPU_KERNEL stage=cts_other name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=76 gpu_sum_ms=0.811010
+GPU_KERNEL stage=cts_other name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=380 gpu_sum_ms=2.705417
+GPU_KERNEL stage=cts_other name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=380 gpu_sum_ms=1.575286
+GPU_KERNEL stage=cts_plain_multiply name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=7277 gpu_sum_ms=140.695070
+GPU_KERNEL stage=cts_projection name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=342 gpu_sum_ms=6.968477
+GPU_KERNEL stage=cts_projection name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=342 gpu_sum_ms=2.656226
+GPU_KERNEL stage=cts_projection name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=38 gpu_sum_ms=0.311295
+GPU_KERNEL stage=cts_projection name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=19 gpu_sum_ms=0.194591
+GPU_KERNEL stage=cts_projection name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=38 gpu_sum_ms=0.463969
+GPU_KERNEL stage=cts_projection name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=19 gpu_sum_ms=0.276418
+GPU_KERNEL stage=cts_projection name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=380 gpu_sum_ms=10.533652
+GPU_KERNEL stage=cts_projection name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=57 gpu_sum_ms=0.938181
+GPU_KERNEL stage=cts_projection name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=1900 gpu_sum_ms=14.390671
+GPU_KERNEL stage=cts_projection name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=285 gpu_sum_ms=1.520737
+GPU_KERNEL stage=cts_rotation name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=19190 gpu_sum_ms=406.724161
+GPU_KERNEL stage=cts_rotation name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=8816 gpu_sum_ms=69.236863
+GPU_KERNEL stage=cts_rotation name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=1976 gpu_sum_ms=16.676021
+GPU_KERNEL stage=cts_rotation name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=988 gpu_sum_ms=10.382498
+GPU_KERNEL stage=cts_rotation name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=1976 gpu_sum_ms=24.766686
+GPU_KERNEL stage=cts_rotation name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=10792 gpu_sum_ms=310.915064
+GPU_KERNEL stage=cts_rotation name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=2432 gpu_sum_ms=34.687312
+GPU_KERNEL stage=cts_rotation name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=53960 gpu_sum_ms=401.578516
+GPU_KERNEL stage=cts_rotation name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=12160 gpu_sum_ms=58.557095
+GPU_KERNEL stage=harmonic name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=3002 gpu_sum_ms=33.615892
+GPU_KERNEL stage=harmonic name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=3002 gpu_sum_ms=17.354325
+GPU_KERNEL stage=harmonic name="poseidon::gpu::(anonymous namespace)::add_plain_c0(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=304 gpu_sum_ms=1.982062
+GPU_KERNEL stage=harmonic name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=2052 gpu_sum_ms=12.002943
+GPU_KERNEL stage=harmonic name="poseidon::gpu::(anonymous namespace)::multiply_ciphertexts(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=285 gpu_sum_ms=4.025110
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=722 gpu_sum_ms=5.324700
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=1330 gpu_sum_ms=8.955121
+GPU_KERNEL stage=harmonic name="poseidon::gpu::(anonymous namespace)::square(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=76 gpu_sum_ms=0.812864
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=285 gpu_sum_ms=1.929938
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=304 gpu_sum_ms=3.803398
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=5054 gpu_sum_ms=77.253029
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=2413 gpu_sum_ms=26.013858
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=25270 gpu_sum_ms=145.450761
+GPU_KERNEL stage=harmonic name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=12065 gpu_sum_ms=53.441237
+GPU_KERNEL stage=head name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=202 gpu_sum_ms=1.665988
+GPU_KERNEL stage=head name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=202 gpu_sum_ms=0.975690
+GPU_KERNEL stage=head name="poseidon::gpu::(anonymous namespace)::add_plain_c0(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=1 gpu_sum_ms=0.004800
+GPU_KERNEL stage=head name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=102 gpu_sum_ms=0.497956
+GPU_KERNEL stage=head name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=49 gpu_sum_ms=0.241188
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=98 gpu_sum_ms=0.541634
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=4 gpu_sum_ms=0.020960
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=39 gpu_sum_ms=0.233473
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=209 gpu_sum_ms=1.704457
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=304 gpu_sum_ms=3.661136
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=151 gpu_sum_ms=1.633859
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=1520 gpu_sum_ms=7.185446
+GPU_KERNEL stage=head name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=755 gpu_sum_ms=3.343222
+GPU_KERNEL stage=modraise name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=38 gpu_sum_ms=1.007585
+GPU_KERNEL stage=modraise name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=38 gpu_sum_ms=0.387748
+GPU_KERNEL stage=modraise name="poseidon::gpu::(anonymous namespace)::extend_q0(unsigned long*, unsigned long const*, unsigned long const*, unsigned long, unsigned long)" count=38 gpu_sum_ms=0.416289
+GPU_KERNEL stage=modraise name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=190 gpu_sum_ms=1.453025
+GPU_KERNEL stage=modraise name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=190 gpu_sum_ms=0.798697
+GPU_KERNEL stage=projection_out name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=95 gpu_sum_ms=0.850246
+GPU_KERNEL stage=projection_out name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=95 gpu_sum_ms=0.468867
+GPU_KERNEL stage=projection_out name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=38 gpu_sum_ms=0.185823
+GPU_KERNEL stage=projection_out name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=19 gpu_sum_ms=0.096704
+GPU_KERNEL stage=projection_out name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=38 gpu_sum_ms=0.220067
+GPU_KERNEL stage=projection_out name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=19 gpu_sum_ms=0.116161
+GPU_KERNEL stage=projection_out name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=133 gpu_sum_ms=1.620941
+GPU_KERNEL stage=projection_out name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=57 gpu_sum_ms=0.633381
+GPU_KERNEL stage=projection_out name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=665 gpu_sum_ms=3.229226
+GPU_KERNEL stage=projection_out name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=285 gpu_sum_ms=1.248261
+GPU_KERNEL stage=residual name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=15 gpu_sum_ms=0.133759
+GPU_KERNEL stage=residual name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=15 gpu_sum_ms=0.074207
+GPU_KERNEL stage=residual name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=10 gpu_sum_ms=0.049185
+GPU_KERNEL stage=residual name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=3 gpu_sum_ms=0.015072
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=6 gpu_sum_ms=0.034688
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=4 gpu_sum_ms=0.021537
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=12 gpu_sum_ms=0.068192
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=3 gpu_sum_ms=0.027232
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=25 gpu_sum_ms=0.300127
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=13 gpu_sum_ms=0.139618
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=125 gpu_sum_ms=0.604196
+GPU_KERNEL stage=residual name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=65 gpu_sum_ms=0.281251
+GPU_KERNEL stage=stc name="poseidon::gpu::(anonymous namespace)::accumulate(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=2546 gpu_sum_ms=18.533549
+GPU_KERNEL stage=stc name="poseidon::gpu::(anonymous namespace)::lift_digit(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=2546 gpu_sum_ms=11.368526
+GPU_KERNEL stage=stc name="poseidon::gpu::(anonymous namespace)::lift_centered(unsigned long*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, bool)" count=2052 gpu_sum_ms=9.260723
+GPU_KERNEL stage=stc name="poseidon::gpu::(anonymous namespace)::permute_galois(unsigned long*, unsigned long const*, unsigned long, unsigned int, int, unsigned int)" count=988 gpu_sum_ms=4.335082
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::finish<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=1976 gpu_sum_ms=9.806828
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::finish<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long, unsigned long const*)" count=76 gpu_sum_ms=0.349057
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::add_terms<false>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=456 gpu_sum_ms=2.513519
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::add_terms<true>(unsigned long*, unsigned long const*, unsigned long const*, poseidon::gpu::detail::WideBvLimb const*, unsigned long, unsigned long)" count=7277 gpu_sum_ms=51.265312
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::ntt_tile<false, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=4598 gpu_sum_ms=48.782980
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::ntt_tile<true, 1024>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long)" count=3040 gpu_sum_ms=28.912217
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::ntt_stage<false>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=22990 gpu_sum_ms=104.909610
+GPU_KERNEL stage=stc name="void poseidon::gpu::(anonymous namespace)::ntt_stage<true>(unsigned long*, unsigned long const*, poseidon::util::MultiplyUIntModOperand const*, poseidon::util::MultiplyUIntModOperand const*, unsigned long, unsigned long, unsigned long, unsigned long, unsigned long)" count=15200 gpu_sum_ms=65.410106
+CPU_STAGE name=carrier submit_wall_ms=941.916154
+CPU_STAGE name=carrier_squares submit_wall_ms=104.108276
+CPU_STAGE name=convolution submit_wall_ms=586.435129
+CPU_STAGE name=cts submit_wall_ms=2.09353
+CPU_STAGE name=cts_other submit_wall_ms=32.16399
+CPU_STAGE name=cts_plain_multiply submit_wall_ms=80.110323
+CPU_STAGE name=cts_projection submit_wall_ms=43.92443
+CPU_STAGE name=cts_rotation submit_wall_ms=1371.866321
+CPU_STAGE name=harmonic submit_wall_ms=520.047616
+CPU_STAGE name=head submit_wall_ms=27.773631
+CPU_STAGE name=modraise submit_wall_ms=4.34098
+CPU_STAGE name=online submit_wall_ms=0.00086
+CPU_STAGE name=projection_out submit_wall_ms=11.3035
+CPU_STAGE name=residual submit_wall_ms=2.73811
+CPU_STAGE name=stc submit_wall_ms=498.885151
+GPU_STAGE name=carrier ms=815.547961
+GPU_STAGE name=carrier_squares ms=75.480913
+GPU_STAGE name=convolution ms=482.248594
+GPU_STAGE name=cts ms=0
+GPU_STAGE name=cts_other ms=20.098289
+GPU_STAGE name=cts_plain_multiply ms=140.69507
+GPU_STAGE name=cts_projection ms=38.683306
+GPU_STAGE name=cts_rotation ms=1357.022662
+GPU_STAGE name=harmonic ms=408.516301
+GPU_STAGE name=head ms=22.684985
+GPU_STAGE name=modraise ms=4.455574
+GPU_STAGE name=online ms=0
+GPU_STAGE name=projection_out ms=8.98126
+GPU_STAGE name=residual ms=1.901448
+GPU_STAGE name=stc ms=373.320603
+ONLINE_TIMING mode=warm_resident wall_ms=4237.626652 cuda_event_ms=4237.5625 host_enqueue_ms=4230.521681 final_wait_ms=7.104971 input_upload_included=false public_material_upload_included=false
+LOGIT 0 gpu=-7.682293337 plain=-7.682276737
+LOGIT 1 gpu=2.890496434 plain=2.890517132
+LOGIT 2 gpu=2.108033072 plain=2.108012836
+LOGIT 3 gpu=25.52832209 plain=25.52823855
+LOGIT 4 gpu=-7.262602462 plain=-7.262548537
+LOGIT 5 gpu=7.924037779 plain=7.924031814
+LOGIT 6 gpu=-6.721876423 plain=-6.721889858
+LOGIT 7 gpu=-7.844305178 plain=-7.844303039
+LOGIT 8 gpu=-2.456353587 plain=-2.456349415
+LOGIT 9 gpu=-6.470206759 plain=-6.470181119
+NETWORK activations=19 L2 predicted=3 plain=3 label=3 max_logit_error=8.353993585e-05 result=PASS
