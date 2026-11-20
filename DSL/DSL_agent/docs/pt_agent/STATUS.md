@@ -1,13 +1,12 @@
-## 用户明确批准920项源码创建提交并推送（2026-11-20 Asia/Taipei）
+## 用户批准的920项源码等已提交并推送（2026-11-20 Asia/Taipei）
 
-**改动文件：** 本轮范围由paper-download/git-push-review-20261120.json的920项固定清单确定：pt_agent 643、baseline 248、其他scripts入口4、workloads 22、主线文档2、DaCapo补丁文件1。用户已明确批准创建commit并push，沿用lhohy <lhohy0203@proton.me>，使用既有lhy-agent-dsl分支；不添加codex前缀或其他作者标记。源码内容保持现状，仅更新本STATUS记录操作授权；最终回执写入paper-download/git-push-result-20261120.json。
+**改动文件：** 按paper-download/git-push-review-20261120.json固定920项清单创建源码提交ff1d160a（Update DSL agent, backend adapters and experiment tooling），并推送到mingerfan/poseidon的lhy-agent-dsl。作者与提交者均为用户批准的lhohy <lhohy0203@proton.me>，没有codex前缀或其他作者标记；源码保留原样。本次只更新本STATUS同步记录，最终回执保存在paper-download/git-push-result-20261120.json。
 
-**测试输出与验证：** 操作前确认Ubuntu/aarch64、当前分支与清单一致，暂存区为空，920项文件均存在且状态与交付清单一致；此前凭证字面量扫描发现0项。未运行完整测试、模型、科学实验或API调用；不将代码快照推送作为实验验证。
+**测试输出与验证：** 提交前暂存区为空；920项清单全部存在、状态一致，暂存范围与批准范围逐路径一致。源码commit实际包含920项文本文件、192826行新增/6393行删除，无额外路径或二进制；作者及提交者身份核对通过。git push --porcelain成功回报HEAD:refs/heads/lhy-agent-dsl a7b4c291..ff1d160a、Done。凭证字面量检查发现0项，未打印凭证。未运行模型、科学实验、API或完整测试套件，推送记录不作为功能测试结论。
 
-**与spec不一致之处：** 无Agent实现或算法改动。当前仓库user.name/email未持久配置，本轮commit命令仅临时指定用户批准的历史作者与提交者身份，保持全局配置。仅按固定清单暂存，保留其他本地变更。
+**与spec不一致之处：** 无Agent实现或算法调整。仅在commit命令临时指定用户批准的身份，全局Git配置保持。固定清单外内容未暂存；本STATUS操作回执作为同一批准范围内的文档更新单独提交，保留源码commit与现有远端历史。
 
-**未完成项：** 批准范围之外的论文下载文件、旧generic文档、后端验证过程产物、第三方副本与子模块内部13项DaCapo改动继续保留本地；本轮不向这些子仓库创建提交或推送。最终commit编号和远端核对以本轮Git回执为准。
-
+**未完成项：** 用户批准的源码同步已完成。论文下载文件、旧generic文档、后端验证过程产物、第三方副本及子模块内部13项DaCapo改动按已确认范围保留本地，本轮不向子仓库提交或推送。
 ## 用户请求推送本地代码：既有提交已推送，未提交源码已整理（2026-11-20 Asia/Taipei）
 
 **改动文件：** 源码未改，按用户明确push请求将既有a7b4c291从lhy-agent-dsl推送到origin同名分支，未新建分支或添加codex前缀。已有提交作者/提交者均为lhohy <lhohy0203@proton.me>。新增paper-download/git-push-review-20261120.json及.txt，列出拟提交的920项代码/测试/配置/主线文档以及单列保留本地的范围；仅更新本STATUS记录。
