@@ -12,7 +12,8 @@ VERSION="capacity-public-tensors-v7"
 CHANNEL_VERSION="capacity-public-tensors-v8"
 INDEX_VERSION="capacity-public-tensors-v9"
 SHALLOW_VERSION="capacity-public-tensors-v10"
-VERSIONS=(LEGACY_VERSION,PREVIOUS_VERSION,TILE_VERSION,TENSOR_VERSION,SPATIAL_VERSION,WINDOW_VERSION,VERSION,CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION)
+from public_basis_packing import VERSION as BASIS_VERSION
+VERSIONS=(BASIS_VERSION,LEGACY_VERSION,PREVIOUS_VERSION,TILE_VERSION,TENSOR_VERSION,SPATIAL_VERSION,WINDOW_VERSION,VERSION,CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION)
 
 def request_version(request):
     descriptor=request["constant_origins"].get("capacity_tensor_packing")
@@ -93,6 +94,9 @@ def row_sum_cost(weights,batches,period):
 
 def packing(model,plan,version=VERSION):
     require(version in VERSIONS,"Unknown capacity public packing version")
+    if version==BASIS_VERSION:
+        from public_basis_packing import packing as basis_packing
+        return basis_packing(model,plan)
     check=validate(model);period=plan["input_slot_period"]
     constants=model["constants"]
     vectors={};bindings=[];seen={};packed_refs=set();other_refs=set();strategies={};tiles={};tensor_strategies={};stack_operands={};spatial_windows={};spatial_streams={};suffix_windows={};planning_costs={};occupied={n["id"] for n in model["nodes"]}
@@ -351,6 +355,8 @@ def key_for(packed,node_id,role,**indices):
 
 
 def rules(version):
+    if version==BASIS_VERSION:
+        return BASIS_RULES
     text="""
 Public packing capacity-public-tensors-v6: bindings name immutable length-P
 vectors, not extra model parameters. Linear strategies are public layout plans.
@@ -420,3 +426,30 @@ runs of destination positions using binary rotation/addition, separately per
 chunk. This preserves all logical elements and never rotates across chunks.
 """
     return result
+
+BASIS_RULES = """
+Public packing capacity-public-tensors-v11: public_constants is still a bounded
+registry of at most256 scalar or length-P values. scalar_bank.pages names its
+immutable binary64 coefficient pages; segments records original tensor C-order
+offsets/elements/shapes. Every original weight is retained. A page[index] read
+using a statically checked integer selects that exact public scalar; slices,
+ciphertext-dependent indices, writes and file access are unavailable. Static
+closed tuples/aliases of named pages are permitted. No replacement weight table
+may be constructed. BatchNorm gain/offset segments follow original mean, variance,
+gamma, beta and epsilon; their derivations do not change model parameters.
+Geometry basis values are public layout data, not model outputs or DSL answers.
+A partial permutation rotates input by input_shift, applies its network, keeps
+its mask (None means all slots), then rotates by -output_shift. Each network
+layer conditionally swaps XOR-distance pairs. For original x, let a=x.rotate(d),
+b=x.rotate(-d); the partner value is b+(a-b)*low_half. Select that partner where
+swap is1, retaining x elsewhere; swap=None selects every pair. Reuse the original
+x for both differences. All data are prebound; no new operation or resource
+limit is granted. Gather stages compose in order. Channel-spatial kernel masks
+use destination coordinates and original stride/padding/dilation: extract one
+input channel, rotate by kernel.rotation, gather, then apply kernel.mask. Apply
+original scalar coefficients and groups. Channel slices and suffix windows
+retain every declared element; a suffix window observes only complete row starts.
+These are optional equivalent layout primitives. The Agent still chooses
+implementation, fusion and blocking. The external compiler manages ciphertext
+state; no explicit bootstrap/rescale/modswitch or refresh positions are needed.
+"""

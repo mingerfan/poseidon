@@ -91,9 +91,13 @@ def _semantics(model,name,values):
     declared_terms=len(values),mathematical_degree=degree,all_zero=degree is None,
     nonzero_indices=[i for i,x in enumerate(values) if x!=0]))
  return result
-def build(request,info=None):
+def build(request,info=None,*,tensor_operands=False):
  """Checked role record from host-owned numeric registries. No name/family dispatch."""
  info=request["public_weight_binding"] if info is None else info
+ require(type(tensor_operands)is bool,"tensor_role_mode")
+ if tensor_operands:
+  from public_tensor_math_context import POLICY as TP,FORMAT as TF
+  require((info.get("policy"),info.get("format"))==(TP,TF),"explicit_tensor_math_policy")
  expected=_base(request,info);used=usage(request["model"])
  scalar_names={}
  for name,v in request["public_constants"].items():
@@ -107,6 +111,9 @@ def build(request,info=None):
   elif polynomial:
    require(len(dims)==1 and desc["elements"]<=MAX_MATH_ELEMENTS,"polynomial_coefficient_capacity")
    kind="polynomial_coefficients";vals=list(value)
+  elif tensor_operands and math_tensor:
+   require(desc["elements"]<=MAX_MATH_ELEMENTS,"tensor_math_capacity")
+   kind="tensor_operand";vals=list(leaves(value))
   else:
    opaque.append(dict(logical_name=name,descriptor=desc,usages=uses,
     exact_whole_plain_names=sorted(k for k,v in expected["public_constants"].items() if v==desc)))
@@ -125,12 +132,16 @@ def build(request,info=None):
    require(_zero_capability(request),"missing_trusted_encrypted_zero_capability")
   rows.append(dict(logical_name=name,descriptor=desc,kind=kind,usages=uses,elements=elements,
    polynomial_semantics=semantics))
- record=dict(format=VERSION,scope="public mathematical values and exact prebound roles; no DSL answer",
+ if tensor_operands:
+  from public_tensor_math_context import ROLE_FORMAT,ROLE_SCOPE
+ record=dict(format=ROLE_FORMAT if tensor_operands else VERSION,
+  scope=ROLE_SCOPE if tensor_operands else "public mathematical values and exact prebound roles; no DSL answer",
   equality="exact-binary64-with-signed-zero-v1",source_registry_sha256=digest(expected),
   projected_graph_sha256=digest(graph_projection(request,info)),math_elements=count,
   required_scalar_polynomial_roles_complete=True,physical_layout_validated=False,
   backend_executable_not_established=True,encrypted_zero_available=_zero_capability(request),existing_layout_roles_sha256=digest(request.get("constant_origins",{})),
   constants=rows,opaque_constants=opaque,prebound_math_scalars={k:matched[k] for k in sorted(matched)})
+ if tensor_operands:record["required_tensor_operand_roles_complete"]=True
  record["binding"]=digest(record)
  require(len(canonical(record))<=MAX_ROLE_BYTES,"public_math_metadata_bytes")
  return record
@@ -140,23 +151,28 @@ def _nested(vals,dims):
  if len(dims)==1:return list(vals)
  width=math.prod(dims[1:])
  return [_nested(vals[i*width:(i+1)*width],dims[1:]) for i in range(dims[0])]
-def verify_projected(context):
+def verify_projected(context,*,tensor_operands=False):
  """Check projected mathematical values against logical/Plain hashes and roles."""
  require(type(context) is dict and set(context)<=TOP_KEYS,"public_envelope_fields")
  info=context.get("public_weight_binding",{})
+ require(type(tensor_operands)is bool,"tensor_role_mode")
+ if tensor_operands:
+  from public_tensor_math_context import POLICY as TP,FORMAT as TF,ROLE_FORMAT,ROLE_SCOPE
+  require((info.get("policy"),info.get("format"))==(TP,TF),"explicit_tensor_math_policy")
  from public_origin_columns import POLICY as COMPACT_POLICY, WEIGHT_FORMAT as COMPACT_FORMAT, origin_digest
- require((info.get("format"),info.get("policy")) in ((FORMAT,POLICY),(COMPACT_FORMAT,COMPACT_POLICY)) and "math_roles" in info,"explicit_math_role_policy")
+ require((info.get("format"),info.get("policy")) in (((TF,TP),)if tensor_operands else ((FORMAT,POLICY),(COMPACT_FORMAT,COMPACT_POLICY))) and "math_roles" in info,"explicit_math_role_policy")
  if info["policy"]==COMPACT_POLICY:
   from public_origin_columns import registries
   info=dict(info,**registries(context))
  require(context["model"]["constants"]==info["model_constants"] and context["public_constants"]==info["public_constants"],"projected_descriptor_registry")
  r=info["math_roles"]
- require(type(r) is dict and set(r)=={"format","scope","equality","source_registry_sha256","projected_graph_sha256","math_elements","required_scalar_polynomial_roles_complete","physical_layout_validated","backend_executable_not_established","encrypted_zero_available","existing_layout_roles_sha256","constants","opaque_constants","prebound_math_scalars","binding"} and r.get("format")==VERSION and r.get("binding")==digest({k:v for k,v in r.items() if k!="binding"}),"public_math_role_binding")
+ require(type(r) is dict and set(r)=={"format","scope","equality","source_registry_sha256","projected_graph_sha256","math_elements","required_scalar_polynomial_roles_complete","physical_layout_validated","backend_executable_not_established","encrypted_zero_available","existing_layout_roles_sha256","constants","opaque_constants","prebound_math_scalars","binding"}|({"required_tensor_operand_roles_complete"}if tensor_operands else set()) and r.get("format")== (ROLE_FORMAT if tensor_operands else VERSION) and r.get("binding")==digest({k:v for k,v in r.items() if k!="binding"}),"public_math_role_binding")
  require(r["source_registry_sha256"]==digest({k:info[k] for k in ("model_constants","public_constants")})
   and r["projected_graph_sha256"]==digest(context["model"]),"public_math_role_source_binding")
- require(r["scope"]=="public mathematical values and exact prebound roles; no DSL answer" and r["equality"]=="exact-binary64-with-signed-zero-v1" and r["required_scalar_polynomial_roles_complete"] is True
+ require(r["scope"]==(ROLE_SCOPE if tensor_operands else "public mathematical values and exact prebound roles; no DSL answer") and r["equality"]=="exact-binary64-with-signed-zero-v1" and r["required_scalar_polynomial_roles_complete"] is True
   and r["physical_layout_validated"] is False and r["backend_executable_not_established"] is True
   and r["encrypted_zero_available"]==_zero_capability(context) and r["existing_layout_roles_sha256"]==origin_digest(context.get("constant_origins",{}),compact_policy=info["policy"]==COMPACT_POLICY),"public_math_role_scope")
+ if tensor_operands:require(r["required_tensor_operand_roles_complete"] is True,"complete_tensor_math_scope")
  used=usage(context["model"]);seen=set();count=0;required_scalars=set()
  for row in r["constants"]:
   require(type(row) is dict and set(row)=={"logical_name","descriptor","kind","usages","elements","polynomial_semantics"},"logical_role_fields")
@@ -184,7 +200,7 @@ def verify_projected(context):
   if any(s["all_zero"] for s in row["polynomial_semantics"]):require(_zero_capability(context),"missing_trusted_encrypted_zero_capability")
   polynomial=any(u["role"]=="polynomial_coefficients" for u in used[name])
   math_tensor=any(u["role"]=="elementwise_operand" for u in used[name])
-  expected_kind="scalar_operand" if not desc["shape"] else "polynomial_coefficients" if polynomial else None
+  expected_kind="scalar_operand" if not desc["shape"] else "polynomial_coefficients" if polynomial else "tensor_operand" if tensor_operands and math_tensor else None
   require(row["kind"]==expected_kind and (not polynomial or len(desc["shape"])==1),"logical_math_kind")
   count+=len(vals)
  for row in r["opaque_constants"]:
@@ -192,7 +208,8 @@ def verify_projected(context):
   name=row["logical_name"];require(name not in seen and name in info["model_constants"],"opaque_role_inventory");seen.add(name)
   desc=info["model_constants"][name]
   require(row["descriptor"]==desc and row["usages"]==used[name] and bool(desc["shape"])
-   and not any(u["role"]=="polynomial_coefficients" for u in used[name]),"opaque_role_identity")
+   and not any(u["role"]=="polynomial_coefficients" for u in used[name])
+   and(not tensor_operands or not any(u["role"]=="elementwise_operand"for u in used[name])),"opaque_role_identity")
   require(row["exact_whole_plain_names"]==sorted(k for k,v in info["public_constants"].items() if v==desc),"opaque_whole_binding")
  require(seen==set(info["model_constants"]) and count==r["math_elements"]<=MAX_MATH_ELEMENTS and
   set(r["prebound_math_scalars"])==required_scalars,"complete_math_role_inventory")

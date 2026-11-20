@@ -167,8 +167,12 @@ def to_host_argv(argv: list[str], run_dir: Path) -> list[str]:
     return mapped
 
 
-def trusted_run(run_dir: Path, argv: list[str], log: Path, *, env_extra: dict | None = None) -> dict:
+def trusted_run(run_dir: Path, argv: list[str], log: Path, *, env_extra: dict | None = None,
+                wall_seconds: int | None = None) -> dict:
     """Run EmitBackend output inside Nix with the separately approved limits."""
+    if wall_seconds is not None and (type(wall_seconds) is not int or not 1 <= wall_seconds <= 7200):
+        raise ValueError("wall_seconds must be an integer in 1..7200 or None")
+    wall_seconds = TRUSTED_LIMITS["wall_seconds"] if wall_seconds is None else wall_seconds
     run_dir, log = Path(run_dir), Path(log)
     if shutil.disk_usage(run_dir).free < TRUSTED_LIMITS["min_free_gib"] * 1024**3:
         raise RuntimeError("Trusted runner requires at least 10 GiB free disk space")
@@ -192,7 +196,7 @@ def trusted_run(run_dir: Path, argv: list[str], log: Path, *, env_extra: dict | 
             runner = stream_run if Path(argv[0]).name=='hecate-opt' else subprocess.run
             completed = runner(command, cwd=run_dir, env={**os.environ, **(env_extra or {})},
                                        stdout=stream, stderr=subprocess.STDOUT, preexec_fn=limits,
-                                       timeout=TRUSTED_LIMITS["wall_seconds"])
+                                       timeout=wall_seconds)
             exit_code = completed.returncode
             ir_io = getattr(completed,'ir_io',None)
         except subprocess.TimeoutExpired:
@@ -359,7 +363,8 @@ def trace(run_dir: Path, seconds: int = 600, *, trusted=False) -> dict:
                 mlir=(run_dir / "candidate_trace.mlir").is_file())
 
 
-def compile(run_dir: Path, mode: str, boot: str | None = None, seconds: int = 900, *, trusted=False) -> dict:
+def compile(run_dir: Path, mode: str, boot: str | None = None, seconds: int = 900, *, trusted=False,
+            trusted_wall_seconds: int | None = None) -> dict:
     """inside Nix. Compile once through the selected runner and preserve its log."""
     setup_env()
 
@@ -370,7 +375,8 @@ def compile(run_dir: Path, mode: str, boot: str | None = None, seconds: int = 90
     argv = compile_argv(mode, boot, run_dir)
     if trusted:
         result = trusted_run(run_dir, to_host_argv(argv, run_dir), run_dir / "compile.log",
-                             env_extra=dict(LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"]))
+                             env_extra=dict(LD_LIBRARY_PATH=os.environ["HECATE_PYTHON_LIBRARY_PATH"]),
+                             wall_seconds=trusted_wall_seconds)
         result["plan"] = (run_dir / "lowered._hecate_golden.runtime-plan.json").is_file()
         return result
     _legacy_sdk_env()

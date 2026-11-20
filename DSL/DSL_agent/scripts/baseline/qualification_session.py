@@ -8,6 +8,7 @@ import json
 import os
 import tempfile
 from pathlib import Path
+from benchmark_graph import canonical
 
 from candidate_contract import ReplayProvider, request_file_bytes, run_feedback_loop, strict_json
 from component_control import QualificationCancelled
@@ -24,9 +25,17 @@ SOURCE = ROOT / "scripts/baseline/golden_cases"
 
 def read_json(path):
     from candidate_contract import MAX_BYTES
-    require(path.is_file() and not path.is_symlink() and path.stat().st_size <= MAX_BYTES,
+    from provenance_json_transport import WIRE_BYTES
+    from public_basis_storage import is_packet,decode_data_file,loads
+    data_role=path.name in ('model.json','request.json')
+    require(path.is_file() and not path.is_symlink() and path.stat().st_size <= (WIRE_BYTES if data_role else MAX_BYTES),
             "JSON file size limit")
-    return strict_json(path.read_text())
+    raw=path.read_bytes()
+    if data_role:
+        value=loads(raw)
+        if is_packet(value):
+            return decode_data_file(value,path.name)
+    return strict_json(raw.decode('utf-8'))
 
 
 def bind_backend(report, request, waterline):
@@ -179,7 +188,7 @@ class QualificationSession:
         return self.validation.evaluate(raw, index)
 
     @classmethod
-    def qualify(cls, request, candidate, *, validation_level="numerical", artifact_observer=None):
+    def qualify(cls, request, candidate, *, validation_level="numerical", artifact_observer=None, evaluation_inputs=None):
         """Single fixed candidate; never prepares a deterministic DSL answer."""
         from component_contract import reconstruct_request
         from unified_graph_contract import validate_candidate
@@ -206,18 +215,28 @@ class QualificationSession:
             if artifact_observer is not None:
                 artifact_observer(result)
             from unified_graph_prepare import prepare_case
-            dump(result / "model.json", request["model"])
+            from public_basis_storage import selected,encode_model
+            if selected(request):
+                (result/"model.json").write_bytes(canonical(encode_model(request["model"])))
+            else:
+                dump(result / "model.json", request["model"])
             layout = request["layout"]
             period = layout["input_slot_period"] if "logical_inputs" in layout else None
             abi = layout["execution_abi"] if "resource_profile" in layout else None
             from unified_graph_prepare import prepare_request
-            model = prepare_request(request, result)
+            model = prepare_request(request, result, evaluation_inputs=evaluation_inputs,
+                                    compile_only=validation_level=="compiled")
             require(read_json(result / "logical-bindings.json") == layout,
                     "Prepared model/layout binding mismatch")
             (result / "model-structure.txt").write_text(str(model))
             (result / "request.json").write_bytes(request_file_bytes(request))
-            frozen = {name: digest(result / name) for name in (
-                "model.json", "weights.npz", "arrays.npz", "request.json", "logical-bindings.json")}
+            prepared_files=["model.json", "weights.npz", "request.json", "logical-bindings.json"]
+            if validation_level=="numerical":prepared_files.append("arrays.npz")
+            if evaluation_inputs is not None:prepared_files.append("evaluation-inputs.json")
+            frozen = {name: digest(result / name) for name in prepared_files}
+            report["data_preparation"]=dict(mode="compiler_metadata" if validation_level=="compiled" else
+                "fixed_inputs" if evaluation_inputs is not None else "default_inputs",
+                numerical_arrays_prepared=validation_level=="numerical")
             fixed = read_json(SOURCE / "fixtures.json")
             helpers = None
             if "upstream_helpers" in request:

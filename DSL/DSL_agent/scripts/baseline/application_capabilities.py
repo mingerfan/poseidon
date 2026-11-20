@@ -418,6 +418,12 @@ def describe():
             required_capabilities=list(op.capabilities),input_status="registered",decomposition_status="registered",
             compiler_status="unverified",encrypted_status="unverified",agent_status="unverified")
             for name,op in sorted(TENSOR_REGISTRY.items())})
+    from operator_registry_contracts import catalog as operator_type_shape_catalog
+    contracts = operator_type_shape_catalog()
+    result["decomposition_registry"]["contract_format"] = contracts["format"]
+    for name, contract in contracts["operators"].items():
+        result["decomposition_registry"]["operators"][name].update(
+            input_contract=contract["summary"], type_and_shape=contract)
     result["identity_sha256"] = digest(result)
     return result
 

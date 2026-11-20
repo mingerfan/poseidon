@@ -13,7 +13,13 @@ def observed_stages(report):
                 numerically_compared=isinstance(last.get("comparison"), dict),
                 evidence_integrity_not_rejected=intact)
 
-def qualify(request, candidate, *, validation_level="numerical", artifact_observer=None):
+def qualify(request, candidate, *, validation_level="numerical", artifact_observer=None, evaluation_inputs=None):
+    from native_execution_profile import selected
+    if selected(request):
+        if evaluation_inputs is not None:raise ValueError('Fixed inputs use the ordinary compiler evaluation profile')
+        from native_qualification import qualify as native_qualify
+        return native_qualify(request,candidate,validation_level=validation_level,
+                              artifact_observer=artifact_observer)
     from benchmark_graph import canonical, require
     from hecate_python_env import WORK
     from qualification_session import QualificationSession
@@ -21,6 +27,7 @@ def qualify(request, candidate, *, validation_level="numerical", artifact_observ
     require(request.get("compiler_configuration",{}).get("backend")=="poseidon_cpu",
             "Historical backend execution is retired; prepare a new Poseidon request")
     options={} if artifact_observer is None else dict(artifact_observer=artifact_observer)
+    if evaluation_inputs is not None:options["evaluation_inputs"]=evaluation_inputs
     code, report, evidence = QualificationSession.qualify(
         request, candidate, validation_level=validation_level, **options)
     terminal = dict(report=report, evidence=str(evidence))
@@ -33,8 +40,9 @@ def qualify(request, candidate, *, validation_level="numerical", artifact_observ
     # keeps the unqualified observations without claiming trusted execution.
     output["encrypted_execution"] = stages["encrypted_execution"] and stages["evidence_integrity_not_rejected"]
     if report["status"] == "passed":
-        from audit_unified_candidate import verify_candidate
-        audit = verify_candidate(Path(terminal["evidence"]), validation_level=validation_level)
+        from bounded_candidate_audit import verify_candidate
+        audit = verify_candidate(Path(terminal["evidence"]), validation_level=validation_level,
+                                 artifact_observer=artifact_observer)
         require(audit["request_id"] == request["request_id"], "Component audit request mismatch")
         output.update(validation_level=validation_level, compiled_validated=True)
         if validation_level == "numerical":

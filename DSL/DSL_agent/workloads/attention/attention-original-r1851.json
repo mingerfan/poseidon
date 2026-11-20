@@ -1,0 +1,1010 @@
+{
+  "constants": {
+    "causal_allow": [
+      [
+        1.0,
+        1.0,
+        0.0
+      ],
+      [
+        1.0,
+        1.0,
+        1.0
+      ]
+    ],
+    "scale": 0.7071067811865475,
+    "wk": [
+      [
+        -0.01803891490561859,
+        0.030922126310766518,
+        0.031416460881167146,
+        0.01952415062850628
+      ],
+      [
+        0.01805896820627803,
+        -0.023749771011115032,
+        0.02054224899705176,
+        0.02583794273084583
+      ],
+      [
+        0.002914687733656607,
+        -0.041795484578572864,
+        0.03617736562402002,
+        0.031896455015679406
+      ],
+      [
+        0.03763540255796474,
+        0.031911648783033195,
+        -0.03608035823964015,
+        0.01964800260625335
+      ]
+    ],
+    "wo": [
+      [
+        -0.022151833895452742,
+        0.018571170238992976,
+        -0.030530788061581486,
+        -0.038907435213257714
+      ],
+      [
+        -0.03509112630620906,
+        -0.025739368210822396,
+        -0.004744902401033861,
+        -0.0354778588364267
+      ],
+      [
+        -0.03836815779661071,
+        -0.012800222059405578,
+        -0.0036815755425540914,
+        0.04187084582301577
+      ],
+      [
+        -0.0034811146447889726,
+        0.007688400068338236,
+        0.01626464367642736,
+        -0.02275801715547857
+      ]
+    ],
+    "wq": [
+      [
+        0.018901611845260943,
+        -0.01248225310781801,
+        0.03352913480434032,
+        -0.03939475808555068
+      ],
+      [
+        -0.038042197664642605,
+        -0.03398017510631195,
+        -0.04062537442424017,
+        0.02523949248814264
+      ],
+      [
+        0.01613339637778579,
+        -0.014786532869922622,
+        0.012015732576701847,
+        -0.044048613698902984
+      ],
+      [
+        0.02725426125493423,
+        -0.041337377602839745,
+        0.013520207815526,
+        -0.0006954832724363758
+      ]
+    ],
+    "wv": [
+      [
+        0.0406664420512189,
+        -0.010428050514764503,
+        -0.028855219660112154,
+        -0.03381919347259653
+      ],
+      [
+        0.013496116519925057,
+        0.012639435469127866,
+        0.022639126345189914,
+        0.030322244896874198
+      ],
+      [
+        -0.004926136179697359,
+        -0.014738436002443556,
+        -0.044110686512780786,
+        0.02336040588325773
+      ],
+      [
+        0.01887538361027369,
+        0.030740135518588632,
+        0.011810340026736116,
+        0.04458238179734271
+      ]
+    ]
+  },
+  "format": "poseidon-operator-graph-v1",
+  "id": "b3_causal_two_head_cached_attention_r1851",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        4
+      ]
+    },
+    {
+      "name": "cached_k",
+      "shape": [
+        2,
+        1,
+        2
+      ]
+    },
+    {
+      "name": "cached_v",
+      "shape": [
+        2,
+        1,
+        2
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "attrs": {},
+      "id": "q_projection",
+      "inputs": [
+        "x",
+        "wq"
+      ],
+      "op": "linear",
+      "outputs": [
+        "q_projection_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          2,
+          2
+        ]
+      },
+      "id": "q_heads",
+      "inputs": [
+        "q_projection_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_heads_v"
+      ]
+    },
+    {
+      "attrs": {
+        "dims": [
+          1,
+          0,
+          2
+        ]
+      },
+      "id": "q_head_order",
+      "inputs": [
+        "q_heads_v"
+      ],
+      "op": "permute",
+      "outputs": [
+        "q_head_order_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "k_projection",
+      "inputs": [
+        "x",
+        "wk"
+      ],
+      "op": "linear",
+      "outputs": [
+        "k_projection_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          2,
+          2
+        ]
+      },
+      "id": "k_heads",
+      "inputs": [
+        "k_projection_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_heads_v"
+      ]
+    },
+    {
+      "attrs": {
+        "dims": [
+          1,
+          0,
+          2
+        ]
+      },
+      "id": "k_head_order",
+      "inputs": [
+        "k_heads_v"
+      ],
+      "op": "permute",
+      "outputs": [
+        "k_head_order_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "v_projection",
+      "inputs": [
+        "x",
+        "wv"
+      ],
+      "op": "linear",
+      "outputs": [
+        "v_projection_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          2,
+          2
+        ]
+      },
+      "id": "v_heads",
+      "inputs": [
+        "v_projection_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "v_heads_v"
+      ]
+    },
+    {
+      "attrs": {
+        "dims": [
+          1,
+          0,
+          2
+        ]
+      },
+      "id": "v_head_order",
+      "inputs": [
+        "v_heads_v"
+      ],
+      "op": "permute",
+      "outputs": [
+        "v_head_order_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "id": "q_rows",
+      "inputs": [
+        "q_head_order_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_rows_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 0,
+        "sections": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "id": "q_tokens",
+      "inputs": [
+        "q_rows_v"
+      ],
+      "op": "split",
+      "outputs": [
+        "q_row_0",
+        "q_row_1",
+        "q_row_2",
+        "q_row_3"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "q_vec_0",
+      "inputs": [
+        "q_row_0"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_vec_0_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 1,
+        "theta": 10000.0
+      },
+      "id": "q_rope_0",
+      "inputs": [
+        "q_vec_0_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "q_rope_0_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "q_rotated_row_0",
+      "inputs": [
+        "q_rope_0_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_rotated_row_0_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "q_vec_1",
+      "inputs": [
+        "q_row_1"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_vec_1_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 2,
+        "theta": 10000.0
+      },
+      "id": "q_rope_1",
+      "inputs": [
+        "q_vec_1_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "q_rope_1_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "q_rotated_row_1",
+      "inputs": [
+        "q_rope_1_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_rotated_row_1_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "q_vec_2",
+      "inputs": [
+        "q_row_2"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_vec_2_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 1,
+        "theta": 10000.0
+      },
+      "id": "q_rope_2",
+      "inputs": [
+        "q_vec_2_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "q_rope_2_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "q_rotated_row_2",
+      "inputs": [
+        "q_rope_2_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_rotated_row_2_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "q_vec_3",
+      "inputs": [
+        "q_row_3"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_vec_3_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 2,
+        "theta": 10000.0
+      },
+      "id": "q_rope_3",
+      "inputs": [
+        "q_vec_3_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "q_rope_3_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "q_rotated_row_3",
+      "inputs": [
+        "q_rope_3_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_rotated_row_3_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 0
+      },
+      "id": "q_rotated_rows",
+      "inputs": [
+        "q_rotated_row_0_v",
+        "q_rotated_row_1_v",
+        "q_rotated_row_2_v",
+        "q_rotated_row_3_v"
+      ],
+      "op": "concat",
+      "outputs": [
+        "q_rotated_rows_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          2,
+          2
+        ]
+      },
+      "id": "q_rotated_heads",
+      "inputs": [
+        "q_rotated_rows_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "q_rotated_heads_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          4,
+          2
+        ]
+      },
+      "id": "k_rows",
+      "inputs": [
+        "k_head_order_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_rows_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 0,
+        "sections": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "id": "k_tokens",
+      "inputs": [
+        "k_rows_v"
+      ],
+      "op": "split",
+      "outputs": [
+        "k_row_0",
+        "k_row_1",
+        "k_row_2",
+        "k_row_3"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "k_vec_0",
+      "inputs": [
+        "k_row_0"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_vec_0_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 1,
+        "theta": 10000.0
+      },
+      "id": "k_rope_0",
+      "inputs": [
+        "k_vec_0_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "k_rope_0_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "k_rotated_row_0",
+      "inputs": [
+        "k_rope_0_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_rotated_row_0_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "k_vec_1",
+      "inputs": [
+        "k_row_1"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_vec_1_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 2,
+        "theta": 10000.0
+      },
+      "id": "k_rope_1",
+      "inputs": [
+        "k_vec_1_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "k_rope_1_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "k_rotated_row_1",
+      "inputs": [
+        "k_rope_1_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_rotated_row_1_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "k_vec_2",
+      "inputs": [
+        "k_row_2"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_vec_2_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 1,
+        "theta": 10000.0
+      },
+      "id": "k_rope_2",
+      "inputs": [
+        "k_vec_2_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "k_rope_2_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "k_rotated_row_2",
+      "inputs": [
+        "k_rope_2_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_rotated_row_2_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2
+        ]
+      },
+      "id": "k_vec_3",
+      "inputs": [
+        "k_row_3"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_vec_3_v"
+      ]
+    },
+    {
+      "attrs": {
+        "position": 2,
+        "theta": 10000.0
+      },
+      "id": "k_rope_3",
+      "inputs": [
+        "k_vec_3_v"
+      ],
+      "op": "rope",
+      "outputs": [
+        "k_rope_3_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          1,
+          2
+        ]
+      },
+      "id": "k_rotated_row_3",
+      "inputs": [
+        "k_rope_3_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_rotated_row_3_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 0
+      },
+      "id": "k_rotated_rows",
+      "inputs": [
+        "k_rotated_row_0_v",
+        "k_rotated_row_1_v",
+        "k_rotated_row_2_v",
+        "k_rotated_row_3_v"
+      ],
+      "op": "concat",
+      "outputs": [
+        "k_rotated_rows_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          2,
+          2
+        ]
+      },
+      "id": "k_rotated_heads",
+      "inputs": [
+        "k_rotated_rows_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "k_rotated_heads_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 1
+      },
+      "id": "keys",
+      "inputs": [
+        "cached_k",
+        "k_rotated_heads_v"
+      ],
+      "op": "concat",
+      "outputs": [
+        "keys_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axis": 1
+      },
+      "id": "values",
+      "inputs": [
+        "cached_v",
+        "v_head_order_v"
+      ],
+      "op": "concat",
+      "outputs": [
+        "values_v"
+      ]
+    },
+    {
+      "attrs": {
+        "dims": [
+          0,
+          2,
+          1
+        ]
+      },
+      "id": "key_transpose",
+      "inputs": [
+        "keys_v"
+      ],
+      "op": "permute",
+      "outputs": [
+        "key_transpose_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "cipher_scores",
+      "inputs": [
+        "q_rotated_heads_v",
+        "key_transpose_v"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "cipher_scores_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "scale_scores",
+      "inputs": [
+        "cipher_scores_v",
+        "scale"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "scale_scores_v"
+      ]
+    },
+    {
+      "attrs": {
+        "approximation": {
+          "degree": 4,
+          "domain": [
+            -1.0,
+            1.0
+          ],
+          "method": "taylor"
+        }
+      },
+      "id": "score_exp",
+      "inputs": [
+        "scale_scores_v"
+      ],
+      "op": "exp",
+      "outputs": [
+        "score_exp_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "causal_mask",
+      "inputs": [
+        "score_exp_v",
+        "causal_allow"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "causal_mask_v"
+      ]
+    },
+    {
+      "attrs": {
+        "axes": [
+          -1
+        ],
+        "keepdims": true
+      },
+      "id": "row_denominator",
+      "inputs": [
+        "causal_mask_v"
+      ],
+      "op": "sum",
+      "outputs": [
+        "row_denominator_v"
+      ]
+    },
+    {
+      "attrs": {
+        "approximation": {
+          "domain": [
+            1.0,
+            4.0
+          ],
+          "iterations": 3,
+          "method": "goldschmidt"
+        }
+      },
+      "id": "inverse_denominator",
+      "inputs": [
+        "row_denominator_v"
+      ],
+      "op": "reciprocal",
+      "outputs": [
+        "inverse_denominator_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "probabilities",
+      "inputs": [
+        "causal_mask_v",
+        "inverse_denominator_v"
+      ],
+      "op": "multiply",
+      "outputs": [
+        "probabilities_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "cipher_attend",
+      "inputs": [
+        "probabilities_v",
+        "values_v"
+      ],
+      "op": "matmul",
+      "outputs": [
+        "cipher_attend_v"
+      ]
+    },
+    {
+      "attrs": {
+        "dims": [
+          1,
+          0,
+          2
+        ]
+      },
+      "id": "token_order",
+      "inputs": [
+        "cipher_attend_v"
+      ],
+      "op": "permute",
+      "outputs": [
+        "token_order_v"
+      ]
+    },
+    {
+      "attrs": {
+        "shape": [
+          2,
+          4
+        ]
+      },
+      "id": "merge_heads",
+      "inputs": [
+        "token_order_v"
+      ],
+      "op": "reshape",
+      "outputs": [
+        "merge_heads_v"
+      ]
+    },
+    {
+      "attrs": {},
+      "id": "output_projection",
+      "inputs": [
+        "merge_heads_v",
+        "wo"
+      ],
+      "op": "linear",
+      "outputs": [
+        "output_projection_v"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "output_projection_v"
+    },
+    {
+      "name": "keys",
+      "value": "keys_v"
+    },
+    {
+      "name": "values",
+      "value": "values_v"
+    }
+  ]
+}

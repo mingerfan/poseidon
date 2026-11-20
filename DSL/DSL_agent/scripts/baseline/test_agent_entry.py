@@ -15,6 +15,18 @@ from test_candidate_pipeline import request_fixture
 
 @unittest.skipUnless(sys.platform == "linux", "runner requires WSL/Linux")
 class AgentEntryTests(unittest.TestCase):
+    def test_sdk_default_and_explicit_legacy_configuration_are_distinct(self):
+        from compiler_configuration import CURRENT_CONFIGURATION
+        with patch("poseidon_runtime_paths.selected_sdk", return_value={"selected": True}):
+            current = runner.parse_args(["--case", "model.json", "--prepare"])
+            explicit = runner.parse_args(["--case", "model.json", "--prepare", "--compiler-configuration",
+                                          "poseidon-cpu-eva-w45-v1"])
+        self.assertEqual(current.compiler_configuration, CURRENT_CONFIGURATION)
+        self.assertEqual(explicit.compiler_configuration, "poseidon-cpu-eva-w45-v1")
+        with patch("poseidon_runtime_paths.selected_sdk", return_value=None):
+            legacy = runner.parse_args(["--case", "model.json", "--prepare"])
+        self.assertEqual(legacy.compiler_configuration, "poseidon-cpu-eva-w45-v1")
+
     def test_cli_loads_local_file_only_for_live_mode_and_cleans_up(self):
         args = runner.parse_args(["--case", "model.json", "--deepseek", "--provider", "deepseek"])
         def enter(command, **kwargs):
@@ -113,7 +125,7 @@ class AgentEntryTests(unittest.TestCase):
         command = calls[-1][0]
         self.assertIn("--pure", command)
         kept = {command[i+1] for i, value in enumerate(command) if value == "--keep"}
-        public = {name for name in ("POSEIDON_WORK_ROOT", "POSEIDON_PLATFORM") if name in os.environ}
+        public = {name for name in ("POSEIDON_WORK_ROOT", "POSEIDON_PLATFORM", "POSEIDON_SDK_MANIFEST") if name in os.environ}
         self.assertEqual(kept, public | {"DEEPSEEK_API_KEY"})
         with self.assertRaises(ValueError):
             environment.enter_nix("trusted-command", keep_env=("UNRELATED_SECRET",))

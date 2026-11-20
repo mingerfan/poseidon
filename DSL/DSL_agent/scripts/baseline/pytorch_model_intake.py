@@ -108,9 +108,14 @@ def source_shape_policy(spec):
     require(type(spec) is dict and spec.get("format") in SOURCE_FORMATS,"Trusted source shape version")
     return {FORMAT:INDEX_POLICY,SHAPE_FORMAT:ARITHMETIC_POLICY,OPERATOR_SHAPE_FORMAT:OPERATOR_POLICY,COMMON_FORMAT:COMMON_POLICY}[spec["format"]]
 
-def source_identity():
+def implementation_paths():
+    from trusted_capture_implementation import implementation_paths_at
     root=Path(__file__).parent
-    return {name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in IMPLEMENTATION}
+    return implementation_paths_at(root,root,IMPLEMENTATION)
+
+def source_identity():
+    return {name:hashlib.sha256(path.read_bytes()).hexdigest()
+            for name,path in implementation_paths().items()}
 
 def package_format(spec):
     if ordered(spec):
@@ -126,7 +131,7 @@ def validate_package(spec,files):
         return selected(spec,files)
     if type(spec) is dict and spec.get("format") in SOURCE_FORMATS:
         legacy.validate_package(shim(spec),files)
-        require(not set(files).intersection(IMPLEMENTATION),"Source module conflicts with trusted adapter")
+        require(not set(files).intersection(implementation_paths()),"Source module conflicts with trusted adapter")
         return spec
     return legacy.validate_package(spec,files)
 
@@ -269,7 +274,7 @@ def run(manifest_path,output,*,resource_profile="legacy-v1",trusted=False):
         "--ro-bind","/sys/devices/system/cpu","/sys/devices/system/cpu",
         "--proc","/proc","--dev","/dev","--tmpfs","/tmp","--dir","/app","--dir","/model",
         "--ro-bind",str(payload),"/request.json","--bind",str(output),"/out"]
-    for name in IMPLEMENTATION:cmd+=["--ro-bind",str(ROOT/"scripts/baseline"/name),"/app/"+name]
+    for name,path in implementation_paths().items():cmd+=["--ro-bind",str(path),"/app/"+name]
     for name,path in paths.items():cmd+=["--ro-bind",str(path),"/model/"+name]
     for name in weight_files:cmd+=["--ro-bind",str(output/"weight-snapshot"/name),"/model/"+name]
     for key,value in dict(PYTHONPATH="/app:/model",PYTHONDONTWRITEBYTECODE="1",PYTHONNOUSERSITE="1",

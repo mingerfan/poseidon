@@ -44,20 +44,7 @@ def prepare_inputs(result,output,request):
     (output/"inputs.json").write_text(json.dumps(input_payload(inputs,layout),allow_nan=False))
     return {str(p.relative_to(output)):digest(p) for p in output.rglob("*") if p.is_file()}
 
-def execute(payload,output,request,native_run,log):
-    from application_planning.compiled_resources import execution_storage_precheck, PRECHECK_FILE, CompiledResourceIntegrityRejected
-    resource_precheck=execution_storage_precheck(output,request)
-    from poseidon_artifact_gate import read as artifact_read, sha as artifact_sha
-    precheck_sha256=artifact_sha(artifact_read(output/PRECHECK_FILE))
-    code=native_run(payload,output,["/poseidon-agent-cpu","/out/bound/plan.json","/operator-spec.json",
-        "/out/bound/bundle","/out/inputs.json","/out/execution.json"],log,150)
-    try:
-        if artifact_sha(artifact_read(output/PRECHECK_FILE))!=precheck_sha256:
-            raise CompiledResourceIntegrityRejected()
-    except (ValueError, OSError) as error:
-        raise CompiledResourceIntegrityRejected() from error
-    require(code==0,f"Isolated Poseidon execution failed (exit {code}); see execute.log")
-    report=json.loads((output/"execution.json").read_text())
+def execution_slots(report,request,expected_samples):
     require(report["backend"]=="poseidon_cpu" and report["encrypted_execution"] is True and report["bootstrap"] is False,"Execution identity")
     require(report["q"]==list(PRIMES[:13]) and report["p"]==list(PRIMES[13:]) and report["security"]=="tc128" and report["executor_secret_key"] is False,"Actual runtime parameters/key boundary")
     contract=execution_contract(request["layout"])
@@ -69,8 +56,35 @@ def execute(payload,output,request,native_run,log):
         require(all(type(report.get(k)) is type(v) and report.get(k)==v for k,v in expected.items()),"Wide execution protocol identity")
     else:
         require("format" not in report and "execution_abi" not in report,"Unexpected execution protocol")
-    slots=np.asarray(report.pop("outputs"),dtype=np.float64)
-    require(slots.ndim==3 and slots.shape[1:]==(request["layout"]["output_ciphertexts"],decode) and np.isfinite(slots).all(),"Decoded ciphertext shape")
+    slots=np.asarray(report["outputs"],dtype=np.float64)
+    require(slots.shape==(expected_samples,request["layout"]["output_ciphertexts"],decode) and np.isfinite(slots).all(),"Decoded ciphertext shape")
+    return slots
+
+
+def execute(payload,output,request,native_run,log):
+    from application_planning.compiled_resources import execution_storage_precheck, PRECHECK_FILE, CompiledResourceIntegrityRejected
+    resource_precheck=execution_storage_precheck(output,request)
+    from poseidon_artifact_gate import read as artifact_read, sha as artifact_sha
+    precheck_sha256=artifact_sha(artifact_read(output/PRECHECK_FILE))
+    def check_precheck():
+        try:
+            if artifact_sha(artifact_read(output/PRECHECK_FILE))!=precheck_sha256:
+                raise CompiledResourceIntegrityRejected()
+        except (ValueError, OSError) as error:
+            raise CompiledResourceIntegrityRejected() from error
+    from poseidon_input_groups import read as group_read, samples, LIMIT, execute as execute_groups
+    original_inputs=group_read(output/'inputs.json');count=len(samples(original_inputs))
+    if count<=LIMIT:
+        code=native_run(payload,output,["/poseidon-agent-cpu","/out/bound/plan.json","/operator-spec.json",
+            "/out/bound/bundle","/out/inputs.json","/out/execution.json"],log,150)
+        check_precheck()
+        require(code==0,f"Isolated Poseidon execution failed (exit {code}); see execute.log")
+        report=group_read(output/'execution.json')
+    else:
+        report=execute_groups(payload,output,original_inputs,native_run,log,
+            lambda part,n:execution_slots(part,request,n),check_precheck)
+    slots=execution_slots(report,request,count)
+    report={k:v for k,v in report.items()if k!='outputs'}
     selected=np.asarray([[sample[c,s] for c,s in request["layout"]["output_selectors"]] for sample in slots])
     np.save(output/"decrypted.npy",selected,allow_pickle=False)
     report["resource_precheck"]=resource_precheck
@@ -79,6 +93,7 @@ def execute(payload,output,request,native_run,log):
         from packed_input_abi import decode_output
         np.save(output/"decrypted-logical.npy",decode_output(selected,request["layout"]),allow_pickle=False)
     return report
+
 
 def audit_gate(output,request,record):
     import tempfile

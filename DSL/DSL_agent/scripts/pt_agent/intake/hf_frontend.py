@@ -7,6 +7,8 @@ the main environment does not import transformers.
 from dataclasses import dataclass
 from pathlib import Path
 
+from .observation import observe
+
 
 LOCAL_ONLY = dict(trust_remote_code=False, local_files_only=True)
 
@@ -20,7 +22,7 @@ class LocalHF:
     input_kind: str
 
 
-def load_local(model_path, *, attn_implementation=None) -> LocalHF:
+def load_local(model_path, *, attn_implementation=None, observer=None) -> LocalHF:
     """Load a reviewed local model and its repository processor/tokenizer.
 
     A .bin checkpoint is read by torch's restricted weights-only loader and
@@ -32,9 +34,10 @@ def load_local(model_path, *, attn_implementation=None) -> LocalHF:
     import transformers
 
     path = Path(model_path).resolve()
-    if not (path / 'config.json').is_file():
-        raise ValueError(f'Local HF directory lacks config.json: {path}')
-    config = transformers.AutoConfig.from_pretrained(str(path), **LOCAL_ONLY)
+    with observe(observer, 'intake.config'):
+        if not (path / 'config.json').is_file():
+            raise ValueError(f'Local HF directory lacks config.json: {path}')
+        config = transformers.AutoConfig.from_pretrained(str(path), **LOCAL_ONLY)
     attention = ({'attn_implementation': attn_implementation}
                  if attn_implementation is not None else {})
     architectures = tuple(config.architectures or ())
@@ -55,27 +58,30 @@ def load_local(model_path, *, attn_implementation=None) -> LocalHF:
         processor_factory = transformers.AutoTokenizer
         input_kind = 'tokens'
 
-    if ((path / 'model.safetensors').is_file()
-            or (path / 'model.safetensors.index.json').is_file()):
-        module = factory.from_pretrained(str(path), config=config,
-                                         use_safetensors=True, **attention, **LOCAL_ONLY)
-    else:
-        binary = path / 'pytorch_model.bin'
-        if not binary.is_file():
-            raise ValueError(f'Local HF directory lacks supported weights: {path}')
-        state = torch.load(binary, map_location='cpu', weights_only=True)
-        if (not isinstance(state, dict) or not state
-                or not all(isinstance(key, str) and torch.is_tensor(value) for key, value in state.items())):
-            raise ValueError('HF .bin must contain only a tensor state_dict')
-        # With state_dict supplied, pinned transformers skips checkpoint reads
-        # and handles saved nonpersistent buffers using its ordinary load rules.
-        module = factory.from_pretrained(str(path), config=config, state_dict=state,
-                                         use_safetensors=False, **attention, **LOCAL_ONLY)
-    module = module.double().eval()
-    try:
-        processor = processor_factory.from_pretrained(str(path), **LOCAL_ONLY)
-    except Exception as exc:
-        raise ValueError(f'Repository processor/tokenizer could not load: {type(exc).__name__}: {exc}') from exc
+    with observe(observer, 'intake.weights'):
+        if ((path / 'model.safetensors').is_file()
+                or (path / 'model.safetensors.index.json').is_file()):
+            module = factory.from_pretrained(str(path), config=config,
+                                             use_safetensors=True, **attention, **LOCAL_ONLY)
+        else:
+            binary = path / 'pytorch_model.bin'
+            if not binary.is_file():
+                raise ValueError(f'Local HF directory lacks supported weights: {path}')
+            state = torch.load(binary, map_location='cpu', weights_only=True)
+            if (not isinstance(state, dict) or not state
+                    or not all(isinstance(key, str) and torch.is_tensor(value) for key, value in state.items())):
+                raise ValueError('HF .bin must contain only a tensor state_dict')
+            # With state_dict supplied, pinned transformers skips checkpoint reads
+            # and handles saved nonpersistent buffers using its ordinary load rules.
+            module = factory.from_pretrained(str(path), config=config, state_dict=state,
+                                             use_safetensors=False, **attention, **LOCAL_ONLY)
+    with observe(observer, 'intake.float64'):
+        module = module.double().eval()
+    with observe(observer, 'intake.tokenizer'):
+        try:
+            processor = processor_factory.from_pretrained(str(path), **LOCAL_ONLY)
+        except Exception as exc:
+            raise ValueError(f'Repository processor/tokenizer could not load: {type(exc).__name__}: {exc}') from exc
     return LocalHF(str(path), config, module, processor, input_kind)
 
 
@@ -148,7 +154,7 @@ class HFInputs:
         return arrays, labels
 
 
-def import_local(source, samples):
+def import_local(source, samples, *, observer=None):
     import torch
     from ..data.samples import choose_sequence
     from . import import_module
@@ -156,30 +162,47 @@ def import_local(source, samples):
     from ..models.info import infer_task
     from types import SimpleNamespace
 
-    local = load_local(resolve_local(source), attn_implementation='eager')
+    options = {} if observer is None else dict(observer=observer)
+    local = load_local(resolve_local(source), attn_implementation='eager', **options)
     split = samples.split()
     sequence = None
     if local.input_kind == 'tokens':
         if samples.kind != 'text':
             raise ValueError('A repository tokenizer requires original text samples')
-        decision_indices = split['calibration'] + split['heldout']
-        texts, _ = samples.select(decision_indices)
-        tokenized = local.processor(texts, truncation=False, padding=False)
-        sequence = choose_sequence([len(ids) for ids in tokenized['input_ids']],
-                                   local.config.max_position_embeddings)
+        with observe(observer, 'intake.sequence'):
+            decision_indices = split['calibration'] + split['heldout']
+            texts, _ = samples.select(decision_indices)
+            tokenized = local.processor(texts, truncation=False, padding=False)
+            sequence = choose_sequence([len(ids) for ids in tokenized['input_ids']],
+                                       local.config.max_position_embeddings)
     elif samples.kind != 'image':
         raise ValueError('A repository image processor requires original image samples')
     task, _ = infer_task((), architectures=local.config.architectures or ())
     temporary = SimpleNamespace(sequence=sequence, task=task, split=split)
     prepared = HFInputs(local, samples, temporary)
-    arrays, _ = prepared.select(split['calibration'][:1])
-    wrapper = boundary_module(local)
+    with observe(observer, 'intake.prepare_inputs'):
+        arrays, _ = prepared.select(split['calibration'][:1])
+        names = tuple(arrays)
+        validation_inputs = []
+        if len(split['calibration']) < 4:
+            raise ValueError('HF intake requires one trace and three real calibration samples')
+        for index in split['calibration'][1:4]:
+            validation_arrays, _ = prepared.select([index])
+            if tuple(validation_arrays) != names:
+                raise ValueError('HF validation input names/order differ from trace inputs')
+            if any(validation_arrays[key].shape != arrays[key].shape for key in names):
+                raise ValueError('HF validation input shapes differ from trace inputs')
+            validation_inputs.append(tuple(torch.from_numpy(validation_arrays[key]) for key in names))
+        wrapper = boundary_module(local)
     graph = import_module(wrapper, tuple(torch.from_numpy(value) for value in arrays.values()),
-                          str(local.config.model_type).replace('-', '_'), frontend='aten')
+                          str(local.config.model_type).replace('-', '_'), frontend='aten',
+                          validation_inputs=tuple(validation_inputs), **options)
     rename_inputs(graph, list(arrays))
     from .transformer import normalize
     causal=task=='causal_lm'
-    graph=normalize(graph,last_position=causal,strict=False) if local.input_kind=='tokens' else graph
+    if local.input_kind=='tokens':
+        with observe(observer, 'intake.normalize'):
+            graph=normalize(graph,last_position=causal,strict=False)
     handling = dict(mode='repository processor/tokenizer', kind=local.input_kind,
                     processor=type(local.processor).__name__,
                     calls=dict(return_tensors='np', **(dict(padding='max_length', truncation=True,

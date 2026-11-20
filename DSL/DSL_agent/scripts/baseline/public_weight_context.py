@@ -15,7 +15,9 @@ FORMAT = "poseidon-public-weight-descriptors-v1"
 MATH_POLICY = "descriptors-math-roles-v2"
 MATH_FORMAT = "poseidon-public-weight-descriptors-v2"
 from public_origin_columns import POLICY as COMPACT_POLICY, WEIGHT_FORMAT as COMPACT_FORMAT
-POLICIES = (POLICY,MATH_POLICY,COMPACT_POLICY)
+from public_tensor_math_context import POLICY as TENSOR_POLICY,FORMAT as TENSOR_FORMAT
+from public_weight_references import POLICY as REFERENCE_POLICY, FORMAT as REFERENCE_FORMAT
+POLICIES = (POLICY,MATH_POLICY,COMPACT_POLICY,TENSOR_POLICY,REFERENCE_POLICY)
 CONTEXT_BYTES = 131072
 TRUSTED_BYTES = 4*1024**2  # Existing application task-file bound, not a candidate bound.
 RULES = """\nPublic weight descriptor contract v1:
@@ -28,6 +30,12 @@ a mapping. The trusted frontend supplies their fixed values during tracing.
 
 def rules_for(policy):
     require(policy in POLICIES,"Public weight policy")
+    if policy==REFERENCE_POLICY:
+        from public_weight_references import RULES as reference_rules
+        return RULES+reference_rules
+    if policy==TENSOR_POLICY:
+        from public_tensor_math_context import RULES as tensor_rules
+        return tensor_rules
     if policy in (MATH_POLICY,COMPACT_POLICY):
         from public_math_context import RULES as mathematical_rules
         if policy==COMPACT_POLICY:
@@ -68,21 +76,85 @@ def binding(request,policy=POLICY):
     value=dict(format=FORMAT,policy=POLICY,resource_profile=profile,
                 model_constants={name:descriptor(value) for name,value in model["constants"].items()},
                 public_constants={name:descriptor(value) for name,value in request["public_constants"].items()})
-    if policy in (MATH_POLICY,COMPACT_POLICY):
+    if policy==REFERENCE_POLICY:
+        value.update(format=REFERENCE_FORMAT,policy=policy)
+    if policy in (MATH_POLICY,COMPACT_POLICY,TENSOR_POLICY):
         from public_math_context import build
-        value.update(format=MATH_FORMAT if policy==MATH_POLICY else COMPACT_FORMAT,policy=policy)
-        value["math_roles"]=build(request,value)
+        value.update(format=TENSOR_FORMAT if policy==TENSOR_POLICY else MATH_FORMAT if policy==MATH_POLICY else COMPACT_FORMAT,policy=policy)
+        value["math_roles"]=build(request,value,tensor_operands=True)if policy==TENSOR_POLICY else build(request,value)
     return value
+
+def _projection_memo(request):
+    """Skip two discarded copies only for shallow builtin JSON trees.
+
+    This is a per-call copy optimization, never a validation result. Aliases,
+    cycles, custom objects, large/deep graphs and insufficient Python stack
+    budget retain the original deepcopy at its original project call site.
+    """
+    if (type(request) is not dict or any(type(key) is not str for key in request)
+            or type(request.get("model")) is not dict
+            or any(type(key) is not str for key in request["model"])
+            or type(request["model"].get("constants")) is not dict
+            or type(request.get("public_constants")) is not dict
+            or type(request.get("public_weight_binding")) is not dict):
+        return None
+    pending=[(request,0)];seen=set();work=0
+    while pending:
+        item,depth=pending.pop();kind=type(item)
+        if depth>32 or id(item) in seen:
+            return None
+        seen.add(id(item));work+=len(item)
+        if work>1048576:
+            return None
+        if kind is dict:
+            if any(type(key) is not str for key in item):
+                return None
+            children=item.values()
+        else:
+            children=item
+        for child in children:
+            child_kind=type(child)
+            if (child_kind is str or child_kind is int or child_kind is float
+                    or child_kind is bool or child_kind is type(None)):
+                continue
+            if child_kind is not dict and child_kind is not list:
+                return None
+            pending.append((child,depth+1))
+    if is_compact_projected(request):
+        return None
+    # CPython's exact dict/list deepcopy uses two Python frames per level.
+    # Keep twice that upper bound plus margin, without changing the limit.
+    import sys
+    try:
+        remaining=sys.getrecursionlimit()-192
+        frame=sys._getframe(1)
+        while frame is not None and remaining>0:
+            remaining-=1;frame=frame.f_back
+        if remaining<=0:
+            return None
+    except Exception:
+        return None
+    finally:
+        frame=None
+    return {id(request["model"]["constants"]):None,id(request["public_constants"]):None}
 
 def project(request):
     info = request["public_weight_binding"]
-    value = copy.deepcopy(request)
+    memo = _projection_memo(request)
+    value = copy.deepcopy(request) if memo is None else copy.deepcopy(request,memo)
     if is_compact_projected(request):
-        from public_origin_columns import registries, restore, verify_guidance
-        registries(request);restore(request["constant_origins"]);verify_guidance(request)
+        if info.get("policy")==REFERENCE_POLICY:
+            from public_weight_references import registries
+            registries(request)
+        else:
+            from public_origin_columns import registries, restore, verify_guidance
+            registries(request);restore(request["constant_origins"]);verify_guidance(request)
         return value
     value["model"]["constants"] = copy.deepcopy(info["model_constants"])
     value["public_constants"] = copy.deepcopy(info["public_constants"])
+    if info.get("policy")==REFERENCE_POLICY:
+        from public_weight_references import references
+        value["public_weight_binding"].update(references(info["model_constants"],info["public_constants"]))
     if info.get("policy")==COMPACT_POLICY:
         from public_origin_columns import project as project_origins, descriptor_references
         value["constant_origins"]=project_origins(request["constant_origins"])
@@ -93,6 +165,9 @@ def project(request):
     return value
 
 def is_compact_projected(request):
+    from public_weight_references import is_projected
+    if is_projected(request):
+        return True
     from public_origin_columns import FORMAT as ORIGIN_FORMAT
     return (type(request) is dict and request.get("public_weight_binding",{}).get("policy")==COMPACT_POLICY
             and type(request.get("constant_origins")) is dict and request["constant_origins"].get("format")==ORIGIN_FORMAT)
@@ -133,10 +208,13 @@ def verify_context(value):
     require(value.get("compiler_configuration",{}).get("backend")=="poseidon_cpu","Weight descriptor backend")
     info = value["public_weight_binding"]
     require(type(info) is dict and set(info)==({"format","policy","resource_profile","model_constants","public_constants","math_roles"}
-            if info.get("policy") in (MATH_POLICY,COMPACT_POLICY) else {"format","policy","resource_profile","model_constants","public_constants"}) and
-            ((info["format"],info["policy"]) in ((FORMAT,POLICY),(MATH_FORMAT,MATH_POLICY),(COMPACT_FORMAT,COMPACT_POLICY))) and
+            if info.get("policy") in (MATH_POLICY,COMPACT_POLICY,TENSOR_POLICY) else {"format","policy","resource_profile","model_constants","public_constants"}) and
+            ((info["format"],info["policy"]) in ((FORMAT,POLICY),(MATH_FORMAT,MATH_POLICY),(COMPACT_FORMAT,COMPACT_POLICY),(TENSOR_FORMAT,TENSOR_POLICY),(REFERENCE_FORMAT,REFERENCE_POLICY))) and
             info["resource_profile"] in ("medium-v1","resnet20-v1","general-tensors-v1"),
             "Public weight descriptor contract")
+    if info["policy"]==REFERENCE_POLICY:
+        from public_weight_references import registries
+        info=dict(info,**registries(value))
     if info["policy"]==COMPACT_POLICY:
         from public_origin_columns import registries, verify_guidance
         info=dict(info,**registries(value));verify_guidance(value)
@@ -161,9 +239,9 @@ def verify_context(value):
             total += item["elements"]
         require(total <= (limits.total_constant_elements if group=="model_constants" else 256*4096),
                 "Public weight aggregate elements")
-    if info["policy"] in (MATH_POLICY,COMPACT_POLICY):
+    if info["policy"] in (MATH_POLICY,COMPACT_POLICY,TENSOR_POLICY):
         from public_math_context import verify_projected
-        verify_projected(value)
+        verify_projected(value,tensor_operands=True)if info["policy"]==TENSOR_POLICY else verify_projected(value)
     require(value["request_id"]==request_digest(value), "Public weight context hash")
     return copy.deepcopy(value)
 
@@ -190,6 +268,10 @@ def read_payload(raw):
     """Separate trusted payload parsing; the generated candidate stays at 128 KiB."""
     value=parse_data(raw)
     require(type(value) is dict and set(value)=={"request","candidate"}, "Trace payload fields")
+    from public_basis_storage import is_packet
+    if is_packet(value["request"]):
+        from unified_request_storage import restore_public_constants
+        restore_public_constants(value["request"])
     require(len(raw.encode())<=storage_limit(value["request"]), "Trace payload policy budget")
     require(len(canonical(value["candidate"]))<=CONTEXT_BYTES, "Generated candidate response budget")
     return value
@@ -197,5 +279,9 @@ def read_payload(raw):
 
 def read_request(raw):
     value=parse_data(raw)
+    from public_basis_storage import is_packet
+    if is_packet(value):
+        from unified_request_storage import restore_public_constants
+        restore_public_constants(value)
     require(type(value) is dict and len(raw.encode())<=storage_limit(value),"Request storage policy budget")
     return value

@@ -25,7 +25,8 @@ def sha(path):
 
 
 def read(path):
-    return json.loads(path.read_text())
+    from public_basis_storage import decode_data_file
+    return decode_data_file(json.loads(path.read_text()),path.name)
 
 
 def verify_files(folder, hashes):
@@ -118,11 +119,26 @@ def verify_candidate(folder, *, live_approval=None, validation_level="numerical"
     if validation_level == "numerical":
         expected_inputs = []; references = []
         period = request['layout']['input_slot_period']
-        for inputs in samples(model, 4):
-            first = mathematical(model, inputs); second = torch_reference(model, inputs)
-            for name in first:
-                np.testing.assert_allclose(first[name], second[name], atol=1e-12, rtol=1e-12)
-            references.append(np.concatenate([first[o['name']].reshape(-1) for o in model['outputs']]))
+        retained=None
+        if (folder/'evaluation-inputs.json').exists():
+            from frozen_evaluation_inputs import load
+            from hecate_python_env import WORK
+            total=sum(math.prod(o['shape']) for o in request['layout']['outputs'])
+            dataset=load(folder/'evaluation-inputs.json',model['inputs'],total,allowed_root=WORK/'results')
+            require(dataset['manifest'].get('model_id')==model['id'],'Evaluation dataset model identity')
+            probes=[{k:np.asarray(v,dtype=np.float64) for k,v in row['values'].items()}for row in dataset['cases']]
+            retained=[row['reference']for row in dataset['cases']]
+        else:
+            probes=samples(model,4)
+        for index,inputs in enumerate(probes):
+            cached=None if retained is None else retained[index]
+            if cached is None:
+                first = mathematical(model, inputs); second = torch_reference(model, inputs)
+                for name in first:
+                    np.testing.assert_allclose(first[name], second[name], atol=1e-12, rtol=1e-12)
+                references.append(np.concatenate([first[o['name']].reshape(-1) for o in model['outputs']]))
+            else:
+                references.append(np.asarray(cached,dtype=np.float64))
             # Independent reconstruction, not the preparation helper.
             parts=[]
             for spec in model['inputs']:
@@ -149,6 +165,8 @@ def verify_candidate(folder, *, live_approval=None, validation_level="numerical"
         audit_gate(out, request, attempt['artifact_gate'])
         if validation_level == "numerical":
             from poseidon_artifact_gate import PRIMES
+            from poseidon_input_groups import audit as audit_input_groups
+            audit_input_groups(out)
             execution=read(out/'execution.json')
             require(execution['q']==list(PRIMES[:13]) and execution['p']==list(PRIMES[13:]) and
                     execution['executor_secret_key'] is False and execution['security']=='tc128',

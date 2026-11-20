@@ -64,7 +64,10 @@ def parameters(request):
     # uint64_t coefficients. Input encryption produces two components.
     basis=["src/poseidon/ciphertext.cpp","src/poseidon/ciphertext.h",
            "src/poseidon/tools/agent_runtime/cpu_runner.cpp"]
-    basis_hashes={name:sha(regular_bytes(ROOT/name,1024**2)) for name in basis}
+    from poseidon_runtime_paths import selected_sdk
+    sdk=selected_sdk()
+    source_root=ROOT if sdk is None else Path(sdk["backend_source_root"])
+    basis_hashes={name:sha(regular_bytes(source_root/name,1024**2)) for name in basis}
     return dict(context_id=context["context_id"],operator_spec_sha256=sha(raw),
         poly_degree=degree,data_modulus_count=count,input_level=count-1,
         input_components=2,coefficient_bytes=8,source_basis_sha256=basis_hashes,

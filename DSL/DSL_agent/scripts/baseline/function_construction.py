@@ -17,6 +17,7 @@ import json
 import operator
 
 from seal_artifact_gate import require
+from candidate_check_diagnostic import CandidateCheckError
 
 
 @dataclass(frozen=True)
@@ -242,24 +243,34 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
     callable_names.update(n.name for n in all_definitions)
     if call_binding:
         callable_names.update(a.arg for n in [*all_definitions, *lambdas] for a in parameter_nodes(n.args))
-    for node in nodes:
-        require(type(node) in ALLOWED or (closures and type(node) is ast.Nonlocal) or
+    positioned_nodes = [(tree, None)]
+    for node, location in positioned_nodes:
+        # Operators such as ast.Is are shared singleton nodes without positions.
+        # Carry the enclosing position per occurrence, preserving ast.walk order.
+        if hasattr(node, "lineno") and hasattr(node, "col_offset"):
+            location = node
+        positioned_nodes.extend((child, location) for child in ast.iter_child_nodes(node))
+        supported = (type(node) in ALLOWED or (closures and type(node) is ast.Nonlocal) or
                 (call_binding and type(node) in (ast.keyword, ast.Starred, ast.Dict)) or
                 (public_iteration and type(node) in (ast.ListComp, ast.DictComp, ast.comprehension)) or
                 (function_literals and type(node) is ast.Lambda) or
                 (public_sequences and type(node) is ast.Slice) or
                 (public_numbers and type(node) in (ast.Div,ast.Pow)) or
                 (public_control and type(node) in (ast.While,ast.Break,ast.Continue,ast.Pass,
-                    ast.BoolOp,ast.And,ast.Or,ast.Not,ast.In,ast.NotIn)),
-                'Unsupported construction syntax: '+type(node).__name__)
+                    ast.BoolOp,ast.And,ast.Or,ast.Not,ast.In,ast.NotIn))
+                )
+        if not supported:
+            raise CandidateCheckError("construction_syntax_not_supported", location)
         if type(node) is ast.comprehension:
             require(not node.is_async, 'Async comprehensions are not supported')
         if closures and type(node) is ast.Attribute:
-            require(numeric_attribute(node) or object_attribute(node) or public_np_path(node) is not None or
+            supported = (numeric_attribute(node) or object_attribute(node) or public_np_path(node) is not None or
                     (public_polynomial and node.attr in ('coef','domain','window')) or
                     any(type(call) is ast.Call and call.func is node and
                         (node.attr in ('rotate', 'append') or string_method(node) or mapping_method(node) or call in fn.decorator_list)
-                        for call in nodes), 'Only permitted method/decorator attributes are allowed')
+                        for call in nodes))
+            if not supported:
+                raise CandidateCheckError("construction_attribute_not_supported", node)
         if type(node) is ast.Call:
             require(call_binding or not node.keywords, 'No keyword calls in construction syntax')
             valid = ((type(node.func) is ast.Name and node.func.id in callable_names | builtin_names) or
@@ -268,7 +279,8 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                      numeric_attribute(node.func) or object_attribute(node.func) or string_method(node.func) or mapping_method(node.func) or
                      (public_polynomial and public_np_path(node.func) in (*polynomial.UFUNCS,'Chebyshev')) or
                      node in fn.decorator_list)
-            require(valid, 'Unsupported construction call')
+            if not valid:
+                raise CandidateCheckError("construction_call_not_supported", node)
     # Reuse the existing exact decorator/signature/manifest checks, including zero ABI.
     header = copy.deepcopy(fn)
     header.body = [ast.Return(value=ast.List(elts=[ast.Name(id=input_names[0], ctx=ast.Load())
@@ -470,7 +482,9 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
         return COMPARISONS[type(op)](left,right)
 
     def emit(node):
-        require(len(emitted) < 256, 'Expanded ciphertext operation budget exceeded')
+        if len(emitted) >= 256:
+            raise CandidateCheckError('construction_emitted_operation_budget', active_nodes[-1],
+                                      context=dict(observed=len(emitted)+1, limit=256))
         number = len(emitted)
         name = 'constructed' + str(number)
         while name in taken:
@@ -885,6 +899,8 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
         if public_iteration and type(node) in (ast.ListComp, ast.DictComp):
             return comprehension(node, depth)
         if type(node) is ast.Name:
+            if node.id not in bindings:
+                raise CandidateCheckError('undefined_value', node)
             require(node.id in bindings and bindings[node.id] is not UNBOUND and
                     (not closures or bindings[node.id] is not CELL_UNBOUND),
                     'Undefined or unbound local construction value: '+node.id)
@@ -1309,8 +1325,10 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                     'Only rotate is an expression method')
             value = expression(node.func.value, depth+1)
             step = integer(expression(node.args[0], depth+1))
-            require(type(value) is Value and value.kind == 'cipher' and step in allowed_rotations,
+            require(type(value) is Value and value.kind == 'cipher',
                     'Rotation requires a ciphertext and a provisioned public step')
+            if step not in allowed_rotations:
+                raise CandidateCheckError('rotation_step_not_allowed', node.args[0])
             return emit(ast.Call(func=ast.Attribute(value=ref(value), attr='rotate', ctx=ast.Load()),
                                  args=[ast.Constant(value=step)], keywords=[]))
         raise ValueError('Unsupported construction expression: '+type(node).__name__)

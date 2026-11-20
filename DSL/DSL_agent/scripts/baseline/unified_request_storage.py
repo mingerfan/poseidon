@@ -1,11 +1,21 @@
 """Lossless bounded public-vector wire storage; versioned RLE and row dictionaries."""
-import json,math
+import json,math,threading
+from collections import OrderedDict
 
 VERSION="capacity-public-vector-rle-v1"
 TILES_VERSION="capacity-public-vector-tiles-v2"
 BINDINGS_VERSION="capacity-public-bindings-table-v1"
 BINDINGS_MAX_ROWS=1024
 BINDINGS_MAX_COLUMNS=16
+
+# Cache only deterministic vector encodings, never request validation or references.
+# Payload and entry bounds limit this optimization; a miss uses the original codec.
+_TILE_CACHE_MAX_ENTRIES=128
+_TILE_CACHE_MAX_PAYLOAD_BYTES=8*1024**2
+_TILE_CACHE_MAX_ITEM_BYTES=128*1024
+_TILE_CACHE=OrderedDict()
+_TILE_CACHE_PAYLOAD_BYTES=0
+_TILE_CACHE_LOCK=threading.Lock()
 
 def compact_bindings(bindings):
     if type(bindings) is not list or not 1<=len(bindings)<=BINDINGS_MAX_ROWS:
@@ -57,7 +67,7 @@ def _runs(values):
         else:result.append([1,value])
     return result
 
-def _tiled_vector(value):
+def _tiled_vector_uncached(value):
     encode=lambda x:json.dumps(x,sort_keys=True,separators=(",",":"),allow_nan=False)
     best=None;size=float("inf")
     for width in (8,16,32,64,128,256):
@@ -74,6 +84,42 @@ def _tiled_vector(value):
         current=len(encode(record))
         if current<size:best=record;size=current
     return best
+
+def _tiled_vector(value):
+    global _TILE_CACHE_PAYLOAD_BYTES
+    # Exact scalar types preserve int/float distinctions and signed zero. Other
+    # inputs retain the original behavior and cannot seed a reusable encoding.
+    if (type(value) is not list or not 8<=len(value)<=4096 or
+        any(type(v) not in (int,float) or abs(v)>1024 or not math.isfinite(v) for v in value)):
+        return _tiled_vector_uncached(value)
+    try:raw=json.dumps(value,separators=(",",":"),allow_nan=False).encode()
+    except (TypeError,ValueError,OverflowError,RecursionError):
+        return _tiled_vector_uncached(value)
+    if len(raw)>_TILE_CACHE_MAX_ITEM_BYTES:return _tiled_vector_uncached(value)
+    key=(TILES_VERSION,raw)
+    with _TILE_CACHE_LOCK:
+        cached=_TILE_CACHE.get(key)
+        if cached is not None:_TILE_CACHE.move_to_end(key)
+    if cached is not None:return json.loads(cached)
+    # Compute from the immutable key, so a caller mutation cannot associate an
+    # encoding with different input bytes. JSON roundtrips these exact scalars.
+    result=_tiled_vector_uncached(json.loads(raw))
+    try:encoded=json.dumps(result,separators=(",",":"),allow_nan=False).encode()
+    except (TypeError,ValueError,OverflowError,RecursionError):return result
+    if len(encoded)>_TILE_CACHE_MAX_ITEM_BYTES:return result
+    size=len(key[0].encode())+len(raw)+len(encoded)
+    with _TILE_CACHE_LOCK:
+        if key in _TILE_CACHE:
+            _TILE_CACHE.move_to_end(key)
+        else:
+            while _TILE_CACHE and (len(_TILE_CACHE)>=_TILE_CACHE_MAX_ENTRIES or
+                    _TILE_CACHE_PAYLOAD_BYTES+size>_TILE_CACHE_MAX_PAYLOAD_BYTES):
+                old_key,old_value=_TILE_CACHE.popitem(last=False)
+                _TILE_CACHE_PAYLOAD_BYTES-=len(old_key[0].encode())+len(old_key[1])+len(old_value)
+            if size<=_TILE_CACHE_MAX_PAYLOAD_BYTES:
+                _TILE_CACHE[key]=encoded
+                _TILE_CACHE_PAYLOAD_BYTES+=size
+    return result
 
 def _decode_runs(runs,length):
     if type(runs) is not list or not 1<=len(runs)<=length:
@@ -114,7 +160,7 @@ def compact_request(request):
     if type(origins) is not dict:return request
     descriptor=origins.get("capacity_tensor_packing")
     if type(descriptor) is not dict:return request
-    if descriptor.get("version") not in ("capacity-public-tensors-v5","capacity-public-tensors-v6","capacity-public-tensors-v7","capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10"):return request
+    if descriptor.get("version") not in ("capacity-public-tensors-v5","capacity-public-tensors-v6","capacity-public-tensors-v7","capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10","capacity-public-tensors-v11"):return request
     public=request.get("public_constants")
     if type(public) is not dict:return request
     result=dict(request);encoded={}
@@ -127,7 +173,7 @@ def compact_request(request):
             record=dict(format=VERSION,length=len(value),runs=runs)
             encode=lambda x:json.dumps(x,separators=(",",":"),sort_keys=True,allow_nan=False)
             best=record if len(encode(record))<len(encode(value)) else value
-            if descriptor["version"] in ("capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10"):
+            if descriptor["version"] in ("capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10","capacity-public-tensors-v11"):
                 tiled=_tiled_vector(value)
                 if tiled is not None and len(encode(tiled))<len(encode(best)):best=tiled
             encoded[key]=best
@@ -137,14 +183,26 @@ def compact_request(request):
     if bindings is not descriptor.get("bindings"):
         result["constant_origins"]=dict(origins)
         result["constant_origins"]["capacity_tensor_packing"]=dict(descriptor,bindings=bindings)
+    if descriptor.get("version")=="capacity-public-tensors-v11":
+        from public_basis_storage import encode_request
+        return encode_request(result,request)
     return result
 
 def restore_public_constants(request):
+    from public_basis_storage import is_packet,REQUEST_FORMAT,decode_compact,restore_model_views,verify_logical
+    if is_packet(request) and request["format"]==REQUEST_FORMAT:
+        packet=dict(request)
+        value=decode_compact(packet)
+        restore_public_constants(value)
+        restore_model_views(value)
+        verify_logical(packet,value)
+        request.clear();request.update(value)
+        return
     """Normalize only the trusted data representation before semantic validation."""
     origins=request.get("constant_origins")
     if type(origins) is not dict:return
     descriptor=origins.get("capacity_tensor_packing")
-    if type(descriptor) is not dict or descriptor.get("version") not in ("capacity-public-tensors-v5","capacity-public-tensors-v6","capacity-public-tensors-v7","capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10"):return
+    if type(descriptor) is not dict or descriptor.get("version") not in ("capacity-public-tensors-v5","capacity-public-tensors-v6","capacity-public-tensors-v7","capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10","capacity-public-tensors-v11"):return
     restore_bindings(descriptor)
     public=request["public_constants"]
     if type(public) is not dict or len(public)>256:raise ValueError("Capacity public registry storage budget")
@@ -157,7 +215,7 @@ def restore_public_constants(request):
     for key,value in public.items():
         if type(value) is not dict:decoded[key]=value;continue
         if value.get("format")==TILES_VERSION:
-            if descriptor["version"] not in ("capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10"):
+            if descriptor["version"] not in ("capacity-public-tensors-v8","capacity-public-tensors-v9","capacity-public-tensors-v10","capacity-public-tensors-v11"):
                 raise ValueError("Capacity public tiles require packing v8 or v9")
             decoded[key]=_decode_tiles(value,period);continue
         if set(value)!={"format","length","runs"} or value["format"]!=VERSION or type(value["length"]) is not int or value["length"]!=period:
@@ -172,3 +230,80 @@ def restore_public_constants(request):
         if len(vector)!=period:raise ValueError("Capacity public vector storage length")
         decoded[key]=vector
     request["public_constants"]=decoded
+
+
+# Versioned task transport; imports stay local to avoid graph/context import cycles.
+TASK_WIRE_FORMAT = 'poseidon-capacity-application-task-v1'
+
+
+def _task_wire_scope(task):
+    from benchmark_graph import require
+    from public_weight_context import POLICIES
+    from unified_capacity_layout import WIDE_PERIODS, PERIODS
+    from unified_capacity_constants import VERSIONS
+    require(type(task) is dict and type(task.get('request')) is dict, 'Capacity task mapping')
+    require('model_provenance' not in task and 'model_source' not in task, 'Ordinary graph metadata scope')
+    q = task['request']
+    origins = q.get('constant_origins')
+    weight = q.get('public_weight_binding')
+    layout = q.get('layout')
+    require(type(origins) is dict and type(weight) is dict and (type(layout) is dict), 'Capacity task nested metadata mappings')
+    packing = origins.get('capacity_tensor_packing')
+    require(type(packing) is dict and weight.get('policy') in POLICIES and (packing.get('version') in VERSIONS), 'Explicit existing public-weight capacity task')
+    period = layout.get('input_slot_period')
+    require(type(period) is int and period in (*PERIODS, *WIDE_PERIODS), 'Existing capacity period')
+    constants = q.get('public_constants')
+    require(type(constants) is dict and len(constants) <= 256, 'Existing public constant count')
+    for value in constants.values():
+        if type(value) is dict:
+            require(type(value.get('length')) is int and value['length'] == period, 'Bounded existing public vector expansion')
+        elif type(value) is list:
+            require(len(value) <= period, 'Bounded existing public vector')
+    return q
+
+
+def _task_wire_encode(task):
+    from benchmark_graph import canonical, digest, require
+    from provenance_json_transport import LOGICAL_BYTES, WIRE_BYTES, measure
+    q = _task_wire_scope(task)
+    logical_bytes = measure(task, LOGICAL_BYTES)
+    value = dict(task, request=compact_request(q))
+    packet = dict(format=TASK_WIRE_FORMAT, value=value, logical_bytes=logical_bytes, logical_sha256=digest(task))
+    packet['binding'] = digest(packet)
+    require(len(canonical(packet)) <= WIRE_BYTES, 'Original task wire file limit')
+    return packet
+
+
+def _task_wire_decode(packet):
+    import copy
+    from benchmark_graph import canonical, digest, require
+    from provenance_json_transport import LOGICAL_BYTES, WIRE_BYTES, measure
+    require(type(packet) is dict and set(packet) == {'format', 'value', 'logical_bytes', 'logical_sha256', 'binding'} and (packet['format'] == TASK_WIRE_FORMAT), 'Capacity task wire fields')
+    require(len(canonical(packet)) <= WIRE_BYTES and packet['binding'] == digest({k: v for (k, v) in packet.items() if k != 'binding'}), 'Capacity task wire binding/file limit')
+    require(type(packet['logical_bytes']) is int and 0 < packet['logical_bytes'] <= LOGICAL_BYTES, 'Existing logical task transport bound')
+    value = copy.deepcopy(packet['value'])
+    q = _task_wire_scope(value)
+    restore_public_constants(q)
+    require(measure(value, LOGICAL_BYTES) == packet['logical_bytes'] and digest(value) == packet['logical_sha256'], 'Exact original logical task bytes/hash')
+    require(value.get('binding') == digest({k: v for (k, v) in value.items() if k != 'binding'}), 'Original task metadata binding')
+    return value
+
+
+def application_task_bytes(value):
+    from benchmark_graph import canonical
+    from provenance_json_transport import WIRE_BYTES
+    if type(value) is dict and 'model_provenance' in value:
+        import json
+        from provenance_json_transport import task_selected, task_bytes as provenance_bytes
+        return provenance_bytes(value) if task_selected(value) else json.dumps(value, sort_keys=False, separators=(',', ':'), allow_nan=False).encode()
+    raw = canonical(value)
+    if len(raw) <= WIRE_BYTES:
+        return raw
+    return canonical(_task_wire_encode(value))
+
+
+def application_unpack_task(value):
+    if type(value) is dict and value.get('format') == TASK_WIRE_FORMAT:
+        return _task_wire_decode(value)
+    from provenance_json_transport import unpack
+    return unpack(value, purpose='application-task')

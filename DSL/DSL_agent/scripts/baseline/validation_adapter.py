@@ -133,12 +133,12 @@ class CandidateValidationAdapter:
                 item['native_star_coverage'] = verify_trace_coverage(
                     item['static_check']['construction_exercise'], read_json(output/'native-star-events.json'))
             stage = "compiler"
-            from poseidon_runtime_compile import command as compile_command, prepare_entrypoint
+            from poseidon_runtime_compile import command_for_configuration, prepare_entrypoint
             from poseidon_validation import gate, prepare_inputs, execute
             require(request.get("compiler_configuration",{}).get("backend")=="poseidon_cpu",
                     "Poseidon CPU configuration required; no legacy backend execution")
             item["runtime_plan_entry"] = prepare_entrypoint(output, request["compiler_configuration"])
-            command = compile_command(waterline, entry_policy=request["compiler_configuration"].get("runtime_plan_entry_policy"))
+            command = command_for_configuration(request["compiler_configuration"])
             item["compile_command"] = command
             code = native_run(trace_payload, output, command, attempt / "compile.log")
             require(code == 0, f"Isolated compiler failed (exit {code}); see compile.log")

@@ -53,3 +53,39 @@ class BackendConfigurationBindingTests(unittest.TestCase):
         with patch.object(poseidon_package,"identity",return_value={"format":"poseidon-backend-identity-v2"}):
             with self.assertRaisesRegex(ValueError,"dependency mismatch"):
                 poseidon_package.replay(self.root,{"dependencies":{"backend_identity":{"format":"poseidon-backend-identity-v1"}}})
+
+
+class BackendSourceBindingTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name)
+
+    def test_missing_source_is_not_an_empty_tree_identity(self):
+        with self.assertRaisesRegex(ValueError,"Missing backend source directory"):
+            binding.tree(self.root/"not-configured")
+
+    def test_empty_source_is_not_a_backend_identity(self):
+        with self.assertRaisesRegex(ValueError,"Empty backend source directory"):
+            binding.tree(self.root)
+
+    def test_only_ignored_metadata_is_not_source_evidence(self):
+        for name in [".git/config","__pycache__/module.cpython-310.pyc","module.pyc"]:
+            p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text("ignored fixture")
+        with self.assertRaisesRegex(ValueError,"Empty backend source directory"):
+            binding.tree(self.root)
+
+    def test_missing_runtime_rejects_the_whole_identity_before_binary_hashing(self):
+        with patch.object(binding,"SOURCE",self.root/"missing-runtime"), \
+                patch.object(binding,"configuration_identity",return_value={}):
+            with self.assertRaisesRegex(ValueError,"Missing backend source directory"):
+                binding.identity()
+
+    def test_valid_source_identity_is_location_independent_and_content_bound(self):
+        import shutil
+        source=self.root/"source";source.mkdir()
+        (source/"runtime.cpp").write_text("int fixed_source = 1;\n")
+        first=binding.tree(source)
+        relocated=self.root/"relocated";shutil.copytree(source,relocated)
+        self.assertEqual(first,binding.tree(relocated))
+        (relocated/"runtime.cpp").write_text("int fixed_source = 2;\n")
+        self.assertNotEqual(first,binding.tree(relocated))

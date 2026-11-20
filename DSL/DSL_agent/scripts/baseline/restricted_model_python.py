@@ -12,9 +12,61 @@ CALLS={"torch.add":"add","torch.sub":"subtract","torch.mul":"multiply","torch.ne
        "torch.reshape":"reshape","torch.flatten":"flatten","torch.sum":"sum","torch.mean":"mean",
        "torch.stack":"stack","torch.cat":"concat","torch.transpose":"transpose",
        "torch.nn.functional.linear":"linear","poseidon.rms_norm":"rms_norm",
+       "torch.nn.functional.conv1d":"conv1d","torch.nn.functional.conv2d":"conv2d",
+       "torch.nn.functional.avg_pool1d":"avg_pool1d","torch.nn.functional.avg_pool2d":"avg_pool2d",
        "torch.softmax":"softmax","torch.nn.functional.softmax":"softmax",
        "torch.exp":"exp","torch.rsqrt":"rsqrt","torch.reciprocal":"reciprocal",
        "poseidon.rope":"rope"}
+def _spatial_vector(value, dimensions, label):
+    if type(value) is int:
+        return [value] * dimensions
+    require(type(value) is list and len(value) == dimensions
+            and all(type(item) is int for item in value),
+            "Static spatial " + label)
+    return list(value)
+
+
+def _spatial_call(op, args, kw):
+    """Bind existing finite real-tensor operators without executing source code."""
+    dimensions = 1 if op.endswith("1d") else 2
+    convolution = op.startswith("conv")
+    if convolution:
+        names = ("input", "weight", "bias", "stride", "padding", "dilation", "groups")
+        values = dict(bias=None, stride=1, padding=0, dilation=1, groups=1)
+    else:
+        names = ("input", "kernel_size", "stride", "padding", "ceil_mode", "count_include_pad")
+        values = dict(stride=None, padding=0, ceil_mode=False, count_include_pad=True)
+        if dimensions == 2:
+            names += ("divisor_override",)
+            values["divisor_override"] = None
+    require(len(args) <= len(names) and set(kw) <= set(names)
+            and not set(names[:len(args)]).intersection(kw),
+            "Static spatial call signature")
+    values.update(zip(names, args))
+    values.update(kw)
+    require(all(name in values for name in names[:2]), "Missing spatial input or weight/kernel")
+    if convolution:
+        require(type(values["groups"]) is int, "Static spatial groups")
+        operands = [values["input"], values["weight"]]
+        if values["bias"] is not None:
+            operands.append(values["bias"])
+        attrs = dict(stride=_spatial_vector(values["stride"], dimensions, "stride"),
+                     padding=_spatial_vector(values["padding"], dimensions, "padding"),
+                     dilation=_spatial_vector(values["dilation"], dimensions, "dilation"),
+                     groups=values["groups"])
+    else:
+        require(values["ceil_mode"] is False, "Ceil-mode pooling is not supported")
+        require(values.get("divisor_override") is None, "Pooling divisor override is not supported")
+        require(type(values["count_include_pad"]) is bool, "Static pooling pad-count flag")
+        kernel = _spatial_vector(values["kernel_size"], dimensions, "kernel")
+        stride = kernel if values["stride"] is None else _spatial_vector(values["stride"], dimensions, "stride")
+        operands = [values["input"]]
+        attrs = dict(kernel=kernel, stride=list(stride),
+                     padding=_spatial_vector(values["padding"], dimensions, "padding"),
+                     count_include_pad=values["count_include_pad"])
+    return operands, attrs
+
+
 class Ref:
     def __init__(self,name):self.name=name
 
@@ -136,6 +188,9 @@ class Frontend:
             op=CALLS[name]
             if op in ("add","subtract","multiply","matmul","dot"):
                 require(len(args)==2 and not kw,"Binary call signature");return self.emit(op,args)
+            if op in ("conv1d","conv2d","avg_pool1d","avg_pool2d"):
+                operands,attrs=_spatial_call(op,args,kw)
+                return self.emit(op,operands,attrs)
             if op=="linear":
                 require(2<=len(args)<=3 and set(kw)<= {"bias"} and not(len(args)==3 and kw),"Linear signature")
                 if kw.get("bias") is not None:args.append(kw["bias"])

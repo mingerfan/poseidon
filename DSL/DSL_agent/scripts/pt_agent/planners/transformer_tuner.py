@@ -12,6 +12,7 @@ from ..dsl.printer import print_program
 from ..transformer_validation import points,point_names,validate,exact_check
 from ..tensor_sim import cached_estimate, timed, estimate_calls
 from ..kernels import approx
+from ..quality import is_regression, model_metric, quality_fields, quality_matches
 from .tuner import TuneResult
 
 validate = timed('validation_s')(validate)
@@ -59,8 +60,9 @@ def margin_rule(rule):
 
 
 def move_logit_limit(ctx, rule):
-    """Tuner acceptance limit on heldout logit_rel_err; margin rules keep a fraction of the task limit."""
-    limit = min(1e-2, ctx.model_info.threshold.get('logit_rel_err', 1e-2))
+    """Relative output/logit limit; margin rules retain their task-limit factor."""
+    key = 'relative_error' if is_regression(model_metric(ctx.model_info)) else 'logit_rel_err'
+    limit = min(1e-2, ctx.model_info.threshold.get(key, 1e-2))
     return MARGIN_RULE_FACTORS.get(rule, 1.0)*limit
 
 
@@ -68,7 +70,8 @@ def move_accuracy_ok(result, ctx, rule):
     if not accuracy_rule(rule):
         return True
     import math
-    error = result.get('logit_rel_err')
+    key = 'relative_error' if is_regression(model_metric(ctx.model_info)) else 'logit_rel_err'
+    error = result.get(key)
     return error is not None and math.isfinite(error) and error <= move_logit_limit(ctx, rule)
 
 
@@ -360,22 +363,27 @@ def _tune_context(program,ctx,cost,result,floors,rule):
     cost_fields['hotspots']=[dict({k:r.get(k) for k in ('line','call_lines','latency_share')},
         levels_left_at_refresh=remaining.get((r['line'],tuple(r['call_lines'])))) for r in cost.get('hotspots',[])]
     rows=result.get('rows') or []
-    precision={k:result.get(k) for k in ('agree','total','logit_rel_err','max_u_calibrated','max_u_analytic')}
+    regression = is_regression(model_metric(ctx.model_info))
+    keys = (('relative_error','total','max_u_calibrated','max_u_analytic') if regression else
+            ('agree','total','logit_rel_err','max_u_calibrated','max_u_analytic'))
+    precision={k:result.get(k) for k in keys}
     precision['points']=[dict(op_id=p.op.id,prefix=p.prefix,role=p.role or 'act',line=p.op.lineno,
         max_u=rows[i].get('max_u') if i<len(rows) else None,refit_floor=floors.get((p.op.id,p.prefix)))
         for i,p in enumerate(points(program))]
     return dict(program='\n'.join(f'{i}: {line}' for i,line in enumerate(print_program(program).splitlines(),1)),
         cost=cost_fields,precision=precision,acceptance=dict(max_u_calibrated=.90,max_u_analytic=1.,
-        logit_rel_err=move_logit_limit(ctx,rule)))
+        **{('relative_error' if regression else 'logit_rel_err'):move_logit_limit(ctx,rule)}))
 
 
 def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,engine_profile='mock',
-         client=None,iteration=0,align_points=None):
-    """`align_points` (E8a §3.1 attribution only) restricts the alignment to these point indices and skips the fallback."""
-    from .tuner import TuneResult,_new_settings,LADDER,TARGET_U,N_COARSE
+         client=None,iteration=0,align_points=None,focus=None):
+    """`align_points` (E8a §3.1 attribution only) restricts the alignment to these point indices and skips the fallback.
+    `focus` (a set of source lines) restricts the sweep's moves to points on those lines; the alignment is unchanged."""
+    from .tuner import TuneResult,_new_settings,LADDER,TARGET_U,N_COARSE,in_focus
     rule=validate_tune_rule(getattr(ctx,'prompt_version','r8-v4'),_tune_rule.get())
     search=validate_tune_search(ctx)
     if search=='llm-select' and client is None:raise ValueError('llm-select requires a tuning client')
+    if search=='llm-select' and focus is not None:raise ValueError('focus applies to the sweep search')
     started=time.monotonic();history=[];changes=[];accepted_states=[];coarse=full=0
     estimates_before=estimate_calls();llm_calls=0;llm_s=0.
     convergent=convergent_rule(rule)
@@ -435,18 +443,20 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
         return not reject_reasons(result)
     def alignment_metrics(result):
         if result is None:return None
-        metrics={key:result.get(key) for key in ('feasible','diverged','agree','total','agreement_pct','logit_rel_err',
-                                                  'max_u_calibrated','max_u_analytic')}
-        metrics['move_logit_limit']=move_logit_limit(ctx,rule) if v8 and accuracy_rule(rule) else None
+        regression = is_regression(model_metric(ctx.model_info))
+        keys = (('feasible','diverged','relative_error','total','max_u_calibrated','max_u_analytic') if regression else
+                ('feasible','diverged','agree','total','agreement_pct','logit_rel_err','max_u_calibrated','max_u_analytic'))
+        metrics={key:result.get(key) for key in keys}
+        metrics['move_relative_error_limit' if regression else 'move_logit_limit']=move_logit_limit(ctx,rule) if v8 and accuracy_rule(rule) else None
         metrics['worst_acts']=list(result.get('worst_acts') or [])[:5]
         return metrics
     def finish():
         result=measure(current,engine='mock' if v8 else 'tensor' if engine_profile=='tensor' else 'mock');
         if v8:criteria.require_analytic_coverage(result)
-        if result['feasible']!=current_result['feasible'] or result['agree']!=current_result['agree']:
+        if result['feasible']!=current_result['feasible'] or not quality_matches(current_result,result,model_metric(ctx.model_info)):
             raise RuntimeError('Final Mock verification differs from tensor')
         history.append(dict(phase='result',accepted=result['feasible'],feasible=result['feasible'],
-                            latency_pred_us=current_cost['latency_pred_us'],agree=result.get('agree'),
+                            latency_pred_us=current_cost['latency_pred_us'],**quality_fields(result,model_metric(ctx.model_info)),
                             total=result.get('total'),max_u=result['max_u']))
         if v8:
             history[-1].update({key:result[key] for key in ('max_u_calibrated','max_u_analytic','worst_acts')})
@@ -704,6 +714,7 @@ def tune(program,ctx,*,budget_s=2400,max_sweeps=1,engine='tensor',cache=True,eng
         visited=set()
         descriptors=points(current)
         for index,point in enumerate(descriptors):
+            if not in_focus(point.op,focus):continue
             identity=(point.op.id,'softmax' if a1 and point.op.kind=='softmax' else point.prefix)
             if identity in visited:continue
             visited.add(identity)

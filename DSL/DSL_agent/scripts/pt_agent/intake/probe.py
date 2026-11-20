@@ -70,16 +70,24 @@ class ImportedModel:
     original: object = None
 
 
-def import_torch(module, samples, *, name, source, split=None, preserve_input_names=False):
+def import_torch(module, samples, *, name, source, split=None, preserve_input_names=False,
+                 observer=None):
     import torch
     from ..data.samples import SampleSplits
     from . import import_module
     if samples.kind != 'tensor':
         raise ValueError('PyTorch models require the original tensor samples sent to module(x)')
     split = samples.split() if split is None else split
-    tensors, _ = samples.tensors(split['calibration'][:1])
-    example = tuple(torch.from_numpy(value) for value in tensors.values())
-    graph = import_module(module, example, name, frontend='aten')
+    calibration = split['calibration'][:3]
+    if len(calibration) == 0:
+        raise ValueError('PyTorch import requires at least one calibration sample')
+    probe_tensors = [samples.tensors([index])[0] for index in calibration]
+    tensors = probe_tensors[0]
+    input_names = tuple(tensors)
+    probes = tuple(tuple(torch.from_numpy(values[key]) for key in input_names)
+                   for values in probe_tensors)
+    graph = import_module(module, probes[0], name, frontend='aten',
+                          validation_inputs=probes, observer=observer)
     if not preserve_input_names:
         # npy has no named keys; preserve the model's inferred argument name.
         if tuple(tensors) != ('input',):
@@ -93,13 +101,14 @@ def import_torch(module, samples, *, name, source, split=None, preserve_input_na
     return ImportedModel(info, SampleSplits(samples, info), module)
 
 
-def import_model(source, samples):
+def import_model(source, samples, *, observer=None):
     kind = source_kind(source)
     if kind == 'torch':
         module, name = load_callable(source)
-        return import_torch(module, samples, name=name, source=source)
+        return import_torch(module, samples, name=name, source=source, observer=observer)
     if kind == 'hf':
         from .hf_frontend import import_local
-        return import_local(source, samples)
+        return (import_local(source, samples) if observer is None
+                else import_local(source, samples, observer=observer))
     from .onnx_frontend import import_model as import_onnx
     return import_onnx(source, samples)

@@ -136,48 +136,13 @@ def validate_package(spec, files):
     return spec
 
 
-from functools import lru_cache
+from trusted_capture_implementation import (dependency_names as _dependency_names,
+                                            implementation_paths_at as _implementation_paths_at)
 
-@lru_cache(maxsize=256)
-def _dependency_names(raw):
-    """Cache only immutable syntax, keyed by the complete source bytes."""
-    candidates = set()
-    for node in ast.walk(ast.parse(raw.decode("utf-8"))):
-        if isinstance(node, ast.Import):
-            candidates.update(alias.name.split(".")[0]+".py" for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            candidates.add(node.module.split(".")[0]+".py")
-        elif (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
-              and node.func.attr == "with_name" and len(node.args) == 1
-              and isinstance(node.args[0], ast.Constant) and type(node.args[0].value) is str):
-            adjacent = node.args[0].value
-            if re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]*\.(py|json)", adjacent):
-                candidates.add(adjacent)
-    return frozenset(candidates)
 
 def implementation_paths():
     return _implementation_paths_at(Path(__file__).resolve().parent,
                                     Path(legacy.__file__).resolve().parent, IMPLEMENTATION)
-
-def _implementation_paths_at(local, retained, initial):
-    # Include project-local imports anywhere in the trusted functions, and
-    # adjacent data files explicitly read with Path.with_name. No model imports
-    # or module execution are needed to compute this deterministic closure.
-    pending = list(initial)
-    result = {}
-    while pending:
-        name = pending.pop()
-        if name in result:
-            continue
-        path = local/name if (local/name).is_file() else retained/name
-        require(path.is_file(), "Trusted implementation file missing")
-        result[name] = path
-        if path.suffix != ".py":
-            continue
-        candidates = _dependency_names(path.read_bytes())
-        pending.extend(sorted(n for n in candidates if n not in result
-                              and ((local/n).is_file() or (retained/n).is_file())))
-    return dict(sorted(result.items()))
 
 def source_identity():
     return {name: hashlib.sha256(path.read_bytes()).hexdigest()

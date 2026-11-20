@@ -1,0 +1,562 @@
+diff --git a/lib/Conversion/CKKSCommon/CMakeLists.txt b/lib/Conversion/CKKSCommon/CMakeLists.txt
+index bece77f..8f8f07a 100644
+--- a/lib/Conversion/CKKSCommon/CMakeLists.txt
++++ b/lib/Conversion/CKKSCommon/CMakeLists.txt
+@@ -8,6 +8,5 @@ add_mlir_conversion_library(HecateCKKSCommonConversion
+   LINK_LIBS PUBLIC
+   EarthDialect
+   CKKSDialect
+-  MLIRLLVMCommonConversion
+   MLIRTransforms
+   )
+diff --git a/lib/Conversion/CKKSToCKKS/CMakeLists.txt b/lib/Conversion/CKKSToCKKS/CMakeLists.txt
+index 659f47c..1c6ff28 100644
+--- a/lib/Conversion/CKKSToCKKS/CMakeLists.txt
++++ b/lib/Conversion/CKKSToCKKS/CMakeLists.txt
+@@ -11,6 +11,5 @@ add_mlir_conversion_library(HecateCKKSToCKKS
+   LINK_LIBS PUBLIC
+   EarthDialect
+   CKKSDialect
+-  MLIRLLVMCommonConversion
+   MLIRTransforms
+   )
+diff --git a/lib/Conversion/EarthToCKKS/CMakeLists.txt b/lib/Conversion/EarthToCKKS/CMakeLists.txt
+index 463a5b7..6917494 100644
+--- a/lib/Conversion/EarthToCKKS/CMakeLists.txt
++++ b/lib/Conversion/EarthToCKKS/CMakeLists.txt
+@@ -8,8 +8,8 @@ add_mlir_conversion_library(HecateEarthToCKKS
+   Core
+ 
+   LINK_LIBS PUBLIC
++  HecateCKKSCommonConversion
+   EarthDialect
+   CKKSDialect
+-  MLIRLLVMCommonConversion
+   MLIRTransforms
+   )
+diff --git a/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp b/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
+index 00bce2d..a7f182c 100644
+--- a/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
++++ b/lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp
+@@ -16,7 +16,7 @@ void hecate::CandidateAnalysis::build() {
+   smu.attach();
+   values.emplace_back(0, nullptr);
+   edges.push_back(0);
+-  auto &&func = dyn_cast<mlir::func::FuncOp>(_op);
++  auto &&func = llvm::dyn_cast<mlir::func::FuncOp>(_op);
+   auto &&bb = func.getBody().getBlocks().front();
+   for (auto iter = bb.begin(); iter != bb.end(); ++iter) {
+     mlir::Operation *op = &*iter;
+@@ -48,7 +48,7 @@ void hecate::CandidateAnalysis::doLiveAnalysis(
+     values.emplace_back(opid, val);
+  }
+ 
+-    if (auto sop = dyn_cast<hecate::earth::HEScaleOpInterface>(op)) {
++    if (auto sop = llvm::dyn_cast<hecate::earth::HEScaleOpInterface>(op)) {
+       if (!sop.isCipher())
+         return;
+       for (auto &&oper : sop->getOperands()) {
+@@ -306,7 +306,7 @@ bool hecate::ValueInfo::isBypassEdge(int64_t to) const {
+   if (opid == to)
+     return false;
+   for (auto user : getValue().getUsers()) {
+-    if (auto sop = dyn_cast<hecate::earth::HEScaleOpInterface>(user)) {
++    if (auto sop = llvm::dyn_cast<hecate::earth::HEScaleOpInterface>(user)) {
+       auto useOpid = hecate::getIntegerAttr("opid", sop->getResult(0));
+       if (useOpid <= thresholdOpid) {
+         if (to < useOpid) {
+diff --git a/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp b/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp
+index ee5398d..37862ab 100644
+--- a/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp
++++ b/lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp
+@@ -272,7 +272,7 @@ hecate::ScaleManagementUnit::ScaleManagementUnit(mlir::Operation *op)
+   for (auto &&kv : smuIds) {
+     if (auto &&res = kv.first.dyn_cast<mlir::OpResult>()) {
+       if (auto &&sop =
+-              dyn_cast<earth::HEScaleOpInterface>(res.getDefiningOp())) {
++              llvm::dyn_cast<earth::HEScaleOpInterface>(res.getDefiningOp())) {
+         if (sop.isNoisy()) {
+           noisyMap[kv.second] = true;
+         }
+diff --git a/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp b/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp
+index 608ae02..ca2e285 100644
+--- a/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp
++++ b/lib/Dialect/Earth/Transforms/CodeSegmentation.cpp
+@@ -6,11 +6,9 @@
+ #include "hecate/Dialect/Earth/Transforms/Passes.h"
+ #include "hecate/Support/Support.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+-#include "mlir/Dialect/Func/Transforms/Passes.h"
+-#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
+-#include "mlir/Dialect/SCF/IR/SCF.h"
+ #include "mlir/IR/Builders.h"
+ #include "mlir/IR/BuiltinAttributes.h"
++#include "mlir/IR/PatternMatch.h"
+ #include "mlir/Pass/PassManager.h"
+ #include "mlir/Transforms/Passes.h"
+ #include <fstream>
+diff --git a/lib/Dialect/Earth/Transforms/Common.cpp b/lib/Dialect/Earth/Transforms/Common.cpp
+index 3a528bc..7a40072 100644
+--- a/lib/Dialect/Earth/Transforms/Common.cpp
++++ b/lib/Dialect/Earth/Transforms/Common.cpp
+@@ -79,6 +79,13 @@ void hecate::earth::refineReturnValues(mlir::func::FuncOp func,
+   });
+ 
+   /* func.walk([&](func::ReturnOp rop) { */
++  // Operand scale management may retune Plain block arguments after
++  // refineInputValues captured inputTypes (for example a bias after mul).
++  // Re-read the final block types so the function signature and arg_scale
++  // describe the same ABI. Do not keep the initial waterline snapshot.
++  inputTypes.clear();
++  for (auto arg : func.getArguments())
++    inputTypes.push_back(arg.getType());
+   // Remap the return types
+   func.setFunctionType(
+       builder.getFunctionType(inputTypes, rop.getOperandTypes()));
+diff --git a/lib/Dialect/Earth/Transforms/ElideConstant.cpp b/lib/Dialect/Earth/Transforms/ElideConstant.cpp
+index 20eee8a..9776f34 100644
+--- a/lib/Dialect/Earth/Transforms/ElideConstant.cpp
++++ b/lib/Dialect/Earth/Transforms/ElideConstant.cpp
+@@ -37,9 +37,9 @@ struct ElideConstantPass
+       cop.setValueAttr(builder.getI64IntegerAttr(save_data.size() - 1));
+     });
+ 
+-    name = name + (func.getName() + ".cst").str();
+-    llvm::errs() << name << "\n";
+-    std::ofstream of(name, std::ios::binary);
++    const auto outputName = name + (func.getName() + ".cst").str();
++    llvm::errs() << outputName << "\n";
++    std::ofstream of(outputName, std::ios::binary);
+     int64_t a;
+     a = save_data.size();
+     of.write((char *)&a, sizeof(int64_t));
+diff --git a/python/hecate/hecate/expr.py b/python/hecate/hecate/expr.py
+index 887d953..5ba6916 100644
+--- a/python/hecate/hecate/expr.py
++++ b/python/hecate/hecate/expr.py
+@@ -1,4 +1,5 @@
+ import ctypes
++import inspect
+ import weakref
+ import re
+ from subprocess import Popen
+@@ -39,6 +40,11 @@ lt.initFunc.argtypes = [
+ lt.createConstant.restype = ctypes.c_size_t
+ lt.createConstant.restype = ctypes.c_size_t
+ lt.createFunc.restype = ctypes.c_size_t
++lt.createCall.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
++        ctypes.POINTER(ctypes.c_size_t), ctypes.c_size_t,
++        ctypes.POINTER(ctypes.c_size_t), ctypes.c_size_t,
++        ctypes.c_char_p, ctypes.c_size_t]
++lt.createCall.restype = ctypes.c_size_t
+ 
+ """Immediate arguments"""
+ lt.createRotation.argtypes = [
+@@ -119,15 +125,31 @@ def unaryFactory(name, opcode):
+     def unaryMethod(self):
+         (frame, filename, line_number, function_name, lines,
+                 index) = getCallerFrame()
+-        if isinstance(self, Iterable):
+-            for tt in self : 
+-                tt = Expr(
+-                    lt.createUnary(ctxt, opcode, tt.obj, filename.encode('utf-8'),
+-                    line_number))
+-            return self 
+-        else :
+-            return Expr(lt.createUnary(ctxt, opcode, self.obj, filename.encode('utf-8'),
+-                line_number)) 
++        def apply(value):
++            return Expr(lt.createUnary(ctxt, opcode, value.obj,
++                filename.encode('utf-8'), line_number))
++
++        if isinstance(self, Expr):
++            return apply(self)
++        if isinstance(self, np.ndarray):
++            if self.dtype != object or not self.flags.writeable:
++                raise TypeError("Unary expression arrays must be writable object arrays")
++            values = list(self.flat)
++        elif isinstance(self, (list, tuple)):
++            values = list(self)
++        else:
++            raise TypeError("Unary expression requires Expr, list, tuple or object ndarray")
++        # Validate every cell before emitting IR or mutating shared storage.
++        if not all(isinstance(value, Expr) for value in values):
++            raise TypeError("Unary expression container cells must be Expr values")
++        results = [apply(value) for value in values]
++        if isinstance(self, tuple):
++            return tuple(results)
++        if isinstance(self, np.ndarray):
++            self.flat[:] = results
++        else:
++            self[:] = results
++        return self
+ 
+     globals()[name] = unaryMethod
+ [unaryFactory(name, opcode) for name, opcode in toUnary.items()]
+@@ -176,7 +198,9 @@ class hecateMetaBinary(hecateMetaBase):
+ 
+             setattr(cls, f"__{name}__", binaryMethod)
+             setattr(cls, f"__r{name}__", binaryReverseMethod)
+-            setattr(cls, f"__i{name}__", binaryReverseMethod)
++            # Augmented assignment rebinds to a new Expr, as before, but must
++            # preserve lhs/rhs order. The reverse method made x -= y emit y-x.
++            setattr(cls, f"__i{name}__", binaryMethod)
+ 
+ 
+         def innerFactory(cls, name, opcode):
+@@ -305,6 +329,8 @@ class Empty :
+ 
+ """Function Decorator"""
+ funcList = []
++_active_traces = []
++_tracing_failed = False
+ 
+ 
+ def func(param):
+@@ -327,35 +353,86 @@ class Func(metaclass=hecateMetaBase):
+         name = fun.__name__
+         self.fun = fun
+ 
+-        arg = paramstr.split(",")
++        if not isinstance(paramstr, str):
++            raise TypeError("Function parameter signature must be a string")
++        arg = [a.strip() for a in paramstr.split(",")] if paramstr.strip() else []
++        if any(a not in ("c", "p") for a in arg):
++            raise ValueError("Function parameters must be c or p")
+         inputs = [ a== "c" for a in arg]
+ 
+         self.inputlen = len(inputs)
++        inspect.signature(fun).bind(*([None] * self.inputlen))
++        self.evaluation_state = "new"
+         inputTys = (ctypes.c_int * len(inputs))(*inputs)
+         self.obj = lt.createFunc(ctxt, name.encode('utf-8'), inputTys,
+                 len(inputs), filename.encode('utf-8'),
+                 line_number)
+ 
+     def eval(self):
+-        inputarr = (ctypes.c_size_t * self.inputlen)()
+-        lt.initFunc(ctxt, self.obj, inputarr, self.inputlen)
+-        inputs = [Expr(x) for x in inputarr[:self.inputlen]]
+-        returns = self.fun(*inputs)
+-        if not isinstance (returns, Iterable) : 
+-            returns = [returns]
+-        outputs = [ x.obj for  x in returns]
+-        outputvec = (ctypes.c_size_t * len(outputs))(*outputs)
+-        lt.setOutput(ctxt, self.obj, outputvec, len(outputs))
++        global _tracing_failed
++        if _tracing_failed:
++            raise ValueError("Native tracing context previously failed; use a fresh process")
++        if self.evaluation_state == "done":
++            return
++        if self.evaluation_state != "new":
++            raise ValueError("Recursive or previously failed decorated function tracing")
++        self.evaluation_state = "active"
++        _active_traces.append(self)
++        try:
++            inputarr = (ctypes.c_size_t * self.inputlen)()
++            lt.initFunc(ctxt, self.obj, inputarr, self.inputlen)
++            inputs = [Expr(x) for x in inputarr[:self.inputlen]]
++            returns = self.fun(*inputs)
++            if _tracing_failed:
++                raise ValueError("Nested native tracing failed; use a fresh process")
++            if isinstance(returns, Expr):
++                self.return_kind, self.return_shape = "scalar", None
++                values = [returns]
++            elif isinstance(returns, np.ndarray) and returns.dtype == object:
++                self.return_kind, self.return_shape = "array", returns.shape
++                values = list(returns.flat)
++            elif isinstance(returns, (list, tuple)):
++                self.return_kind, self.return_shape = type(returns).__name__, None
++                values = list(returns)
++            else:
++                raise TypeError("Decorated functions return Expr or a flat expression container")
++            if not all(isinstance(value, Expr) for value in values):
++                raise TypeError("Function output cells must be Expr values")
++            outputs = [x.obj for x in values]
++            self.outputlen = len(outputs)
++            outputvec = (ctypes.c_size_t * len(outputs))(*outputs)
++            lt.setOutput(ctxt, self.obj, outputvec, len(outputs))
++            self.evaluation_state = "done"
++        except BaseException:
++            self.evaluation_state = "failed"
++            _tracing_failed = True
++            raise
++        finally:
++            _active_traces.pop()
+ 
+     def __call__(self, *args):
++        if len(args) != self.inputlen:
++            raise TypeError("Decorated function argument count mismatch")
++        if not _active_traces or _tracing_failed:
++            raise ValueError("Decorated function calls require an active, non-failed trace")
+         (frame, filename, line_number, function_name, lines,
+                 index) = getProperFrame()
+         tmps = [resolveType(arg) for arg in args]
+         argarr = (ctypes.c_size_t * len(args))(*[tmp.obj for tmp in tmps])
+-
+-        return Expr(
+-                lt.createCall(ctxt, self.obj, argarr, len(args),
+-                    filename.encode('utf-8'), line_number))
++        self.eval()  # Also handles forward definitions; restores caller insertion point.
++        outputs = (ctypes.c_size_t * self.outputlen)()
++        count = lt.createCall(ctxt, self.obj, argarr, len(args), outputs,
++                             self.outputlen, filename.encode('utf-8'), line_number)
++        if count != self.outputlen:
++            raise ValueError("Native function call type/body/insertion-point mismatch")
++        values = [Expr(value) for value in outputs]
++        if self.return_kind == "scalar":
++            return values[0]
++        if self.return_kind == "array":
++            result = np.empty(self.return_shape, dtype=object)
++            result.flat[:] = values
++            return result
++        return tuple(values) if self.return_kind == "tuple" else values
+ 
+ 
+ def removeCtxt() :
+diff --git a/python/poly/poly/MPCB.py b/python/poly/poly/MPCB.py
+index 12e6fab..4a6b0d9 100644
+--- a/python/poly/poly/MPCB.py
++++ b/python/poly/poly/MPCB.py
+@@ -295,8 +295,11 @@ def shapeClosure(nt, bb, fh, fw, s , hi, ho, wi, wo, ni, no, ci, co, ki, ko, ti,
+     
+     def ConcatSelecting () : 
+         tt = min (co * wo *ho , nt)
+-        M = torch.ones ((tt - (ci * wi * hi) % tt), dtype = torch.double)
+-        FF = F.pad (M, (0, (ci * wi * hi) %tt), mode = 'constant', value = 0)
++        # The first output fragment retains the valid tail of A, not its
++        # complement. For multi-cipher inputs this is ci*wi*hi modulo nt.
++        tail = (ci * wi * hi) % tt
++        M = torch.ones ((tail), dtype = torch.double)
++        FF = F.pad (M, (0, tt - tail), mode = 'constant', value = 0)
+         BB = 1 - FF
+         FF = F.pad (FF, (0, nt//po - tt), mode = 'constant', value = 0)
+         BB = F.pad (BB, (0, nt//po - tt), mode = 'constant', value = 0)
+@@ -322,8 +325,10 @@ def shapeClosure(nt, bb, fh, fw, s , hi, ho, wi, wo, ni, no, ci, co, ki, ko, ti,
+         second = [C[i] for i in range(ni)]
+         for i in range (ni) : 
+             D[ni-1 +i] = first [i] * FF + second[i] * BB
+-        if ni != no : 
+-            D[no-1] = first[ni]
++        # The loop already fills 2*ni-1 ciphertexts. Only a larger result
++        # needs a final carry; mask it so wrapped data is not duplicated.
++        if no == 2 * ni :
++            D[no-1] = first[ni] * FF
+             
+         return D
+         
+@@ -636,6 +641,11 @@ def InferShapes(shapes) :
+     
+ def CascadeConcat (shapes1, shapes2) : 
+     shapes = shapes1.copy()
++    # Both branches must describe the same channel-packing geometry. Taking
++    # only shapes1 silently accepted incompatible spatial sizes or scaling.
++    if any(shapes1[key] != shapes2[key]
++           for key in ("nt", "bb", "ko", "ho", "wo", "no", "po")):
++        raise ValueError("concat requires matching branch packing and spatial shapes")
+     if (shapes1["co"] != shapes2["co"]) or (shapes1["co"] % (shapes["ko"] * shapes["ko"]) != 0):  
+         print ("concat does not support this shape")
+         return 0
+diff --git a/tools/CMakeLists.txt b/tools/CMakeLists.txt
+index 65b64e5..ee53d69 100644
+--- a/tools/CMakeLists.txt
++++ b/tools/CMakeLists.txt
+@@ -4,15 +4,21 @@ add_library (HecateFrontend
+   frontend.cpp
+   )
+ 
+-get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
+-get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
++# Preserve the default SDK behavior; the existing pinned distribution opts out.
++option(HECATE_LINK_ALL_MLIR_LIBS "Link every upstream MLIR dialect and conversion library" ON)
++if(HECATE_LINK_ALL_MLIR_LIBS)
++  get_property(dialect_libs GLOBAL PROPERTY MLIR_DIALECT_LIBS)
++  get_property(conversion_libs GLOBAL PROPERTY MLIR_CONVERSION_LIBS)
++  set(hecate_mlir_libs ${dialect_libs} ${conversion_libs})
++else()
++  set(hecate_mlir_libs MLIRFuncDialect MLIRTensorDialect MLIRParser MLIRTransforms)
++endif()
+ 
+ target_link_libraries(HecateFrontend
+   MLIRBytecodeWriter
+   EarthDialect
+   EarthTransforms
+-  ${dialect_libs}
+-  ${conversion_libs}
++  ${hecate_mlir_libs}
+   )
+ 
+ add_executable (hecate-opt
+@@ -20,7 +26,6 @@ add_executable (hecate-opt
+   )
+ 
+ target_link_libraries(hecate-opt
+-  MLIREmitCDialect
+   MLIROptLib
+   EarthDialect
+   CKKSDialect
+@@ -29,6 +34,5 @@ target_link_libraries(hecate-opt
+   HecateCKKSCommonConversion
+   HecateEarthToCKKS
+   HecateCKKSToCKKS
+-  ${dialect_libs}
+-  ${conversion_libs}
++  ${hecate_mlir_libs}
+   )
+diff --git a/tools/frontend.cpp b/tools/frontend.cpp
+index 6a41958..efb54b4 100644
+--- a/tools/frontend.cpp
++++ b/tools/frontend.cpp
+@@ -6,20 +6,17 @@
+ #include <memory>
+ 
+ #include "mlir/Bytecode/BytecodeWriter.h"
+-#include "mlir/Conversion/LLVMCommon/ConversionTarget.h"
+-#include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+ #include "mlir/Parser/Parser.h"
+ #include "mlir/Tools/mlir-opt/MlirOptMain.h"
+ #include "llvm/Support/SourceMgr.h"
+-#include <llvm/Bitcode/BitcodeWriter.h>
+-#include <llvm/Support/TargetSelect.h>
+ #include <llvm/Support/raw_ostream.h>
+ #include <mlir/Dialect/Func/IR/FuncOps.h>
+ #include <mlir/Dialect/Tensor/IR/Tensor.h>
+-#include <mlir/Dialect/Tensor/Transforms/Passes.h>
+ #include <mlir/IR/Builders.h>
+ #include <mlir/IR/MLIRContext.h>
++#include <mlir/IR/IRMapping.h>
+ #include <mlir/IR/Value.h>
++#include <mlir/IR/Verifier.h>
+ #include <mlir/Pass/Pass.h>
+ #include <mlir/Pass/PassManager.h>
+ #include <mlir/Transforms/Passes.h>
+@@ -58,6 +55,7 @@ struct Context {
+   std::unique_ptr<mlir::OpBuilder> builder;
+   llvm::SmallVector<mlir::Value, 32> valueMap;
+   llvm::SmallVector<mlir::func::FuncOp, 32> funcMap;
++  llvm::SmallVector<mlir::OpBuilder::InsertPoint, 8> insertionPoints;
+ };
+ 
+ Context::Context() : ctxt(), mod(), builder() {
+@@ -90,9 +88,10 @@ funcID createFunc(Context *ctxt, char *name, int *inputTys, size_t len,
+   auto &&funcMap = ctxt->funcMap;
+   llvm::SmallVector<mlir::Type, 4> arg_types(len);
+   std::transform(inputTys, inputTys + len, arg_types.begin(), [&](auto a) {
++    mlir::Type element = a ? mlir::Type(builder.getType<hecate::earth::CipherType>(0, 0))
++                          : mlir::Type(builder.getType<hecate::earth::PlainType>(0, 0));
+     return mlir::RankedTensorType::get(
+-        llvm::SmallVector<int64_t, 1>{1},
+-        builder.getType<hecate::earth::CipherType>(0, 0));
++        llvm::SmallVector<int64_t, 1>{1}, element);
+   });
+   auto funcType = builder.getFunctionType(
+       arg_types, mlir::RankedTensorType::get(
+@@ -107,6 +106,7 @@ funcID createFunc(Context *ctxt, char *name, int *inputTys, size_t len,
+ }
+ 
+ void initFunc(Context *ctxt, funcID fun, valueID *args, size_t len) {
++  ctxt->insertionPoints.push_back(ctxt->builder->saveInsertionPoint());
+   auto &&funcOp = ctxt->funcMap[fun];
+   auto &&valueMap = ctxt->valueMap;
+   auto entryBlock = funcOp.addEntryBlock();
+@@ -195,8 +195,9 @@ valueID createBinary(Context *ctxt, size_t opcode, valueID lhs, valueID rhs,
+   auto location =
+       mlir::FileLineColLoc::get(builder.getStringAttr(filename), line, 0);
+ 
+-  auto &&srcl = valueMap[lhs];
+-  auto &&srcr = valueMap[rhs];
++  // Copy Value handles: appending the intermediate below may grow valueMap.
++  auto srcl = valueMap[lhs];
++  auto srcr = valueMap[rhs];
+ 
+   switch (opcode) {
+   case 6: {
+@@ -205,7 +206,20 @@ valueID createBinary(Context *ctxt, size_t opcode, valueID lhs, valueID rhs,
+     break;
+   }
+   case 7: {
+-    auto neg = builder.create<hecate::earth::NegateOp>(location, srcr);
++    // NegateOp has a ciphertext result. A public constant must be negated
++    // before construction instead of emitting an ill-typed plaintext NegateOp.
++    mlir::Value neg;
++    if (auto constant = srcr.getDefiningOp<hecate::earth::ConstantOp>()) {
++      if (auto dense = mlir::dyn_cast<mlir::DenseFPElementsAttr>(constant.getValue())) {
++        llvm::SmallVector<double, 4> values;
++        for (auto value : dense.getValues<llvm::APFloat>())
++          values.push_back(-value.convertToDouble());
++        neg = builder.create<hecate::earth::ConstantOp>(
++            location, llvm::ArrayRef<double>(values));
++      }
++    }
++    if (!neg)
++      neg = builder.create<hecate::earth::NegateOp>(location, srcr);
+     valueMap.push_back(neg);
+     auto res = builder.create<hecate::earth::AddOp>(location, srcl, neg);
+     valueMap.push_back(res);
+@@ -247,6 +261,41 @@ void setOutput(Context *ctxt, funcID fun, valueID *ret, size_t len) {
+   auto retType = func.getFunctionType();
+   func.setFunctionType(
+       ctxt->builder->getFunctionType(retType.getInputs(), types));
++  ctxt->builder->restoreInsertionPoint(ctxt->insertionPoints.pop_back_val());
++}
++
++// Statically inline the already traced straight-line body. Earth/HEVM has no
++// runtime call instruction; cloning IR preserves every operand/result without
++// re-executing the user's Python function at each call site.
++size_t createCall(Context *ctxt, funcID fun, valueID *args, size_t nargs,
++                  valueID *results, size_t capacity, char *, size_t) {
++  const auto invalid = std::numeric_limits<size_t>::max();
++  if (fun >= ctxt->funcMap.size() || !ctxt->builder->getInsertionBlock())
++    return invalid;
++  auto callee = ctxt->funcMap[fun];
++  if (callee.empty() || !llvm::hasSingleElement(callee.getBody()) ||
++      nargs != callee.getNumArguments() || capacity != callee.getNumResults() ||
++      mlir::failed(mlir::verify(callee)))
++    return invalid;
++  auto &body = callee.front();
++  auto returned = mlir::dyn_cast<mlir::func::ReturnOp>(body.getTerminator());
++  if (!returned || returned.getNumOperands() != capacity)
++    return invalid;
++  mlir::IRMapping mapping;
++  for (size_t i = 0; i < nargs; ++i) {
++    if (args[i] >= ctxt->valueMap.size() ||
++        ctxt->valueMap[args[i]].getParentBlock() != ctxt->builder->getInsertionBlock() ||
++        ctxt->valueMap[args[i]].getType() != body.getArgument(i).getType())
++      return invalid;
++    mapping.map(body.getArgument(i), ctxt->valueMap[args[i]]);
++  }
++  for (auto &op : body.without_terminator())
++    ctxt->builder->clone(op, mapping);
++  for (size_t i = 0; i < capacity; ++i) {
++    ctxt->valueMap.push_back(mapping.lookup(returned.getOperand(i)));
++    results[i] = ctxt->valueMap.size() - 1;
++  }
++  return capacity;
+ }
+ 
+ Context *init() {
+diff --git a/tools/optimizer.cpp b/tools/optimizer.cpp
+index 7a9e4ff..368f633 100644
+--- a/tools/optimizer.cpp
++++ b/tools/optimizer.cpp
+@@ -1,8 +1,8 @@
++#include "mlir/Transforms/Passes.h"
++#include "mlir/Dialect/Tensor/IR/Tensor.h"
++#include "mlir/Dialect/Func/IR/FuncOps.h"
+ 
+ #include "mlir/Bytecode/BytecodeWriter.h"
+-#include "mlir/Dialect/LLVMIR/LLVMAttrs.h"
+-#include "mlir/Dialect/LLVMIR/LLVMDialect.h"
+-#include "mlir/Dialect/SCF/IR/SCF.h"
+ #include "mlir/IR/AsmState.h"
+ #include "mlir/IR/Attributes.h"
+ #include "mlir/IR/BuiltinOps.h"
+@@ -10,8 +10,6 @@
+ #include "mlir/IR/Dialect.h"
+ #include "mlir/IR/Location.h"
+ #include "mlir/IR/MLIRContext.h"
+-#include "mlir/InitAllDialects.h"
+-#include "mlir/InitAllPasses.h"
+ #include "mlir/Parser/Parser.h"
+ #include "mlir/Pass/Pass.h"
+ #include "mlir/Pass/PassManager.h"

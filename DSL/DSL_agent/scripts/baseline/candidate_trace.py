@@ -111,6 +111,7 @@ def main():
         from unified_capacity_layout import EXTENDED_ABIS
         _, plan = register(candidate['hecate_source'], request['public_constants'], hc,
                            request['layout']['output_ciphertexts'], input_names=request_input_names(request),
+                           public_constant_indices=request.get('constant_origins',{}).get('capacity_tensor_packing',{}).get('version')=='capacity-public-tensors-v11',
                            capacity_layout=request['layout'] if request['layout'].get('execution_abi') in EXTENDED_ABIS else None,
                            observe=calls.append, upstream_helpers="upstream_helpers" in request,
                            observe_upstream=upstream_calls.append, upstream_request=request if "upstream_helpers" in request else None,

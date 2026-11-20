@@ -142,7 +142,14 @@ class ContextTests(unittest.TestCase):
         task=app.submit(model(),options=dict(chunk_period=4),limits=dict(
             generations=2,http_attempts=4,wall_seconds=120,api_timeout_seconds=60,max_tokens=2048))
         payload=json.loads((context.task_store/task/"task.json").read_text())
-        self.assertEqual(payload["request"],self.request)
+        from compiler_configuration import CURRENT_CONFIGURATION
+        from poseidon_runtime_paths import selected_sdk
+        options=dict(chunk_period=4)
+        if selected_sdk()is not None:options["compiler_configuration"]=CURRENT_CONFIGURATION
+        expected=prepare(model(),"poseidon_cpu","numerical",options)[0]
+        self.assertEqual(payload["request"],expected)
+        self.assertEqual(payload["request"]["compiler_configuration"]["source_lock_sha256"],
+                         context.record()["backend_identity"]["tools"]["source_lock_sha256"])
         self.assertEqual(payload["budget"]["generations"],2)
         self.assertEqual(app.status(task)["status"],"queued")
         self.assertEqual(app.cancel(task)["status"],"cancelled")
@@ -157,6 +164,25 @@ class ContextTests(unittest.TestCase):
             result=app.run(task,Provider())
         self.assertEqual(result["status"],"service_error")
         self.assertEqual(result["generations"],0)
+
+    def test_request_for_other_sdk_is_rejected_before_any_provider_call(self):
+        from compiler_configuration import CURRENT_CONFIGURATION
+        from poseidon_runtime_paths import selected_sdk
+        wrong="poseidon-cpu-eva-w45-v1"if selected_sdk()is not None else CURRENT_CONFIGURATION
+        context=WorkerContext.capture(self.root/"mismatched-sdk")
+        app=application(context)
+        task=app.submit(model(),options=dict(chunk_period=4,compiler_configuration=wrong))
+        class Provider:
+            kind="scripted_replay";agent_calls=0;calls=0
+            def generate(self,*_):
+                self.calls+=1
+                raise AssertionError("Mismatched SDK must stop before generation")
+        provider=Provider()
+        with patch("application_execution.backend.ContextBackend.qualify")as native:
+            result=app.run(task,provider)
+        self.assertEqual(result["status"],"service_error")
+        self.assertEqual(provider.calls,0)
+        native.assert_not_called()
 
 
     def test_execute_forwards_structured_input_observer_and_records_context(self):

@@ -3,6 +3,7 @@
 import copy
 from dataclasses import dataclass, field
 import time
+from ..quality import is_regression, model_metric, quality_fields, quality_matches, strict_tuner_quality
 
 from ..cost import estimate, estimate_normalized, estimate_fast, estimate_normalized_fast
 from ..dsl.ir import Program
@@ -38,7 +39,12 @@ class TuneResult:
 
 
 def _strict(result):
-    return result['feasible'] and result['acc_drop_pp'] <= TUNER_MAX_ACC_DROP_PP
+    return strict_tuner_quality(result, TUNER_MAX_ACC_DROP_PP)
+
+
+def in_focus(op, focus):
+    """True when no focus is given, or `op` sits on a focus line or is called from one."""
+    return focus is None or op.lineno in focus or any(line in focus for line in op.call_lines)
 
 
 def _changes(original, current):
@@ -92,7 +98,9 @@ def _new_settings(attrs):
 
 def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
          engine: str = "tensor", cache: bool = True, engine_profile: str = "mock",
-         client=None, iteration=0) -> TuneResult:
+         client=None, iteration=0, focus=None) -> TuneResult:
+    """`focus` (a set of source lines) restricts the descent moves to points on those lines; the domain
+    alignment still covers every point."""
     if getattr(ctx, 'prompt_version', 'r8-v4') in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         from ..dsl.interface import require_interface
         require_interface(program, ctx.model_info)
@@ -101,7 +109,8 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         from .transformer_tuner import tune as token_tune
         return token_tune(program,ctx,budget_s=budget_s,max_sweeps=max_sweeps,engine=engine,
                           cache=cache,engine_profile=engine_profile,
-                          **(dict(client=client,iteration=iteration) if getattr(ctx,'tune_search','sweep')=='llm-select' else {}))
+                          **(dict(client=client,iteration=iteration) if getattr(ctx,'tune_search','sweep')=='llm-select' else {}),
+                          **({} if focus is None else dict(focus=focus)))
     if engine_profile not in ("mock", "tensor"):
         raise ValueError('engine_profile must be "mock" or "tensor"')
     if engine_profile == "tensor":
@@ -131,13 +140,17 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         return validation(candidate)
 
     def record(phase, candidate, cost, result, accepted, **details):
+        regression = is_regression(model_metric(getattr(ctx, 'model_info', None)), result)
+        precision = (dict(**quality_fields(result), total=result.get('total'), max_u=result.get('max_u')) if regression else
+            dict(agree=result.get('agree'), total=result.get('total'), max_u=result.get('max_u'), top1=result.get('top1'),
+                 exact_top1=result.get('exact_top1'), acc_drop_pp=result.get('acc_drop_pp')))
         entry = dict(phase=phase, latency_pred_us=cost['latency_pred_us'],
-                     agree=result.get('agree'), total=result.get('total'), max_u=result.get('max_u'),
-                     top1=result.get('top1'), exact_top1=result.get('exact_top1'),
-                     acc_drop_pp=result.get('acc_drop_pp'),
+                     **precision,
                      accepted=accepted, **details)
         history.append(entry)
-        print(f"TUNER phase={phase} accepted={accepted} agree={entry['agree']}/{entry['total']} "
+        observed = (f"relative_error={entry['relative_error']}" if regression else
+                    f"agree={entry['agree']}/{entry['total']}")
+        print(f"TUNER phase={phase} accepted={accepted} {observed} "
               f"max_u={entry['max_u']} latency_pred_us={entry['latency_pred_us']}", flush=True)
 
     def finish(candidate, result, feasible):
@@ -148,8 +161,11 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         if engine == "tensor":
             verified = validate(candidate, ctx, boot_nodes=after['boot_nodes'],
                                 engine="tensor" if engine_profile == "tensor" else "mock", cache=cache)
-            for field in ('feasible', 'agree'):
-                if verified[field] != result[field]:
+            metric = model_metric(getattr(ctx, 'model_info', None))
+            fields = ('feasible', 'relative_error') if is_regression(metric, result) else ('feasible', 'agree')
+            for field in fields:
+                matches = quality_matches(result, verified, metric) if field == 'relative_error' else verified[field] == result[field]
+                if not matches:
                     raise RuntimeError(
                         f"Final Mock verification differs from tensor: {field} "
                         f"tensor={result[field]!r}, mock={verified[field]!r}")
@@ -206,7 +222,7 @@ def tune(program, ctx, *, budget_s: float = 2400, max_sweeps: int = 1,
         ranked = {(row['line'], tuple(row.get('call_lines', ()))): rank
                   for rank, row in reversed(list(enumerate(sorted(hotspots,
                                       key=lambda row: row.get('latency_share', 0), reverse=True))))}
-        order = sorted((index for index, op in enumerate(cur.ops) if op.kind in ('act', 'maxpool')),
+        order = sorted((index for index, op in enumerate(cur.ops) if op.kind in ('act', 'maxpool') and in_focus(op, focus)),
                        key=lambda index: (ranked.get((cur.ops[index].lineno, cur.ops[index].call_lines), len(ranked)), index))
         for index in order:
             if time.monotonic()-started >= budget_s:

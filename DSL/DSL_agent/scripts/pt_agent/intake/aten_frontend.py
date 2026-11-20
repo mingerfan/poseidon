@@ -9,6 +9,7 @@ from torch.fx.passes.shape_prop import ShapeProp
 
 from . import decompose
 from .graph import Graph, TensorInfo
+from .observation import observe
 from .torch_frontend import IntakeError
 from .torch_mapping import Mapper, Unsupported, arg, axis, pair
 
@@ -49,6 +50,19 @@ class _AtenMapper(Mapper):
             if str(node.target) == "aten.t.default" and node.args[0].op == "get_attr":
                 if node.users and all(self.linear_weight(user) is node.args[0] for user in node.users):
                     self.absorbed.add(node)
+
+    def weight(self, name, value):
+        if (isinstance(value, torch.Tensor) and value.device.type == "cpu"
+                and value.dtype == torch.float64 and value.layout == torch.strided
+                and value.data_ptr() in self.parameter_names):
+            # Only registered storage from the private deepcopy may be shared.
+            # Captured external tensors retain Mapper's snapshot-copy behavior.
+            array = value.detach().numpy()
+            array.setflags(write=False)
+            self.graph.weights[name] = array
+            self.graph.tensors[name] = TensorInfo(name, tuple(array.shape), "weight")
+            return name
+        return super().weight(name, value)
 
     @staticmethod
     def linear_weight(node):
@@ -288,12 +302,26 @@ class _AtenMapper(Mapper):
             raise Unsupported("aten op not in mapping table")
 
 
-def import_module_aten(module, example_inputs: tuple, name: str) -> Graph:
-    m = copy.deepcopy(module).eval().double()
-    inputs = tuple(value.to(dtype=torch.float64) for value in example_inputs)
+def import_module_aten(module, example_inputs: tuple, name: str, *,
+                       validation_inputs=None, observer=None) -> Graph:
+    probes = None
+    if validation_inputs is not None:
+        probes = tuple(validation_inputs)
+        if not probes:
+            raise ValueError('validation_inputs must contain at least one complete input tuple')
+        for probe in probes:
+            if not isinstance(probe, tuple) or len(probe) != len(example_inputs):
+                raise ValueError('Validation input count differs from trace inputs')
+            if any(value.shape != example.shape for value, example in zip(probe, example_inputs)):
+                raise ValueError('Validation input shapes differ from trace inputs')
+        probes = tuple(tuple(value.to(dtype=torch.float64) for value in probe) for probe in probes)
+    with observe(observer, 'intake.deepcopy'):
+        m = copy.deepcopy(module).eval().double()
+        inputs = tuple(value.to(dtype=torch.float64) for value in example_inputs)
     try:
         with torch.no_grad():
-            gm = make_fx(m, tracing_mode="real")(*inputs)
+            with observe(observer, 'intake.make_fx'):
+                gm = make_fx(m, tracing_mode="real")(*inputs)
             # Effect-only writes (e.g. writing a computed value into a view)
             # cannot be discarded just because their returned tensor is dead.
             # Convert observable mutations into explicit dataflow before static
@@ -301,56 +329,67 @@ def import_module_aten(module, example_inputs: tuple, name: str) -> Graph:
             if any(getattr(getattr(node.target, '_schema', None), 'is_mutable', False)
                    and (not node.users or str(node.target) not in _BINARIES)
                    for node in gm.graph.nodes if node.op == 'call_function'):
-                gm = make_fx(torch.func.functionalize(m), tracing_mode='real')(*inputs)
-            generator = torch.Generator().manual_seed(20261022)
-            for _ in range(3):
-                samples = tuple(torch.randn(value.shape, generator=generator, dtype=torch.float64)
-                                for value in inputs)
-                if _different(gm(*samples), m(*samples)):
-                    raise _trace_error(m, CONTROL_FLOW_REASON)
-            ShapeProp(gm).propagate(*inputs)
+                with observe(observer, 'intake.functionalize'):
+                    gm = make_fx(torch.func.functionalize(m), tracing_mode='real')(*inputs)
+            if probes is None:
+                with observe(observer, 'intake.legacy_probes'):
+                    generator = torch.Generator().manual_seed(20261022)
+                    for _ in range(3):
+                        samples = tuple(torch.randn(value.shape, generator=generator, dtype=torch.float64)
+                                        for value in inputs)
+                        if _different(gm(*samples), m(*samples)):
+                            raise _trace_error(m, CONTROL_FLOW_REASON)
+            else:
+                with observe(observer, 'intake.real_probes', probe_count=len(probes)):
+                    for index, samples in enumerate(probes):
+                        with observe(observer, 'intake.real_probe', probe_index=index):
+                            if _different(gm(*samples), m(*samples)):
+                                raise _trace_error(m, CONTROL_FLOW_REASON)
+            with observe(observer, 'intake.shape_prop'):
+                ShapeProp(gm).propagate(*inputs)
     except IntakeError:
         raise
     except Exception as exc:
         reason = CONTROL_FLOW_REASON if 'data-dependent control flow' in str(exc) else str(exc)
         raise _trace_error(m, reason) from exc
-    names = {}
-    for key, value in list(m.named_parameters())+list(m.named_buffers()):
-        names.setdefault(value.data_ptr(), key)
-    graph = Graph(name, [], {}, {}, [], [])
-    mapper = _AtenMapper(graph, gm, names)
-    errors = []
-    output = None
-    for node in gm.graph.nodes:
-        meta = node.meta.get('tensor_meta')
-        if hasattr(meta, 'shape'):
-            graph.tensors[node.name] = TensorInfo(node.name, tuple(int(v) for v in meta.shape),
-                                                  'input' if node.op == 'placeholder' else 'act')
-        if node.op == 'placeholder':
-            graph.inputs.append(node.name)
-        elif node.op == 'output':
-            output = node
-        else:
-            try:
-                mapper.map(node)
-            except Unsupported as exc:
-                errors.append(dict(fx_node=node.name, op=node.op, target=str(node.target), reason=str(exc)))
-    if errors:
-        raise IntakeError(errors)
+    with observe(observer, 'intake.map_weights'):
+        names = {}
+        for key, value in list(m.named_parameters())+list(m.named_buffers()):
+            names.setdefault(value.data_ptr(), key)
+        graph = Graph(name, [], {}, {}, [], [])
+        mapper = _AtenMapper(graph, gm, names)
+        errors = []
+        output = None
+        for node in gm.graph.nodes:
+            meta = node.meta.get('tensor_meta')
+            if hasattr(meta, 'shape'):
+                graph.tensors[node.name] = TensorInfo(node.name, tuple(int(v) for v in meta.shape),
+                                                      'input' if node.op == 'placeholder' else 'act')
+            if node.op == 'placeholder':
+                graph.inputs.append(node.name)
+            elif node.op == 'output':
+                output = node
+            else:
+                try:
+                    mapper.map(node)
+                except Unsupported as exc:
+                    errors.append(dict(fx_node=node.name, op=node.op, target=str(node.target), reason=str(exc)))
+        if errors:
+            raise IntakeError(errors)
 
-    def outputs(value):
-        if isinstance(value, torch.fx.Node):
-            resolved = mapper.aliases.get(value, value.name)
-            return [resolved] if isinstance(resolved, str) else list(resolved)
-        if isinstance(value, (tuple, list)):
-            return [name for item in value for name in outputs(item)]
-        raise IntakeError([dict(fx_node=output.name, op='output', target=str(output.target),
-                                reason='output must contain tensors')])
+        def outputs(value):
+            if isinstance(value, torch.fx.Node):
+                resolved = mapper.aliases.get(value, value.name)
+                return [resolved] if isinstance(resolved, str) else list(resolved)
+            if isinstance(value, (tuple, list)):
+                return [name for item in value for name in outputs(item)]
+            raise IntakeError([dict(fx_node=output.name, op='output', target=str(output.target),
+                                    reason='output must contain tensors')])
 
-    graph.outputs = outputs(output.args[0])
-    graph = decompose.run(graph)
-    graph.intake_stats = dict(original_nodes=sum(node.op == 'call_function' for node in gm.graph.nodes),
-                             folded_nodes=sum(node.op == 'call_function' and node in mapper.constants
-                                              for node in gm.graph.nodes),
-                             original_unmapped={})
+        graph.outputs = outputs(output.args[0])
+        graph = decompose.run(graph)
+        graph.intake_stats = dict(original_nodes=sum(node.op == 'call_function' for node in gm.graph.nodes),
+                                 folded_nodes=sum(node.op == 'call_function' and node in mapper.constants
+                                                  for node in gm.graph.nodes),
+                                 original_unmapped={})
     return graph

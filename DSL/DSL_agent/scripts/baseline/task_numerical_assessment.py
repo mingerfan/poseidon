@@ -6,6 +6,7 @@ PyTorch forward, preserving its declared dtypes. The existing Application owns
 package validation and execution. No generation,
 compilation, Provider calls, package rewriting, or automatic retry is added.
 """
+from top1_accuracy_metrics import TOP1_KINDS, limit_field, threshold
 import copy
 import math
 from fractions import Fraction
@@ -85,13 +86,14 @@ def criterion(value, model, count):
                 and math.isfinite(value["limit"]) and 0<=value["limit"]<=1024,
                 "assessment_input_rejected")
         return dict(kind=kind,limit=float(value["limit"]))
-    require(kind=="top1_accuracy_drop" and
-            set(value)=={"kind","output","class_axis","labels","max_drop"} and
+    require(kind in TOP1_KINDS,"assessment_input_rejected")
+    field=limit_field(kind)
+    require(set(value)=={"kind","output","class_axis","labels",field} and
             type(value["class_axis"])is int and
             type(value["output"])is str and
             type(value["labels"])is list and len(value["labels"])==count and
-            type(value["max_drop"])in(int,float) and math.isfinite(value["max_drop"]) and
-            0<=value["max_drop"]<=1,"assessment_input_rejected")
+            type(value[field])in(int,float) and math.isfinite(value[field]) and
+            0<=value[field]<=1,"assessment_input_rejected")
     checked=validate(model);refs={o["name"]:o["value"] for o in model["outputs"]}
     require(value["output"] in refs,"assessment_input_rejected")
     shape=checked["shapes"][refs[value["output"]]]
@@ -106,7 +108,7 @@ def criterion(value, model, count):
         return item
     return dict(kind=kind,output=value["output"],class_axis=axis,
                 labels=[labels(item,label_shape) for item in value["labels"]],
-                max_drop=float(value["max_drop"]))
+                **{field:float(value[field])})
 def source_selection(value,request):
     """Host-only, explicit source execution; no callbacks or implicit trust."""
     if value is None:return None
@@ -214,14 +216,15 @@ def application_metric(profile,original,approximate,decrypted,model,*,scope=POLI
             correct+=int(np.sum(prediction==target));total+=int(target.size)
         scores.append(correct/total);counts.append((correct,total))
     require(all(n==counts[0][1] for _,n in counts),"assessment_input_rejected")
-    exact_drop=Fraction(counts[0][0]-counts[2][0],counts[0][1])
-    drop=float(exact_drop)
-    passed=exact_drop<=Fraction(str(profile["max_drop"]))
+    checked=threshold(profile["kind"],counts[0][0],counts[2][0],counts[0][1],
+                      profile[limit_field(profile["kind"])])
+    passed=checked["passed"]
     result=dict(kind=profile["kind"],status="passed" if passed else "failed",
         passed=passed,output=name,class_axis=axis,
         original_mathematical_top1=scores[0],approximate_mathematical_top1=scores[1],
-        encrypted_top1=scores[2],accuracy_drop=drop,max_drop=profile["max_drop"],
+        encrypted_top1=scores[2],
         labels_compared=sum(t.size for t in labels),tie_policy="first_index",scope=scope)
+    result.update(checked)
     if scope==NATIVE_POLICY:
         result["original_source_top1"]=result.pop("original_mathematical_top1")
         result["approximate_computation_top1"]=result.pop("approximate_mathematical_top1")

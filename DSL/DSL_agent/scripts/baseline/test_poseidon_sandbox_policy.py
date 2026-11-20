@@ -20,7 +20,7 @@ class SandboxProfileTests(unittest.TestCase):
         from sandbox_policy import MODULES as legacy, limits as old_limits
         self.assertIs(limits, old_limits)
         self.assertEqual(set(legacy) - set(MODULES), {"sandbox_policy.py", "upstream_helper_probe.py"})
-        self.assertEqual(set(MODULES) - set(legacy), {"poseidon_sandbox_policy.py", "public_math_context.py", "unified_output_binding_guidance.py"})
+        self.assertEqual(set(MODULES) - set(legacy), {"poseidon_sandbox_policy.py", "public_math_context.py", "public_tensor_math_context.py", "unified_output_binding_guidance.py"})
         self.assertEqual(len(MODULES), len(set(MODULES)))
         base = Path(__file__).parent
         self.assertTrue(all((base/name).is_file() for name in MODULES))
@@ -138,6 +138,10 @@ assert 'process_resource_limits' in sys.modules
             script = """
 import ast,sys
 sys.path.insert(0,sys.argv[1])
+from public_weight_context import read_payload
+from public_tensor_math_context import POLICY as TENSOR_POLICY
+assert TENSOR_POLICY == "descriptors-math-tensors-v4"
+assert callable(read_payload)
 from unified_binding_guidance import VERSION
 from candidate_check_diagnostic import CandidateCheckError
 from unified_capacity_constants import SHALLOW_VERSION

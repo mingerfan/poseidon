@@ -15,6 +15,10 @@ the pure Nix shell (see ENV_VARS):
     PT_HECATE_BUILD        Hecate/DaCapo build directory with bin/hecate-opt
     PT_DACAPO_ROOT         DaCapo source tree: Python Hecate frontend, minimax coefficients, ResNet20-SiLU weights
     PT_DACAPO_UPSTREAM     unmodified upstream DaCapo checkout (expert DSL examples, R9a motivation only)
+    PT_ORION_ROOT          independent Orion checkout
+    PT_ORBIT_ROOT          independent Orbit checkout
+    PT_INTAKE_PYTHON       Python executable for original-model intake
+    PT_PAPER_DATA_PYTHON   explicitly configured Python executable for paper data conversion
 
 PT_RESULTS is deliberately not read here: it names the output directory of one outer run, and inner
 (Nix --pure) code must not depend on it.
@@ -24,10 +28,10 @@ import os
 from pathlib import Path
 
 ENV_VARS = ("POSEIDON_WORK_ROOT", "POSEIDON_PLATFORM", "PT_AGENT_RESULTS_ROOT", "PT_HECATE_BUILD", "PT_DACAPO_ROOT",
-            "PT_DACAPO_UPSTREAM")
+            "PT_DACAPO_UPSTREAM", "PT_ORION_ROOT", "PT_ORBIT_ROOT", "PT_INTAKE_PYTHON", "PT_PAPER_DATA_PYTHON")
 
 
-def _env_path(name: str, default: Path) -> Path:
+def _env_path(name: str, default: Path | None) -> Path | None:
     value = os.environ.get(name)
     return Path(value).expanduser() if value and value.strip() else default
 
@@ -47,6 +51,10 @@ WORK_RESULTS = PLATFORM_DIR / "results"
 HECATE_BUILD = _env_path("PT_HECATE_BUILD", WORK_RESULTS / "agent-dacapo-bootwindow-20261030/build")
 DACAPO_ROOT = _env_path("PT_DACAPO_ROOT", REPO / "third_party/ckks-runtime/third_party/dacapo")
 DACAPO_UPSTREAM = _env_path("PT_DACAPO_UPSTREAM", REPO / "third_party/dacapo")
+ORION_ROOT = _env_path("PT_ORION_ROOT", WORKSPACE / "baselines/orion")
+ORBIT_ROOT = _env_path("PT_ORBIT_ROOT", WORKSPACE / "baselines/orbit")
+INTAKE_PYTHON = _env_path("PT_INTAKE_PYTHON", PLATFORM_DIR / "venvs/intake-2.0.1-cpu/bin/python")
+PAPER_DATA_PYTHON = _env_path("PT_PAPER_DATA_PYTHON", None)
 PROFILES_DIR = Path(__file__).resolve().parent / "compiler_profiles"
 
 

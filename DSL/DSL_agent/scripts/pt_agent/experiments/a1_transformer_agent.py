@@ -417,6 +417,10 @@ def session_step(args):
                        max_iters=state['max_iters'] if state is not None else
                            getattr(args,'session_iters',None) or session_iterations(args.prompt_version,used),
                        tune_rule=args.tune_rule,confirm_rule=getattr(args,'confirm_rule','c1'),
+                       tune_policy=getattr(args,'tune_policy',None) or 'new_best',
+                       stale_limit=getattr(args,'stale_limit',None) or 2,
+                       focus_retune=getattr(args,'focus_retune','off')=='on',
+                       numeric_lock=getattr(args,'numeric_lock','off')=='on',
                        **(dict(tune_client=tune_client,label=label) if ctx.tune_search=='llm-select' else {}))
         if args.model=='qwen' and phase=='tune' and args.tune_rule=='v8-6.14':
             result['first_convergent_tune']=first_convergent_tune
@@ -831,6 +835,12 @@ def main():
     parser.add_argument('--confirm-rule',choices=('c1','c2'),default='c1')
     parser.add_argument('--tune-call-limit',type=int,choices=(8,9,12,14,16,20),default=20)
     parser.add_argument('--session-iters',type=int,choices=range(1,11))
+    parser.add_argument('--tune-policy',choices=('new_best','all'),help='applies when a session starts (default new_best)')
+    parser.add_argument('--stale-limit',type=int,choices=range(1,4),help='iterations without a 5%% gain before confirming (default 2)')
+    parser.add_argument('--focus-retune',choices=('on','off'),default='off',
+                        help='after the first tune, retune only the points on lines that differ from the best program')
+    parser.add_argument('--numeric-lock',choices=('on','off'),default='off',
+                        help='give later replies the best program\'s tuned degrees and domains where their structure is unchanged')
     parser.add_argument('--ledger-cap',type=int,help='global ledger ceiling approved for this round (default: the earlier fixed caps)')
     parser.add_argument('--experiment-round',choices=('E8',),help='registry round; default derives it from the session label')
     for key in ('model_dir','r0_program','program','frozen','budget_path','call_dir','root','resume_session','response_file','mock_report'):

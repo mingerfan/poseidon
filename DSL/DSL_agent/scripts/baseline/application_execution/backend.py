@@ -63,7 +63,7 @@ class ContextBackend(PoseidonBackend):
 
 def application(context):
     """Create the existing component with an explicit pinned worker context."""
-    from application_component import Application
+    from application_shared import SharedApplication
     require(isinstance(context,WorkerContext),"context_application_type")
     context.persist()
-    return Application(context.task_store,ContextBackend(context))
+    return SharedApplication(context.task_store,ContextBackend(context))

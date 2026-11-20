@@ -21,7 +21,7 @@ def copy_checked_artifacts(folder,manifest,output):
         shutil.copyfile(source,destination)
         if digest(destination)!=expected:raise ValueError("Package changed during reload")
 
-def replay(folder,manifest):
+def replay(folder,manifest,*,artifact_observer=None):
     folder=Path(folder)
     if identity()!=manifest["dependencies"]["backend_identity"]:
         raise ValueError("Poseidon package dependency mismatch")
@@ -29,6 +29,8 @@ def replay(folder,manifest):
     candidate=dict(schema=1,request_id=request["request_id"],hecate_source=(folder/"candidate.py").read_text())
     validate_candidate(candidate,request)
     evidence=Path(tempfile.mkdtemp(prefix="poseidon-package-replay-",dir=WORK/"results"))
+    if artifact_observer is not None:
+        artifact_observer(evidence)
     output=evidence/"output";output.mkdir()
     copy_checked_artifacts(folder,manifest,output)
     record=json.loads((output/"validation.json").read_text())

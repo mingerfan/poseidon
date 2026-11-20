@@ -188,7 +188,7 @@ def main():
     parser.add_argument("--provider-retries",type=int,choices=range(4),default=0)
     parser.add_argument("--api-timeout",type=int,default=1200)
     parser.add_argument("--max-tokens",type=int)
-    parser.add_argument("--reasoning-effort",choices=("low","high","max"),default="high")
+    parser.add_argument("--reasoning-effort",choices=("none","low","high","max"),default="high")
     parser.add_argument("--stream",action="store_true")
     parser.add_argument("--resume",action="store_true")
     parser.add_argument("--inside",action="store_true",help=argparse.SUPPRESS)

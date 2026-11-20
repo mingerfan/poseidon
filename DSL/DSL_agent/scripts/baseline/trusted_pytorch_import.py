@@ -41,6 +41,7 @@ def validate_package(spec,files):
         require(type(files[name]) is str,"Source text")
         raw=files[name].encode();total+=len(raw)
         require(len(raw)<=65536 and total<=65536 and hashlib.sha256(raw).hexdigest()==expected,"Source hash/budget")
+    require(not set(files).intersection(implementation_paths()),"Source module conflicts with trusted adapter")
     require(spec["entry"].split(".")[0]+".py" in hashes,"Factory module missing")
     return spec
 
@@ -78,9 +79,14 @@ def preparation_options(provenance,model,options=None):
         result["capacity_packing_version"]=INDEX_VERSION
     return result
 
-def source_identity(root=None):
+def implementation_paths(root=None):
+    from trusted_capture_implementation import implementation_paths_at
     root=Path(__file__).parent if root is None else Path(root)
-    return {name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in IMPLEMENTATION}
+    return implementation_paths_at(root,root,IMPLEMENTATION)
+
+def source_identity(root=None):
+    return {name:hashlib.sha256(path.read_bytes()).hexdigest()
+            for name,path in implementation_paths(root).items()}
 
 def runtime_identity():
     from platform_config import configuration
@@ -207,7 +213,7 @@ def run(manifest_path,output,*,resource_profile="legacy-v1",trusted=False):
         "--ro-bind","/sys/devices/system/cpu","/sys/devices/system/cpu",
         "--proc","/proc","--dev","/dev","--tmpfs","/tmp","--dir","/app","--dir","/model",
         "--ro-bind",str(payload),"/request.json","--bind",str(output),"/out"]
-    for name in IMPLEMENTATION:cmd+=["--ro-bind",str(ROOT/"scripts/baseline"/name),"/app/"+name]
+    for name,path in implementation_paths().items():cmd+=["--ro-bind",str(path),"/app/"+name]
     for name,path in paths.items():cmd+=["--ro-bind",str(path),"/model/"+name]
     for name in weight_files:cmd+=["--ro-bind",str(output/"weight-snapshot"/name),"/model/"+name]
     for key,value in dict(PYTHONPATH="/app:/model",PYTHONDONTWRITEBYTECODE="1",PYTHONNOUSERSITE="1",

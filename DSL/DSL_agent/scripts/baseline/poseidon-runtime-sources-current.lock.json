@@ -1,0 +1,19 @@
+{
+  "approved_patches": [
+    "4c5e025a34cb7318c3e12caf7b23eddf7b17780ea43e474d5c1a18266c458b93",
+    "b5e57829c51cda4eef6cf7deb180d4adebe5d8f671982377ccf138413dbc37c0"
+  ],
+  "compiler_source_binding": "9a8ac4a75ea5fd85d7d5b84ddd4564af7bf180df5147375023391707a684aaac",
+  "cuda_certified": false,
+  "dacapo_commit": "39c1fb255adddbfb9d7180f9d1b8535a31241bff",
+  "executor_plan_binding": "e6453b41506d6e8e8f13bd4814714087db5eaee769f4f6dd68afd7d20d6bf14a",
+  "format": "poseidon-current-runtime-sources-v1",
+  "native_bootstrap_certified": false,
+  "poseidon_commit": "957ff9c05181f47485d2555ab52b2bedcbdb60d6",
+  "runtime_commit": "f7e9115eaec22e44c8e12ff9f53528e421691688",
+  "source_trees": {
+    "api": "e36428192144c995dfbff32843d61776656f385c56ec65ec7a89eb281add3c49",
+    "runner": "bad66abf5c45cc0e920083d368ce510167940a67b65181349933fbe40845ade2",
+    "runtime": "a9039abed452f8867282f93cc3e56e53e9359da48032b78646f169fde5f1be4e"
+  }
+}

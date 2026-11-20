@@ -15,6 +15,12 @@ POLICIES = (LEGACY, PRECISE)
 
 # reason -> layer, public message. No arbitrary diagnostic text is rendered.
 MESSAGES = {
+    "native_ast_node_budget": ("static_check", "The candidate source exceeds the fixed 4096 AST-node budget. Reduce source expansion using admitted static helpers, containers and loops, and share repeated work while preserving the supplied model, weights and layout."),
+    "native_expanded_ast_node_budget": ("static_check", "Public loop expansion exceeds the fixed 4096 AST-node budget. Each range iteration copies its body in this analysis; short source can still exceed the expanded bound. The observed count is the measured expanded prefix at the first rejected statement, or the complete module count when the location is candidate. A source location identifies the original statement whose next expanded copy exceeded the budget. Share reusable intermediate computations and reduce duplicated expanded syntax using admitted DSL forms. Preserve the model, coefficients, layout and all bounds."),
+    "construction_emitted_operation_budget": ("static_check", "Construction emits more than the fixed 256 ciphertext-operation limit. Each executed cipher arithmetic or rotation emits an operation, including inside public helper calls and loops. Reuse already computed values and preserve the supplied model, weights and layout."),
+    "construction_call_not_supported": ("static_check", "The call at this location is outside the public construction API. Use only declared helpers, admitted builtins, registered methods and the request-supported np functions. np.zeros/np.ones are unavailable; numeric arrays use np.array/asarray on bounded public data."),
+    "construction_attribute_not_supported": ("static_check", "The attribute at this location is outside the public construction API. Use registered array/mapping methods and the literal golden decorator call with its c signature. Keep attributes on hc/np within the request contract."),
+    "construction_syntax_not_supported": ("static_check", "The syntax at this location is outside the public construction grammar. Identity tests (is/is not) and bitwise/shift operators are unavailable. Use admitted public operators and a public flag or loop index for accumulator initialization; ciphertext values never control branches."),
     "response_contract": ("response_parse", "Return the fixed JSON response schema and request binding."),
     "source_syntax": ("source_parse", "Candidate source must be valid Python syntax."),
     "entry_missing": ("static_check", "Define exactly one top-level function named golden."),
@@ -96,7 +102,23 @@ def make(reason, *, location=None, context=None):
     if reason not in MESSAGES:
         raise ValueError("Diagnostic reason")
     context = {} if context is None else context
-    static_fields = {"native_signature_mismatch": {"expected", "actual"},
+    if reason == "native_ast_node_budget" and not (
+            type(context) is dict and set(context) == {"observed", "limit"} and
+            type(context["limit"]) is int and context["limit"] == 4096 and
+            type(context["observed"]) is int and 4096 < context["observed"] <= 2**53 and
+            type(location) is dict and location == {"kind": "candidate"}):
+        raise ValueError("Diagnostic native AST budget witness")
+    if reason == "native_expanded_ast_node_budget":
+        located=_location(location)
+        if not (type(context) is dict and set(context)=={"observed","limit"} and
+                type(context["limit"]) is int and context["limit"]==4096 and
+                type(context["observed"]) is int and 4096<context["observed"]<=2**53 and
+                located is not None and (located=={"kind":"candidate"} or
+                    located["kind"]=="source" and located["line"]>=1)):
+            raise ValueError("Diagnostic expanded AST budget witness")
+    static_fields = {"construction_emitted_operation_budget": {"observed", "limit"},"construction_call_not_supported": set(),
+                     "construction_attribute_not_supported": set(),
+                     "construction_syntax_not_supported": set(),"native_signature_mismatch": {"expected", "actual"},
                      "expanded_work_budget": {"observed", "limit"},
                      "native_reserved_binding": set(),
                      "native_control_flow_not_enabled": set(),
@@ -110,6 +132,8 @@ def make(reason, *, location=None, context=None):
             type(context["limit"]) is int and context["limit"] == 1024 and
             type(context["observed"]) is int and context["observed"] > context["limit"]):
         raise ValueError("Diagnostic expanded work witness")
+    if reason == "construction_emitted_operation_budget" and context != {"observed": 257, "limit": 256}:
+        raise ValueError("Diagnostic emitted work witness")
     # Preserve the existing v2 reasons' context vocabulary. Byte constraints
     # belong only to this trusted storage witness, never arbitrary diagnostics.
     if reason == "provider_stream_limit":

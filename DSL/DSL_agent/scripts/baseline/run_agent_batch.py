@@ -474,7 +474,7 @@ def main():
     selection_mode.add_argument("--failed-from", type=Path, help="Retest only failures from a completed, hash-linked catalog report")
     selection_mode.add_argument("--remaining-from", type=Path, help="Failures and unfinished cases from a sealed interrupted report")
     parser.add_argument("--allow-config-change", action="store_true", help="Explicit new generation experiment; preserve source report")
-    parser.add_argument("--reasoning-effort", choices=("low", "high", "max"), default="high")
+    parser.add_argument("--reasoning-effort", choices=("none", "low", "high", "max"), default="high")
     parser.add_argument("--max-tokens", type=int)
     parser.add_argument("--api-timeout", type=float, default=1200)
     parser.add_argument('--provider-retries', type=int, choices=range(4), default=0)

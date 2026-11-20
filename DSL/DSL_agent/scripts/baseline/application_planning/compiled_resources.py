@@ -46,18 +46,25 @@ def source_authority():
 def _basis():
     from model_weight_package import regular_bytes
     from candidate_contract import strict_json
-    raw = regular_bytes(ROOT / "scripts/baseline" / POLICY_FILE, 16384)
+    from poseidon_runtime_paths import selected_sdk
+    sdk=selected_sdk()
+    source_root=ROOT if sdk is None else Path(sdk["backend_source_root"])
+    selected_policy=ROOT / "scripts/baseline" / POLICY_FILE if sdk is None else Path(sdk["resource_policy"])
+    basis=BASIS if sdk is None else tuple(name.replace("third_party/ckks-runtime-agent/","third_party/ckks-runtime/") for name in BASIS)
+    policy_format="poseidon-compiled-resource-policy-v1" if sdk is None else "poseidon-compiled-resource-policy-v2"
+    retention="all_defined_values_until_runtime_destruction" if sdk is None else "all_defined_values_without_release_or_reuse"
+    raw = regular_bytes(selected_policy, 16384)
     policy = strict_json(raw.decode())
     require(type(policy) is dict and set(policy) == {
         "format", "policy", "retention", "word_bytes", "source_basis_sha256"},
         "compiled_resource_policy_fields")
-    require(policy["format"] == "poseidon-compiled-resource-policy-v1" and
+    require(policy["format"] == policy_format and
             policy["policy"] == POLICY and policy["word_bytes"] == 8 and
-            policy["retention"] == "all_defined_values_until_runtime_destruction" and
-            set(policy["source_basis_sha256"]) == set(BASIS),
+            policy["retention"] == retention and
+            set(policy["source_basis_sha256"]) == set(basis),
             "compiled_resource_policy_unverified")
     for name, expected in policy["source_basis_sha256"].items():
-        require(sha(regular_bytes(ROOT / name, 2 * 1024**2)) == expected,
+        require(sha(regular_bytes(source_root / name, 2 * 1024**2)) == expected,
                 "compiled_resource_source_basis_changed")
     return dict(policy_sha256=sha(raw), **policy)
 
@@ -118,6 +125,8 @@ def _measure_plan(plan, degree, budget, payload_lengths):
         define(value_id, "external_inputs", None)
     for phase in ("initialization", "execution"):
         for operation in plan[phase]:
+            require(operation.get("reuse_input",False) is False,
+                    "compiled_resource_reuse_requires_lifetime_policy")
             ordinal = operation["ordinal"]
             require(ordinal not in ordinal_set, "compiled_resource_duplicate_ordinal")
             ordinal_set.add(ordinal)

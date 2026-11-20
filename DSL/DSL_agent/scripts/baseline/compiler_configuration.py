@@ -11,10 +11,20 @@ import json
 PROFILE_SHA256 = 'ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e'
 LEGACY_CONFIGURATIONS = {'seal-cpu-eva-w40-v1': 40, 'seal-cpu-eva-w45-v1': 45}
 COMPACT_CONFIGURATION = 'poseidon-cpu-eva-w45-compact-v1'
+CURRENT_CONFIGURATION = 'poseidon-cpu-eva-w45-current-v1'
+COMPILER_MANAGED_CONFIGURATION = 'poseidon-cpu-dacapo-w45-current-v1'
+COMPILER_STATE_POLICY = 'compiler-dacapo-optimized-v1'
+NATIVE_CONFIGURATION = 'poseidon-cpu-eva-w44-native-epoch-v1'
+RUNTIME_PLAN_SERIALIZATION_POLICY = 'runtime-plan-json-files-v1'
+CURRENT_SOURCE_LOCK_SHA256 = '243946ab90446743f0063b7b71bdbfd6ba46f0bab63e0ca6eecf57af9eef0526'
 TRACE_SERIALIZATION_POLICY = 'hecate-dense-f64-shortest-v1'
-CONFIGURATIONS = {COMPACT_CONFIGURATION:45, **LEGACY_CONFIGURATIONS, 'poseidon-cpu-eva-w40-v1':40, 'poseidon-cpu-eva-w45-v1':45, 'poseidon-cuda-eva-w45-v1':45}
-ACTIVE_CONFIGURATIONS = (COMPACT_CONFIGURATION,'poseidon-cpu-eva-w40-v1','poseidon-cpu-eva-w45-v1','poseidon-cuda-eva-w45-v1')
-CPU_CONFIGURATIONS = tuple(name for name in ACTIVE_CONFIGURATIONS if name.startswith("poseidon-cpu-"))
+CONFIGURATIONS = {CURRENT_CONFIGURATION:45, COMPACT_CONFIGURATION:45, **LEGACY_CONFIGURATIONS, 'poseidon-cpu-eva-w40-v1':40, 'poseidon-cpu-eva-w45-v1':45, 'poseidon-cuda-eva-w45-v1':45}
+CONFIGURATIONS[NATIVE_CONFIGURATION]=44
+CONFIGURATIONS[COMPILER_MANAGED_CONFIGURATION]=45
+# The Native profile enters through the component/Application backend. Legacy
+# run_candidate's validation adapter remains on its existing compiler profiles.
+ACTIVE_CONFIGURATIONS = (COMPILER_MANAGED_CONFIGURATION,CURRENT_CONFIGURATION,COMPACT_CONFIGURATION,'poseidon-cpu-eva-w40-v1','poseidon-cpu-eva-w45-v1','poseidon-cuda-eva-w45-v1')
+CPU_CONFIGURATIONS = (NATIVE_CONFIGURATION,*(name for name in ACTIVE_CONFIGURATIONS if name.startswith("poseidon-cpu-")))
 POSEIDON_PROFILE_SHA256 = 'acf39bf80a0049c3344c147ae4eaac5ee03665b8f5f76cab6c91195aa1429037'
 
 
@@ -29,6 +39,35 @@ def require(condition, message):
 
 def configuration(name, profile_sha256=None, *, schema=None):
     require(type(name) is str and name in CONFIGURATIONS, 'Unknown compiler configuration')
+    if name == COMPILER_MANAGED_CONFIGURATION:
+        require(schema is None or type(schema) is int and schema == 6,
+                'Unsupported compiler-managed configuration version')
+        body = configuration(CURRENT_CONFIGURATION, profile_sha256, schema=5)
+        body.pop('identity_sha256')
+        body.update(schema=6,name=name,pipeline='dacapo-runtime-plan',
+                    ciphertext_state_policy=COMPILER_STATE_POLICY,
+                    ciphertext_state_owner='compiler',bootstrap_placement='optimized')
+        return dict(body,identity_sha256=hashlib.sha256(
+            b'poseidon-compiler-configuration-v6\0'+canonical(body)).hexdigest())
+    if name == NATIVE_CONFIGURATION:
+        from native_execution_profile import configuration as native_configuration
+        return native_configuration(profile_sha256,schema=schema)
+    if name == CURRENT_CONFIGURATION:
+        require(schema is None or type(schema) is int and schema == 5, 'Unsupported current SDK compiler configuration version')
+        profile_sha256 = POSEIDON_PROFILE_SHA256 if profile_sha256 is None else profile_sha256
+        require(profile_sha256 == POSEIDON_PROFILE_SHA256, 'Poseidon compiler profile hash mismatch')
+        body = dict(schema=5,name=name,backend='poseidon_cpu',pipeline='eva-runtime-plan',
+            ckks_config_sha256=profile_sha256,waterline=45,
+            runtime_commit='f7e9115eaec22e44c8e12ff9f53528e421691688',
+            dacapo_commit='39c1fb255adddbfb9d7180f9d1b8535a31241bff',
+            api_commit='957ff9c05181f47485d2555ab52b2bedcbdb60d6',
+            parameter_identity='poseidon-agent-n15-q13-p1-tc128-v1',
+            source_lock_sha256=CURRENT_SOURCE_LOCK_SHA256,
+            operator_spec_sha256='a16b1ae98958370731a1753db2ea023a7c0d6658f1246c330b44d27f161e790e',
+            runtime_plan_entry_policy='hecate-private-symbol-dce-v1',
+            trace_serialization_policy=TRACE_SERIALIZATION_POLICY,
+            runtime_plan_serialization_policy=RUNTIME_PLAN_SERIALIZATION_POLICY)
+        return dict(body,identity_sha256=hashlib.sha256(b'poseidon-compiler-configuration-v5\0'+canonical(body)).hexdigest())
     if name in ACTIVE_CONFIGURATIONS:
         profile_sha256 = POSEIDON_PROFILE_SHA256 if profile_sha256 is None else profile_sha256
         require(profile_sha256 == POSEIDON_PROFILE_SHA256, 'Poseidon compiler profile hash mismatch')

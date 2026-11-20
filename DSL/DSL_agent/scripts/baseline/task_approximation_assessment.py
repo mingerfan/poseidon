@@ -3,6 +3,7 @@
 This explicit host adapter reuses Application and its native source reference.
 Numerical package validation, generation, and execution are unchanged.
 """
+from top1_accuracy_metrics import TOP1_KINDS, limit_field, threshold
 import copy
 from pathlib import Path
 from benchmark_graph import digest
@@ -39,7 +40,7 @@ def approximation_metric(profile,original,approximate,model):
     # Reuse the exact-count threshold and typed criterion. The compared result
     # here is mathematical approximation, so it must not be labeled encrypted.
     value=application_metric(profile,original,approximate,approximate,model,scope=NATIVE_POLICY)
-    if value.get("kind")=="top1_accuracy_drop":
+    if value.get("kind") in TOP1_KINDS:
         value["approximate_top1"]=value.pop("encrypted_top1")
         value.pop("approximate_computation_top1")
     value["subject"]=SUBJECT

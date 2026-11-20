@@ -289,12 +289,16 @@ def serialize_model_provenance(value, limit, *, compact_fallback=False):
 
 def export_bundle(evidence, output, *, model_import=None, model_provenance=None, live_approval=None, validation_level="numerical", application_identities=None, generation_provenance=None, model_source=None):
     from workspace_paths import RESULTS
-    from audit_unified_candidate import verify_candidate
+    from bounded_candidate_audit import verify_candidate as bounded_verify
+    from audit_unified_candidate import verify_candidate as original_verify
     from poseidon_runtime_paths import BUILD
     require(not output.exists(), "Preserve existing export")
     require(evidence.resolve().is_relative_to(RESULTS.resolve()), "Platform evidence required")
-    audit = verify_candidate(evidence, live_approval=live_approval, validation_level=validation_level)
     report = strict_file(evidence/"report.json", 8*1024**2)
+    if report.get("backend")=="poseidon_cpu" and live_approval is None:
+        audit = bounded_verify(evidence,validation_level=validation_level,workspace=output.parent)
+    else:
+        audit = original_verify(evidence,live_approval=live_approval,validation_level=validation_level)
     request = strict_file(evidence/"request.json", 4*1024**2)
     reconstruct_request(request)
     model = strict_file(evidence/"model.json", 4*1024**2)
@@ -321,7 +325,11 @@ def export_bundle(evidence, output, *, model_import=None, model_provenance=None,
         compact=request.get("public_weight_binding",{}).get("policy")==COMPACT_POLICY
         provenance_bytes = serialize_model_provenance(value, data_limit,compact_fallback=compact)
     output.mkdir(parents=True)
-    dump(output/"model.json", model)
+    from public_basis_storage import selected,encode_model
+    if selected(request):
+        (output/"model.json").write_bytes(canonical(encode_model(model)))
+    else:
+        dump(output/"model.json", model)
     (output/"request.json").write_bytes(request_file_bytes(request))
     (output/"candidate.py").write_bytes(source.read_bytes())
     files = set(V2_FILES)
@@ -330,9 +338,9 @@ def export_bundle(evidence, output, *, model_import=None, model_provenance=None,
         out=evidence/("attempt-%02d"%attempt["index"])/"output"
         artifacts=output/"artifacts";artifacts.mkdir()
         trace_files=("candidate_trace.mlir","lowered.earth.mlir","lowered.ckks.mlir","lowered._hecate_golden.runtime-plan.json")
-        if request["compiler_configuration"]["schema"] in (3,4):
+        if request["compiler_configuration"]["schema"] in (3,4,5):
             trace_files+=("candidate_trace.entry.mlir","entry-selection.json")
-        if request["compiler_configuration"]["schema"]==4:
+        if request["compiler_configuration"]["schema"]in (4,5):
             trace_files+=("candidate_trace.compact.mlir",)
         for name in trace_files:
             shutil.copyfile(out/name,artifacts/name)
@@ -341,7 +349,7 @@ def export_bundle(evidence, output, *, model_import=None, model_provenance=None,
         from poseidon_runtime_paths import SPEC,PROFILE
         shutil.copyfile(SPEC,artifacts/"operator-spec.json")
         shutil.copyfile(PROFILE,artifacts/"compiler-profile.json")
-        entry = dict(runtime_plan_entry=attempt["runtime_plan_entry"],compile_command=attempt["compile_command"]) if request["compiler_configuration"]["schema"] in (3,4) else {}
+        entry = dict(runtime_plan_entry=attempt["runtime_plan_entry"],compile_command=attempt["compile_command"]) if request["compiler_configuration"]["schema"] in (3,4,5) else {}
         dump(artifacts/"validation.json",dict(level=validation_level,scope="four fixed inputs",gate=attempt["artifact_gate"],**entry))
         dump(artifacts/"dependencies.json",report["backend_identity"])
         files |= {str(p.relative_to(output)) for p in artifacts.rglob("*") if p.is_file()}
@@ -407,6 +415,9 @@ def export_bundle(evidence, output, *, model_import=None, model_provenance=None,
     return manifest
 
 def check_execution_dependencies(folder):
+    from native_program_package import is_native,check_execution_dependencies as native_dependencies
+    if is_native(folder):
+        return native_dependencies(folder)
     folder = Path(folder)
     manifest = check_bundle(folder)
     require(manifest["format"] in ("poseidon-dsl-bundle-v4","poseidon-dsl-bundle-v5", "poseidon-dsl-bundle-v6") and
@@ -443,10 +454,11 @@ def check_execution_dependencies(folder):
         audit_provenance(strict_file(folder/PROVENANCE, storage_limit(request)), request["model"])
     return manifest, request
 
-def replay_bundle(folder):
+def replay_bundle(folder, *, artifact_observer=None):
     manifest, request = check_execution_dependencies(folder)
     from poseidon_package import replay
-    return replay(Path(folder),manifest)
+    options = {} if artifact_observer is None else dict(artifact_observer=artifact_observer)
+    return replay(Path(folder),manifest,**options)
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)

@@ -119,6 +119,9 @@ def registry(model,plan,policy=None,capacity_packing_version=None):
     if plan["execution_abi"] in CAPACITY_ABIS:
         from unified_capacity_constants import packing,VERSION
         packed=packing(model,plan,capacity_packing_version or VERSION)
+    from public_basis_packing import VERSION as BASIS_VERSION
+    if capacity_packing_version==BASIS_VERSION:
+        return packed["vectors"]
     for name,value in model["constants"].items():
         if packed is None or name not in packed["excluded_scalars"]:numbers.update(scalars(value))
     for node in model["nodes"]:
@@ -172,8 +175,8 @@ def prepare(model,profile_hash,configuration=None,construction=None,*,constructi
     require(not capacity or helper_profile is None,"Capacity helper profile not yet verified")
     from unified_capacity_layout import WIDE_ABI
     if p["execution_abi"]==WIDE_ABI:
-        from unified_capacity_constants import CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION
-        require(capacity_packing_version in (None,CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION),"Wide capacity requires packing v8, v9 or v10")
+        from unified_capacity_constants import CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION,BASIS_VERSION
+        require(capacity_packing_version in (None,CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION,BASIS_VERSION),"Wide capacity requires packing v8, v9 or v10")
         capacity_packing_version=capacity_packing_version or CHANNEL_VERSION
     if capacity and p["resource_profile"]["name"]=="general-tensors-v1" and capacity_packing_version is None:
         from unified_capacity_constants import CHANNEL_VERSION
@@ -235,15 +238,15 @@ def prepare(model,profile_hash,configuration=None,construction=None,*,constructi
         from generation_model_origin import checked_public
         body["generation_model_origin"]=checked_public(model_origin,body)
     if generation_guidance is not None:
-        require(generation_guidance in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE,TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE),"Unknown unified generation guidance")
-        if generation_guidance not in (TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE):
+        require(generation_guidance in (SYNTAX_GUIDANCE,EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE,TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE,NATIVE_GUIDANCE),"Unknown unified generation guidance")
+        if generation_guidance not in (TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE,NATIVE_GUIDANCE):
             body["generation_guidance"]=explicit_generation_guidance(body,generation_guidance)
     from public_weight_context import POLICY,POLICIES,binding,request_digest,storage_limit,rules_for
     require(public_weight_policy in (None,*POLICIES),"Public weight policy")
     if public_weight_policy is not None:
         body["public_weight_binding"]=binding(body,policy=public_weight_policy)
         body["rules"]+=rules_for(public_weight_policy)
-    if generation_guidance in (TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE):
+    if generation_guidance in (TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE,NATIVE_GUIDANCE):
         # Fit optional annotations against the complete public envelope, including
         # descriptor/mathematical-role metadata and its mandatory rules.
         body["generation_guidance"]=explicit_generation_guidance(body,generation_guidance)
@@ -257,6 +260,10 @@ def prepare(model,profile_hash,configuration=None,construction=None,*,constructi
 
 
 def validate_request(request):
+    from public_basis_storage import is_packet
+    if is_packet(request):
+        from unified_request_storage import restore_public_constants
+        restore_public_constants(request)
     from unified_public_contract import CONTRACT as PUBLIC,RULES as PUBLIC_RULES,GUIDANCE as PUBLIC_GUIDANCE
     from candidate_contract import RESPONSE_SCHEMA
     required={"schema","task","model","fx_graph","public_constants","constant_origins","layout",
@@ -281,8 +288,8 @@ def validate_request(request):
         from unified_capacity_constants import packing,request_version
         capacity_packing_version=request_version(request)
         from unified_capacity_layout import WIDE_ABI
-        from unified_capacity_constants import CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION
-        require(request["layout"]["execution_abi"]!=WIDE_ABI or capacity_packing_version in (CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION),
+        from unified_capacity_constants import CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION,BASIS_VERSION
+        require(request["layout"]["execution_abi"]!=WIDE_ABI or capacity_packing_version in (CHANNEL_VERSION,INDEX_VERSION,SHALLOW_VERSION,BASIS_VERSION),
                 "Wide capacity requires packing v8, v9 or v10")
         descriptor=packing(request["model"],request["layout"],capacity_packing_version)["descriptor"]
     require(origins==dict(base,**({"capacity_tensor_packing":descriptor} if descriptor is not None else {})),
@@ -352,7 +359,7 @@ def validate_request(request):
         checked_public(request["generation_model_origin"],request)
     if "generation_guidance" in request:
         value=request["generation_guidance"]
-        require(type(value) is dict and value.get("version") in (EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE,TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE),
+        require(type(value) is dict and value.get("version") in (SYNTAX_GUIDANCE,EXPLICIT_GUIDANCE,COMPOSITE_GUIDANCE,MATHEMATICAL_GUIDANCE,DIRECTED_GUIDANCE,TYPED_GUIDANCE,BINDING_GUIDANCE,PRECISE_GUIDANCE,GATE_GUIDANCE,EXPRESSION_GUIDANCE,POSEIDON_GUIDANCE,BINDING_CONTEXT_GUIDANCE,TENSOR_AXIS_GUIDANCE,CONSTRUCTION_GUIDANCE,OUTPUT_BINDING_GUIDANCE,OUTPUT_ALIAS_GUIDANCE,CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE,NATIVE_GUIDANCE),
                 "Changed unified generation guidance")
         require(canonical(value)==canonical(explicit_generation_guidance(request,value["version"])),
                 "Changed unified generation guidance")
@@ -369,6 +376,7 @@ def _native_candidate_plan(source,request,period):
     from unified_capacity_layout import EXTENDED_ABIS
     return native_validate(source,request["public_constants"],
         request["layout"]["output_ciphertexts"],input_names=tuple(s["dsl_name"] for s in request["layout"]["inputs"])+("zero_ct",),
+        public_constant_indices=request["constant_origins"].get("capacity_tensor_packing",{}).get("version")=="capacity-public-tensors-v11",
         array_mutation=True,slot_period=period,capacity_layout=request["layout"] if request["layout"]["execution_abi"] in EXTENDED_ABIS else None,upstream_helpers="upstream_helpers" in request,upstream_request=request if "upstream_helpers" in request else None)
 
 
@@ -423,10 +431,47 @@ TILE_PHASE_GUIDANCE="explicit-v18"
 BINDING_FRAME_GUIDANCE="explicit-v19"
 SUFFIX_STAGE_GUIDANCE="explicit-v20"
 ORIGIN_GUIDANCE="explicit-v21"
+NATIVE_GUIDANCE="native-explicit-v1"
+SYNTAX_GUIDANCE="syntax-explicit-v1"
 
 
 def explicit_generation_guidance(request,version=EXPLICIT_GUIDANCE):
     """Expose only the public ABI and contract; never a model implementation."""
+    if version == SYNTAX_GUIDANCE:
+        require("construction_profile" not in request and
+                "execution_profile" not in request.get("compiler_configuration", {}),
+                "Syntax-only guidance requires the ordinary native DSL contract")
+        inherited = explicit_generation_guidance(request, EXPLICIT_GUIDANCE)
+        inherited["version"] = SYNTAX_GUIDANCE
+        inherited["native_syntax_rules"] = dict(
+            format="poseidon-native-syntax-only-guidance-v1",
+            authority="Explanation of the existing native DSL checker only; no new syntax, operation, limit, backend capability or model implementation.",
+            statements="Use single-target local assignments, flat tuple/list unpacking into distinct names, name-target +=/-=/*=, static range loops and final returns. Chained assignment is not admitted. The existing checker still governs typing, alias-aware array augmentation, work and AST bounds.",
+            loops="Static range induction variables are read-only, must not shadow ABI parameters, public constants or reserved names, and obey the existing integer bounds. No return, break, continue or for-else inside a loop. Only bounded public integer +,-,*,//,% and signed integer expressions are folded for indices.",
+            comprehensions="List, set and dictionary comprehensions and generator expressions are not admitted, even with a static range. Do not use container repetition to build coefficient tables.",
+            mutation="Subscript/attribute assignments and container mutation methods are not admitted. Do not fill a matrix by assigning indexed cells or calling append. Array name-target augmentation follows the existing alias-aware storage rules; it is not a subscript write.",
+            values="Reuse public_constants keys as prebound scalar/vector values. Do not construct replacement coefficient tables or evaluate Plain/Plain floating-point Expr arithmetic. Ciphertext +,-,* and unary minus follow the supplied operand rules; signed finite number literals and bounded public integer index expressions follow their existing rules.",
+            storage="List/tuple literals and np.array(data,dtype=object) organize whole Expr values. Array indexing/slicing and permitted storage methods never address ciphertext slots. Keep all frozen shape, rank and cell bounds.",
+            calls="Use declared decorated native helpers, selected upstream helpers when supplied, the admitted np.array constructor, static range, and the permitted Expr/storage methods only. Ordinary Python/NumPy builtins or methods are not implicitly available. Do not use sum, len, enumerate, zip, float, list, zeros, dot or matmul as executable calls.",
+            arithmetic="Python **, @, true division, comparisons, conditional expressions and dynamic control flow are outside this native contract. Use only arithmetic and public index forms admitted by the supplied rules.",
+            response="Return response-schema JSON whose hecate_source contains only the required decorated function declarations. Do not include imports, module-level setup, generated coefficient data or an explanation in the source.")
+        return inherited
+    if version == NATIVE_GUIDANCE:
+        from native_execution_profile import validate_request as validate_native
+        from unified_tensor_axis_guidance import fit_public_context
+        validate_native(request)
+        inherited = explicit_generation_guidance(request, CONTRACT_SCOPE_GUIDANCE)
+        inherited["version"] = NATIVE_GUIDANCE
+        inherited["native_execution_scope"] = dict(
+            format="poseidon-native-public-candidate-scope-v1",
+            authority="Restrictions of the selected immutable Native profile; no new syntax, operator, budget or backend capability.",
+            physical_io="Exactly one retained physical ciphertext input and one final ciphertext output; no public constants in this certified fragment.",
+            compiled_source_operations=["mul_cc", "relinearize", "rescale"],
+            arithmetic="The source fragment admits ciphertext multiplication and compiler-generated relinearization/rescale only. Addition, subtraction, negation, rotation and plaintext arithmetic are outside this profile, including mathematically neutral operations.",
+            zero_argument="Keep zero_ct in the exact entry signature. It may remain unused. Do not add zero_ct to a result, make an additive output copy, or force every ABI parameter to be used. The certified linker can remove unused input descriptors without changing source arithmetic.",
+            views="A C-order reshape or flatten that preserves logical element order preserves the frozen slot mapping and does not require an arithmetic copy or rotation.",
+            bootstrap="Do not insert bootstrap or change scale, levels or security parameters. Only the existing certified linker and original Runtime own those operations.")
+        return fit_public_context(request, inherited)
     if version == ORIGIN_GUIDANCE:
         from unified_origin_guidance import specification
         from unified_tensor_axis_guidance import fit_public_context
@@ -574,7 +619,7 @@ def static_repair_hint(source,request,diagnostic=""):
         hints.append(guidance["helper_rule"])
     for item in guidance.get("construction_requirements",[]):
         hints.append(item["feature"]+": "+item["instruction"])
-    if guidance["version"] in (CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE):
+    if guidance["version"] in (CONTRACT_SCOPE_GUIDANCE,ROUTE_COORDINATE_GUIDANCE,TILE_PHASE_GUIDANCE,BINDING_FRAME_GUIDANCE,SUFFIX_STAGE_GUIDANCE,ORIGIN_GUIDANCE,NATIVE_GUIDANCE):
         from unified_contract_scope_guidance import repair_hint
         hint = repair_hint(request, source, diagnostic)
         if hint:hints.append(hint)

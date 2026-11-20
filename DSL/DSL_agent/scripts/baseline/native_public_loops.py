@@ -171,11 +171,16 @@ def expand(tree, constants, *, scalar_augmented=False, upstream_helpers=False, u
                 else:
                     rewritten=rewrite(stmt,indices)
                     expanded_nodes+=len(list(ast.walk(rewritten)))
-                    require(expanded_nodes<=MAX_NODES,'Native expanded syntax bound')
+                    if expanded_nodes>MAX_NODES:
+                        raise CandidateCheckError('native_expanded_ast_node_budget',stmt,
+                            context=dict(observed=expanded_nodes,limit=MAX_NODES))
                     output.append(rewritten)
             return output
         fn.body=block(fn.body)
-    require(len(list(ast.walk(result)))<=MAX_NODES,'Native expanded module bound')
+    module_nodes=len(list(ast.walk(result)))
+    if module_nodes>MAX_NODES:
+        raise CandidateCheckError('native_expanded_ast_node_budget',tree,
+            context=dict(observed=module_nodes,limit=MAX_NODES))
     ast.fix_missing_locations(result)
     rendered=ast.unparse(result)
     return result,dict(schema=1,loops=records,iterations=iterations,

@@ -176,7 +176,7 @@ def approximation_points(graph):
     return result
 
 
-def approximation_values(graph, values):
+def approximation_values(graph, values, *, include_softmax_inverse=True):
     from .kernels.cnn import DifferenceStats, maxpool_tensor
     result = {}
     for node, name in approximation_points(graph):
@@ -187,6 +187,8 @@ def approximation_values(graph, values):
             centered=x if node.op=='rmsnorm' else x-x.mean(-1,keepdims=True)
             result[name]=((centered*centered).mean(-1,keepdims=True)+node.attrs['eps']).reshape(1,-1)
         elif node.op=='softmax':
+            if name.endswith('::inv') and not include_softmax_inverse:
+                continue
             x=values[node.inputs[0]];a=node.attrs
             keep=np.ones(x.shape,dtype=bool)
             if a.get('keep')=='causal':
@@ -209,6 +211,7 @@ def calibrate(graph: Graph, inputs: dict[str, np.ndarray], batch: int = 100) -> 
         raise ValueError("batch must be positive")
     count = len(inputs[graph.inputs[0]])
     result = {}
+    softmax_rows = {}
     for start in range(0, count, batch):
         values = reference_forward(graph, {name: array[start:start+batch] for name, array in inputs.items()}, keep=True)
         for name, tensor in graph.tensors.items():
@@ -226,7 +229,7 @@ def calibrate(graph: Graph, inputs: dict[str, np.ndarray], batch: int = 100) -> 
                            p999=max(old["p999"], percentile), count=old["count"]+int(value.size))
         pool_names = {name for node, name in approximation_points(graph) if node.op != 'act'}
         if pool_names:
-            for name, value in approximation_values(graph, values).items():
+            for name, value in approximation_values(graph, values, include_softmax_inverse=False).items():
                 if name not in pool_names:
                     continue
                 low, high = float(value.min()), float(value.max())
@@ -236,4 +239,49 @@ def calibrate(graph: Graph, inputs: dict[str, np.ndarray], batch: int = 100) -> 
                 else:
                     old = result[name]
                     old.update(min=min(old['min'], low), max=max(old['max'], high), absmax=max(old['absmax'], absolute))
+        # Select one public normalization only after all calibration score
+        # bounds are known. Keep the original exact-check observations above
+        # available through approximation_values' unchanged default interface.
+        for node in graph.nodes:
+            if node.op == 'softmax':
+                x = values[node.inputs[0]]
+                mask = values[node.attrs['mask']] if node.attrs.get('mask') else None
+                softmax_rows.setdefault(node.id, []).append((np.array(x, copy=True),
+                    None if mask is None else np.array(mask, copy=True)))
+    if softmax_rows:
+        from .planners.transformer_rule import squared_softmax_adjustments
+        for node in graph.nodes:
+            if node.op != 'softmax':
+                continue
+            name = node.outputs[0]+'::inv'
+            key_count = graph.tensors[node.inputs[0]].shape[-1]
+            config = squared_softmax_adjustments(result[node.outputs[0]+'::exp'], key_count)
+            # An explicit kernel transform, when present, is authoritative.
+            config.update({key: node.attrs[key] for key in ('shift', 'steps', 'inv_scale') if key in node.attrs})
+            shift, steps, scale = (config[key] for key in ('shift', 'steps', 'inv_scale'))
+            if not math.isfinite(shift) or not math.isfinite(scale) or scale <= 0:
+                raise ValueError('Softmax calibration requires finite public shift and positive inverse scale')
+            for x, mask in softmax_rows[node.id]:
+                keep = np.ones(x.shape, dtype=bool)
+                if node.attrs.get('keep') == 'causal':
+                    keep &= np.arange(x.shape[-1])[None, :] <= np.arange(x.shape[-2])[:, None]
+                if mask is not None:
+                    keep &= mask.reshape((len(x),)+(1,)*(x.ndim-2)+(x.shape[-1],)).astype(bool)
+                # This is exactly the kernel's initial inverse input:
+                # sum(exp((scores-shift)*2**(-steps))*mask)/inv_scale.
+                # Exclude masked entries before exp, avoiding inf*0.
+                z = np.where(keep, (x-shift)*(2.0**(-steps)), -np.inf)
+                value = np.exp(z).sum(-1, keepdims=True)/scale
+                if not np.isfinite(value).all():
+                    raise ValueError('Nonfinite softmax inverse input under the declared public normalization')
+                low, high = float(value.min()), float(value.max())
+                if name not in result:
+                    result[name] = dict(min=low, max=high, absmax=max(abs(low), abs(high)))
+                else:
+                    old = result[name]
+                    old.update(min=min(old['min'], low), max=max(old['max'], high),
+                               absmax=max(old['absmax'], abs(low), abs(high)))
+            result[name]['normalization'] = dict(shift=shift, steps=steps, inv_scale=scale,
+                scope='Initial inverse input of the declared public R0 kernel normalization; candidate kernels retain their own analytical inverse bounds',
+                source='All calibration scores only; no heldout, confirmation or report data')
     return result

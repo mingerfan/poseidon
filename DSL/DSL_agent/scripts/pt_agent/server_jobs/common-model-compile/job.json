@@ -1,0 +1,35 @@
+{
+  "entry": "bash run.sh <original-factory> <dacapo-system> <fresh-results-directory>",
+  "models": [
+    "pt_agent.experiments.r13_common_models:vgg16_silu_avgpool",
+    "pt_agent.experiments.r13_common_models:alexnet_silu_avgpool"
+  ],
+  "systems": ["dacapo-optimized", "dacapo-depth-dp"],
+  "starting_resource_budget": {
+    "address_space_gib": 12,
+    "case_artifact_gib": 32,
+    "single_file_gib": 8,
+    "reserve_free_gib": 10,
+    "trace_native_seconds": 1800,
+    "compile_native_seconds": 7200,
+    "phase_worker_overhead_seconds": 240,
+    "serial_jobs": 1
+  },
+  "server_starting_physical_memory_recommendation_gib": 32,
+  "server_starting_free_disk_recommendation_gib_per_case": 50,
+  "native_memory_and_storage_sufficiency_measured": false,
+  "source_contract": "Original selected R13 ModelInfo and the same accepted R17/R17a fixed-rule result; semantic JSON correspondence before any weight restoration",
+  "rule_candidate_frozen": false,
+  "formal_accuracy_acceptance": null,
+  "agent_entry_ready": false,
+  "agent_entry_requirement": "Independent frozen quality audit for the same selected model, selected program and original ModelInfo",
+  "actual_emit_trace_compile_attempts_for_this_preparation": 0,
+  "keygen_runs": 0,
+  "ckks_executions": 0,
+  "new_api_calls": 0,
+  "downloads": 0,
+  "installations": 0,
+  "contains_weights_or_credentials": false,
+  "existing_paths_required": "Mount the original repository, SDK/frontend and saved source artifact roots consistently with their recorded JSON paths; use paths.py overrides for the configured repository/results/toolchain roots",
+  "documentation_artifact": "COMMON_MODEL_COMPILE_PREPARATION.html"
+}

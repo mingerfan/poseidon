@@ -2,11 +2,46 @@
 import tempfile
 from pathlib import Path
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 
-from agent_credentials import CredentialError, load_api_key, parse_env
+from agent_credentials import CredentialError, credential_root, load_api_key, parse_env
 
 
 class CredentialTests(unittest.TestCase):
+    def test_linked_checkout_loads_primary_file_only_with_clean_git_environment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            primary = Path(directory) / "primary"
+            linked = Path(directory) / "linked"
+            primary.mkdir(); linked.mkdir()
+            (primary / ".git").mkdir()
+            (linked / ".git").write_text("gitdir: fixture metadata\n")
+            (primary / ".env").write_text("DEEPSEEK_API_KEY=FAKE-PRIMARY")
+            (linked / ".env").write_text("DEEPSEEK_API_KEY=FAKE-NOT-USED")
+            def git(argv, **options):
+                self.assertEqual(options["env"], {"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8"})
+                self.assertNotIn("FAKE", " ".join(argv))
+                self.assertIn("--no-optional-locks", argv)
+                return SimpleNamespace(stdout=str(linked)+"\n"+str(primary / ".git")+"\n")
+            with patch("agent_credentials.subprocess.run", side_effect=git):
+                self.assertEqual(load_api_key(linked, {}), "FAKE-PRIMARY")
+            self.assertTrue((primary / ".env").is_file() and (linked / ".env").is_file())
+
+    def test_invalid_git_worktree_never_falls_back_to_another_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".git").write_text("gitdir: fixture\n")
+            (root / ".env").write_text("DEEPSEEK_API_KEY=FAKE-NOT-USED")
+            with patch("agent_credentials.subprocess.run", return_value=SimpleNamespace(stdout="invalid\n")):
+                with self.assertRaises(CredentialError):
+                    load_api_key(root, {})
+
+    def test_actual_feature_checkout_resolves_integration_without_reading_credentials(self):
+        root = Path(__file__).resolve().parents[4]
+        if root.name != "Poseidon-generalization":
+            self.skipTest("Feature checkout metadata fixture is unavailable")
+        self.assertEqual(credential_root(root), root.parent / "Poseidon")
+
     def test_literal_quoted_and_windows_lines(self):
         for text in ("DEEPSEEK_API_KEY=FAKE-KEY", 'DEEPSEEK_API_KEY="FAKE-KEY"',
                      "# comment\r\n DEEPSEEK_API_KEY = 'FAKE-KEY'\r\n"):

@@ -100,6 +100,23 @@ class Normalizer:
                            (1,L,view.D),name=node.outputs[0]+'.shuffle')
         return root,L,view.D
 
+    def materialized_view(self, root, view, L, D, shape):
+        """Describe newly computed values after their old view was consumed.
+
+        The emitted token matrix already contains any feature permutation and
+        signs.  Its logical tensor axes remain in the source tensor's order,
+        while its feature coordinates now refer to the new matrix.
+        """
+        index, _ = self.canonical_map(view)
+        for axis, size in enumerate(view.index.shape):
+            transformed = np.moveaxis(view.index, axis, 0)
+            if (size == L and transformed.size == L*D
+                    and np.array_equal(transformed.reshape(L, D), index)):
+                coordinates = np.arange(L*D).reshape(transformed.shape)
+                coordinates = np.moveaxis(coordinates, 0, axis).reshape(shape)
+                return self.view(root, L, D, shape, index=coordinates)
+        raise Unsupported('暂不支持 materialized token axis mapping')
+
     def pointwise_constant(self, node, view, value):
         value=np.broadcast_to(value,self.shape(node.outputs[0]))
         if view.score:
@@ -173,7 +190,7 @@ class Normalizer:
             if node.op=='layernorm' and tuple(a['normalized_shape'])!=(D,):
                 raise Unsupported('暂不支持 normalization outside the last token dimension')
             out=self.emit(node,node.op,[root],dict(a),(1,L,D))
-            result=self.view(out,L,D,shape,index=x.index.copy())
+            result=self.materialized_view(out,x,L,D,shape)
         elif node.op in ('add','sub','mul'):
             x=self.get(node.inputs[0])
             if x.score:root,L,D=x.root,x.L,x.D
@@ -197,7 +214,8 @@ class Normalizer:
                 outshape=self.graph.tensors[root].shape
             else:outshape=(1,L,D)
             out=self.emit(node,node.op,inputs,attrs,outshape)
-            result=self.view(out,L,D,shape,index=x.index.copy(),score=x.score)
+            result=(self.view(out,L,D,shape,index=x.index.copy(),score=True) if x.score
+                    else self.materialized_view(out,x,L,D,shape))
         elif node.op=='matmul':
             left,right=[self.get(v) for v in node.inputs]
             if left.score:

@@ -4,12 +4,19 @@ from hecate_python_env import digest
 from poseidon_runtime_paths import SPEC
 ENTRY_POLICY = "hecate-private-symbol-dce-v1"
 
-def command(waterline=45, *, entry_policy=None):
+def command(waterline=45, *, entry_policy=None, serialization_policy=None, state_management_policy=None):
     if waterline not in (40,45):raise ValueError("Unqualified Poseidon waterline")
     if entry_policy not in (None, ENTRY_POLICY):raise ValueError("Unknown RuntimePlan entry policy")
+    from compiler_configuration import RUNTIME_PLAN_SERIALIZATION_POLICY
+    if serialization_policy not in (None,RUNTIME_PLAN_SERIALIZATION_POLICY):raise ValueError("Unknown RuntimePlan serialization policy")
+    from compiler_configuration import COMPILER_STATE_POLICY
+    if state_management_policy not in (None,COMPILER_STATE_POLICY):raise ValueError("Unknown compiler ciphertext-state policy")
+    pipeline = (["--dacapo","--boot-placement=optimized","--output-val=10","--threshold=0.5","--dump-pass-pipeline"]
+                if state_management_policy else ["--eva"])
+    serialization=[] if serialization_policy is None else ["--runtime-plan-format=json","--runtime-plan-bundle-format=files"]
     trace = "/out/candidate_trace.entry.mlir" if entry_policy else "/out/candidate_trace.mlir"
     cleanup = ["--symbol-dce"] if entry_policy else []
-    return ["/hecate-opt",trace,*cleanup,"--eva","--ckks-config=/profile.json",
+    return ["/hecate-opt",trace,*serialization,*cleanup,*pipeline,"--ckks-config=/profile.json",
         f"--waterline={waterline}","--enable-debug-printer","--mlir-disable-threading","--verify-each",
         "--runtime-plan-id=1","--runtime-plan-target-id=poseidon-ckks-cpu",
         "--runtime-plan-capability-version=1","--runtime-plan-operator-spec-id=poseidon-agent-cpu-v1",
@@ -18,6 +25,15 @@ def command(waterline=45, *, entry_policy=None):
         "--runtime-plan-device-count=0","--runtime-plan-ntt=true",
         "--runtime-plan-boot-implementation=native","--runtime-plan-inline-payload-max-bytes=4096",
         "-o","/out/lowered.mlir"]
+
+
+def command_for_configuration(config):
+    """Trusted external compiler selection; the DSL supplies no state operations."""
+    from compiler_configuration import validate_configuration
+    checked = validate_configuration(config,config['ckks_config_sha256'])
+    return command(checked['waterline'],entry_policy=checked.get('runtime_plan_entry_policy'),
+        serialization_policy=checked.get('runtime_plan_serialization_policy'),
+        state_management_policy=checked.get('ciphertext_state_policy'))
 
 
 def entrypoint_trace(source):
@@ -101,7 +117,7 @@ def compact_f64_trace(source):
 def _entrypoint(source,config):
     serialization = None
     compact = None
-    if config.get("schema") == 4:
+    if config.get("schema") in (4,5,6):
         from compiler_configuration import TRACE_SERIALIZATION_POLICY
         if config.get("trace_serialization_policy") != TRACE_SERIALIZATION_POLICY:
             raise ValueError("Changed trace serialization policy")
@@ -114,7 +130,7 @@ def _entrypoint(source,config):
 
 
 def prepare_entrypoint(output, config):
-    if config.get("schema") not in (3,4):
+    if config.get("schema") not in (3,4,5,6):
         return None
     if config.get("runtime_plan_entry_policy") != ENTRY_POLICY:
         raise ValueError("Changed RuntimePlan entry policy")
@@ -128,7 +144,7 @@ def prepare_entrypoint(output, config):
 
 def audit_entrypoint(output, request, receipt, compile_command):
     config=request.get("compiler_configuration",{})
-    if config.get("schema") not in (3,4):
+    if config.get("schema") not in (3,4,5,6):
         if receipt is not None:
             raise ValueError("Unexpected entry policy for historical compiler configuration")
         return
@@ -138,5 +154,5 @@ def audit_entrypoint(output, request, receipt, compile_command):
     if (receipt != expected or
         json.loads((output/"entry-selection.json").read_text()) != expected or
         (output/"candidate_trace.entry.mlir").read_text() != selected or
-        compile_command != command(config["waterline"],entry_policy=config["runtime_plan_entry_policy"])):
+        compile_command != command_for_configuration(config)):
         raise ValueError("RuntimePlan entry provenance mismatch")

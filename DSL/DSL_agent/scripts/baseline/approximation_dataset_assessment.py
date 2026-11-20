@@ -3,6 +3,7 @@
 Inputs and labels are frozen before collection. Returned source receipts are
 host-pinned, rechecked against their partitions, and never counted as FHE.
 """
+from top1_accuracy_metrics import TOP1_KINDS, limit_field, threshold
 import copy,hashlib,math
 from fractions import Fraction
 from pathlib import Path
@@ -121,7 +122,7 @@ class ApproximationDatasetAssessment:
         require(da.shape==dr.shape==actual.shape and
             compare(da,dr,REFERENCE_ATOL,REFERENCE_RTOL)==decomposition,"dataset_receipt_rejected")
         counts=None
-        if profile is not None and profile["kind"]=="top1_accuracy_drop":
+        if profile is not None and profile["kind"] in TOP1_KINDS:
             counts=dict(original_correct=0,approximate_correct=0,total=0)
             for src,approx,label in zip(native,approximate,profile["labels"]):
                 target=np.asarray(label,dtype=np.int64)
@@ -157,14 +158,16 @@ class ApproximationDatasetAssessment:
                 original=sum(r["counts"]["original_correct"]for r in self.records.values())
                 approximate=sum(r["counts"]["approximate_correct"]for r in self.records.values())
                 total=sum(r["counts"]["total"]for r in self.records.values())
-                drop=Fraction(original-approximate,total)
-                passed=drop<=Fraction(str(profile["max_drop"]))
+                checked=threshold(profile["kind"],original,approximate,total,
+                                  profile[limit_field(profile["kind"])])
+                passed=checked["passed"]
                 metric=dict(kind=profile["kind"],output=profile["output"],class_axis=profile["class_axis"],
                     original_source_top1=original/total,approximate_top1=approximate/total,
                     original_correct=original,approximate_correct=approximate,
-                    labels_compared=total,accuracy_drop=float(drop),max_drop=profile["max_drop"],
+                    labels_compared=total,
                     passed=passed if complete else None,
                     status=("passed"if passed else "failed")if complete else "pending",subject=SUBJECT)
+                metric.update({k:v for k,v in checked.items()if k!="passed"})
         result=dict(format=FORMAT,status=("passed"if metric["passed"]is not False else "failed")if complete else "incomplete",
             dataset_binding=self.declaration["binding"],reference_identity_sha256=self.anchor["reference_identity_sha256"],
             complete=complete,planned_samples=self.declaration["samples"],evaluated_samples=evaluated,

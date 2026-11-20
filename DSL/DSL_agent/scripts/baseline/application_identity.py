@@ -285,6 +285,9 @@ def source_closure(root, roots, *, dynamic_authorities=None):
 
 
 def _backend_projection(backend, stage):
+    if type(backend) is dict and backend.get('format') == 'poseidon-backend-identity-v3':
+        from application_backend_identity_v3 import project
+        return project(backend, stage)
     _require(type(backend) is dict and backend.get("format") == "poseidon-backend-identity-v2",
              "Pinned Poseidon backend identity v2 required")
     required = {"format", "build_configuration", *set().union(*[set(v) for v in TOOL_FIELDS.values()])}
@@ -306,16 +309,36 @@ def _backend_projection(backend, stage):
     return value
 
 
+def _repository_baseline(root):
+    """Select the real Agent directory in either supported repository layout."""
+    native = Path("DSL/DSL_agent/scripts/baseline")
+    relative = native if (root / native).exists() or (root / native).is_symlink() else Path("scripts/baseline")
+    # Check every path component against the repository boundary. The retained
+    # compatibility links are never accepted as authoritative source paths.
+    baseline = root / relative
+    _require(baseline.is_dir() and baseline.resolve().is_relative_to(root.resolve()) and
+             not any((root / Path(*relative.parts[:i])).is_symlink()
+                     for i in range(1, len(relative.parts) + 1)),
+             "Identity baseline symlink/escape")
+    return baseline
+
+
 def _repository_references(root, sources):
     """Bind literal launcher/configuration paths outside the baseline directory."""
     records = {}
-    baseline = root / "scripts/baseline"
+    baseline = _repository_baseline(root)
     for name in sources:
         if not name.endswith(".py"):
             continue
         _,literals,_,_ = _syntax_facts(_read(baseline,name),name)
         for value in literals:
             if (root/value).is_file():
+                if baseline == root / "DSL/DSL_agent/scripts/baseline" and value.startswith("scripts/"):
+                    native = Path("DSL/DSL_agent") / value
+                    if (root / native).is_file():
+                        _require((root/value).resolve() == (root/native).resolve(),
+                                 "Identity compatibility entry changed")
+                        value = str(native)
                 records[value]=hashlib.sha256(_read(root,value)).hexdigest()
     return records
 
@@ -323,7 +346,7 @@ def _repository_references(root, sources):
 def identity_manifest(root, backend_identity):
     """Build from current bytes and the unchanged trusted low-level identity."""
     root = Path(root)
-    baseline = root / "scripts/baseline"
+    baseline = _repository_baseline(root)
     catalog=source_catalog(baseline)
     stage_roots,optional_roots,authorities=_catalog_values(catalog)
     result = dict(format=FORMAT, backend=copy.deepcopy(backend_identity), policy=POLICY)

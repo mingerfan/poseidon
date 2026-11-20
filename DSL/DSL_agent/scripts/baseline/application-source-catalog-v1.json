@@ -34,6 +34,16 @@
       "authority": "Explicit V12 trusted local manifest; hash-bound flat source files and isolated CPU capture worker",
       "expression": "importlib.import_module(module_name)",
       "module": "pytorch_ordered_intake.py"
+    },
+    {
+      "authority": "Original approved resource64 controller: two literal module names under the fixed platform results root, with exact migration_core/controlled_apply/manifest SHA256 checked before loading; no Provider or candidate input.",
+      "expression": "importlib.util.spec_from_file_location('compiler_eval64_' + name, root / (name + '.py'))",
+      "module": "compiler_managed_cli.py"
+    },
+    {
+      "authority": "Original approved resource64 controller: two literal module names under the fixed platform results root, with exact migration_core/controlled_apply/manifest SHA256 checked before loading; no Provider or candidate input.",
+      "expression": "spec.loader.exec_module(module)",
+      "module": "compiler_managed_cli.py"
     }
   ],
   "format": "poseidon-identity-source-catalog-v1",
@@ -65,7 +75,9 @@
       "deepseek_provider.py",
       "deepseek_http_worker.py",
       "agent_response_provenance.py",
-      "application_model_source.py"
+      "application_model_source.py",
+      "application_shared.py",
+      "candidate_shared.py"
     ],
     "validation": [
       "candidate_bundle.py",

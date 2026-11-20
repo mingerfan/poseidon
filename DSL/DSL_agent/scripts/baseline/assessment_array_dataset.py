@@ -1,4 +1,5 @@
 """Bounded non-pickle input arrays for local, explicit dataset assessment."""
+from top1_accuracy_metrics import TOP1_KINDS, limit_field, threshold
 import functools,hashlib,io,json,math,re
 from pathlib import Path
 import numpy as np
@@ -125,11 +126,13 @@ class ArrayDataset:
     def criterion(self,requirements=None):
         if requirements is None:return None
         value=snapshot(requirements,limit=131072)
-        if self._labels is None or (type(value)is dict and value.get("kind")!="top1_accuracy_drop"):return value
-        require(type(value)is dict and set(value)=={"kind","max_drop"} and value["kind"]=="top1_accuracy_drop")
+        if self._labels is None or (type(value)is dict and value.get("kind") not in TOP1_KINDS):return value
+        require(type(value)is dict and value.get("kind") in TOP1_KINDS)
+        field=limit_field(value["kind"])
+        require(set(value)=={"kind",field})
         info=self._manifest["labels"]
-        return dict(kind="top1_accuracy_drop",output=info["output"],class_axis=info["class_axis"],
-                    labels=self._labels.tolist(),max_drop=value["max_drop"])
+        return dict(kind=value["kind"],output=info["output"],class_axis=info["class_axis"],
+                    labels=self._labels.tolist(),**{field:value[field]})
 @guard
 def load_dataset(request,manifest_path,*,expected_binding):
     path=Path(manifest_path)

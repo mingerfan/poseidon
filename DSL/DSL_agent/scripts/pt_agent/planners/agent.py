@@ -7,6 +7,7 @@ from pathlib import Path
 import time
 
 from ..llm import LLMError
+from ..quality import quality_fields
 from ..dsl.parser import parse
 from ..dsl.printer import print_program
 from .agent_tools import AgentContext, evaluate, apply_placement
@@ -15,6 +16,68 @@ from .prompts import build_system_prompt, feedback_message, initial_message
 from .tuner import tune
 from .transformer_tuner import (DEFAULT_TUNE_RULE, PRE_TUNE_RULE, CONVERGENT_TUNE_RULE, convergent_rule,
                                validate_tune_rule, tune_rule_scope)
+
+
+NUMERIC_FIELDS = ('deg', 'deg0', 'iters', 'domain', 'degrees', 'inv_budget')
+STRUCTURE_NOTE = ('The tuner sets degrees, iteration counts and domains. On every operation whose structure you keep, '
+                  'the system replaces these settings in your program with the tuned values. Reduce latency by changing '
+                  'structure: approximation methods, the decomposition of softmax and normalization, kernel algorithms '
+                  'and layouts.')
+
+
+def _numeric(key):
+    """Tuner-owned settings: degrees, iteration counts, domains and the reciprocal budget, with any role prefix."""
+    return key in NUMERIC_FIELDS or key.endswith(tuple('_'+field for field in NUMERIC_FIELDS))
+
+
+def _structure(op):
+    return op.kind, json.dumps({key: value for key, value in op.attrs.items() if not _numeric(key)},
+                               sort_keys=True, default=str)
+
+
+def _aligned_pairs(base, new):
+    """Pairs of operations with the same structure, aligned in program order; value names play no part."""
+    import difflib
+    matcher = difflib.SequenceMatcher(None, [_structure(op) for op in base.ops], [_structure(op) for op in new.ops],
+                                      autojunk=False)
+    for block in matcher.get_matching_blocks():
+        for offset in range(block.size):
+            yield base.ops[block.a+offset], new.ops[block.b+offset]
+
+
+def changed_lines(source, base_source):
+    """Lines of `source` whose operation has no identical counterpart in `base_source`.
+
+    Operations are aligned by kind and structural settings in program order, so renamed values do not count as
+    changes. A focused retune moves only the approximation points on these lines or called from them; a program in
+    which every operation differs yields every line, so the retune equals an unrestricted tune."""
+    new, base = parse(source), parse(base_source)
+    unchanged = {id(op) for old, op in _aligned_pairs(base, new) if old.attrs == op.attrs}
+    lines = set()
+    for op in new.ops:
+        if id(op) not in unchanged:
+            lines.add(op.lineno)
+            lines.update(op.call_lines)
+    return lines
+
+
+def lock_numeric(source, base_source):
+    """Copy the tuner-owned settings of `base_source` onto every operation of `source` whose structure is unchanged.
+
+    Returns the resulting source and the number of operations whose settings were replaced. Operations whose
+    method, decomposition, algorithm or layout changed keep the LLM's settings and are tuned afterwards."""
+    new, base = parse(source), parse(base_source)
+    locked = 0
+    for old, op in _aligned_pairs(base, new):
+        fields = {key for key in set(old.attrs) | set(op.attrs) if _numeric(key)}
+        if any(old.attrs.get(key) != op.attrs.get(key) for key in fields):
+            locked += 1
+            for key in fields:
+                if key in old.attrs:
+                    op.attrs[key] = old.attrs[key]
+                else:
+                    op.attrs.pop(key, None)
+    return (print_program(new) if locked else source), locked
 
 
 def _add_intermediate_states(pool, records, result, iteration, source, *, serialized=False):
@@ -33,7 +96,7 @@ def _selected_record(records, selected, confirmation):
         record = dict(record)
         measured = next(row for row in confirmation['evals'] if row['iteration'] == selected.iteration
                         and row['origin'] == selected.origin)
-        record.update({key: measured[key] for key in ('agree', 'max_u', 'max_u_calibrated',
+        record.update({key: measured[key] for key in ('agree', 'relative_error', 'max_u', 'max_u_calibrated',
                        'max_u_analytic', 'worst_acts') if key in measured})
     return record, lines
 
@@ -41,7 +104,15 @@ def _selected_record(records, selected, confirmation):
 def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path,
               tuner: bool = True, tuner_budget_s: float = 2400,
               tune_policy: str = "new_best", engine_profile: str = "mock",
-              tune_rule: str | None = None, confirm_rule: str = 'c1') -> dict:
+              tune_rule: str | None = None, confirm_rule: str = 'c1', stale_limit: int = 2,
+              tune_sweeps: int | None = None, focus_retune: bool = False, pool_states: bool = False,
+              numeric_lock: bool = False) -> dict:
+    """`pool_states` adds every sweep's accepted tuner state to the confirmation pool, as rule c2 does where it
+    applies, so a multi-sweep tune keeps its earlier states when the last one fails confirmation. `numeric_lock`
+    gives every later reply the best program's tuned settings on the operations whose structure it keeps, and the
+    feedback says so."""
+    if stale_limit < 1 or (tune_sweeps is not None and tune_sweeps < 1):
+        raise ValueError('stale_limit and tune_sweeps must be positive')
     requested_confirm_rule = confirm_rule
     confirm_rule = confirmation_rule(ctx, confirm_rule)
     tune_rule = validate_tune_rule(getattr(ctx, 'prompt_version', 'r8-v4'), tune_rule)
@@ -90,6 +161,7 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
         prompt_tokens += usage.get("prompt_tokens", 0)
         completion_tokens += usage.get("completion_tokens", 0)
         source = None
+        locked_ops = None
         try:
             response = json.loads(reply["content"])
             source = response["program"]
@@ -107,6 +179,8 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                 response_path.parent.mkdir(parents=True,exist_ok=True)
                 with response_path.open('x') as stream:stream.write(source)
             source = apply_placement(source, ctx)
+            if numeric_lock and best_program is not None:
+                source, locked_ops = lock_numeric(source, best_program)
             fb = evaluate(source, ctx, **(dict(engine="tensor", **profile_args) if profile_args else {}))
             if v8 and not source.strip() and reply.get('finish_reason') == 'length':
                 fb = dict(stage='length', feasible=False, output_limit=65536,
@@ -114,7 +188,9 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
         cost, validation = fb.get("cost") or {}, fb.get("validation") or {}
         row = dict(iteration=iteration, stage=fb["stage"], feasible=fb.get("feasible", False),
                             latency_pred_us=cost.get("latency_pred_us"), boots_pred=cost.get("boots_pred"),
-                            agree=validation.get("agree"), max_u=validation.get("max_u"), tuned=None)
+                            **quality_fields(validation), max_u=validation.get("max_u"), tuned=None)
+        if locked_ops is not None:
+            row['locked_ops'] = locked_ops
         candidates = [(source, cost, validation, 'llm')] if fb.get('feasible') else []
         tuned = None
         comparable = cost and (not v8 or tune_rule == PRE_TUNE_RULE or fb.get('feasible', False))
@@ -126,6 +202,7 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                     and (validation.get('boot_input_bound') is None
                          or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
         tuned_reused_from = None
+        focus = None
         if tuner and eligible and not fb.get('stop') and (tune_policy == "all" or new_llm_best or not has_tuned):
             has_tuned = True
             parsed = parse(source)
@@ -133,14 +210,19 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
             if normalized in tune_cache:
                 result, tuned_reused_from, tune_source = tune_cache[normalized]
             else:
+                if focus_retune and best_program is not None:
+                    focus = changed_lines(source, best_program)
                 with tune_rule_scope(tune_rule) if v8 else nullcontext():
                     result = tune(parsed, ctx, budget_s=tuner_budget_s,
-                                  max_sweeps=8 if convergent_rule(tune_rule) else 1, **profile_args)
+                                  max_sweeps=tune_sweeps or (8 if convergent_rule(tune_rule) else 1), **profile_args,
+                                  **({} if focus is None else dict(focus=focus)))
                 tune_source = source
                 tune_cache[normalized] = (result, iteration, tune_source)
                 if convergent_rule(tune_rule) and getattr(result,'converged',False):
                     tune_cache[print_program(result.program)] = (result, iteration, tune_source)
             tuned = {key: value for key, value in asdict(result).items() if key != 'program'}
+            if focus is not None:
+                tuned['focus_lines'] = sorted(focus)
             # A reused result retains its original source locations and snippets.
             lines = tune_source.splitlines()
             for change in tuned['changes']:
@@ -148,16 +230,18 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                 change['call_texts'] = [lines[line-1].strip() for line in change['call_lines']]
             confirmation = result.history[-1]
             row['tuned'] = dict(feasible=result.feasible, latency_pred_us=result.cost_after['latency_pred_us'],
-                                boots_pred=result.cost_after['boots_pred'], agree=confirmation['agree'],
+                                boots_pred=result.cost_after['boots_pred'], **quality_fields(confirmation),
                                 max_u=confirmation['max_u'], coarse_evals=result.coarse_evals,
                                 full_evals=result.full_evals, seconds=result.seconds)
             if v8:
                 row['tuned'].update({key: confirmation[key] for key in ('max_u_calibrated','max_u_analytic')})
             if convergent_rule(tune_rule):
                 row['tuned'].update(sweeps=result.sweeps,converged=result.converged)
+            if focus is not None:
+                row['tuned']['focus_lines'] = sorted(focus)
             if result.feasible:
                 candidates.append((result.source, result.cost_after, confirmation, 'tuned'))
-            if confirm_rule == 'c2':
+            if confirm_rule == 'c2' or pool_states:
                 _add_intermediate_states(pool, records, result, iteration, source)
         row.update(has_tuned=has_tuned, new_llm_best=new_llm_best, llm_min=llm_min,
                    tuned_reused_from=tuned_reused_from)
@@ -166,7 +250,7 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                                   candidate_cost['boots_pred']))
             records[(iteration, origin, candidate)] = (
                 dict(candidate_cost, iteration=iteration, source=origin,
-                     agree=confirmed['agree'], max_u=confirmed['max_u'],
+                     **quality_fields(confirmed), max_u=confirmed['max_u'],
                      **({key:confirmed[key] for key in ('max_u_calibrated','max_u_analytic')} if v8 else {}),
                      boot_input_max_abs=confirmed.get('boot_input_max_abs'),
                      worst_acts=confirmed.get('worst_acts', [])),
@@ -177,7 +261,7 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
                 best_program, best_iteration = candidate, iteration
                 best_llm_lines = sum(bool(line.strip()) for line in source.splitlines())
                 best = dict(candidate_cost, iteration=iteration, source=origin,
-                            agree=confirmed['agree'], max_u=confirmed['max_u'],
+                            **quality_fields(confirmed), max_u=confirmed['max_u'],
                             **({key:confirmed[key] for key in ('max_u_calibrated','max_u_analytic')} if v8 else {}),
                             boot_input_max_abs=confirmed.get('boot_input_max_abs'),
                             worst_acts=confirmed.get('worst_acts', []))
@@ -186,12 +270,14 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
         from .transformer_session import json_safe
         shown_fb,shown_tuned=(json_safe(fb),json_safe(tuned)) if token_agent else (fb,tuned)
         added = [dict(role="assistant", content=reply["content"]),
-                 dict(role="user", content=feedback_message(shown_fb, iteration, best, tuned=shown_tuned))]
+                 dict(role="user", content=feedback_message(shown_fb, iteration, best, tuned=shown_tuned)
+                      + ('\n\n'+STRUCTURE_NOTE if numeric_lock else ''))]
         messages.extend(added)
         with trace_path.open("a") as stream:
             stream.write(json.dumps(dict(iteration=iteration, messages=added, fb=shown_fb, usage=usage,
                                          seconds=reply["seconds"], tuned=shown_tuned,
                                          tuned_reused_from=tuned_reused_from,
+                                         **({} if locked_ops is None else dict(locked_ops=locked_ops)),
                                          tune_policy=tune_policy, **rule_record), allow_nan=False)+"\n")
         print(f"AGENT iteration={iteration} stage={fb['stage']} feasible={fb.get('feasible', False)}", flush=True)
         if v8 and fb.get('stop'):
@@ -199,7 +285,7 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
             break
         if best is not None:
             stale = 0 if previous is None or previous-best["latency_pred_us"] >= .05*previous else stale+1
-            if stale >= 2:
+            if stale >= stale_limit:
                 break
     confirmation = (dict(selected=None,evals=[],deduplicated=dict(before=len(pool),after=0),duplicates=[])
                     if v8 and failed else confirm_select(pool, ctx, **profile_args,
@@ -220,10 +306,16 @@ def _run_agent_once(ctx: AgentContext, client, *, max_iters: int = 6, trace_path
 
 
 def new_agent_state(ctx, *, max_iters=6, tuner=True, tuner_budget_s=2400,
-                    tune_policy='new_best', engine_profile='mock', tune_rule=None, confirm_rule='c1'):
-    """The frozen loop's locals, with an explicit process boundary at each tool."""
+                    tune_policy='new_best', engine_profile='mock', tune_rule=None, confirm_rule='c1',
+                    stale_limit=2, focus_retune=False, numeric_lock=False):
+    """The frozen loop's locals, with an explicit process boundary at each tool.
+
+    `stale_limit` and `focus_retune` are stored only when they differ from the defaults, so states written by
+    earlier rounds read the same."""
     if tune_policy not in ('new_best', 'all'):
         raise ValueError('tune_policy must be "new_best" or "all"')
+    if stale_limit < 1:
+        raise ValueError('stale_limit must be positive')
     if engine_profile not in ('mock', 'tensor'):
         raise ValueError('engine_profile must be "mock" or "tensor"')
     version = getattr(ctx, 'prompt_version', 'r8-v4')
@@ -246,6 +338,9 @@ def new_agent_state(ctx, *, max_iters=6, tuner=True, tuner_budget_s=2400,
         best_llm_lines=None, llm_min=None, has_tuned=False, tune_cache={},
         history=[], pool=[], records={}, calls=0, prompt_tokens=0,
         completion_tokens=0, stale=0, failed=None, elapsed_s=0., pending=None,
+        **(dict(stale_limit=stale_limit) if stale_limit != 2 else {}),
+        **(dict(focus_retune=True) if focus_retune else {}),
+        **(dict(numeric_lock=True) if numeric_lock else {}),
         **(dict(model_call_offset=getattr(ctx, 'a1_model_call_offset', 0)) if version in ('r8-v9','r8-v10','r8-v11') else {}),
         **(dict(split_version=split['version']) if 'version' in split else {}))
 
@@ -261,7 +356,7 @@ def _finish_iteration(state, trace_path):
         state['pool'].append(asdict(Candidate(candidate, origin, iteration,
             candidate_cost['latency_pred_us'], candidate_cost['boots_pred'])))
         record = dict(candidate_cost, iteration=iteration, source=origin,
-            agree=confirmed['agree'], max_u=confirmed['max_u'],
+            **quality_fields(confirmed), max_u=confirmed['max_u'],
             **{key: confirmed[key] for key in ('max_u_calibrated', 'max_u_analytic')},
             boot_input_max_abs=confirmed.get('boot_input_max_abs'),
             worst_acts=confirmed.get('worst_acts', []))
@@ -276,12 +371,14 @@ def _finish_iteration(state, trace_path):
     shown_fb, shown_tuned = json_safe(fb), json_safe(tuned)
     reply = pending['reply']
     added = [dict(role='assistant', content=reply['content']),
-             dict(role='user', content=feedback_message(shown_fb, iteration, state['best'], tuned=shown_tuned))]
+             dict(role='user', content=feedback_message(shown_fb, iteration, state['best'], tuned=shown_tuned)
+                  + ('\n\n'+STRUCTURE_NOTE if state.get('numeric_lock') else ''))]
     state['messages'].extend(added)
     with Path(trace_path).open('a') as stream:
         stream.write(json.dumps(dict(iteration=iteration, messages=added, fb=shown_fb,
             usage=pending['usage'], seconds=reply['seconds'], tuned=shown_tuned,
             tuned_reused_from=pending['tuned_reused_from'], tune_policy=state['tune_policy'],
+            **({} if 'locked_ops' not in row else dict(locked_ops=row['locked_ops'])),
             confirm_rule=state.get('confirm_rule', 'c1'),
             tune_rule=state.get('tune_rule', PRE_TUNE_RULE),
             **(dict(tune_search=state.get('tune_search','sweep')) if state['prompt_version']=='r8-v11' else {}),
@@ -300,7 +397,8 @@ def _finish_iteration(state, trace_path):
             previous = pending['previous']
             state['stale'] = (0 if previous is None or previous-state['best']['latency_pred_us'] >= .05*previous
                               else state['stale']+1)
-        state['phase'] = 'confirm' if state['stale'] >= 2 or iteration >= state['max_iters'] else 'evaluate'
+        state['phase'] = ('confirm' if state['stale'] >= state.get('stale_limit', 2) or iteration >= state['max_iters']
+                          else 'evaluate')
     state['iteration'] = iteration+1
     state['pending'] = None
 
@@ -309,6 +407,8 @@ def _finish_tune(state, result, trace_path, *, reused_from=None, tune_source=Non
     pending = state['pending']
     tune_source = pending['source'] if tune_source is None else tune_source
     tuned = {key: value for key, value in asdict(result).items() if key != 'program'}
+    if pending.get('focus') is not None and reused_from is None:
+        tuned['focus_lines'] = list(pending['focus'])
     lines = tune_source.splitlines()
     for change in tuned['changes']:
         change['line_text'] = lines[change['line']-1].strip()
@@ -316,11 +416,13 @@ def _finish_tune(state, result, trace_path, *, reused_from=None, tune_source=Non
     confirmation = result.history[-1]
     pending['row']['tuned'] = dict(feasible=result.feasible,
         latency_pred_us=result.cost_after['latency_pred_us'], boots_pred=result.cost_after['boots_pred'],
-        agree=confirmation['agree'], max_u=confirmation['max_u'], coarse_evals=result.coarse_evals,
+        **quality_fields(confirmation), max_u=confirmation['max_u'], coarse_evals=result.coarse_evals,
         full_evals=result.full_evals, seconds=result.seconds,
         **{key: confirmation[key] for key in ('max_u_calibrated', 'max_u_analytic')})
     if convergent_rule(state.get('tune_rule')):
         pending['row']['tuned'].update(sweeps=result.sweeps,converged=result.converged)
+    if pending.get('focus') is not None and reused_from is None:
+        pending['row']['tuned']['focus_lines'] = list(pending['focus'])
     if result.feasible:
         pending['candidates'].append((result.source, result.cost_after, confirmation, 'tuned'))
     if state.get('confirm_rule', 'c1') == 'c2':
@@ -356,6 +458,7 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
     state['prompt_tokens'] += usage.get('prompt_tokens', 0)
     state['completion_tokens'] += usage.get('completion_tokens', 0)
     source = None
+    locked_ops = None
     try:
         response = json.loads(reply['content'])
         source = response['program']
@@ -372,6 +475,8 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
         with response_path.open('x') as stream:
             stream.write(source)
         source = apply_placement(source, ctx)
+        if state.get('numeric_lock') and state['best_program'] is not None:
+            source, locked_ops = lock_numeric(source, state['best_program'])
         profile_args = dict(engine_profile='tensor') if state['engine_profile'] == 'tensor' else {}
         fb = feedback if feedback is not None else evaluate(source, ctx,
             **(dict(engine='tensor', **profile_args) if profile_args else {}))
@@ -381,7 +486,7 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
     cost, validation = fb.get('cost') or {}, fb.get('validation') or {}
     row = dict(iteration=iteration, stage=fb['stage'], feasible=fb.get('feasible', False),
         latency_pred_us=cost.get('latency_pred_us'), boots_pred=cost.get('boots_pred'),
-        agree=validation.get('agree'), max_u=validation.get('max_u'), tuned=None)
+        **quality_fields(validation), max_u=validation.get('max_u'), tuned=None)
     comparable = cost and (state.get('tune_rule', PRE_TUNE_RULE) == PRE_TUNE_RULE or fb.get('feasible', False))
     new_llm_best = bool(comparable and (state['llm_min'] is None or cost['latency_pred_us'] < state['llm_min']))
     if comparable:
@@ -391,6 +496,8 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
                 and not validation['diverged'] and fb['stage'] == 'complete'
                 and (validation.get('boot_input_bound') is None
                      or validation['boot_input_max_abs'] <= validation['boot_input_bound']))
+    if locked_ops is not None:
+        row['locked_ops'] = locked_ops
     state['pending'] = dict(iteration=iteration, previous=previous, reply=reply, source=source,
         fb=fb, usage=usage, row=row, new_llm_best=new_llm_best, tuned=None, tuned_reused_from=None,
         candidates=[(source, cost, validation, 'llm')] if fb.get('feasible') else [])
@@ -403,6 +510,8 @@ def _evaluate_step(ctx, state, client, trace_path, *, reply=None, feedback=None)
             _finish_tune(state, _read_tune_result(cached), trace_path,
                          reused_from=reused_from, tune_source=tune_source)
         else:
+            if state.get('focus_retune') and state['best_program'] is not None:
+                state['pending']['focus'] = sorted(changed_lines(source, state['best_program']))
             state['phase'] = 'tune'
     else:
         _finish_iteration(state, trace_path)
@@ -442,7 +551,8 @@ def agent_step(ctx, state, *, trace_path, client=None, reply=None, feedback=None
                 budget_s=state['tuner_budget_s'],
                 max_sweeps=8 if convergent_rule(state.get('tune_rule')) else 1, **profile_args,
                 **(dict(client=tune_client,iteration=pending['iteration'])
-                   if state.get('tune_search')=='llm-select' else {}))
+                   if state.get('tune_search')=='llm-select' else {}),
+                **({} if pending.get('focus') is None else dict(focus=set(pending['focus']))))
         state['tune_cache'][print_program(parsed)] = (
             saved_tune_result(result), pending['iteration'], pending['source'])
         if convergent_rule(state.get('tune_rule')) and getattr(result,'converged',False):
@@ -493,17 +603,23 @@ def agent_result(state):
 def run_agent(ctx: AgentContext, client, *, max_iters: int = 6, trace_path: Path,
               tuner: bool = True, tuner_budget_s: float = 2400,
               tune_policy: str = 'new_best', engine_profile: str = 'mock',
-              tune_rule: str | None = None, confirm_rule: str = 'c1') -> dict:
+              tune_rule: str | None = None, confirm_rule: str = 'c1', stale_limit: int = 2,
+              tune_sweeps: int | None = None, focus_retune: bool = False, pool_states: bool = False,
+              numeric_lock: bool = False) -> dict:
     from .transformer_session import validate_tune_search
     validate_tune_search(ctx)
     tune_rule = validate_tune_rule(getattr(ctx, 'prompt_version', 'r8-v4'), tune_rule)
     if getattr(ctx, 'prompt_version', 'r8-v4') not in ('r8-v8','r8-v9','r8-v10','r8-v11'):
         return _run_agent_once(ctx, client, max_iters=max_iters, trace_path=trace_path, tuner=tuner,
             tuner_budget_s=tuner_budget_s, tune_policy=tune_policy, engine_profile=engine_profile,
-            confirm_rule=confirm_rule)
+            confirm_rule=confirm_rule, stale_limit=stale_limit, tune_sweeps=tune_sweeps, focus_retune=focus_retune,
+            pool_states=pool_states, numeric_lock=numeric_lock)
+    if tune_sweeps is not None or pool_states:
+        raise ValueError('tune_sweeps and pool_states apply to the r8-v4 loop; the resumable loop uses its rules')
     state = new_agent_state(ctx, max_iters=max_iters, tuner=tuner, tuner_budget_s=tuner_budget_s,
                             tune_policy=tune_policy, engine_profile=engine_profile, tune_rule=tune_rule,
-                            confirm_rule=confirm_rule)
+                            confirm_rule=confirm_rule, stale_limit=stale_limit, focus_retune=focus_retune,
+                            numeric_lock=numeric_lock)
     while state['phase'] != 'done':
         agent_step(ctx, state, trace_path=trace_path, client=client)
     return agent_result(state)

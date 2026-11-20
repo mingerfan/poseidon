@@ -471,10 +471,16 @@ def _inside(args):
                     report['selected_examples'] = select_examples(target_features(graph, annotate(graph)), ctx.model_name)
                     (out/'system_prompt.txt').write_text(build_system_prompt(ctx))
                     (out/'initial_message.json').write_text(initial_message(ctx))
+                    loop_options = dict(stale_limit=getattr(args, 'stale_limit', 2),
+                                        tune_sweeps=getattr(args, 'tune_sweeps', None),
+                                        focus_retune=getattr(args, 'focus_retune', 'off') == 'on',
+                                        pool_states=getattr(args, 'pool_states', 'off') == 'on',
+                                        numeric_lock=getattr(args, 'numeric_lock', 'off') == 'on')
+                    report.update(loop_options)
                     result = run_agent(ctx, client, max_iters=args.agent_iters, trace_path=out / "agent_trace.jsonl",
                                        tuner=getattr(args, 'tuner', 'on') == 'on',
                                        tuner_budget_s=getattr(args, 'tuner_budget_s', 2400),
-                                       tune_policy=report['tune_policy'])
+                                       tune_policy=report['tune_policy'], **loop_options)
                     selected = result['confirm']['selected']
                     report["agent"] = dict(result, confirm=dict(result['confirm'],
                         selected=asdict(selected) if selected is not None else None))
@@ -622,6 +628,11 @@ def main():
     parser.add_argument("--tuner", choices=('on', 'off'), default='on')
     parser.add_argument("--tuner-budget-s", type=float, default=2400)
     parser.add_argument("--tune-policy", choices=('new_best', 'all'), default='new_best')
+    parser.add_argument("--stale-limit", type=int, default=2)
+    parser.add_argument("--tune-sweeps", type=int)
+    parser.add_argument("--focus-retune", choices=('on', 'off'), default='off')
+    parser.add_argument("--pool-states", choices=('on', 'off'), default='off')
+    parser.add_argument("--numeric-lock", choices=('on', 'off'), default='off')
     parser.add_argument("--deg", type=int)
     parser.add_argument("--margin", type=float)
     parser.add_argument("--prompt-version", choices=("r8-v4", "r8-v5", "r8-v6"), default="r8-v4")
@@ -676,8 +687,11 @@ def main():
         command.extend(("--budget-path", str(Path(os.environ["PT_RESULTS"]) / "llm_calls.jsonl"),
                         "--agent-iters", str(args.agent_iters), "--llm-model", args.llm_model,
                         "--tuner", args.tuner, '--tuner-budget-s', str(args.tuner_budget_s),
-                        '--tune-policy', args.tune_policy,
+                        '--tune-policy', args.tune_policy, '--stale-limit', str(args.stale_limit),
+                        '--focus-retune', args.focus_retune, '--pool-states', args.pool_states, '--numeric-lock', args.numeric_lock,
                         "--llm-reasoning", args.llm_reasoning, "--llm-max-tokens", str(args.llm_max_tokens)))
+        if args.tune_sweeps is not None:
+            command.extend(('--tune-sweeps', str(args.tune_sweeps)))
     if args.deg is not None:
         command.extend(("--deg", str(args.deg)))
     if args.margin is not None:

@@ -15,4 +15,6 @@ def strict_file(path,limit):
             result[k]=v
         return result
     def nonfinite(x): raise ValueError("Nonfinite JSON")
-    return json.loads(path.read_bytes(),object_pairs_hook=pairs,parse_constant=nonfinite)
+    value = json.loads(path.read_bytes(),object_pairs_hook=pairs,parse_constant=nonfinite)
+    from public_basis_storage import decode_data_file
+    return decode_data_file(value,path.name)

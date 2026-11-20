@@ -33,7 +33,7 @@ from public_weight_context import storage_limit
 from application_admission import (LEGACY as ADMISSION_LEGACY, STRUCTURED as ADMISSION_STRUCTURED,
     AdmissionRejected, diagnostic as admission_diagnostic, policy as check_admission_policy,
     precheck as admission_precheck, source_precheck)
-from application_artifact_budget import ArtifactMonitor, OperationalStopped, limits as operational_budget
+from application_artifact_budget import ArtifactMonitor, OperationalStopped, limits as operational_budget, effective_limits
 
 FORMAT = "poseidon-model-source-request-v1"
 SNAPSHOT = "poseidon-model-source-snapshot-v1"
@@ -184,6 +184,8 @@ class ModelSourceIntake:
         task = uuid.uuid4().hex
         path = self._dir(task)
         path.mkdir(mode=0o700)
+        observer=getattr(self,"_task_created",None)
+        if callable(observer):observer(path)
         level = requirements.get("validation_level", "numerical")
         state = dict(task_id=task, status="queued", phase="intake_queued",
                      validation_level=level, generations=0, http_attempts=0, ledger=[],
@@ -208,6 +210,8 @@ class ModelSourceIntake:
                 try:operational_limits=operational_budget(operational_limits)
                 except (ValueError,TypeError,KeyError):
                     raise AdmissionRejected("operational_limits",location="operational_limits") from None
+            operational_limits=effective_limits(operational_limits,getattr(self,"global_operational_limits",None))
+            if operational_limits is not None:
                 monitor=ArtifactMonitor(self,path,operational_limits,initialize=True)
                 monitor.check(force=True)
             require(level in LEVELS and target == BACKEND and policy in POLICIES,
@@ -469,8 +473,10 @@ class ModelSourceIntake:
             state.update(status="running", phase="model_import")
             self._write(path / "state.json", state)
             try:
-                if "operational_limits" in spec:
-                    monitor=ArtifactMonitor(self,path,spec["operational_limits"])
+                runtime_limits=effective_limits(spec.get("operational_limits"),getattr(self,"global_operational_limits",None))
+                if runtime_limits is not None:
+                    monitor=ArtifactMonitor(self,path,runtime_limits,
+                        initialize="operational_limits" not in spec)
                     monitor.check(force=True)
                 require(signal.getitimer(signal.ITIMER_REAL) == (0., 0.), "Worker owns an alarm")
                 previous = signal.signal(signal.SIGALRM, check)

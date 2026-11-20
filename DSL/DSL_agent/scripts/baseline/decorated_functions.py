@@ -34,7 +34,7 @@ def cells(value):
     return value[1] if type(value) is tuple else (value,)
 
 
-def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None, upstream_helpers=False, upstream_request=None, capacity_layout=None):
+def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None, upstream_helpers=False, upstream_request=None, capacity_layout=None, public_constant_indices=False):
     require(type(upstream_helpers) is bool, "Invalid upstream capability flag")
     if upstream_helpers:
         from upstream_candidate_helpers import dispatch_specs
@@ -81,11 +81,18 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
         tree = ast.parse(source, type_comments=True)
     except (SyntaxError, RecursionError, MemoryError) as error:
         raise ValueError('Invalid native function syntax') from error
-    require(len(list(ast.walk(tree))) <= LIMIT, 'AST node limit')
+    ast_nodes = len(list(ast.walk(tree)))
+    if ast_nodes > LIMIT:
+        raise CandidateCheckError('native_ast_node_budget', tree,
+                                  context=dict(observed=ast_nodes, limit=LIMIT))
     loop_plan = None
     if public_loops:
         from native_public_loops import expand
         tree,loop_plan = expand(tree,constants,scalar_augmented=scalar_augmented,upstream_helpers=upstream_helpers,upstream_request=upstream_request)
+    constant_load_plan = None
+    if public_constant_indices:
+        from public_constant_loads import lower
+        tree,constant_load_plan=lower(tree,constants,slot_period if packed else 4)
     require(1 <= len(tree.body) <= 17 and all(type(n) is ast.FunctionDef for n in tree.body),
             'Only native function declarations allowed')
     nodes = {n.name:n for n in tree.body}
@@ -313,21 +320,23 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
         plan['packed_binding']=dict(slot_period=slot_period,rotation_steps=list(allowed_rotations),
                                     output_limit=16,constant_limit=256)
     if upstream_helpers: plan["upstream_calls"]=upstream_sites
+    if public_constant_indices:
+        plan["public_constant_loads"]=constant_load_plan
     return nodes, plan
 
 
-def validate(source, constants, expected_outputs=1, *, input_names=('x',), arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None, upstream_helpers=False, upstream_request=None, capacity_layout=None):
-    return _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request,capacity_layout=capacity_layout)[1]
+def validate(source, constants, expected_outputs=1, *, input_names=('x',), arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None, upstream_helpers=False, upstream_request=None, capacity_layout=None, public_constant_indices=False):
+    return _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request,capacity_layout=capacity_layout,public_constant_indices=public_constant_indices)[1]
 
 
-def register(source, constants, frontend, expected_outputs=1, *, input_names=('x',), observe=None, arrays=False, observe_storage=None, starred_calls=False, array_arithmetic=False, public_loops=False, observe_starred=None, scalar_augmented=False, observe_augmented=None, array_mutation=False, observe_mutation=None, slot_period=None, upstream_helpers=False, observe_upstream=None, upstream_request=None, observe_upstream_binding=None, capacity_layout=None):
+def register(source, constants, frontend, expected_outputs=1, *, input_names=('x',), observe=None, arrays=False, observe_storage=None, starred_calls=False, array_arithmetic=False, public_loops=False, observe_starred=None, scalar_augmented=False, observe_augmented=None, array_mutation=False, observe_mutation=None, slot_period=None, upstream_helpers=False, observe_upstream=None, upstream_request=None, observe_upstream_binding=None, capacity_layout=None, public_constant_indices=False):
     """Trusted harness only: validate all code before touching the supplied native frontend.
 
     Each wrapper is trusted Python; candidate functions remain inert AST nodes.
     The caller owns sandboxing, input manifests, frontend lifetime and hc.save.
     """
     arrays = arrays or starred_calls or array_arithmetic or public_loops or scalar_augmented or array_mutation
-    nodes, plan = _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request,capacity_layout=capacity_layout)
+    nodes, plan = _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request,capacity_layout=capacity_layout,public_constant_indices=public_constant_indices)
     public = copy.deepcopy(constants); functions = {}
     trusted = {}
     if upstream_helpers:
@@ -338,8 +347,9 @@ def register(source, constants, frontend, expected_outputs=1, *, input_names=('x
         parameters = tuple(plan['functions'][node.name]['parameters'])
         def body(*args):
             star_origins = {}
+            used = {n.id for n in ast.walk(node) if type(n) is ast.Name and type(n.ctx) is ast.Load} if public_constant_indices else set(public)
             symbols = {n:frontend.resolveType(frontend.np.asarray(v if type(v) is list else [v], dtype=float))
-                       for n,v in public.items()}
+                       for n,v in public.items() if n in used}
             symbols.update(zip(parameters, args))
 
             def storage_event(op,n,value,before=None):

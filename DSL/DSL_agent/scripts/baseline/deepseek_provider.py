@@ -69,6 +69,28 @@ Repair the previous program using diagnostics, not by guessing hidden outputs.
 No tools, network, filesystem operations or bootstrap are available to the program.
 """
 
+COMPILER_MANAGED_SYSTEM = """Generate a complete computational Hecate DSL for the supplied model and public constraints.
+Return exactly one JSON object following response_schema, without Markdown.
+Before answering, plan every output dependency using the supplied public computation obligations, registered constants and operator attributes.
+Choose the computational implementation, fusion, layout and blocking within those constraints. Implement genuine reductions, branches, shape changes and the complete declared polynomial basis and coefficients.
+Use the exact golden entry header in those obligations. Declare native helpers at module scope with literal c/p type signatures. Restrict statements, control flow and indices to the active construction contract, including expressions with literal conditions.
+Only names registered in public_constants are prebound DSL values. Model constant IDs label logical tensors; resolve their disclosed bindings or public coefficient pages before using them. Keep Plain vectors, loaded scalar coefficients, whole-Expr storage and ciphertext slots distinct.
+Return the actual computed outputs. Do not replace a missing producer with a zero feature, an identity activation, a guessed weight alias, or a partial head accompanied by a claim that the whole graph was evaluated.
+Do not emit explicit bootstrap, rescale, modswitch, level or scale manipulation, and do not choose refresh locations.
+The separately frozen external compiler configuration owns legal rescale, modswitch, bootstrap insertion and ciphertext state.
+Complete understanding and implementation choices before answering. No compiler, execution, numerical feedback or post-output repair is available in delivery mode.
+Keep the model, reference, input domain, application requirements, tolerances and security parameters unchanged.
+No tools, network, filesystem operations, key access or intermediate decrypt/reencrypt are available to the DSL.
+"""
+
+
+def system_prompt(request):
+    from compiler_configuration import COMPILER_MANAGED_CONFIGURATION
+    if request.get('compiler_configuration',{}).get('name')!=COMPILER_MANAGED_CONFIGURATION:
+        return SYSTEM
+    from compiler_managed_output_planning import render
+    return COMPILER_MANAGED_SYSTEM+'\n'+render(request)
+
 
 
 
@@ -229,7 +251,7 @@ class DeepSeekProvider:
         check(type(feedback_history) is list and len(feedback_history) == len(self._responses), "history_mismatch")
         history = [public_feedback(item) for item in feedback_history]
         check(history[:len(self._feedback)] == self._feedback, "prior_feedback_changed")
-        messages = [dict(role="system", content=SYSTEM), dict(role="user", content=canonical(request).decode())]
+        messages = [dict(role="system", content=system_prompt(request)), dict(role="user", content=canonical(request).decode())]
         for answer, feedback in zip(self._responses, history):
             messages.extend([dict(role="assistant", content=answer),
                              dict(role="user", content=canonical({"feedback": feedback}).decode())])
@@ -352,9 +374,9 @@ class HTTPSTransport:
                 check(type(message) is dict and set(message) == {"role", "content"}
                       and type(message["content"]) is str and len(message["content"].encode()) <= MAX_BYTES,
                       "unapproved_message_fields")
-            check(messages[0] == dict(role="system", content=SYSTEM) and messages[1]["role"] == "user",
-                  "unapproved_instructions")
+            check(messages[1]["role"] == "user", "unapproved_instructions")
             request = public_request(strict_json(messages[1]["content"]))
+            check(messages[0] == dict(role="system", content=system_prompt(request)), "unapproved_instructions")
             check(request["request_id"] == self._approved, "request_not_covered_by_approval")
             for i in range(2, len(messages), 2):
                 check(messages[i]["role"] == "assistant" and messages[i+1]["role"] == "user", "unapproved_roles")

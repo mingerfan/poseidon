@@ -210,6 +210,43 @@ class IdentityTests(unittest.TestCase):
         with patch.object(identity, "current_identity_manifest", return_value=expected):
             self.assertIs(expected, application_backend.PoseidonBackend().identity_manifest())
 
+    def migrate(self):
+        native = self.root / "DSL/DSL_agent/scripts/baseline"
+        native.parent.mkdir(parents=True)
+        self.base.rename(native)
+        self.base.symlink_to("../DSL/DSL_agent/scripts/baseline")
+        self.base = native
+
+    def test_migrated_assets_and_compatibility_references_bind_real_sources(self):
+        self.migrate()
+        (self.base / "candidate_trace.py").write_text('CONFIG = "scripts/baseline/profile.json"\n')
+        (self.base / "profile.json").write_text('{}')
+        before = self.manifest()
+        name = "DSL/DSL_agent/scripts/baseline/profile.json"
+        self.assertIn(name, before["compilation"]["configuration_files"])
+        self.assertNotIn("scripts/baseline/profile.json", before["compilation"]["configuration_files"])
+        (self.base / "profile.json").write_text('{"changed":true}')
+        self.assertFalse(identity.compatible(before, self.manifest()))
+
+    def test_migrated_sources_still_reject_symlinks(self):
+        self.migrate()
+        outside = self.root / "outside.py"
+        outside.write_text("VALUE=1")
+        (self.base / "candidate_trace.py").unlink()
+        (self.base / "candidate_trace.py").symlink_to(outside)
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            self.manifest()
+
+    def test_redirected_compatibility_launcher_is_rejected(self):
+        self.migrate()
+        (self.base / "candidate_trace.py").write_text('LAUNCHER = "scripts/agent_component.py"\n')
+        (self.base.parent / "agent_component.py").write_text("VALUE=1")
+        redirected = self.root / "redirected.py"
+        redirected.write_text("VALUE=2")
+        (self.root / "scripts/agent_component.py").symlink_to(redirected)
+        with self.assertRaisesRegex(ValueError, "compatibility entry changed"):
+            self.manifest()
+
 
 if __name__ == "__main__":
     unittest.main()

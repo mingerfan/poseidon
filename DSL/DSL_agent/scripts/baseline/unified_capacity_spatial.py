@@ -50,13 +50,121 @@ def contributions(node,shapes,constants):
                         src=flatten((batch,first+cin,*position),source)
                         yield 0,src,dst,factor
 
+def _plain_spatial_metadata(node,shapes):
+    pending=[node,shapes];seen=set();work=0
+    while pending:
+        item=pending.pop();kind=type(item)
+        if (kind is str or kind is int or kind is float or kind is bool
+                or kind is type(None)):
+            continue
+        if kind is not dict and kind is not list and kind is not tuple:
+            return False
+        if id(item) in seen:
+            continue
+        seen.add(id(item));work+=len(item)
+        if work>65536:
+            return False
+        if kind is dict:
+            if any(type(key) is not str for key in item):
+                return False
+            pending.extend(item.values())
+        else:
+            pending.extend(item)
+    return True
+
+def _plain_conv_terms(node,shapes,constants,period,g):
+    """Per-call numeric preparation only; all admission/route checks remain.
+
+    Exact builtin metadata/weights, positive geometry and bounded numeric work
+    exclude callbacks and avoid reading weights for empty/invalid geometry.
+    Unknown/custom/invalid data use the original lazy contribution generator.
+    No validation result, request or weight matrix is cached across calls.
+    """
+    if (type(node) is not dict or type(shapes) is not dict
+            or type(constants) is not dict or len(constants)>4096
+            or type(period) is not int or not 1<=period<=16384
+            or not _plain_spatial_metadata(node,shapes)
+            or any(type(key) is not str for key in constants)):
+        return None
+    if (type(node.get("op")) is not str or node["op"] not in ("conv1d","conv2d")
+            or type(node.get("inputs")) is not list or len(node["inputs"]) not in (2,3)
+            or any(type(ref) is not str for ref in node["inputs"])):
+        return None
+    rank=g["rank"];source,target=g["source"],g["target"];kernel=g["kernel"]
+    if (len(source)!=rank+2 or len(target)!=rank+2 or len(kernel)!=rank
+            or any(type(n) is not int or n<=0 for n in (*source,*target,*kernel))
+            or any(len(g[name])!=rank for name in ("stride","padding","dilation"))
+            or any(type(n) is not int or n<=0 for name in ("stride","dilation") for n in g[name])
+            or any(type(n) is not int or n<0 for n in g["padding"])
+            or type(g["groups"]) is not int or g["groups"]<=0
+            or source[1]%g["groups"] or target[1]%g["groups"]):
+        return None
+    channels=source[1]//g["groups"]
+    expected=(target[1],channels,*kernel)
+    if math.prod(expected)>131072 or node["inputs"][1] not in constants:
+        return None
+    pending=[(constants[node["inputs"][1]],0)];flat=[]
+    while pending:
+        value,axis=pending.pop()
+        if axis==len(expected):
+            if type(value) is not int and type(value) is not float:
+                return None
+            try:factor=float(value)
+            except OverflowError:return None
+            if not math.isfinite(factor):
+                return None
+            flat.append(factor)
+        else:
+            if type(value) is not list or len(value)!=expected[axis]:
+                return None
+            pending.extend((child,axis+1)for child in reversed(value))
+    values=iter(flat);offsets=tuple(itertools.product(*(range(n)for n in kernel)))
+    terms=[]
+    for channel in range(target[1]):
+        rows=[]
+        for cin in range(channels):
+            entries=[]
+            for offset in offsets:
+                factor=next(values)
+                if factor!=0.:
+                    entries.append((offset,factor))
+            rows.append(tuple(entries))
+        terms.append(tuple(rows))
+    return tuple(terms)
+
+def _sparse_contributions(node,shapes,terms):
+    # Preserve the original second geometry pass and per-window divisor check.
+    g=geometry(node,shapes);source,target=g["source"],g["target"]
+    local_channels=source[1]//g["groups"]
+    for batch in range(target[0]):
+        for channel in range(target[1]):
+            first=(channel//(target[1]//g["groups"]))*local_channels
+            for location in itertools.product(*(range(n) for n in target[2:])):
+                dst=flatten((batch,channel,*location),target)
+                valid=[]
+                for offset in itertools.product(*(range(n) for n in g["kernel"])):
+                    position=tuple(o*s-p+k*d for o,s,p,k,d in
+                        zip(location,g["stride"],g["padding"],offset,g["dilation"]))
+                    if all(0<=c<n for c,n in zip(position,source[2:])):valid.append((offset,position))
+                divisor=math.prod(g["kernel"])
+                require(divisor>0,"Capacity pool window has no valid elements")
+                positions=dict(valid)
+                for cin,entries in enumerate(terms[channel]):
+                    for offset,factor in entries:
+                        position=positions.get(offset)
+                        if position is None:continue
+                        src=flatten((batch,first+cin,*position),source)
+                        yield 0,src,dst,factor
+
 def vectors(node,shapes,constants,period):
     g=geometry(node,shapes)
     channels=g["source"][1]//g["groups"] if g["conv"] else 1
     require(math.prod(g["target"])*math.prod(g["kernel"])*channels<=MAX_ROUTE_GROUPS*period,
             "Capacity spatial map work budget")
+    terms=_plain_conv_terms(node,shapes,constants,period,g)
+    routes=contributions(node,shapes,constants) if terms is None else _sparse_contributions(node,shapes,terms)
     result={}
-    for operand,src,dst,factor in contributions(node,shapes,constants):
+    for operand,src,dst,factor in routes:
         key=(operand,src//period,dst//period,(src-dst)%period)
         if key not in result:
             require(len(result)<MAX_ROUTE_GROUPS,"Capacity spatial route budget")

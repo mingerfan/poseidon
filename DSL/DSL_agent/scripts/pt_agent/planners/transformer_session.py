@@ -170,15 +170,20 @@ def load_state(path):
     return state
 
 
-def session_step(ctx,directory,*,client=None,reply=None,max_iters=8,tune_rule=None,tune_client=None,label=None,confirm_rule='c1'):
-    """One process owns one step. The outer orchestrator reads only its status."""
+def session_step(ctx,directory,*,client=None,reply=None,max_iters=8,tune_rule=None,tune_client=None,label=None,confirm_rule='c1',
+                 tune_policy='new_best',stale_limit=2,focus_retune=False,numeric_lock=False):
+    """One process owns one step. The outer orchestrator reads only its status.
+
+    `tune_policy`, `stale_limit`, `focus_retune` and `numeric_lock` apply when the session starts; a resumed state
+    keeps its own."""
     from .agent import new_agent_state,agent_step,agent_result
     directory=Path(directory);directory.mkdir(parents=True,exist_ok=True)
     path=directory/'SESSION.json'
     from .transformer_tuner import validate_tune_rule
     tune_rule=validate_tune_rule(ctx.prompt_version,tune_rule)
     state=load_state(path) if path.exists() else new_agent_state(ctx,max_iters=max_iters,
-        engine_profile='tensor',tune_rule=tune_rule,confirm_rule=confirm_rule)
+        engine_profile='tensor',tune_rule=tune_rule,confirm_rule=confirm_rule,tune_policy=tune_policy,
+        stale_limit=stale_limit,focus_retune=focus_retune,numeric_lock=numeric_lock)
     from .confirm import confirmation_rule
     if state.get('confirm_rule', 'c1') != confirmation_rule(ctx, confirm_rule):
         raise ValueError('Session confirm_rule changed')

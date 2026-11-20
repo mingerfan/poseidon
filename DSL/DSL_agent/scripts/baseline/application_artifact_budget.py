@@ -31,6 +31,19 @@ def limits(value):
             0 <= value["min_free_disk_bytes"] <= 2**63-1, "Free disk reserve")
     return copy.deepcopy(value)
 
+
+def effective_limits(value, ceiling=None):
+    """Intersect request limits with a trusted deployment's retained-byte cap."""
+    requested = None if value is None else limits(value)
+    if ceiling is None:
+        return requested
+    fixed = limits(ceiling)
+    if requested is None:
+        return fixed
+    return dict(format=FORMAT,
+                max_new_artifact_bytes=min(requested["max_new_artifact_bytes"], fixed["max_new_artifact_bytes"]),
+                min_free_disk_bytes=max(requested["min_free_disk_bytes"], fixed["min_free_disk_bytes"]))
+
 def failure(reason):
     mapping = {
         "artifact_bytes": ("budget_exhausted", "resource", "artifact_budget_exhausted"),

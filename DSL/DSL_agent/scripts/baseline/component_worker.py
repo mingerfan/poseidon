@@ -36,7 +36,7 @@ def dispatch(job):
     checked = validate_program(job["candidate"], job["request"])
     if job["action"] == "validate" or checked["status"] == "rejected":
         return checked
-    from component_backend import qualify
+    from shared_worker import qualify
     return qualify(job["request"], job["candidate"])
 
 def main(argv=None):

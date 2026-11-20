@@ -85,6 +85,15 @@ def print_outcome(report):
 
 
 def inside(args, *, expected_request=None, report_sink=None, validation_level="numerical"):
+    # The approved loader owns discovery; only the transport retains the value.
+    api_key = os.environ.pop("DEEPSEEK_API_KEY", "") if args.deepseek else ""
+    from candidate_shared import run
+    return run(args, _inside, expected_request=expected_request, report_sink=report_sink,
+               validation_level=validation_level, api_key=api_key)
+
+
+def _inside(args, *, expected_request=None, report_sink=None, validation_level="numerical",
+            shared, api_key=""):
     require(validation_level in ("numerical", "compiled"), "Validation level")
     from application_diagnostics import LEGACY, PRECISE, POLICIES
     feedback_policy=getattr(args,"feedback_policy",LEGACY)
@@ -94,7 +103,6 @@ def inside(args, *, expected_request=None, report_sink=None, validation_level="n
             "Poseidon CPU configuration required; CUDA awaits hardware qualification and SEAL execution is retired")
     # Remove the credential from the process environment before native children.
     # Only the HTTPS transport retains it and passes it to its worker over stdin.
-    api_key = os.environ.pop("DEEPSEEK_API_KEY", "") if args.deepseek else ""
     import numpy as np
     import torch
     import poseidon_candidate_sandbox as sandbox
@@ -107,6 +115,7 @@ def inside(args, *, expected_request=None, report_sink=None, validation_level="n
     require_python_packages(torch, np)
     result = Path(tempfile.mkdtemp(prefix="agent-deepseek-" if args.deepseek else "candidate-replay-",
                                    dir=WORK / "results"))
+    shared.observe(result)
     print(f"Candidate evidence: {result}", flush=True)
     report = dict(validation_level=validation_level, feedback_policy=feedback_policy, platform_identity=identity(), status="running", provider="deepseek_api" if args.deepseek else "scripted_replay", agent_calls=0,
                   backend="poseidon_cpu", poseidon_gpu_validated=False, attempts=[],
@@ -322,7 +331,9 @@ def inside(args, *, expected_request=None, report_sink=None, validation_level="n
             dump(result / "report.json", report)
             print(f"attempt {index}: {feedback['status']} / {feedback['layer']}", flush=True)
 
-        report["loop"] = run_feedback_loop(request, provider, evaluate, record, max_repairs=args.max_repairs, control=feedback_control)
+        evaluate = shared.evaluator(evaluate)
+        with shared.provider(provider):
+            report["loop"] = run_feedback_loop(request, provider, evaluate, record, max_repairs=args.max_repairs, control=feedback_control)
         report["status"] = report["loop"]["status"]
         if args.self_test and not unified:
             observed = [a.get("failure_layer", "complete") for a in report["attempts"]]
@@ -340,7 +351,6 @@ def inside(args, *, expected_request=None, report_sink=None, validation_level="n
         update_provider_report(report, provider)
         report["frozen_hashes"] = frozen
         dump(result / "report.json", report)
-        print_outcome(report)
         # Native execution is finished and durable numerical evidence is saved.
         # No intermediate/random key material needs to survive the experiment.
         if (result / 'private-keys').exists():
@@ -359,7 +369,7 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inside", action="store_true")
     parser.add_argument("--case", type=Path, required=True)
-    parser.add_argument('--compiler-configuration', choices=tuple(CONFIGURATIONS), default='poseidon-cpu-eva-w45-v1',
+    parser.add_argument('--compiler-configuration', choices=tuple(CONFIGURATIONS), default=None,
                         help='Poseidon execution configuration; historical SEAL requests are read-only')
     parser.add_argument('--extended-arithmetic', action='store_true',
                         help='Versioned reverse arithmetic, rebinding and augmented assignment grammar')
@@ -413,7 +423,7 @@ def parse_args(argv=None):
                         help="Share physical outputs only for identical graph value references")
     parser.add_argument("--public-weights",choices=("descriptors-v1","descriptors-math-roles-v2","descriptors-compact-origins-v3"),
                         help="Opt-in hash-bound public weight descriptors; full values stay in the trusted worker")
-    parser.add_argument("--unified-guidance",choices=("explicit-v1","explicit-v2","explicit-v3","explicit-v4","explicit-v5","explicit-v6","explicit-v7","explicit-v8","explicit-v9","explicit-v10","explicit-v11","explicit-v12","explicit-v13","explicit-v14","explicit-v15","explicit-v16","explicit-v17","explicit-v18","explicit-v19","explicit-v20","explicit-v21"),
+    parser.add_argument("--unified-guidance",choices=("syntax-explicit-v1","explicit-v1","explicit-v2","explicit-v3","explicit-v4","explicit-v5","explicit-v6","explicit-v7","explicit-v8","explicit-v9","explicit-v10","explicit-v11","explicit-v12","explicit-v13","explicit-v14","explicit-v15","explicit-v16","explicit-v17","explicit-v18","explicit-v19","explicit-v20","explicit-v21","native-explicit-v1"),
                         help="Opt-in public ABI guidance and precise static feedback; omission preserves old request hashes")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--prepare", action="store_true", help="Export public request without inference/execution")
@@ -427,13 +437,18 @@ def parse_args(argv=None):
     parser.add_argument("--feedback-policy", choices=("legacy-v1","precise-v2"), default="legacy-v1",
                         help="Opt-in precise diagnostics and repeat stopping; request bytes remain unchanged")
     parser.add_argument("--max-tokens", type=int)
-    parser.add_argument("--reasoning-effort", choices=("low", "high", "max"), default="high")
+    parser.add_argument("--reasoning-effort", choices=("none", "low", "high", "max"), default="high")
     parser.add_argument("--api-timeout", type=float, default=1200)
     parser.add_argument('--provider-retries', type=int, choices=range(4), default=0)
     parser.add_argument('--stream', action='store_true')
     parser.add_argument('--loopback-proxy-port', type=int, default=0,
                         help='Explicit DeepSeek CONNECT via 127.0.0.1; zero keeps the default route')
     args = parser.parse_args(argv)
+    if args.compiler_configuration is None:
+        from poseidon_runtime_paths import selected_sdk
+        from compiler_configuration import CURRENT_CONFIGURATION
+        args.compiler_configuration = (CURRENT_CONFIGURATION if selected_sdk() is not None
+                                       else "poseidon-cpu-eva-w45-v1")
     from deepseek_provider import MODEL_OUTPUT_LIMITS
     if args.max_tokens is None:
         args.max_tokens = MODEL_OUTPUT_LIMITS[args.model]

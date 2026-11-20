@@ -4,6 +4,7 @@ No model loading, generation, compilation, execution, filesystem evidence
 loading or automatic retries. Trusted host code supplies pinned receipts and
 declares input partitions before collecting results.
 """
+from top1_accuracy_metrics import TOP1_KINDS, limit_field, threshold
 import functools,hashlib,math,re
 from fractions import Fraction
 from pathlib import Path
@@ -90,7 +91,7 @@ def reference_anchor(receipt,*,expected_binding):
 def part_criterion(profile,start,count,model):
     if profile is None:return None
     value=dict(profile)
-    if value["kind"]=="top1_accuracy_drop":value["labels"]=profile["labels"][start:start+count]
+    if value["kind"] in TOP1_KINDS:value["labels"]=profile["labels"][start:start+count]
     return criterion(value,model,count)
 @public("dataset_declaration_rejected")
 def declare_dataset(request,batches,*,anchor,application_criterion=None):
@@ -275,7 +276,7 @@ class DatasetNumericalAssessment:
                 type(report.get("failure"))is dict and report["failure"].get("code")==failure),
             "dataset_receipt_rejected")
         counts=None
-        if profile is not None and profile["kind"]=="top1_accuracy_drop":
+        if profile is not None and profile["kind"] in TOP1_KINDS:
             labels=[np.asarray(x,dtype=np.int64) for x in profile["labels"]]
             scores=[]
             for group in (shaped(original,model),shaped(approximate,model),shaped(actual,model)):
@@ -330,13 +331,14 @@ class DatasetNumericalAssessment:
                 scores={key:sum(p["top1_counts"][key] for p in evaluated) for key in (
                     "original_correct","approximate_correct","encrypted_correct","labels_compared")}
                 n=scores["labels_compared"]
-                exact_drop=Fraction(scores["original_correct"]-scores["encrypted_correct"],n)
-                drop=float(exact_drop)
-                passed=exact_drop<=Fraction(str(profile["max_drop"]))
+                checked=threshold(profile["kind"],scores["original_correct"],scores["encrypted_correct"],n,
+                                  profile[limit_field(profile["kind"])])
+                passed=checked["passed"]
                 metric=dict(kind=profile["kind"],status="passed" if passed else "failed",passed=passed,
                     original_top1=scores["original_correct"]/n,approximate_top1=scores["approximate_correct"]/n,
-                    encrypted_top1=scores["encrypted_correct"]/n,accuracy_drop=drop,max_drop=profile["max_drop"],
+                    encrypted_top1=scores["encrypted_correct"]/n,
                     counts=scores,scope=self.policy)
+                metric.update(checked)
         passed=complete and numeric is True and metric["passed"]is not False
         status="passed" if passed else "incomplete" if not complete else "validation_failed"
         # All original per-part outcomes remain visible even when the declared

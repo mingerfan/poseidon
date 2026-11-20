@@ -15,7 +15,7 @@ from application_admission import (LEGACY as ADMISSION_LEGACY, STRUCTURED as ADM
                                    AdmissionRejected, diagnostic as admission_diagnostic,
                                    policy as check_admission_policy, precheck as admission_precheck)
 from application_artifact_budget import (ArtifactMonitor, OperationalStopped,
-                                        limits as operational_budget)
+                                        limits as operational_budget, effective_limits)
 TERMINAL={"succeeded","unsupported","budget_exhausted","validation_failed","service_error","cancelled","timed_out"}
 class Stopped(BaseException):
     def __init__(self,status):self.status=status
@@ -34,22 +34,23 @@ class PackageBindingRejected(ValueError):
 from application_model_source import ModelSourceIntake
 
 class Application(ModelSourceIntake):
-    def __init__(self,store,backend):
+    def __init__(self,store,backend,*,global_operational_limits=None):
         self.store=Path(store).resolve();self.store.mkdir(parents=True,exist_ok=True,mode=0o700)
         self.backend=backend
+        self.global_operational_limits=(None if global_operational_limits is None else
+                                        operational_budget(global_operational_limits))
     def _dir(self,task):
         require(type(task) is str and re.fullmatch("[0-9a-f]{32}",task),"Task identifier")
         p=self.store/task
         require(not p.is_symlink(),"Indirect task directory")
         return p
+    def _task_created(self,path):
+        """Optional trusted storage observation; no effect in the base adapter."""
+        pass
     def _write(self,path,value):
-        # Ordered source provenance is data with a declaration sequence.
-        # Preserve it in task transport; canonical request/binding hashes and
-        # all status, budget and ledger serialization retain their old policy.
-        if path.name == "task.json" and type(value) is dict and "model_provenance" in value:
-            from provenance_json_transport import task_selected,task_bytes
-            raw=(task_bytes(value) if task_selected(value) else
-                 json.dumps(value,sort_keys=False,separators=(",",":"),allow_nan=False).encode())
+        if path.name == "task.json":
+            from unified_request_storage import application_task_bytes as task_bytes
+            raw=task_bytes(value)
         else:
             raw=canonical(value)
         tmp=path.with_name(path.name+"."+uuid.uuid4().hex+".tmp")
@@ -74,8 +75,8 @@ class Application(ModelSourceIntake):
             value=json.loads(path.read_text(),object_pairs_hook=pairs,
                              parse_constant=nonfinite,parse_float=real)
             if path.name=="task.json":
-                from provenance_json_transport import unpack
-                value=unpack(value,purpose="application-task")
+                from unified_request_storage import application_unpack_task as unpack_task
+                value=unpack_task(value)
             return value
         except (RecursionError,MemoryError) as error:
             raise ValueError("Task JSON resource limit") from error
@@ -144,6 +145,7 @@ class Application(ModelSourceIntake):
                feedback_policy=PRECISE,model_provenance=None,admission_policy=ADMISSION_LEGACY,
                operational_limits=None):
         task=uuid.uuid4().hex;p=self._dir(task);p.mkdir(mode=0o700)
+        self._task_created(p)
         state=dict(task_id=task,status="queued",phase="input_check",validation_level=validation_level,
                    generations=0,http_attempts=0,ledger=[],failure=None,package=None,acceptance=None,generation=None)
         self._write(p/"state.json",state)
@@ -157,6 +159,7 @@ class Application(ModelSourceIntake):
                 try:operational_limits=operational_budget(operational_limits)
                 except (ValueError,TypeError,KeyError):
                     raise AdmissionRejected("operational_limits",location="operational_limits") from None
+            operational_limits=effective_limits(operational_limits,self.global_operational_limits)
             require(feedback_policy in POLICIES,"Feedback policy")
             b=budget(requested_limits)
             q,context=prepare(model,backend,validation_level,options)
@@ -194,10 +197,9 @@ class Application(ModelSourceIntake):
         if operational_limits is not None:
             payload["operational_limits"]=operational_limits
         payload["binding"]=digest(payload)
-        from provenance_json_transport import task_selected,task_bytes
+        from unified_request_storage import application_task_bytes as task_bytes
         try:
-            too_large=(len(task_bytes(payload))>4*1024**2 if task_selected(payload) else
-                       len(canonical(payload))>4*1024**2)
+            too_large=len(task_bytes(payload))>4*1024**2
         except (ValueError,TypeError,RecursionError):too_large=True
         if too_large:
             state.update(status="unsupported",phase="complete",
@@ -258,6 +260,11 @@ class Application(ModelSourceIntake):
         return s
     def execute(self,task,samples,*,operational_limits=None,sample_format="named"):
         """Package execution; an explicit resource budget applies to this call."""
+        try:
+            operational_limits=effective_limits(operational_limits,self.global_operational_limits)
+        except (ValueError,TypeError,KeyError):
+            return dict(status="unsupported",failure=admission_diagnostic("operational_limits",
+                        location="operational_limits"),agent_calls=0,compiler_calls=0,encrypted_execution=False)
         if operational_limits is None:
             if sample_format=="named":return self._execute(task,samples)
             return self._execute(task,samples,sample_format=sample_format)
@@ -397,7 +404,10 @@ class Application(ModelSourceIntake):
                 self._write(p/"state.json",state);return self.status(task)
             state.update(status="running",phase="preflight");self._write(p/"state.json",state)
             try:
-                control=Controller(self,p,state,b,policy=policy,operational_limits=meta.get("operational_limits"))
+                if self.global_operational_limits is not None and "operational_limits" not in meta:
+                    ArtifactMonitor(self,p,self.global_operational_limits,initialize=True).check(force=True)
+                control=Controller(self,p,state,b,policy=policy,operational_limits=effective_limits(
+                    meta.get("operational_limits"),self.global_operational_limits))
             except OperationalStopped as stop:
                 state.update(status=stop.status,phase="complete",failure=stop.public_failure)
                 self._write(p/"state.json",state);return self.status(task)
@@ -414,6 +424,9 @@ class Application(ModelSourceIntake):
                 alarm=signal.setitimer(signal.ITIMER_REAL,.1,.1)
                 control.check()
                 require(self._identity_matches(meta),"Backend changed")
+                request_check=getattr(self.backend,"check_request",None)
+                if callable(request_check):request_check(meta["request"],level)
+                control.check()
                 # Reuse is explicit in the result and always rechecks package integrity.
                 for other in sorted(self.store.glob("*/state.json")):
                     control.check()
