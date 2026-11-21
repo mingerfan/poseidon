@@ -57,6 +57,39 @@ __global__ void ntt_stage(Word *values, const Word *moduli, const Operand *roots
     values[second] = difference;
 }
 
+// Two forward stages on four independent values; the operation order is unchanged.
+__global__ void ntt_forward_pair(Word *values, const Word *moduli, const Operand *roots,
+                                 std::size_t limbs, std::size_t degree, std::size_t groups,
+                                 std::size_t gap, std::size_t first_limb)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t quarter = degree / 4;
+    if (tid >= limbs * quarter) return;
+    const std::size_t limb = tid / quarter, butterfly = tid % quarter;
+    const std::size_t k = gap / 2, group = butterfly / k;
+    const std::size_t base = limb * degree + group * (2 * gap) + butterfly % k;
+    const Word q = moduli[first_limb + limb];
+    const Operand r0 = roots[(first_limb + limb) * degree + groups + group];
+    const Operand r1 = roots[(first_limb + limb) * degree + 2 * groups + 2 * group];
+    const Operand r2 = roots[(first_limb + limb) * degree + 2 * groups + 2 * group + 1];
+    Word a = values[base], b = values[base + k];
+    const Word c = multiply(values[base + gap], r0, q);
+    const Word d = multiply(values[base + gap + k], r0, q);
+    Word x0 = a + c, x1 = b + d;
+    if (x0 >= q) x0 -= q;
+    if (x1 >= q) x1 -= q;
+    const Word x2 = a >= c ? a - c : a + q - c;
+    const Word x3 = b >= d ? b - d : b + q - d;
+    const Word y1 = multiply(x1, r1, q), y3 = multiply(x3, r2, q);
+    Word s0 = x0 + y1, s1 = x2 + y3;
+    if (s0 >= q) s0 -= q;
+    if (s1 >= q) s1 -= q;
+    values[base] = s0;
+    values[base + k] = x0 >= y1 ? x0 - y1 : x0 + q - y1;
+    values[base + gap] = s1;
+    values[base + gap + k] = x2 >= y3 ? x2 - y3 : x2 + q - y3;
+}
+
 // Fuse butterfly stages that stay inside one aligned tile.
 template <bool Inverse, int Tile>
 __global__ void ntt_tile(Word *values, const Word *moduli, const Operand *roots,
@@ -230,6 +263,15 @@ void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
         for (std::size_t groups = 1, gap = degree_ / 2; gap; groups *= 2, gap /= 2)
         {
             if (fused && gap <= tile_size / 2) break;
+            if (fused && gap > tile_size && std::getenv("POSEIDON_WIDE_NTT_PAIR"))
+            {
+                const int pair_blocks = static_cast<int>((limbs * (degree_ / 4) + threads - 1) / threads);
+                ntt_forward_pair<<<pair_blocks, threads, 0, stream>>>(values.data(), moduli_.data(),
+                    forward_roots_.data(), limbs, degree_, groups, gap, first_limb);
+                gpu_check_cuda(cudaGetLastError(), "GpuWideNtt forward paired stages");
+                groups *= 2; gap /= 2;
+                continue;
+            }
             ntt_stage<false><<<blocks, threads, 0, stream>>>(
                 values.data(), moduli_.data(), forward_roots_.data(),
                 nullptr, limbs, degree_, groups, gap, first_limb);
