@@ -90,6 +90,44 @@ __global__ void ntt_forward_pair(Word *values, const Word *moduli, const Operand
     values[base + gap + k] = x2 >= y3 ? x2 - y3 : x2 + q - y3;
 }
 
+__global__ void ntt_inverse_pair(Word *values, const Word *moduli, const Operand *roots,
+                                 const Operand *inverse_degrees, std::size_t limbs,
+                                 std::size_t degree, std::size_t groups, std::size_t gap,
+                                 std::size_t first_limb)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t quarter = degree / 4;
+    if (tid >= limbs * quarter) return;
+    const std::size_t limb = tid / quarter, butterfly = tid % quarter;
+    const std::size_t group = butterfly / gap;
+    const std::size_t base = limb * degree + group * 4 * gap + butterfly % gap;
+    const Word q = moduli[first_limb + limb];
+    const std::size_t roots_base = (first_limb + limb) * degree;
+    const Operand r0 = roots[roots_base + degree - 2 * groups + 1 + 2 * group];
+    const Operand r1 = roots[roots_base + degree - 2 * groups + 2 + 2 * group];
+    const Operand r2 = roots[roots_base + degree - groups + 1 + group];
+    const Word a = values[base], b = values[base + gap];
+    const Word c = values[base + 2 * gap], d = values[base + 3 * gap];
+    Word x0 = a + b, x2 = c + d;
+    if (x0 >= q) x0 -= q;
+    if (x2 >= q) x2 -= q;
+    const Word x1 = multiply(a >= b ? a - b : a + q - b, r0, q);
+    const Word x3 = multiply(c >= d ? c - d : c + q - d, r1, q);
+    Word s0 = x0 + x2, s1 = x1 + x3;
+    if (s0 >= q) s0 -= q;
+    if (s1 >= q) s1 -= q;
+    Word d0 = multiply(x0 >= x2 ? x0 - x2 : x0 + q - x2, r2, q);
+    Word d1 = multiply(x1 >= x3 ? x1 - x3 : x1 + q - x3, r2, q);
+    if (groups == 2)
+    {
+        const Operand inv = inverse_degrees[first_limb + limb];
+        s0 = multiply(s0, inv, q); s1 = multiply(s1, inv, q);
+        d0 = multiply(d0, inv, q); d1 = multiply(d1, inv, q);
+    }
+    values[base] = s0; values[base + gap] = s1;
+    values[base + 2 * gap] = d0; values[base + 3 * gap] = d1;
+}
+
 // Fuse butterfly stages that stay inside one aligned tile.
 template <bool Inverse, int Tile>
 __global__ void ntt_tile(Word *values, const Word *moduli, const Operand *roots,
@@ -252,6 +290,15 @@ void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
         for (std::size_t groups = degree_ / 2, gap = 1; groups; groups /= 2, gap *= 2)
         {
             if (fused && gap <= tile_size / 2) continue;
+            if (groups >= 2 && std::getenv("POSEIDON_WIDE_INTT_PAIR"))
+            {
+                const int pair_blocks = static_cast<int>((limbs * (degree_ / 4) + threads - 1) / threads);
+                ntt_inverse_pair<<<pair_blocks, threads, 0, stream>>>(values.data(), moduli_.data(),
+                    inverse_roots_.data(), inverse_degrees_.data(), limbs, degree_, groups, gap, first_limb);
+                gpu_check_cuda(cudaGetLastError(), "GpuWideNtt inverse paired stages");
+                groups /= 2; gap *= 2;
+                continue;
+            }
             ntt_stage<true><<<blocks, threads, 0, stream>>>(
                 values.data(), moduli_.data(), inverse_roots_.data(),
                 inverse_degrees_.data(), limbs, degree_, groups, gap, first_limb);
