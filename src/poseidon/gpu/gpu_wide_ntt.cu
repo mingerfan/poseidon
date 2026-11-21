@@ -90,6 +90,45 @@ __global__ void ntt_forward_pair(Word *values, const Word *moduli, const Operand
     values[base + gap + k] = x2 >= y3 ? x2 - y3 : x2 + q - y3;
 }
 
+// Three forward stages, preserving the original butterfly order.
+__global__ void ntt_forward_triple(Word *values, const Word *moduli, const Operand *roots,
+                                   std::size_t limbs, std::size_t degree, std::size_t groups,
+                                   std::size_t gap, std::size_t first_limb)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t eighth = degree / 8;
+    if (tid >= limbs * eighth) return;
+    const std::size_t limb = tid / eighth, butterfly = tid % eighth;
+    const std::size_t k = gap / 4, group = butterfly / k;
+    const std::size_t base = limb * degree + group * (2 * gap) + butterfly % k;
+    const Word q = moduli[first_limb + limb];
+    Word x[8];
+    #pragma unroll
+    for (int j = 0; j < 8; ++j) x[j] = values[base + j * k];
+    #pragma unroll
+    for (int stage = 0; stage < 3; ++stage)
+    {
+        const int width = 8 >> stage, half = width / 2;
+        #pragma unroll
+        for (int block = 0; block < (1 << stage); ++block)
+        {
+            const Operand root = roots[(first_limb + limb) * degree +
+                (groups << stage) + (group << stage) + block];
+            #pragma unroll
+            for (int j = 0; j < half; ++j)
+            {
+                const int left = block * width + j, right = left + half;
+                const Word a = x[left], b = multiply(x[right], root, q);
+                Word sum = a + b;
+                x[left] = sum >= q ? sum - q : sum;
+                x[right] = a >= b ? a - b : a + q - b;
+            }
+        }
+    }
+    #pragma unroll
+    for (int j = 0; j < 8; ++j) values[base + j * k] = x[j];
+}
+
 __global__ void ntt_inverse_pair(Word *values, const Word *moduli, const Operand *roots,
                                  const Operand *inverse_degrees, std::size_t limbs,
                                  std::size_t degree, std::size_t groups, std::size_t gap,
@@ -310,6 +349,15 @@ void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
         for (std::size_t groups = 1, gap = degree_ / 2; gap; groups *= 2, gap /= 2)
         {
             if (fused && gap <= tile_size / 2) break;
+            if (fused && gap > 2 * tile_size && std::getenv("POSEIDON_WIDE_NTT_TRIPLE"))
+            {
+                const int triple_blocks = static_cast<int>((limbs * (degree_ / 8) + threads - 1) / threads);
+                ntt_forward_triple<<<triple_blocks, threads, 0, stream>>>(values.data(), moduli_.data(),
+                    forward_roots_.data(), limbs, degree_, groups, gap, first_limb);
+                gpu_check_cuda(cudaGetLastError(), "GpuWideNtt forward triple stages");
+                groups *= 4; gap /= 4;
+                continue;
+            }
             if (fused && gap > tile_size && std::getenv("POSEIDON_WIDE_NTT_PAIR"))
             {
                 const int pair_blocks = static_cast<int>((limbs * (degree_ / 4) + threads - 1) / threads);
