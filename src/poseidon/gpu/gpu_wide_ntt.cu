@@ -1,4 +1,5 @@
 #include "poseidon/gpu/gpu_wide_ntt.h"
+#include "poseidon/gpu/gpu_wide_bv.h"
 #include <cstdlib>
 
 namespace poseidon::gpu
@@ -16,6 +17,22 @@ __device__ Word multiply(Word value, Operand constant, Word modulus)
     const Word remainder = value * constant.operand - quotient * modulus;
     return remainder >= modulus ? remainder - modulus : remainder;
 }
+
+__device__ Word multiply_key(Word a, Word b, Word modulus, Word ratio_low, Word ratio_high)
+{
+    const Word low = a * b;
+    const Word high = __umul64hi(a, b);
+    const Word carry = __umul64hi(low, ratio_low);
+    const Word cross_low = low * ratio_high;
+    const Word cross_high = high * ratio_low;
+    const Word middle = cross_low + carry;
+    const Word quotient = high * ratio_high + __umul64hi(low, ratio_high) +
+                          __umul64hi(high, ratio_low) + (middle < cross_low) +
+                          (middle + cross_high < middle);
+    const Word remainder = low - quotient * modulus;
+    return remainder >= modulus ? remainder - modulus : remainder;
+}
+
 
 template <bool Inverse>
 __global__ void ntt_stage(Word *values, const Word *moduli, const Operand *roots,
@@ -207,9 +224,11 @@ __global__ void ntt_inverse_triple(Word *values, const Word *moduli, const Opera
 }
 
 // Fuse butterfly stages that stay inside one aligned tile.
-template <bool Inverse, int Tile>
+template <bool Inverse, int Tile, bool KeyAccumulate = false>
 __global__ void ntt_tile(Word *values, const Word *moduli, const Operand *roots,
-                             std::size_t degree, std::size_t first_limb)
+                             std::size_t degree, std::size_t first_limb,
+                             const Word *key, Word *accumulator,
+                             const detail::WideBvLimb *limbs, std::size_t words)
 {
     __shared__ Word tile[Tile];
     const std::size_t tiles_per_limb = degree / Tile;
@@ -240,8 +259,30 @@ __global__ void ntt_tile(Word *values, const Word *moduli, const Operand *roots,
         tile[first + gap] = difference;
         __syncthreads();
     }
-    values[base + t] = tile[t];
-    values[base + t + Tile / 2] = tile[t + Tile / 2];
+    if constexpr (KeyAccumulate)
+    {
+        const auto table = limbs[limb];
+        #pragma unroll
+        for (int j = 0; j < 2; ++j)
+        {
+            const std::size_t local = t + j * (Tile / 2), i = base + local;
+            const Word value = tile[local];
+            #pragma unroll
+            for (int component = 0; component < 2; ++component)
+            {
+                const std::size_t at = i + component * words;
+                const Word product = multiply_key(value, key[at], table.modulus,
+                                                  table.ratio_low, table.ratio_high);
+                const Word sum = accumulator[at] + product;
+                accumulator[at] = sum >= table.modulus ? sum - table.modulus : sum;
+            }
+        }
+    }
+    else
+    {
+        values[base + t] = tile[t];
+        values[base + t + Tile / 2] = tile[t + Tile / 2];
+    }
 }
 
 __global__ void extend_q0(Word *out, const Word *in, const Word *moduli,
@@ -303,6 +344,17 @@ void GpuWideNtt::forward(DeviceVector<Word> &values) const
     transform(values, false, 0);
 }
 
+void GpuWideNtt::forward_accumulate(DeviceVector<Word> &values, const Word *key,
+                                    DeviceVector<Word> &sum,
+                                    const DeviceVector<detail::WideBvLimb> &limbs) const
+{
+    if (!key || values.size() != degree_ * limb_count_ || sum.size() != 2 * values.size() ||
+        limbs.size() != limb_count_ || values.device_id() != device_id_ ||
+        sum.device_id() != device_id_ || limbs.device_id() != device_id_)
+        throw std::invalid_argument("GpuWideNtt: invalid fused accumulate buffers");
+    transform(values, false, 0, key, sum.data(), limbs.data());
+}
+
 void GpuWideNtt::inverse(DeviceVector<Word> &values) const
 {
     if (values.size() != degree_ * limb_count_)
@@ -339,7 +391,8 @@ void GpuWideNtt::extend_centered_q0(const DeviceVector<Word> &source,
 }
 
 void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
-                           std::size_t first_limb) const
+                           std::size_t first_limb, const Word *key, Word *sum,
+                           const detail::WideBvLimb *key_limbs) const
 {
     const std::size_t limbs = values.size() / degree_;
     if (first_limb >= limb_count_ || limbs > limb_count_ - first_limb ||
@@ -356,13 +409,15 @@ void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
         throw std::invalid_argument("POSEIDON_WIDE_NTT_TILE must be 512, 1024, or 2048");
     const std::size_t tile_size = std::stoul(tile_text);
     const bool fused = degree_ > tile_size && std::getenv("POSEIDON_WIDE_NTT_FUSED") != nullptr;
+    if (key && (inverse || !fused || tile_size != 1024 || !sum || !key_limbs))
+        throw std::invalid_argument("GpuWideNtt: fused accumulation requires forward tile 1024");
     if (inverse)
     {
         if (fused)
         {
-            if (tile_size == 512) ntt_tile<true, 512><<<limbs * (degree_ / 512), 256, 0, stream>>>(values.data(), moduli_.data(), inverse_roots_.data(), degree_, first_limb);
-            else if (tile_size == 1024) ntt_tile<true, 1024><<<limbs * (degree_ / 1024), 512, 0, stream>>>(values.data(), moduli_.data(), inverse_roots_.data(), degree_, first_limb);
-            else ntt_tile<true, 2048><<<limbs * (degree_ / 2048), 1024, 0, stream>>>(values.data(), moduli_.data(), inverse_roots_.data(), degree_, first_limb);
+            if (tile_size == 512) ntt_tile<true, 512><<<limbs * (degree_ / 512), 256, 0, stream>>>(values.data(), moduli_.data(), inverse_roots_.data(), degree_, first_limb, nullptr, nullptr, nullptr, 0);
+            else if (tile_size == 1024) ntt_tile<true, 1024><<<limbs * (degree_ / 1024), 512, 0, stream>>>(values.data(), moduli_.data(), inverse_roots_.data(), degree_, first_limb, nullptr, nullptr, nullptr, 0);
+            else ntt_tile<true, 2048><<<limbs * (degree_ / 2048), 1024, 0, stream>>>(values.data(), moduli_.data(), inverse_roots_.data(), degree_, first_limb, nullptr, nullptr, nullptr, 0);
             gpu_check_cuda(cudaGetLastError(), "GpuWideNtt inverse tile");
         }
         for (std::size_t groups = degree_ / 2, gap = 1; groups; groups /= 2, gap *= 2)
@@ -422,9 +477,12 @@ void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
         }
         if (fused)
         {
-            if (tile_size == 512) ntt_tile<false, 512><<<limbs * (degree_ / 512), 256, 0, stream>>>(values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb);
-            else if (tile_size == 1024) ntt_tile<false, 1024><<<limbs * (degree_ / 1024), 512, 0, stream>>>(values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb);
-            else ntt_tile<false, 2048><<<limbs * (degree_ / 2048), 1024, 0, stream>>>(values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb);
+            if (key) ntt_tile<false, 1024, true><<<limbs * (degree_ / 1024), 512, 0, stream>>>(
+                values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb,
+                key, sum, key_limbs, values.size());
+            else if (tile_size == 512) ntt_tile<false, 512><<<limbs * (degree_ / 512), 256, 0, stream>>>(values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb, nullptr, nullptr, nullptr, 0);
+            else if (tile_size == 1024) ntt_tile<false, 1024><<<limbs * (degree_ / 1024), 512, 0, stream>>>(values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb, nullptr, nullptr, nullptr, 0);
+            else ntt_tile<false, 2048><<<limbs * (degree_ / 2048), 1024, 0, stream>>>(values.data(), moduli_.data(), forward_roots_.data(), degree_, first_limb, nullptr, nullptr, nullptr, 0);
             gpu_check_cuda(cudaGetLastError(), "GpuWideNtt forward tile");
         }
     }

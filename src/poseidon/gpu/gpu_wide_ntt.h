@@ -7,6 +7,7 @@
 
 namespace poseidon::gpu
 {
+namespace detail { struct WideBvLimb; }
 
 // In-place negacyclic NTT on contiguous [RNS limb][coefficient] storage.
 // Forward output uses Poseidon's bit-reversed order. Inputs must be reduced.
@@ -17,6 +18,9 @@ public:
 
     void forward(DeviceVector<std::uint64_t> &values) const;
     void inverse(DeviceVector<std::uint64_t> &values) const;
+    void forward_accumulate(DeviceVector<std::uint64_t> &values,
+                            const std::uint64_t *key, DeviceVector<std::uint64_t> &sum,
+                            const DeviceVector<detail::WideBvLimb> &limbs) const;
 
     // Transform a buffer containing consecutive limbs of the plan.
     void forward_prefix(DeviceVector<std::uint64_t> &values) const;
@@ -28,7 +32,9 @@ public:
                             DeviceVector<std::uint64_t> &destination) const;
 
 private:
-    void transform(DeviceVector<std::uint64_t> &values, bool inverse, std::size_t first_limb) const;
+    void transform(DeviceVector<std::uint64_t> &values, bool inverse, std::size_t first_limb,
+                   const std::uint64_t *key = nullptr, std::uint64_t *sum = nullptr,
+                   const detail::WideBvLimb *limbs = nullptr) const;
 
     int device_id_;
     std::size_t degree_;

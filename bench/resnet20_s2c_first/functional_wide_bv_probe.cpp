@@ -1,4 +1,5 @@
 #include "poseidon/encryptor.h"
+#include "poseidon/gpu/gpu_wide_bv.h"
 #include "poseidon/factory/poseidon_factory.h"
 #include "functional_wide_probe_keys.h"
 #include "poseidon/keygenerator.h"
@@ -15,6 +16,59 @@ using namespace poseidon::gpu;
 namespace
 {
 using Word = std::uint64_t;
+
+void check_fused_qp(const ParametersLiteral &literal)
+{
+    auto moduli = literal.q();
+    moduli.insert(moduli.end(), literal.p().begin(), literal.p().end());
+    const std::size_t degree = literal.degree(), words = degree * moduli.size();
+    std::vector<poseidon::gpu::detail::WideBvLimb> tables;
+    for (const auto &q : moduli)
+    {
+        const auto ratio = q.const_ratio();
+        tables.push_back({q.value(), ratio[0], ratio[1], 0, 0});
+    }
+    std::vector<Word> input(words), key(2 * words), initial(2 * words), expected(2 * words), transformed(words), actual(2 * words);
+    std::uint64_t state = 0x9e3779b97f4a7c15ULL;
+    auto next = [&]() { state ^= state << 13; state ^= state >> 7; state ^= state << 17; return state; };
+    for (std::size_t i = 0; i < words; ++i)
+    {
+        const auto q = moduli[i / degree].value();
+        input[i] = next() % q;
+        for (int c = 0; c < 2; ++c)
+        {
+            key[c * words + i] = next() % q;
+            initial[c * words + i] = next() % q;
+        }
+        if (i % degree == 0) { input[i] = q - 1; key[i] = q - 1; initial[i] = q - 1; }
+    }
+    GpuWideNtt ntt(literal.log_n(), moduli, 0);
+    DeviceVector<Word> values(words, 0), keys(2 * words, 0), sums(2 * words, 0);
+    DeviceVector<poseidon::gpu::detail::WideBvLimb> limbs(tables.size(), 0);
+    values.copy_from_host(input.data(), words);
+    ntt.forward(values);
+    values.copy_to_host(transformed.data(), words);
+    expected = initial;
+    for (std::size_t i = 0; i < words; ++i)
+    {
+        const auto q = moduli[i / degree].value();
+        for (int c = 0; c < 2; ++c)
+        {
+            const auto at = c * words + i;
+            const Word product = static_cast<unsigned __int128>(transformed[i]) * key[at] % q;
+            const Word sum = expected[at] + product;
+            expected[at] = sum >= q ? sum - q : sum;
+        }
+    }
+    values.copy_from_host(input.data(), words);
+    keys.copy_from_host(key.data(), key.size());
+    sums.copy_from_host(initial.data(), initial.size());
+    limbs.copy_from_host(tables.data(), tables.size());
+    ntt.forward_accumulate(values, keys.data(), sums, limbs);
+    sums.copy_to_host(actual.data(), actual.size());
+    if (actual != expected) throw std::runtime_error("fused NTT keyacc Q/P residue mismatch");
+    std::cout << "fused NTT keyacc Q/P limbs=" << moduli.size() << " residues=" << actual.size() << " match=EXACT\n";
+}
 
 class BvProbe
 {
@@ -41,6 +95,18 @@ public:
 
         std::vector<Word> actual(output_.size());
         output_.copy_to_host(actual.data(), actual.size());
+        ::unsetenv("POSEIDON_WIDE_NTT_KEYACC");
+        if (galois_element) bv_.apply_galois(input_, key, galois_element, output_);
+        else bv_.square_relinearize(input_, key, output_);
+        std::vector<Word> unfused(output_.size());
+        output_.copy_to_host(unfused.data(), unfused.size());
+        ::setenv("POSEIDON_WIDE_NTT_KEYACC", "1", 1);
+        if (galois_element) bv_.apply_galois(input_, key, galois_element, output_);
+        else bv_.square_relinearize(input_, key, output_);
+        std::vector<Word> fused(output_.size());
+        output_.copy_to_host(fused.data(), fused.size());
+        if (unfused != fused) throw std::runtime_error("NTT key accumulation residue mismatch");
+        std::cout << operation << " fused keyacc Q=" << q_.size() << " residues=" << fused.size() << " match=EXACT\n";
         for (std::size_t component = 0; component < 2; ++component)
         {
             for (std::size_t i = 0; i < words_; ++i)
@@ -143,6 +209,7 @@ try
     ParametersLiteral literal(CKKS, 15, 14, 40, 32, 0, Modulus(0),
                               {}, {}, sec_level_type::none);
     literal.set_log_modulus(q_bits, {51});
+    check_fused_qp(literal);
     {
         std::vector<Modulus> primes = literal.q();
         primes.insert(primes.end(), literal.p().begin(), literal.p().end());

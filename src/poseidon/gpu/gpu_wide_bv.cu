@@ -579,11 +579,18 @@ void GpuWideBv::switch_and_add(const Word *source, const Word *add_c0, const Wor
             digit_.data(), source_coefficients_.data() + digit * degree_,
             limb_tables_.data(), degree_, q_count_, std::getenv("POSEIDON_WIDE_FAST_LIFT") != nullptr);
         gpu_check_cuda(cudaGetLastError(), "GpuWideBv ModUp digit");
-        qp_ntt_.forward(digit_);
-        accumulate<<<blocks(qp_words), threads, 0, stream>>>(
-            sum_.data(), digit_.data(), key + digit * 2 * qp_words,
-            limb_tables_.data(), degree_, qp_words);
-        gpu_check_cuda(cudaGetLastError(), "GpuWideBv key multiply-accumulate");
+        const char *tile = std::getenv("POSEIDON_WIDE_NTT_TILE");
+        if (std::getenv("POSEIDON_WIDE_NTT_KEYACC") &&
+            std::getenv("POSEIDON_WIDE_NTT_FUSED") && tile && std::string(tile) == "1024" && degree_ > 1024)
+            qp_ntt_.forward_accumulate(digit_, key + digit * 2 * qp_words, sum_, limb_tables_);
+        else
+        {
+            qp_ntt_.forward(digit_);
+            accumulate<<<blocks(qp_words), threads, 0, stream>>>(
+                sum_.data(), digit_.data(), key + digit * 2 * qp_words,
+                limb_tables_.data(), degree_, qp_words);
+            gpu_check_cuda(cudaGetLastError(), "GpuWideBv key multiply-accumulate");
+        }
     }
 
     for (std::size_t component = 0; component < 2; ++component)
