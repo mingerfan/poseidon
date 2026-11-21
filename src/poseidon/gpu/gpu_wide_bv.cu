@@ -101,6 +101,29 @@ __global__ void accumulate(Word *sum, const Word *digit, const Word *key,
     }
 }
 
+// Accumulate cached hoisted digits in the same modular order as accumulate().
+__global__ void accumulate_cached_digits(Word *sum, const Word *digits, const Word *keys,
+                                          const Limb *limbs, std::size_t degree,
+                                          std::size_t qp_words, std::size_t q_count)
+{
+    const std::size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= qp_words) return;
+    const Limb limb = limbs[i / degree];
+    Word total0 = 0, total1 = 0;
+    for (std::size_t digit = 0; digit < q_count; ++digit)
+    {
+        const Word value = digits[digit * qp_words + i];
+        const Word *key = keys + digit * 2 * qp_words;
+        const Word p0 = multiply(value, key[i], limb.modulus, limb.ratio_low, limb.ratio_high);
+        const Word p1 = multiply(value, key[qp_words + i], limb.modulus, limb.ratio_low, limb.ratio_high);
+        total0 += p0; total1 += p1;
+        if (total0 >= limb.modulus) total0 -= limb.modulus;
+        if (total1 >= limb.modulus) total1 -= limb.modulus;
+    }
+    sum[i] = total0;
+    sum[qp_words + i] = total1;
+}
+
 __global__ void lift_centered(Word *destination, const Word *source, const Limb *limbs,
                                  std::size_t degree, std::size_t q_count, bool fast)
 {
@@ -397,6 +420,15 @@ void GpuWideBv::apply_galois_digits(const DeviceVector<Word> &input,
     std::uint32_t inverse = element;
     for (int i = 0; i < 5; ++i) inverse *= 2u - element * inverse;
     inverse &= static_cast<std::uint32_t>(2 * degree_ - 1);
+    const bool fused = key_pretransformed && std::getenv("POSEIDON_WIDE_FUSED_ACCUMULATE");
+    if (fused)
+    {
+        accumulate_cached_digits<<<blocks(qp_words), threads, 0, stream>>>(
+            sum_.data(), hoisted_digits_.data(), key.data(), limb_tables_.data(), degree_, qp_words, q_count_);
+        gpu_check_cuda(cudaGetLastError(), "fused hoisted key multiply");
+    }
+    else
+    {
     gpu_check_cuda(cudaMemsetAsync(sum_.data(), 0, sum_.size() * sizeof(Word), stream),
                    "clear hoisted accumulator");
     for (std::size_t digit = 0; digit < q_count_; ++digit)
@@ -412,6 +444,7 @@ void GpuWideBv::apply_galois_digits(const DeviceVector<Word> &input,
             sum_.data(), hoisted_digits_.data() + digit * qp_words,
             active_key, limb_tables_.data(), degree_, qp_words);
         gpu_check_cuda(cudaGetLastError(), "hoisted rotated key multiply");
+    }
     }
     for (std::size_t component = 0; component < 2; ++component)
     {
