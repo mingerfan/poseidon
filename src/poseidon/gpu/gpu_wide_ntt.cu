@@ -167,6 +167,45 @@ __global__ void ntt_inverse_pair(Word *values, const Word *moduli, const Operand
     values[base + 2 * gap] = d0; values[base + 3 * gap] = d1;
 }
 
+// Three inverse stages on eight values before the final normalization.
+__global__ void ntt_inverse_triple(Word *values, const Word *moduli, const Operand *roots,
+                                   std::size_t limbs, std::size_t degree, std::size_t groups, std::size_t gap,
+                                   std::size_t first_limb)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t eighth = degree / 8;
+    if (tid >= limbs * eighth) return;
+    const std::size_t limb = tid / eighth, butterfly = tid % eighth;
+    const std::size_t group = butterfly / gap;
+    const std::size_t base = limb * degree + group * (8 * gap) + butterfly % gap;
+    const Word q = moduli[first_limb + limb];
+    Word x[8];
+    #pragma unroll
+    for (int j = 0; j < 8; ++j) x[j] = values[base + j * gap];
+    #pragma unroll
+    for (int stage = 0; stage < 3; ++stage)
+    {
+        const int width = 2 << stage, half = width / 2;
+        #pragma unroll
+        for (int block = 0; block < (4 >> stage); ++block)
+        {
+            const Operand root = roots[(first_limb + limb) * degree + degree -
+                2 * (groups >> stage) + 1 + group * (4 >> stage) + block];
+            #pragma unroll
+            for (int j = 0; j < half; ++j)
+            {
+                const int left = block * width + j, right = left + half;
+                const Word a = x[left], b = x[right];
+                const Word sum = a + b;
+                x[left] = sum >= q ? sum - q : sum;
+                x[right] = multiply(a >= b ? a - b : a + q - b, root, q);
+            }
+        }
+    }
+    #pragma unroll
+    for (int j = 0; j < 8; ++j) values[base + j * gap] = x[j];
+}
+
 // Fuse butterfly stages that stay inside one aligned tile.
 template <bool Inverse, int Tile>
 __global__ void ntt_tile(Word *values, const Word *moduli, const Operand *roots,
@@ -329,6 +368,15 @@ void GpuWideNtt::transform(DeviceVector<Word> &values, bool inverse,
         for (std::size_t groups = degree_ / 2, gap = 1; groups; groups /= 2, gap *= 2)
         {
             if (fused && gap <= tile_size / 2) continue;
+            if (groups >= 8 && std::getenv("POSEIDON_WIDE_INTT_TRIPLE"))
+            {
+                const int triple_blocks = static_cast<int>((limbs * (degree_ / 8) + threads - 1) / threads);
+                ntt_inverse_triple<<<triple_blocks, threads, 0, stream>>>(values.data(), moduli_.data(),
+                    inverse_roots_.data(), limbs, degree_, groups, gap, first_limb);
+                gpu_check_cuda(cudaGetLastError(), "GpuWideNtt inverse triple stages");
+                groups /= 4; gap *= 4;
+                continue;
+            }
             if (groups >= 2 && std::getenv("POSEIDON_WIDE_INTT_PAIR"))
             {
                 const int pair_blocks = static_cast<int>((limbs * (degree_ / 4) + threads - 1) / threads);
