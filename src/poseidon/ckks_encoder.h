@@ -8,6 +8,7 @@
 #include "util/fft.h"
 #include <cmath>
 #include <complex>
+#include <cstdint>
 #include <limits>
 #include <type_traits>
 #include <vector>
@@ -374,6 +375,102 @@ public:
     POSEIDON_NODISCARD inline std::size_t slot_count() const noexcept { return slots_; }
 
     POSEIDON_NODISCARD inline const PoseidonContext &context() const { return context_; }
+
+    // Encode complex slots to raw [limb][coeff] uint32_t RNS coefficients (no NTT).
+    // Thread-safe for distinct destination buffers; returns false if coefficients exceed
+    // 64 bits or any modulus exceeds uint32_t so callers can fall back to encode().
+    bool encode_rns_coefficients_u32(
+        const std::complex<double> *values,
+        std::size_t values_size,
+        parms_id_type parms_id,
+        double scale,
+        std::uint32_t *destination_u32,
+        std::size_t expected_q_count) const
+    {
+        auto params = this->context_.parameters_literal();
+        auto crt_context = context_.crt_context();
+        if (params == nullptr || crt_context == nullptr ||
+            (!values && values_size > 0) || values_size > slots_ ||
+            destination_u32 == nullptr)
+        {
+            return false;
+        }
+        const auto context_data_ptr = crt_context->get_context_data(parms_id);
+        if (!context_data_ptr)
+        {
+            return false;
+        }
+        const auto &context_data = *context_data_ptr;
+        const auto &parms = context_data.parms();
+        const auto &coeff_modulus = context_data.coeff_modulus();
+        const std::size_t coeff_modulus_size = coeff_modulus.size();
+        const std::size_t coeff_count = parms.degree();
+        const std::size_t n = util::mul_safe(slots_, std::size_t(2));
+        if (coeff_modulus_size != expected_q_count || coeff_count != n)
+        {
+            return false;
+        }
+        for (std::size_t j = 0; j < coeff_modulus_size; ++j)
+        {
+            if (coeff_modulus[j].value() > std::numeric_limits<std::uint32_t>::max())
+            {
+                return false;
+            }
+        }
+        if (scale <= 0 ||
+            (static_cast<int>(std::log2(scale)) + 1 >= context_data.total_coeff_modulus_bit_count()))
+        {
+            return false;
+        }
+
+        std::vector<std::complex<double>> conj_values(n, std::complex<double>{0.0, 0.0});
+        for (std::size_t i = 0; i < values_size; ++i)
+        {
+            conj_values[matrix_reps_index_map_[i]] = values[i];
+            conj_values[matrix_reps_index_map_[i + slots_]] = std::conj(values[i]);
+        }
+        double fix = scale / static_cast<double>(n);
+        fft_handler_.transform_from_rev(
+            conj_values.data(), util::get_power_of_two(n), inv_root_powers_.get(), &fix);
+
+        double max_coeff = 0.0;
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            max_coeff = std::max(max_coeff, std::fabs(conj_values[i].real()));
+        }
+        const int max_coeff_bit_count =
+            static_cast<int>(std::ceil(std::log2(std::max(max_coeff, 1.0)))) + 1;
+        if (max_coeff_bit_count >= context_data.total_coeff_modulus_bit_count() ||
+            max_coeff_bit_count > 64)
+        {
+            return false;
+        }
+
+        for (std::size_t i = 0; i < n; ++i)
+        {
+            const double coeffd = std::round(conj_values[i].real());
+            const bool is_negative = std::signbit(coeffd);
+            const std::uint64_t coeffu = static_cast<std::uint64_t>(std::fabs(coeffd));
+            if (is_negative)
+            {
+                for (std::size_t j = 0; j < coeff_modulus_size; ++j)
+                {
+                    destination_u32[i + j * coeff_count] = static_cast<std::uint32_t>(
+                        util::negate_uint_mod(
+                            util::barrett_reduce_64(coeffu, coeff_modulus[j]), coeff_modulus[j]));
+                }
+            }
+            else
+            {
+                for (std::size_t j = 0; j < coeff_modulus_size; ++j)
+                {
+                    destination_u32[i + j * coeff_count] = static_cast<std::uint32_t>(
+                        util::barrett_reduce_64(coeffu, coeff_modulus[j]));
+                }
+            }
+        }
+        return true;
+    }
 
 private:
     template <typename T, typename = std::enable_if_t<

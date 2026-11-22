@@ -1999,6 +1999,708 @@ void launch_square_two_component_ciphertext(
         "launch_square_two_component_ciphertext cross kernel launch");
 }
 
+namespace
+{
+__global__ void expand_periodic_plaintext_65536_kernel(
+    GpuWord *__restrict__ destination,
+    const GpuWord *__restrict__ compact_ntt,
+    std::size_t q_count)
+{
+    const std::size_t total4 = q_count * 16384ULL;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= total4)
+    {
+        return;
+    }
+    const std::size_t limb = tid >> 14;
+    const unsigned int j = static_cast<unsigned int>((tid >> 5) & 511U);
+    const unsigned int rev_j = __brev(j) >> 23;
+    const GpuWord val = compact_ntt[limb * 512ULL + rev_j];
+    reinterpret_cast<uint4 *>(destination)[tid] = make_uint4(val, val, val, val);
+}
+}  // namespace
+
+void launch_expand_periodic_plaintext(
+    GpuWord *destination,
+    const GpuWord *compact_ntt,
+    std::size_t q_count,
+    std::size_t degree,
+    int device_id)
+{
+    if (destination == nullptr || compact_ntt == nullptr)
+    {
+        throw std::invalid_argument("launch_expand_periodic_plaintext: null data pointer");
+    }
+    if (degree != 65536 || q_count == 0)
+    {
+        throw std::invalid_argument("launch_expand_periodic_plaintext: invalid shape");
+    }
+    gpu_check_cuda(cudaSetDevice(device_id), "launch_expand_periodic_plaintext cudaSetDevice");
+    constexpr int block_size = 256;
+    const std::size_t total4 = q_count * (degree >> 2);
+    const int grid_size = static_cast<int>((total4 + block_size - 1) / block_size);
+    expand_periodic_plaintext_65536_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
+        destination,
+        compact_ntt,
+        q_count);
+    gpu_check_cuda(cudaGetLastError(), "launch_expand_periodic_plaintext kernel launch");
+}
+
+namespace
+{
+
+__device__ __forceinline__ GpuWord add_mod_u32(
+    GpuWord a,
+    GpuWord b,
+    GpuWord modulus)
+{
+    const GpuWide sum = static_cast<GpuWide>(a) + static_cast<GpuWide>(b);
+    return static_cast<GpuWord>(sum >= modulus ? sum - modulus : sum);
+}
+
+__device__ __forceinline__ GpuWord sub_mod_u32(
+    GpuWord a,
+    GpuWord b,
+    GpuWord modulus)
+{
+    return a >= b
+        ? (a - b)
+        : static_cast<GpuWord>(static_cast<GpuWide>(a) + modulus - b);
+}
+
+__device__ __forceinline__ GpuWord mul_mod_u32(
+    GpuWord a,
+    GpuWord b,
+    GpuWord modulus,
+    GpuWide ratio)
+{
+    return barrett_reduce_u64_u32(
+        static_cast<GpuWide>(a) * static_cast<GpuWide>(b),
+        modulus,
+        ratio);
+}
+
+template <int FixedCount>
+__global__ void multiply_plain_ptrs_kernel(
+    MultiplyPlainPtrsArgs args,
+    int count,
+    const GpuWord *plain,
+    const GpuWord *q_primes,
+    const GpuWide *q_modulus_constants,
+    std::size_t coeff_count)
+{
+    const std::size_t coeff =
+        static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (coeff >= coeff_count)
+    {
+        return;
+    }
+    const std::size_t limb = blockIdx.y;
+    const std::size_t offset = limb * coeff_count + coeff;
+    const GpuWord mod = q_primes[limb];
+    const GpuWide ratio = q_modulus_constants[limb];
+    const GpuWord p = plain[offset];
+
+    constexpr int kLoopMax =
+        FixedCount > 0 ? FixedCount : static_cast<int>(kMaxElementwisePairPtrs);
+#pragma unroll
+    for (int i = 0; i < kLoopMax; ++i)
+    {
+        if (FixedCount == 0 && i >= count)
+        {
+            break;
+        }
+        args.dst[i][offset] = mul_mod_u32(args.src[i][offset], p, mod, ratio);
+    }
+}
+
+template <bool Subtract, int FixedCount>
+__global__ void add_or_sub_ptrs_kernel(
+    BinaryPolyPtrsArgs args,
+    int count,
+    const GpuWord *q_primes,
+    std::size_t coeff_count)
+{
+    const std::size_t coeff =
+        static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (coeff >= coeff_count)
+    {
+        return;
+    }
+    const std::size_t limb = blockIdx.y;
+    const std::size_t offset = limb * coeff_count + coeff;
+    const GpuWord mod = q_primes[limb];
+
+    constexpr int kLoopMax =
+        FixedCount > 0 ? FixedCount : static_cast<int>(kMaxElementwisePairPtrs);
+#pragma unroll
+    for (int i = 0; i < kLoopMax; ++i)
+    {
+        if (FixedCount == 0 && i >= count)
+        {
+            break;
+        }
+        const GpuWord l = args.lhs[i][offset];
+        const GpuWord r = args.rhs[i][offset];
+        args.dst[i][offset] =
+            Subtract ? sub_mod_u32(l, r, mod) : add_mod_u32(l, r, mod);
+    }
+}
+
+template <bool IsSquare>
+__global__ void multiply_batch_two_components_kernel(
+    MultiplyTwoComponentsBatchArgs args,
+    const GpuWord *q_primes,
+    const GpuWide *q_modulus_constants,
+    std::size_t coeff_count)
+{
+    const std::size_t coeff =
+        static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (coeff >= coeff_count)
+    {
+        return;
+    }
+    const std::size_t limb = blockIdx.y;
+    const std::size_t offset = limb * coeff_count + coeff;
+    const std::size_t lane = blockIdx.z;
+    const GpuWord *l0_ptr = args.lhs0[lane];
+    const GpuWord *l1_ptr = args.lhs1[lane];
+    GpuWord *d0_ptr = args.dst0[lane];
+    GpuWord *d1_ptr = args.dst1[lane];
+    GpuWord *d2_ptr = args.dst2[lane];
+
+    const GpuWord mod = q_primes[limb];
+    const GpuWide ratio = q_modulus_constants[limb];
+    const GpuWord a0 = l0_ptr[offset];
+    const GpuWord a1 = l1_ptr[offset];
+
+    if constexpr (IsSquare)
+    {
+        const GpuWord a01 = mul_mod_u32(a0, a1, mod, ratio);
+        d0_ptr[offset] = mul_mod_u32(a0, a0, mod, ratio);
+        d1_ptr[offset] = add_mod_u32(a01, a01, mod);
+        d2_ptr[offset] = mul_mod_u32(a1, a1, mod, ratio);
+    }
+    else
+    {
+        const GpuWord b0 = args.rhs0[lane][offset];
+        const GpuWord b1 = args.rhs1[lane][offset];
+        d0_ptr[offset] = mul_mod_u32(a0, b0, mod, ratio);
+        d1_ptr[offset] = add_mod_u32(
+            mul_mod_u32(a0, b1, mod, ratio),
+            mul_mod_u32(a1, b0, mod, ratio),
+            mod);
+        d2_ptr[offset] = mul_mod_u32(a1, b1, mod, ratio);
+    }
+}
+
+template <DoublePlainPairOp Op, bool HasLaneB>
+__global__ void double_sub_or_add_plain_pair_kernel(
+    GpuWord *dst_a0,
+    GpuWord *dst_a1,
+    const GpuWord *src_a0,
+    const GpuWord *src_a1,
+    GpuWord *dst_b0,
+    GpuWord *dst_b1,
+    const GpuWord *src_b0,
+    const GpuWord *src_b1,
+    const GpuWord *plain,
+    const GpuWord *corr_a0,
+    const GpuWord *corr_a1,
+    const GpuWord *corr_b0,
+    const GpuWord *corr_b1,
+    const GpuWord *q_primes,
+    const GpuWide *q_modulus_constants,
+    std::size_t coeff_count)
+{
+    const std::size_t coeff =
+        static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+    if (coeff >= coeff_count)
+    {
+        return;
+    }
+    const std::size_t limb = blockIdx.y;
+    const std::size_t offset = limb * coeff_count + coeff;
+    const GpuWord mod = q_primes[limb];
+    const GpuWord p = plain[offset];
+
+    const GpuWord a0 = src_a0[offset];
+    const GpuWord a1 = src_a1[offset];
+    const GpuWord two_a0 = add_mod_u32(a0, a0, mod);
+    const GpuWord two_a1 = add_mod_u32(a1, a1, mod);
+
+    if constexpr (Op == DoublePlainPairOp::SubCorr)
+    {
+        const GpuWide ratio = q_modulus_constants[limb];
+        dst_a0[offset] = sub_mod_u32(two_a0, mul_mod_u32(p, corr_a0[offset], mod, ratio), mod);
+        dst_a1[offset] = sub_mod_u32(two_a1, mul_mod_u32(p, corr_a1[offset], mod, ratio), mod);
+        if constexpr (HasLaneB)
+        {
+            const GpuWord b0 = src_b0[offset];
+            const GpuWord b1 = src_b1[offset];
+            const GpuWord two_b0 = add_mod_u32(b0, b0, mod);
+            const GpuWord two_b1 = add_mod_u32(b1, b1, mod);
+            dst_b0[offset] = sub_mod_u32(two_b0, mul_mod_u32(p, corr_b0[offset], mod, ratio), mod);
+            dst_b1[offset] = sub_mod_u32(two_b1, mul_mod_u32(p, corr_b1[offset], mod, ratio), mod);
+        }
+    }
+    else if constexpr (Op == DoublePlainPairOp::SubPlainC0)
+    {
+        dst_a0[offset] = sub_mod_u32(two_a0, p, mod);
+        dst_a1[offset] = two_a1;
+        if constexpr (HasLaneB)
+        {
+            const GpuWord b0 = src_b0[offset];
+            const GpuWord b1 = src_b1[offset];
+            dst_b0[offset] = sub_mod_u32(add_mod_u32(b0, b0, mod), p, mod);
+            dst_b1[offset] = add_mod_u32(b1, b1, mod);
+        }
+    }
+    else
+    {
+        dst_a0[offset] = add_mod_u32(two_a0, p, mod);
+        dst_a1[offset] = two_a1;
+        if constexpr (HasLaneB)
+        {
+            const GpuWord b0 = src_b0[offset];
+            const GpuWord b1 = src_b1[offset];
+            dst_b0[offset] = add_mod_u32(add_mod_u32(b0, b0, mod), p, mod);
+            dst_b1[offset] = add_mod_u32(b1, b1, mod);
+        }
+    }
+}
+
+template <DoublePlainPairOp Op>
+void launch_double_plain_op(
+    dim3 grid,
+    int block_size,
+    bool has_b,
+    const GpuPolyShardView &dst_a0,
+    const GpuPolyShardView &dst_a1,
+    const GpuConstPolyShardView &src_a0,
+    const GpuConstPolyShardView &src_a1,
+    const GpuPolyShardView *dst_b0,
+    const GpuPolyShardView *dst_b1,
+    const GpuConstPolyShardView *src_b0,
+    const GpuConstPolyShardView *src_b1,
+    const GpuConstPolyShardView &plain_shard,
+    const GpuConstPolyShardView *corr_a0,
+    const GpuConstPolyShardView *corr_a1,
+    const GpuConstPolyShardView *corr_b0,
+    const GpuConstPolyShardView *corr_b1,
+    const GpuWord *q_primes,
+    const GpuWide *q_consts)
+{
+    if (has_b)
+    {
+        double_sub_or_add_plain_pair_kernel<Op, true>
+            <<<grid, block_size, 0, gpu_execution_stream()>>>(
+                dst_a0.ptr, dst_a1.ptr, src_a0.ptr, src_a1.ptr,
+                dst_b0->ptr, dst_b1->ptr, src_b0->ptr, src_b1->ptr,
+                plain_shard.ptr,
+                corr_a0 ? corr_a0->ptr : nullptr,
+                corr_a1 ? corr_a1->ptr : nullptr,
+                corr_b0 ? corr_b0->ptr : nullptr,
+                corr_b1 ? corr_b1->ptr : nullptr,
+                q_primes, q_consts, dst_a0.coeff_count);
+    }
+    else
+    {
+        double_sub_or_add_plain_pair_kernel<Op, false>
+            <<<grid, block_size, 0, gpu_execution_stream()>>>(
+                dst_a0.ptr, dst_a1.ptr, src_a0.ptr, src_a1.ptr,
+                nullptr, nullptr, nullptr, nullptr,
+                plain_shard.ptr,
+                corr_a0 ? corr_a0->ptr : nullptr,
+                corr_a1 ? corr_a1->ptr : nullptr,
+                nullptr, nullptr,
+                q_primes, q_consts, dst_a0.coeff_count);
+    }
+}
+
+template <typename ShardA, typename ShardB>
+bool same_shard_placement_pair(const ShardA &a, const ShardB &b)
+{
+    return b.ptr != nullptr &&
+           b.device_id == a.device_id &&
+           b.limb_begin == a.limb_begin &&
+           b.limb_count == a.limb_count &&
+           b.coeff_begin == a.coeff_begin &&
+           b.coeff_count == a.coeff_count;
+}
+
+std::size_t checked_parameter_offset(
+    const char *name,
+    const GpuPolyShardView &ref,
+    const GpuParameterShard &parameter_shard,
+    bool need_constants)
+{
+    if (ref.ptr == nullptr ||
+        ref.limb_count == 0 ||
+        ref.coeff_count == 0 ||
+        parameter_shard.device_id != ref.device_id ||
+        ref.limb_begin < parameter_shard.limb_begin ||
+        parameter_shard.q_primes.data() == nullptr ||
+        (need_constants && parameter_shard.q_modulus_constants.data() == nullptr))
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shard or parameter placement");
+    }
+    const std::size_t offset = ref.limb_begin - parameter_shard.limb_begin;
+    if (offset + ref.limb_count > parameter_shard.q_primes.size() ||
+        (need_constants && offset + ref.limb_count > parameter_shard.q_modulus_constants.size()))
+    {
+        throw std::invalid_argument(std::string(name) + ": parameter range mismatch");
+    }
+    return offset;
+}
+
+}  // namespace
+
+void launch_multiply_plain_ptrs(
+    const MultiplyPlainPtrsArgs &args,
+    std::size_t count,
+    const GpuConstPolyShardView &plain_shard,
+    const GpuPolyShardView &reference_dst_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_multiply_plain_ptrs";
+    if (count == 0 || count > kMaxElementwisePairPtrs ||
+        reference_dst_shard.coeff_count > degree ||
+        !same_shard_placement_pair(reference_dst_shard, plain_shard))
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid batch count or plain shard");
+    }
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (args.dst[i] == nullptr || args.src[i] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null batch pointer");
+        }
+    }
+    const std::size_t offset =
+        checked_parameter_offset(name, reference_dst_shard, parameter_shard, true);
+    gpu_check_cuda(cudaSetDevice(reference_dst_shard.device_id), name);
+
+    constexpr int kBlockSize = 256;
+    const dim3 grid(
+        static_cast<unsigned int>((reference_dst_shard.coeff_count + kBlockSize - 1) / kBlockSize),
+        static_cast<unsigned int>(reference_dst_shard.limb_count));
+    const GpuWord *q_primes = parameter_shard.q_primes.data() + offset;
+    const GpuWide *q_consts = parameter_shard.q_modulus_constants.data() + offset;
+    if (count == 4)
+    {
+        multiply_plain_ptrs_kernel<4><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+            args, 4, plain_shard.ptr, q_primes, q_consts, reference_dst_shard.coeff_count);
+    }
+    else if (count == 6)
+    {
+        multiply_plain_ptrs_kernel<6><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+            args, 6, plain_shard.ptr, q_primes, q_consts, reference_dst_shard.coeff_count);
+    }
+    else if (count == 12)
+    {
+        multiply_plain_ptrs_kernel<12><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+            args, 12, plain_shard.ptr, q_primes, q_consts, reference_dst_shard.coeff_count);
+    }
+    else
+    {
+        multiply_plain_ptrs_kernel<0><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+            args, static_cast<int>(count), plain_shard.ptr, q_primes, q_consts, reference_dst_shard.coeff_count);
+    }
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_add_or_sub_ptrs(
+    const BinaryPolyPtrsArgs &args,
+    std::size_t count,
+    bool subtract,
+    const GpuPolyShardView &reference_dst_shard,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *name = "launch_add_or_sub_ptrs";
+    if (count == 0 || count > kMaxElementwisePairPtrs)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid batch count");
+    }
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (args.dst[i] == nullptr || args.lhs[i] == nullptr || args.rhs[i] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null batch pointer");
+        }
+    }
+    const std::size_t offset =
+        checked_parameter_offset(name, reference_dst_shard, parameter_shard, false);
+    gpu_check_cuda(cudaSetDevice(reference_dst_shard.device_id), name);
+
+    constexpr int kBlockSize = 256;
+    const dim3 grid(
+        static_cast<unsigned int>((reference_dst_shard.coeff_count + kBlockSize - 1) / kBlockSize),
+        static_cast<unsigned int>(reference_dst_shard.limb_count));
+    const GpuWord *q_primes = parameter_shard.q_primes.data() + offset;
+
+    if (!subtract)
+    {
+        if (count == 4)
+        {
+            add_or_sub_ptrs_kernel<false, 4><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 4, q_primes, reference_dst_shard.coeff_count);
+        }
+        else if (count == 6)
+        {
+            add_or_sub_ptrs_kernel<false, 6><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 6, q_primes, reference_dst_shard.coeff_count);
+        }
+        else if (count == 12)
+        {
+            add_or_sub_ptrs_kernel<false, 12><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 12, q_primes, reference_dst_shard.coeff_count);
+        }
+        else if (count == 18)
+        {
+            add_or_sub_ptrs_kernel<false, 18><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 18, q_primes, reference_dst_shard.coeff_count);
+        }
+        else
+        {
+            add_or_sub_ptrs_kernel<false, 0><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, static_cast<int>(count), q_primes, reference_dst_shard.coeff_count);
+        }
+    }
+    else
+    {
+        if (count == 4)
+        {
+            add_or_sub_ptrs_kernel<true, 4><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 4, q_primes, reference_dst_shard.coeff_count);
+        }
+        else if (count == 6)
+        {
+            add_or_sub_ptrs_kernel<true, 6><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 6, q_primes, reference_dst_shard.coeff_count);
+        }
+        else if (count == 12)
+        {
+            add_or_sub_ptrs_kernel<true, 12><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 12, q_primes, reference_dst_shard.coeff_count);
+        }
+        else if (count == 18)
+        {
+            add_or_sub_ptrs_kernel<true, 18><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, 18, q_primes, reference_dst_shard.coeff_count);
+        }
+        else
+        {
+            add_or_sub_ptrs_kernel<true, 0><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+                args, static_cast<int>(count), q_primes, reference_dst_shard.coeff_count);
+        }
+    }
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_multiply_batch_two_components(
+    const MultiplyTwoComponentsBatchArgs &args,
+    std::size_t count,
+    bool is_square,
+    const GpuPolyShardView &reference_dst_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_multiply_batch_two_components";
+    if (count == 0 || count > kMaxElementwiseCiphertextBatch ||
+        reference_dst_shard.coeff_count > degree)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid batch shape");
+    }
+    const std::size_t offset =
+        checked_parameter_offset(name, reference_dst_shard, parameter_shard, true);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (args.dst0[i] == nullptr || args.dst1[i] == nullptr || args.dst2[i] == nullptr ||
+            args.lhs0[i] == nullptr || args.lhs1[i] == nullptr ||
+            (!is_square && (args.rhs0[i] == nullptr || args.rhs1[i] == nullptr)))
+        {
+            throw std::invalid_argument(std::string(name) + ": null batch pointer");
+        }
+    }
+    gpu_check_cuda(cudaSetDevice(reference_dst_shard.device_id), name);
+    constexpr int kBlockSize = 256;
+    const dim3 grid(
+        static_cast<unsigned int>((reference_dst_shard.coeff_count + kBlockSize - 1) / kBlockSize),
+        static_cast<unsigned int>(reference_dst_shard.limb_count),
+        static_cast<unsigned int>(count));
+    const GpuWord *q_primes = parameter_shard.q_primes.data() + offset;
+    const GpuWide *q_consts = parameter_shard.q_modulus_constants.data() + offset;
+    if (is_square)
+    {
+        multiply_batch_two_components_kernel<true><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+            args, q_primes, q_consts, reference_dst_shard.coeff_count);
+    }
+    else
+    {
+        multiply_batch_two_components_kernel<false><<<grid, kBlockSize, 0, gpu_execution_stream()>>>(
+            args, q_primes, q_consts, reference_dst_shard.coeff_count);
+    }
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_multiply_pair_two_components(
+    const GpuPolyShardView &dst_a0,
+    const GpuPolyShardView &dst_a1,
+    const GpuPolyShardView &dst_a2,
+    const GpuConstPolyShardView &lhs_a0,
+    const GpuConstPolyShardView &lhs_a1,
+    const GpuConstPolyShardView &rhs_a0,
+    const GpuConstPolyShardView &rhs_a1,
+    const GpuPolyShardView *dst_b0,
+    const GpuPolyShardView *dst_b1,
+    const GpuPolyShardView *dst_b2,
+    const GpuConstPolyShardView *lhs_b0,
+    const GpuConstPolyShardView *lhs_b1,
+    const GpuConstPolyShardView *rhs_b0,
+    const GpuConstPolyShardView *rhs_b1,
+    bool is_square,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_multiply_pair_two_components";
+    if (dst_a0.coeff_count > degree ||
+        !same_shard_placement_pair(dst_a0, dst_a1) ||
+        !same_shard_placement_pair(dst_a0, dst_a2) ||
+        !same_shard_placement_pair(dst_a0, lhs_a0) ||
+        !same_shard_placement_pair(dst_a0, lhs_a1) ||
+        !same_shard_placement_pair(dst_a0, rhs_a0) ||
+        !same_shard_placement_pair(dst_a0, rhs_a1))
+    {
+        throw std::invalid_argument(std::string(name) + ": lane A placement mismatch");
+    }
+    const bool has_b = dst_b0 != nullptr;
+    if (has_b)
+    {
+        if (dst_b1 == nullptr || dst_b2 == nullptr ||
+            lhs_b0 == nullptr || lhs_b1 == nullptr ||
+            rhs_b0 == nullptr || rhs_b1 == nullptr ||
+            !same_shard_placement_pair(dst_a0, *dst_b0) ||
+            !same_shard_placement_pair(dst_a0, *dst_b1) ||
+            !same_shard_placement_pair(dst_a0, *dst_b2) ||
+            !same_shard_placement_pair(dst_a0, *lhs_b0) ||
+            !same_shard_placement_pair(dst_a0, *lhs_b1) ||
+            !same_shard_placement_pair(dst_a0, *rhs_b0) ||
+            !same_shard_placement_pair(dst_a0, *rhs_b1))
+        {
+            throw std::invalid_argument(std::string(name) + ": lane B placement mismatch");
+        }
+    }
+
+    MultiplyTwoComponentsBatchArgs args{};
+    args.dst0[0] = dst_a0.ptr;
+    args.dst1[0] = dst_a1.ptr;
+    args.dst2[0] = dst_a2.ptr;
+    args.lhs0[0] = lhs_a0.ptr;
+    args.lhs1[0] = lhs_a1.ptr;
+    args.rhs0[0] = rhs_a0.ptr;
+    args.rhs1[0] = rhs_a1.ptr;
+    if (has_b)
+    {
+        args.dst0[1] = dst_b0->ptr;
+        args.dst1[1] = dst_b1->ptr;
+        args.dst2[1] = dst_b2->ptr;
+        args.lhs0[1] = lhs_b0->ptr;
+        args.lhs1[1] = lhs_b1->ptr;
+        args.rhs0[1] = rhs_b0->ptr;
+        args.rhs1[1] = rhs_b1->ptr;
+    }
+    launch_multiply_batch_two_components(
+        args, has_b ? 2 : 1, is_square, dst_a0, parameter_shard, degree);
+}
+
+void launch_double_sub_or_add_plain_pair(
+    DoublePlainPairOp op,
+    const GpuPolyShardView &dst_a0,
+    const GpuPolyShardView &dst_a1,
+    const GpuConstPolyShardView &src_a0,
+    const GpuConstPolyShardView &src_a1,
+    const GpuPolyShardView *dst_b0,
+    const GpuPolyShardView *dst_b1,
+    const GpuConstPolyShardView *src_b0,
+    const GpuConstPolyShardView *src_b1,
+    const GpuConstPolyShardView &plain_shard,
+    const GpuConstPolyShardView *corr_a0,
+    const GpuConstPolyShardView *corr_a1,
+    const GpuConstPolyShardView *corr_b0,
+    const GpuConstPolyShardView *corr_b1,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *name = "launch_double_sub_or_add_plain_pair";
+    const bool need_consts = op == DoublePlainPairOp::SubCorr;
+    const std::size_t offset =
+        checked_parameter_offset(name, dst_a0, parameter_shard, need_consts);
+    if (!same_shard_placement_pair(dst_a0, dst_a1) ||
+        !same_shard_placement_pair(dst_a0, src_a0) ||
+        !same_shard_placement_pair(dst_a0, src_a1) ||
+        !same_shard_placement_pair(dst_a0, plain_shard))
+    {
+        throw std::invalid_argument(std::string(name) + ": lane A placement mismatch");
+    }
+    const bool has_b = dst_b0 != nullptr;
+    if (has_b)
+    {
+        if (dst_b1 == nullptr || src_b0 == nullptr || src_b1 == nullptr ||
+            !same_shard_placement_pair(dst_a0, *dst_b0) ||
+            !same_shard_placement_pair(dst_a0, *dst_b1) ||
+            !same_shard_placement_pair(dst_a0, *src_b0) ||
+            !same_shard_placement_pair(dst_a0, *src_b1))
+        {
+            throw std::invalid_argument(std::string(name) + ": lane B placement mismatch");
+        }
+    }
+    if (need_consts)
+    {
+        if (corr_a0 == nullptr || corr_a1 == nullptr ||
+            !same_shard_placement_pair(dst_a0, *corr_a0) ||
+            !same_shard_placement_pair(dst_a0, *corr_a1) ||
+            (has_b &&
+             (corr_b0 == nullptr || corr_b1 == nullptr ||
+              !same_shard_placement_pair(dst_a0, *corr_b0) ||
+              !same_shard_placement_pair(dst_a0, *corr_b1))))
+        {
+            throw std::invalid_argument(std::string(name) + ": correction placement mismatch");
+        }
+    }
+
+    gpu_check_cuda(cudaSetDevice(dst_a0.device_id), name);
+    constexpr int kBlockSize = 256;
+    const dim3 grid(
+        static_cast<unsigned int>((dst_a0.coeff_count + kBlockSize - 1) / kBlockSize),
+        static_cast<unsigned int>(dst_a0.limb_count));
+    const GpuWord *q_primes = parameter_shard.q_primes.data() + offset;
+    const GpuWide *q_consts = parameter_shard.q_modulus_constants.data() + offset;
+
+    switch (op)
+    {
+        case DoublePlainPairOp::SubCorr:
+            launch_double_plain_op<DoublePlainPairOp::SubCorr>(
+                grid, kBlockSize, has_b,
+                dst_a0, dst_a1, src_a0, src_a1, dst_b0, dst_b1, src_b0, src_b1,
+                plain_shard, corr_a0, corr_a1, corr_b0, corr_b1, q_primes, q_consts);
+            break;
+        case DoublePlainPairOp::SubPlainC0:
+            launch_double_plain_op<DoublePlainPairOp::SubPlainC0>(
+                grid, kBlockSize, has_b,
+                dst_a0, dst_a1, src_a0, src_a1, dst_b0, dst_b1, src_b0, src_b1,
+                plain_shard, corr_a0, corr_a1, corr_b0, corr_b1, q_primes, q_consts);
+            break;
+        case DoublePlainPairOp::AddPlainC0:
+            launch_double_plain_op<DoublePlainPairOp::AddPlainC0>(
+                grid, kBlockSize, has_b,
+                dst_a0, dst_a1, src_a0, src_a1, dst_b0, dst_b1, src_b0, src_b1,
+                plain_shard, corr_a0, corr_a1, corr_b0, corr_b1, q_primes, q_consts);
+            break;
+    }
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
 }  // namespace kernel
 }  // namespace gpu
 }  // namespace poseidon

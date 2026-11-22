@@ -2135,6 +2135,16 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     const bool dynamic_rescale = options.dynamic_rescale.has_value()
         ? *options.dynamic_rescale
         : env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE");
+    double quotient_physical_floor = 0.0;
+    if (const auto bits = options.min_quotient_scale_log2)
+    {
+        if (!dynamic_rescale || *bits < 40 || *bits > 80)
+        {
+            throw std::invalid_argument(
+                "EvalMod quotient precision floor requires dynamic rescale and log2(scale) in [40, 80]");
+        }
+        quotient_physical_floor = std::exp2(static_cast<double>(*bits));
+    }
     const double effective_input_scale = input_scale > 0.0
         ? input_scale
         : target_scale;
@@ -2965,10 +2975,14 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             const double context_scale = context.parameters_literal()->scale();
             // Small leading quotients can lose accuracy if rescaled down to
             // message precision. Replan the real Rescales at the higher floor.
-            const double quotient_min_scale = node.polynomial.lead()
+            const double planned_quotient_min_scale = node.polynomial.lead()
                 ? (options.retain_leading_quotient_scale
                     ? std::max(context_scale, target_scale) : context_scale)
                 : pow_scale;
+            // The dynamic chooser accepts half its nominal target. Double
+            // the requested physical floor for the chooser, then verify it.
+            const double quotient_min_scale =
+                std::max(planned_quotient_min_scale, 2.0 * quotient_physical_floor);
             const auto quotient_rescale_count =
                 choose_dynamic_rescale_allow_zero(
                     quotient.q_count,
@@ -2981,6 +2995,12 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                     quotient.q_count,
                     quotient.scale,
                     quotient_rescale_count);
+            if (quotient_physical_floor > 0.0 &&
+                quotient_scale_after < quotient_physical_floor * (1.0 - 1e-12))
+            {
+                throw std::invalid_argument(
+                    "dynamic EvalMod quotient cannot meet physical precision floor");
+            }
             const std::size_t product_q_count =
                 std::min(quotient_q_count, basis_q_iter->second);
             const double product_scale =

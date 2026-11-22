@@ -44,6 +44,8 @@ struct GpuEvalModUploadOptions
     std::optional<bool> lead_leaf_resplit;
     // Keep leading quotients at EvalMod working precision during dynamic rescale.
     bool retain_leading_quotient_scale = false;
+    // Optional minimum log2(scale) after rescaling any dynamic PS quotient.
+    std::optional<std::uint32_t> min_quotient_scale_log2;
 };
 
 /**

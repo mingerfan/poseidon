@@ -221,6 +221,28 @@ void GpuHybridKeySwitchWorkspace::ensure_capacity(
     p_count = requested_p_count;
 }
 
+void GpuHybridKeySwitchWorkspace::ensure_modup_batch_capacity(
+    int requested_device_id,
+    std::size_t requested_batch_q_words,
+    std::size_t requested_batch_p_words)
+{
+    if (requested_batch_q_words == 0 || requested_batch_p_words == 0)
+    {
+        throw std::invalid_argument(
+            "GpuHybridKeySwitchWorkspace::ensure_modup_batch_capacity requires non-zero sizes");
+    }
+    if (batch_modup_q.device_id() != requested_device_id ||
+        batch_modup_q.size() < requested_batch_q_words)
+    {
+        batch_modup_q.allocate(requested_batch_q_words, requested_device_id);
+    }
+    if (batch_modup_p.device_id() != requested_device_id ||
+        batch_modup_p.size() < requested_batch_p_words)
+    {
+        batch_modup_p.allocate(requested_batch_p_words, requested_device_id);
+    }
+}
+
 GpuLinearTransformMode gpu_linear_transform_mode_from_environment(
     GpuLinearTransformMode fallback)
 {

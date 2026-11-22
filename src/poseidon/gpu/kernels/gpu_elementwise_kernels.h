@@ -209,6 +209,122 @@ void launch_square_two_component_ciphertext(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/** Expand compact 512-slot per-limb periodic NTT residues on GPU (degree=65536). */
+void launch_expand_periodic_plaintext(
+    GpuWord *destination,
+    const GpuWord *compact_ntt,
+    std::size_t q_count,
+    std::size_t degree,
+    int device_id);
+
+inline constexpr std::size_t kMaxElementwisePairPtrs = 24;
+inline constexpr std::size_t kMaxElementwiseCiphertextBatch = 8;
+
+struct MultiplyPlainPtrsArgs
+{
+    GpuWord *dst[kMaxElementwisePairPtrs];
+    const GpuWord *src[kMaxElementwisePairPtrs];
+};
+
+struct BinaryPolyPtrsArgs
+{
+    GpuWord *dst[kMaxElementwisePairPtrs];
+    const GpuWord *lhs[kMaxElementwisePairPtrs];
+    const GpuWord *rhs[kMaxElementwisePairPtrs];
+};
+
+struct MultiplyTwoComponentsBatchArgs
+{
+    GpuWord *dst0[kMaxElementwiseCiphertextBatch];
+    GpuWord *dst1[kMaxElementwiseCiphertextBatch];
+    GpuWord *dst2[kMaxElementwiseCiphertextBatch];
+    const GpuWord *lhs0[kMaxElementwiseCiphertextBatch];
+    const GpuWord *lhs1[kMaxElementwiseCiphertextBatch];
+    const GpuWord *rhs0[kMaxElementwiseCiphertextBatch];
+    const GpuWord *rhs1[kMaxElementwiseCiphertextBatch];
+};
+
+enum class DoublePlainPairOp
+{
+    SubCorr = 0,
+    SubPlainC0 = 1,
+    AddPlainC0 = 2
+};
+
+/**
+ * @brief Multiply up to 8 ciphertext component shards by one shared plaintext shard.
+ */
+void launch_multiply_plain_ptrs(
+    const MultiplyPlainPtrsArgs &args,
+    std::size_t count,
+    const GpuConstPolyShardView &plain_shard,
+    const GpuPolyShardView &reference_dst_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Add or subtract up to 8 ciphertext component shard pairs in one launch.
+ */
+void launch_add_or_sub_ptrs(
+    const BinaryPolyPtrsArgs &args,
+    std::size_t count,
+    bool subtract,
+    const GpuPolyShardView &reference_dst_shard,
+    const GpuParameterShard &parameter_shard);
+
+/**
+ * @brief Fused multiply (or square) for up to kMaxElementwiseCiphertextBatch two-component ciphertexts.
+ */
+void launch_multiply_batch_two_components(
+    const MultiplyTwoComponentsBatchArgs &args,
+    std::size_t count,
+    bool is_square,
+    const GpuPolyShardView &reference_dst_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Fused multiply (or square) for 1 or 2 two-component ciphertexts.
+ */
+void launch_multiply_pair_two_components(
+    const GpuPolyShardView &dst_a0,
+    const GpuPolyShardView &dst_a1,
+    const GpuPolyShardView &dst_a2,
+    const GpuConstPolyShardView &lhs_a0,
+    const GpuConstPolyShardView &lhs_a1,
+    const GpuConstPolyShardView &rhs_a0,
+    const GpuConstPolyShardView &rhs_a1,
+    const GpuPolyShardView *dst_b0,
+    const GpuPolyShardView *dst_b1,
+    const GpuPolyShardView *dst_b2,
+    const GpuConstPolyShardView *lhs_b0,
+    const GpuConstPolyShardView *lhs_b1,
+    const GpuConstPolyShardView *rhs_b0,
+    const GpuConstPolyShardView *rhs_b1,
+    bool is_square,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Fused 2*src +/- plain (or plain * corr) across one or two lanes.
+ */
+void launch_double_sub_or_add_plain_pair(
+    DoublePlainPairOp op,
+    const GpuPolyShardView &dst_a0,
+    const GpuPolyShardView &dst_a1,
+    const GpuConstPolyShardView &src_a0,
+    const GpuConstPolyShardView &src_a1,
+    const GpuPolyShardView *dst_b0,
+    const GpuPolyShardView *dst_b1,
+    const GpuConstPolyShardView *src_b0,
+    const GpuConstPolyShardView *src_b1,
+    const GpuConstPolyShardView &plain_shard,
+    const GpuConstPolyShardView *corr_a0,
+    const GpuConstPolyShardView *corr_a1,
+    const GpuConstPolyShardView *corr_b0,
+    const GpuConstPolyShardView *corr_b1,
+    const GpuParameterShard &parameter_shard);
+
 }  // namespace kernel
 }  // namespace gpu
 }  // namespace poseidon

@@ -78,6 +78,15 @@ void launch_forward_ntt_two_components_inplace_fourstep_65536(
     std::size_t limb_count,
     const GpuParameterShard &parameter_shard);
 
+// Contiguous strided batches in-place (grid.z = batch_count).
+void launch_forward_ntt_limbs_batch_inplace_fourstep_65536(
+    GpuWord *values,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t batch_count,
+    std::size_t batch_stride,
+    const GpuParameterShard &parameter_shard);
+
 // Out of place; tables start at `modulus_offset` (P limbs: base_q_size).
 void launch_inverse_ntt_two_components_fourstep_65536(
     GpuWord *destination0,
@@ -88,11 +97,48 @@ void launch_inverse_ntt_two_components_fourstep_65536(
     std::size_t limb_count,
     const GpuParameterShard &parameter_shard);
 
+inline constexpr std::size_t kMaxInntPtrsBatch = 16;
+
+struct InntPtrsArgs
+{
+    const GpuWord *sources[kMaxInntPtrsBatch];
+};
+
+void launch_inverse_ntt_ptrs_fourstep_65536(
+    GpuWord *destination,
+    const InntPtrsArgs &source_args,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t batch_count,
+    const GpuParameterShard &parameter_shard);
+
 void launch_forward_ntt_qp_active_fourstep_65536(
     GpuWord *destination_q,
     GpuWord *destination_p,
     const GpuWord *source_q,
     const GpuWord *source_p,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool phase1_ready = false);
+
+inline constexpr std::size_t kMaxQpActiveNttBatch = 32;
+
+struct QpActiveNttBatchArgs
+{
+    GpuWord *destination_q[kMaxQpActiveNttBatch];
+    GpuWord *destination_p[kMaxQpActiveNttBatch];
+    const GpuWord *source_q[kMaxQpActiveNttBatch];
+    const GpuWord *source_p[kMaxQpActiveNttBatch];
+};
+
+/**
+ * Run four-step forward NTT on active Q and P limbs for a batch of HYBRID digits.
+ */
+void launch_forward_ntt_qp_active_batch_fourstep_65536(
+    const QpActiveNttBatchArgs &batch_args,
+    std::size_t batch_count,
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     const GpuParameterShard &parameter_shard,
@@ -121,6 +167,36 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
     GpuWord *accum_q1,
     GpuWord *accum_p1,
     const GpuWord *c2_ntt,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    bool overwrite_accum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool phase1_ready = false);
+
+void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_pair_65536(
+    GpuWord *partial_q_a,
+    GpuWord *partial_p_a,
+    const GpuWord *source_q_a,
+    const GpuWord *source_p_a,
+    GpuWord *accum_q0_a,
+    GpuWord *accum_p0_a,
+    GpuWord *accum_q1_a,
+    GpuWord *accum_p1_a,
+    const GpuWord *c2_ntt_a,
+    GpuWord *partial_q_b,
+    GpuWord *partial_p_b,
+    const GpuWord *source_q_b,
+    const GpuWord *source_p_b,
+    GpuWord *accum_q0_b,
+    GpuWord *accum_p0_b,
+    GpuWord *accum_q1_b,
+    GpuWord *accum_p1_b,
+    const GpuWord *c2_ntt_b,
     const GpuWord *key_q0,
     const GpuWord *key_p0,
     const GpuWord *key_q1,

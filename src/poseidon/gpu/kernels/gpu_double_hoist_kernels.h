@@ -13,10 +13,11 @@ namespace gpu
 namespace kernel
 {
 
-// The largest baby-step batch carried by the fused KeySwitch/plaintext-MAC
-// launch. Keep this shared with the host-side argument packing so a complete
-// 15-diagonal direct stage can be issued as one Q launch and one P launch.
+// The largest baby-step batch and giant-group count carried by one fused
+// KeySwitch/plaintext-MAC launch. Keep these shared with host-side argument
+// packing so complete direct stages issue in a single Q/P launch pair.
 inline constexpr std::size_t kMaxDoubleHoistFusedBabySteps = 16;
+inline constexpr std::size_t kMaxDoubleHoistFusedBabyGroups = 8;
 
 void launch_double_hoist_pre_rotated_keymul_digit(
     GpuWord *destination_q0,
@@ -49,6 +50,40 @@ void launch_double_hoist_pre_rotated_keymul_batch(
     std::uint32_t galois_elt,
     bool overwrite,
     const GpuWord *lifted_c0_source_q,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+// The largest rotation batch carried by one multi-step InversePreRotated keymul
+// launch. Callers with more steps chunk cleanly across batches of this size.
+inline constexpr std::size_t kMaxDoubleHoistKeymulManySteps = 32;
+
+struct DoubleHoistKeymulManyArgs
+{
+    std::uint32_t galois_elts[kMaxDoubleHoistKeymulManySteps];
+    std::uint32_t key_indices[kMaxDoubleHoistKeymulManySteps];
+};
+
+/**
+ * Compute InversePreRotated HYBRID key-multiplies (and optional lifted c0)
+ * for up to kMaxDoubleHoistKeymulManySteps rotation steps against one
+ * hoisted source decomposition. Steps with galois_elt == 0 emit the lifted
+ * identity ciphertext.
+ */
+void launch_double_hoist_pre_rotated_keymul_many(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const GpuWord *digits_q,
+    const GpuWord *digits_p,
+    const GpuWord *lifted_c0_source_q,
+    const GpuWord *lifted_c1_source_q,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    const DoubleHoistKeymulManyArgs &args,
+    std::size_t step_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
@@ -107,6 +142,31 @@ void launch_double_hoist_pre_rotated_giant_group_accumulate(
     GpuWord *destination_p0,
     GpuWord *destination_p1,
     const GpuWord *inner_q_batch,
+    std::size_t identity_group_index,
+    const GpuWord *const *host_group_digit_q_ptrs,
+    const GpuWord *const *host_group_digit_p_ptrs,
+    const std::uint32_t *host_group_indices,
+    const std::uint32_t *host_galois_elts,
+    const std::uint32_t *host_key_indices,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    std::size_t active_group_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+inline constexpr std::size_t kMaxGiantReduceBatch = 8;
+inline constexpr std::size_t kMaxGiantReduceBatchGroups = 16;
+
+void launch_double_hoist_pre_rotated_giant_group_accumulate_batch(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    std::size_t batch_count,
+    const GpuWord *inner_q_batch,
+    std::size_t inner_batch_stride_words,
     std::size_t identity_group_index,
     const GpuWord *const *host_group_digit_q_ptrs,
     const GpuWord *const *host_group_digit_p_ptrs,
@@ -210,6 +270,66 @@ void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
     std::size_t degree,
     bool compressed_plaintexts,
     bool initialize_accumulators);
+
+/**
+ * Compute InversePreRotated HYBRID key-multiplies (and optional lifted c0)
+ * for two ciphertexts sharing one Galois automorphism in one key read pass.
+ */
+void launch_double_hoist_pre_rotated_keymul_pair(
+    GpuWord *destination_a_q0,
+    GpuWord *destination_a_p0,
+    GpuWord *destination_a_q1,
+    GpuWord *destination_a_p1,
+    GpuWord *destination_b_q0,
+    GpuWord *destination_b_p0,
+    GpuWord *destination_b_q1,
+    GpuWord *destination_b_p1,
+    const GpuWord *digits_a_q,
+    const GpuWord *digits_a_p,
+    const GpuWord *digits_b_q,
+    const GpuWord *digits_b_p,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    std::size_t dnum,
+    std::uint32_t galois_elt,
+    const GpuWord *lifted_c0_a_q,
+    const GpuWord *lifted_c0_b_q,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+inline constexpr std::size_t kMaxDoubleHoistKeymulBatchSources = 8;
+
+struct DoubleHoistKeymulManyBatchArgs
+{
+    std::uint32_t galois_elts[kMaxDoubleHoistKeymulManySteps];
+    std::uint32_t key_indices[kMaxDoubleHoistKeymulManySteps];
+    const GpuWord *digits_q[kMaxDoubleHoistKeymulBatchSources];
+    const GpuWord *digits_p[kMaxDoubleHoistKeymulBatchSources];
+    const GpuWord *lifted_c0_q[kMaxDoubleHoistKeymulBatchSources];
+    GpuWord *destination_q[kMaxDoubleHoistKeymulBatchSources];
+    GpuWord *destination_p[kMaxDoubleHoistKeymulBatchSources];
+};
+
+/**
+ * Compute hoisted QP key-switching accumulators (with fused lifted c0 on Q)
+ * for up to kMaxDoubleHoistKeymulBatchSources inputs across shared rotation steps.
+ */
+void launch_double_hoist_pre_rotated_keymul_many_batch(
+    const DoubleHoistKeymulManyBatchArgs &args,
+    std::size_t source_count,
+    std::size_t step_count,
+    std::size_t step_stride_words_q,
+    std::size_t step_stride_words_p,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    std::size_t dnum,
+    std::size_t storage_dnum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
 
 }  // namespace kernel
 }  // namespace gpu

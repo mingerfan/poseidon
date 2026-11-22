@@ -521,6 +521,156 @@ unsigned int p9_modup_fourstep_grouped_targets()
         "POSEIDON_P9_MODUP_FOURSTEP_GROUPED_TARGETS must be 0, 1, 2, or 4");
 }
 
+bool is_fourstep_ntt_algo_enabled()
+{
+    const char *ntt_env = std::getenv("POSEIDON_NTT_ALGO");
+    if (ntt_env == nullptr || *ntt_env == '\0')
+    {
+        return true;
+    }
+    const std::string ntt_algo(ntt_env);
+    return ntt_algo == "fourstep" ||
+           ntt_algo == "four_step" ||
+           ntt_algo == "cheddar";
+}
+
+bool is_small_p_fourstep_env_enabled(std::size_t base_p_size)
+{
+    const char *raw = std::getenv("POSEIDON_GPU_SMALL_P_FOURSTEP");
+    if (raw != nullptr && *raw != '\0' && std::string(raw) == "0")
+    {
+        return false;
+    }
+    if (base_p_size > 8)
+    {
+        const char *large_raw = std::getenv("POSEIDON_GPU_LARGE_P_FOURSTEP");
+        if (large_raw != nullptr && *large_raw != '\0' && std::string(large_raw) == "0")
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool use_small_p_fourstep(std::size_t degree, std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size < 3 || base_p_size == 9)
+    {
+        return false;
+    }
+    return is_fourstep_ntt_algo_enabled() &&
+           is_small_p_fourstep_env_enabled(base_p_size);
+}
+
+bool allow_fourstep_rescale_x2(
+    std::size_t degree,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *raw = std::getenv("POSEIDON_GPU_SMALL_P_FOURSTEP");
+    const bool enabled =
+        raw == nullptr || *raw == '\0' || std::string(raw) != "0";
+    return degree == 65536 &&
+           parameter_shard.limb_begin == 0 &&
+           enabled &&
+           is_fourstep_ntt_algo_enabled();
+}
+
+bool can_batch_fourstep_p_intt(
+    std::size_t degree,
+    const GpuParameterShard &parameter_shard)
+{
+    return degree == 65536 &&
+           parameter_shard.limb_begin == 0 &&
+           !parameter_shard.fourstep_intt_tables.empty() &&
+           is_fourstep_ntt_algo_enabled();
+}
+
+void launch_batch_lazy_convert_and_forward_ntt_fourstep_65536(
+    GpuWord *converted_q,
+    const GpuWord *p_coeff,
+    std::size_t pair_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const std::size_t q_component_words =
+        parameter_shard.hybrid_base_q_count * degree;
+    kernel::launch_hybrid_convert_p_to_q_coeff_lazy_batch(
+        converted_q,
+        p_coeff,
+        pair_count,
+        parameter_shard,
+        degree);
+    kernel::launch_forward_ntt_limbs_batch_inplace_fourstep_65536(
+        converted_q,
+        0,
+        parameter_shard.hybrid_base_q_count,
+        2 * pair_count,
+        q_component_words,
+        parameter_shard);
+}
+
+void launch_double_hoist_inverse_ntt_p_two_components(
+    int device_id,
+    GpuWord *p_coeff0,
+    GpuWord *p_coeff1,
+    const GpuWord *p_ntt0,
+    const GpuWord *p_ntt1,
+    std::size_t q_count,
+    std::size_t p_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (use_small_p_fourstep(degree, p_count) &&
+        parameter_shard.limb_begin == 0)
+    {
+        NvtxRange range("double_hoist.moddown.intt_p.two_comp_fourstep");
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            p_coeff0,
+            p_coeff1,
+            p_ntt0,
+            p_ntt1,
+            q_count,
+            p_count,
+            parameter_shard);
+        return;
+    }
+
+    const GpuPolyShardView p_coeff0_view{
+        device_id, p_coeff0, q_count, p_count, 0, degree};
+    const GpuPolyShardView p_coeff1_view{
+        device_id, p_coeff1, q_count, p_count, 0, degree};
+    const GpuConstPolyShardView p_ntt0_view{
+        device_id, p_ntt0, q_count, p_count, 0, degree};
+    const GpuConstPolyShardView p_ntt1_view{
+        device_id, p_ntt1, q_count, p_count, 0, degree};
+    kernel::launch_inverse_ntt_poly_shard(
+        p_coeff0_view, p_ntt0_view, parameter_shard, degree);
+    kernel::launch_inverse_ntt_poly_shard(
+        p_coeff1_view, p_ntt1_view, parameter_shard, degree);
+}
+
+void launch_lazy_convert_and_forward_ntt_fourstep_65536(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *p_coeff0,
+    const GpuWord *p_coeff1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    kernel::launch_hybrid_convert_p_to_q_coeff_lazy(
+        converted_q0,
+        converted_q1,
+        p_coeff0,
+        p_coeff1,
+        parameter_shard,
+        degree);
+    kernel::launch_forward_ntt_two_components_inplace_fourstep_65536(
+        converted_q0,
+        converted_q1,
+        parameter_shard.hybrid_base_q_count,
+        parameter_shard);
+}
+
 void launch_double_hoist_p_to_q_forward_ntt(
     GpuWord *converted_q0,
     GpuWord *converted_q1,
@@ -571,6 +721,20 @@ void launch_double_hoist_p_to_q_forward_ntt(
             degree,
             preweight);
     }
+    else if (!preweight &&
+             use_small_p_fourstep(degree, p_count) &&
+             parameter_shard.limb_begin == 0 &&
+             parameter_shard.hybrid_base_q_count > 0)
+    {
+        NvtxRange range("double_hoist.moddown.p_to_q.fourstep_lazy");
+        launch_lazy_convert_and_forward_ntt_fourstep_65536(
+            converted_q0,
+            converted_q1,
+            p_coeff0,
+            p_coeff1,
+            parameter_shard,
+            degree);
+    }
     else
     {
         NvtxRange range("double_hoist.moddown.p_to_q.generic");
@@ -599,22 +763,6 @@ bool use_fourstep_c2_intt()
            value != "off" &&
            value != "false" &&
            value != "FALSE";
-}
-
-// Small special modulus (3 <= P <= 8; P=2 and P=9 have tuned paths): run the
-// key-switch finalize as two-component launches, i.e. one P-side inverse NTT
-// for c0 and c1 together, one lazy P->Q conversion and one in-place Q NTT for
-// both components, instead of per-component INTTs and the stage-by-stage Q
-// NTT. On by default; POSEIDON_GPU_SMALL_P_FOURSTEP=0 restores the
-// per-component path.
-bool use_small_p_fourstep(std::size_t degree, std::size_t base_p_size)
-{
-    if (degree != 65536 || base_p_size < 3 || base_p_size > 8)
-    {
-        return false;
-    }
-    const char *raw = std::getenv("POSEIDON_GPU_SMALL_P_FOURSTEP");
-    return raw == nullptr || *raw == '\0' || std::string(raw) != "0";
 }
 
 bool use_fourstep_all_ntt(
@@ -866,6 +1014,104 @@ struct HybridScratch
         return result;
     }
 };
+
+struct HybridScratchPair
+{
+    int device_id = 0;
+    std::size_t degree = 0;
+    std::size_t base_q_size = 0;
+    std::size_t base_p_size = 0;
+    std::size_t q_word_count = 0;
+    std::size_t p_word_count = 0;
+
+    DeviceVector<GpuWord> c2_intt[2];
+    DeviceVector<GpuWord> modup_q[2];
+    DeviceVector<GpuWord> modup_p[2];
+    DeviceVector<GpuWord> accum_q0[2];
+    DeviceVector<GpuWord> accum_q1[2];
+    DeviceVector<GpuWord> fourstep_q0[2];
+    DeviceVector<GpuWord> fourstep_p0[2];
+    DeviceVector<GpuWord> accum_p_pair;
+    DeviceVector<GpuWord> fourstep_p_pair;
+    DeviceVector<GpuWord> converted_q_pair;
+    DeviceVector<GpuWord> dropped_ntt[2];
+    DeviceVector<GpuWord> dropped_coeff[2];
+    DeviceVector<GpuWord> correction[2];
+    DeviceVector<GpuWord> correction_ntt[2];
+};
+
+void ensure_hybrid_scratch_pair(
+    HybridScratchPair &scratch,
+    int device_id,
+    std::size_t degree,
+    std::size_t base_q_size,
+    std::size_t base_p_size)
+{
+    const std::size_t q_word_count = checked_mul(
+        base_q_size,
+        degree,
+        "GpuKeySwitchHandler pair q scratch overflow");
+    const std::size_t p_word_count = checked_mul(
+        base_p_size,
+        degree,
+        "GpuKeySwitchHandler pair p scratch overflow");
+    const auto ensure_capacity =
+        [device_id](DeviceVector<GpuWord> &buffer, std::size_t words)
+        {
+            if (buffer.size() < words ||
+                (!buffer.empty() && buffer.device_id() != device_id))
+            {
+                buffer.allocate(words, device_id);
+            }
+        };
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        ensure_capacity(scratch.c2_intt[lane], q_word_count);
+        ensure_capacity(scratch.modup_q[lane], q_word_count);
+        ensure_capacity(scratch.modup_p[lane], p_word_count);
+        ensure_capacity(scratch.accum_q0[lane], q_word_count);
+        ensure_capacity(scratch.accum_q1[lane], q_word_count);
+        ensure_capacity(scratch.fourstep_q0[lane], q_word_count);
+        ensure_capacity(scratch.fourstep_p0[lane], p_word_count);
+    }
+    ensure_capacity(scratch.accum_p_pair, 4 * p_word_count);
+    ensure_capacity(scratch.fourstep_p_pair, 4 * p_word_count);
+    ensure_capacity(scratch.converted_q_pair, 4 * q_word_count);
+    scratch.device_id = device_id;
+    scratch.degree = degree;
+    scratch.base_q_size = base_q_size;
+    scratch.base_p_size = base_p_size;
+    scratch.q_word_count = q_word_count;
+    scratch.p_word_count = p_word_count;
+}
+
+void ensure_hybrid_pair_rescale_x2_scratch(HybridScratchPair &scratch)
+{
+    if (scratch.degree == 0 || scratch.base_q_size < 3)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler pair relin-rescale_x2 scratch requires q_count >= 3");
+    }
+    const auto ensure_capacity =
+        [&scratch](DeviceVector<GpuWord> &buffer, std::size_t words)
+        {
+            if (buffer.size() < words ||
+                (!buffer.empty() && buffer.device_id() != scratch.device_id))
+            {
+                buffer.allocate(words, scratch.device_id);
+            }
+        };
+    const std::size_t dropped_words = 2 * 2 * scratch.degree;
+    const std::size_t correction_words =
+        2 * (scratch.base_q_size - 2) * scratch.degree;
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        ensure_capacity(scratch.dropped_ntt[lane], dropped_words);
+        ensure_capacity(scratch.dropped_coeff[lane], dropped_words);
+        ensure_capacity(scratch.correction[lane], correction_words);
+        ensure_capacity(scratch.correction_ntt[lane], correction_words);
+    }
+}
 
 GpuPolyShardView make_scratch_q_view(
     GpuWord *ptr,
@@ -1886,6 +2132,30 @@ void finalize_hybrid_relinearize_rescale_x2(
         converted_q0 = scratch.fourstep_q0.data();
         converted_q1 = scratch.fourstep_q1.data();
     }
+    else if (use_small_p_fourstep(scratch.degree, scratch.base_p_size) &&
+             parameter_shard->limb_begin == 0 &&
+             scratch.fourstep_p0.size() >= scratch.p_word_count &&
+             scratch.fourstep_p1.size() >= scratch.p_word_count)
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.small_p_fourstep");
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            scratch.fourstep_p0.data(),
+            scratch.fourstep_p1.data(),
+            scratch.accum_p0.data(),
+            scratch.accum_p1.data(),
+            scratch.base_q_size,
+            scratch.base_p_size,
+            *parameter_shard);
+        launch_lazy_convert_and_forward_ntt_fourstep_65536(
+            scratch.c2_intt.data(),
+            scratch.modup_q.data(),
+            scratch.fourstep_p0.data(),
+            scratch.fourstep_p1.data(),
+            *parameter_shard,
+            scratch.degree);
+        converted_q0 = scratch.c2_intt.data();
+        converted_q1 = scratch.modup_q.data();
+    }
     else
     {
         {
@@ -1990,21 +2260,38 @@ void finalize_hybrid_relinearize_rescale_x2(
         2,
         0,
         scratch.degree};
+    const bool fourstep_rescale_x2 =
+        allow_fourstep_rescale_x2(scratch.degree, *parameter_shard);
+    if (fourstep_rescale_x2)
     {
-        NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped0");
-        kernel::launch_inverse_ntt_poly_shard(
-            dropped_coeff0,
-            as_const_shard(dropped_ntt0),
-            *parameter_shard,
-            scratch.degree);
+        NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped_fourstep");
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            scratch.relin_rescale_dropped_coeff.data(),
+            scratch.relin_rescale_dropped_coeff.data() + 2 * scratch.degree,
+            scratch.relin_rescale_dropped_ntt.data(),
+            scratch.relin_rescale_dropped_ntt.data() + 2 * scratch.degree,
+            scratch.base_q_size - 2,
+            2,
+            *parameter_shard);
     }
+    else
     {
-        NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped1");
-        kernel::launch_inverse_ntt_poly_shard(
-            dropped_coeff1,
-            as_const_shard(dropped_ntt1),
-            *parameter_shard,
-            scratch.degree);
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped0");
+            kernel::launch_inverse_ntt_poly_shard(
+                dropped_coeff0,
+                as_const_shard(dropped_ntt0),
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped1");
+            kernel::launch_inverse_ntt_poly_shard(
+                dropped_coeff1,
+                as_const_shard(dropped_ntt1),
+                *parameter_shard,
+                scratch.degree);
+        }
     }
 
     const std::size_t destination_q_count = destination_level_info.q_count;
@@ -2049,21 +2336,34 @@ void finalize_hybrid_relinearize_rescale_x2(
         destination_q_count,
         0,
         scratch.degree};
+    if (fourstep_rescale_x2)
     {
-        NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction0");
-        kernel::launch_forward_ntt_poly_shard(
+        NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction_fourstep");
+        kernel::launch_forward_ntt_poly_shard_batch_fourstep_65536(
             correction_ntt0,
             correction0,
             *parameter_shard,
-            scratch.degree);
+            scratch.degree,
+            2);
     }
+    else
     {
-        NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction1");
-        kernel::launch_forward_ntt_poly_shard(
-            correction_ntt1,
-            correction1,
-            *parameter_shard,
-            scratch.degree);
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction0");
+            kernel::launch_forward_ntt_poly_shard(
+                correction_ntt0,
+                correction0,
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction1");
+            kernel::launch_forward_ntt_poly_shard(
+                correction_ntt1,
+                correction1,
+                *parameter_shard,
+                scratch.degree);
+        }
     }
 
     {
@@ -2296,6 +2596,7 @@ void validate_hybrid_switch_key_shape(
 struct GpuKeySwitchHandler::PersistentWorkspace
 {
     HybridScratch relinearize;
+    HybridScratchPair relinearize_pair;
 };
 
 GpuKeySwitchHandler::GpuKeySwitchHandler(const GpuParameterData &params)
@@ -2318,6 +2619,20 @@ std::size_t GpuKeySwitchHandler::retained_workspace_bytes(
              &scratch.relin_rescale_dropped_ntt, &scratch.relin_rescale_dropped_coeff,
              &scratch.relin_rescale_correction, &scratch.relin_rescale_correction_ntt})
         bytes += buffer->allocated_bytes(resource);
+    const auto &pair = persistent_workspace_->relinearize_pair;
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        for (const auto *buffer : {
+                 &pair.c2_intt[lane], &pair.modup_q[lane], &pair.modup_p[lane],
+                 &pair.accum_q0[lane], &pair.accum_q1[lane],
+                 &pair.fourstep_q0[lane], &pair.fourstep_p0[lane],
+                 &pair.dropped_ntt[lane], &pair.dropped_coeff[lane],
+                 &pair.correction[lane], &pair.correction_ntt[lane]})
+            bytes += buffer->allocated_bytes(resource);
+    }
+    bytes += pair.accum_p_pair.allocated_bytes(resource);
+    bytes += pair.fourstep_p_pair.allocated_bytes(resource);
+    bytes += pair.converted_q_pair.allocated_bytes(resource);
     return bytes;
 }
 
@@ -2361,26 +2676,32 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
         q_count,
         p_count);
     const bool shape_changed =
+        !(destination.parms_id == level_info.parms_id) ||
         destination.device_id != source_shard.device_id ||
         destination.degree != level_info.degree ||
         destination.q_count != q_count ||
         destination.p_count != p_count ||
         destination.dnum != dnum;
-    const bool digit_capacity_insufficient =
-        shape_changed ||
-        destination.digits_q_ntt.size() < dnum * q_words ||
-        destination.digits_p_ntt.size() < dnum * p_words;
-    if (digit_capacity_insufficient)
+    if (shape_changed ||
+        destination.digits_q_ntt.device_id() != source_shard.device_id ||
+        destination.digits_q_ntt.size() < dnum * q_words)
     {
         destination.digits_q_ntt.allocate(
             dnum * q_words,
             source_shard.device_id);
+    }
+    if (shape_changed ||
+        destination.digits_p_ntt.device_id() != source_shard.device_id ||
+        destination.digits_p_ntt.size() < dnum * p_words)
+    {
         destination.digits_p_ntt.allocate(
             dnum * p_words,
             source_shard.device_id);
     }
     if (precomputed_source_intt_q == nullptr &&
-        (shape_changed || destination.source_intt_q.size() < q_words))
+        (shape_changed ||
+         destination.source_intt_q.device_id() != source_shard.device_id ||
+         destination.source_intt_q.size() < q_words))
     {
         destination.source_intt_q.allocate(
             q_words,
@@ -2558,6 +2879,342 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
                 level_info.degree);
         }
     }
+}
+
+void GpuKeySwitchHandler::hoist_decompose_modup_ntt_batch(
+    const std::vector<GpuConstRNSPolyView> &switch_polys_ntt,
+    const GpuLevelInfo &level_info,
+    std::vector<GpuHoistedDecomposition *> &destinations,
+    GpuHybridKeySwitchWorkspace &workspace,
+    const GpuWord *precomputed_source_intt_q_batch,
+    std::size_t source_intt_q_stride) const
+{
+    if (switch_polys_ntt.empty())
+    {
+        return;
+    }
+    if (switch_polys_ntt.size() != destinations.size())
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::hoist_decompose_modup_ntt_batch: size mismatch");
+    }
+    if (switch_polys_ntt.size() == 1)
+    {
+        if (destinations[0] == nullptr)
+        {
+            throw std::invalid_argument(
+                "GpuKeySwitchHandler::hoist_decompose_modup_ntt_batch: null destination");
+        }
+        hoist_decompose_modup_ntt(
+            switch_polys_ntt[0],
+            level_info,
+            *destinations[0],
+            workspace,
+            precomputed_source_intt_q_batch);
+        return;
+    }
+
+    NvtxRange range("double_hoist.decompose_batch");
+    const std::size_t total_batch = switch_polys_ntt.size();
+    const char *name = "GpuKeySwitchHandler::hoist_decompose_modup_ntt_batch";
+    validate_single_full_shard(
+        name,
+        switch_polys_ntt[0],
+        level_info.degree,
+        level_info.q_count);
+    const auto &first_shard = switch_polys_ntt[0].shards.front();
+    const auto *parameter_shard = find_parameter_shard(level_info, first_shard);
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(std::string(name) + ": no matching parameter shard");
+    }
+
+    const std::size_t q_count = level_info.q_count;
+    const std::size_t p_count = parameter_shard->hybrid_base_p_count;
+    if (p_count == 0 || parameter_shard->hybrid_base_q_count != q_count)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid HYBRID base");
+    }
+    const std::size_t dnum = (q_count + p_count - 1) / p_count;
+    const std::size_t q_words = q_count * level_info.degree;
+    const std::size_t p_words = p_count * level_info.degree;
+    if (precomputed_source_intt_q_batch != nullptr &&
+        source_intt_q_stride < q_words)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": precomputed_source_intt_q stride too small");
+    }
+
+    for (std::size_t i = 0; i < total_batch; ++i)
+    {
+        validate_single_full_shard(
+            name,
+            switch_polys_ntt[i],
+            level_info.degree,
+            q_count);
+        if (switch_polys_ntt[i].shards.front().device_id != first_shard.device_id)
+        {
+            throw std::invalid_argument(
+                std::string(name) + ": cross-device batch not supported");
+        }
+        if (destinations[i] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null destination");
+        }
+    }
+
+    const bool qp_fourstep = use_double_hoist_p9_qp_fourstep(
+        level_info.degree,
+        p_count);
+    const bool fuse_modup_phase1 = qp_fourstep &&
+        (use_p9_modup_fourstep_compact_preweight(level_info.degree, p_count) ||
+         use_p9_modup_fourstep_phase1_fused(level_info.degree, p_count));
+    if (!qp_fourstep || fuse_modup_phase1 || p_count <= 1)
+    {
+        for (std::size_t i = 0; i < total_batch; ++i)
+        {
+            const GpuWord *source_intt =
+                precomputed_source_intt_q_batch != nullptr
+                    ? precomputed_source_intt_q_batch + i * source_intt_q_stride
+                    : nullptr;
+            hoist_decompose_modup_ntt(
+                switch_polys_ntt[i],
+                level_info,
+                *destinations[i],
+                workspace,
+                source_intt);
+        }
+        return;
+    }
+
+    workspace.ensure_capacity(
+        first_shard.device_id,
+        level_info.degree,
+        q_count,
+        p_count);
+
+    for (std::size_t offset = 0;
+         offset < total_batch;
+         offset += kernel::kMaxHybridModUpBatch)
+    {
+        const std::size_t chunk = std::min(
+            kernel::kMaxHybridModUpBatch,
+            total_batch - offset);
+        workspace.ensure_modup_batch_capacity(
+            first_shard.device_id,
+            chunk * q_words,
+            chunk * p_words);
+
+        kernel::CopyDecompQBatchArgs copy_args{};
+        const GpuWord *source_intt_ptrs[kernel::kMaxHybridModUpBatch]{};
+        for (std::size_t b = 0; b < chunk; ++b)
+        {
+            auto &dest = *destinations[offset + b];
+            const bool shape_changed =
+                !(dest.parms_id == level_info.parms_id) ||
+                dest.device_id != first_shard.device_id ||
+                dest.degree != level_info.degree ||
+                dest.q_count != q_count ||
+                dest.p_count != p_count ||
+                dest.dnum != dnum;
+            if (shape_changed ||
+                dest.digits_q_ntt.device_id() != first_shard.device_id ||
+                dest.digits_q_ntt.size() < dnum * q_words)
+            {
+                dest.digits_q_ntt.allocate(dnum * q_words, first_shard.device_id);
+            }
+            if (shape_changed ||
+                dest.digits_p_ntt.device_id() != first_shard.device_id ||
+                dest.digits_p_ntt.size() < dnum * p_words)
+            {
+                dest.digits_p_ntt.allocate(dnum * p_words, first_shard.device_id);
+            }
+            if (precomputed_source_intt_q_batch != nullptr)
+            {
+                source_intt_ptrs[b] = precomputed_source_intt_q_batch +
+                    (offset + b) * source_intt_q_stride;
+            }
+            else
+            {
+                if (shape_changed ||
+                    dest.source_intt_q.device_id() != first_shard.device_id ||
+                    dest.source_intt_q.size() < q_words)
+                {
+                    dest.source_intt_q.allocate(q_words, first_shard.device_id);
+                }
+                GpuPolyShardView intt_q{
+                    first_shard.device_id,
+                    dest.source_intt_q.data(),
+                    0,
+                    q_count,
+                    0,
+                    level_info.degree};
+                kernel::launch_inverse_ntt_poly_shard(
+                    intt_q,
+                    switch_polys_ntt[offset + b].shards.front(),
+                    *parameter_shard,
+                    level_info.degree);
+                source_intt_ptrs[b] = dest.source_intt_q.data();
+            }
+            dest.parms_id = level_info.parms_id;
+            dest.device_id = first_shard.device_id;
+            dest.degree = level_info.degree;
+            dest.q_count = q_count;
+            dest.p_count = p_count;
+            dest.dnum = dnum;
+
+            copy_args.digit0_q[b] = dest.digits_q_ntt.data();
+            copy_args.source_q[b] = switch_polys_ntt[offset + b].shards.front().ptr;
+        }
+
+        kernel::launch_copy_decomp_q_limbs_batch(
+            copy_args,
+            chunk,
+            q_count,
+            p_count,
+            *parameter_shard,
+            level_info.degree);
+
+        for (std::size_t digit = 0; digit < dnum; ++digit)
+        {
+            const std::size_t limb_begin = digit * p_count;
+            const std::size_t limb_count =
+                std::min(p_count, q_count - limb_begin);
+            kernel::HybridModUpBatchArgs modup_args{};
+            kernel::QpActiveNttBatchArgs ntt_args{};
+            for (std::size_t b = 0; b < chunk; ++b)
+            {
+                auto &dest = *destinations[offset + b];
+                GpuWord *digit_q = dest.digits_q_ntt.data() + digit * q_words;
+                GpuWord *digit_p = dest.digits_p_ntt.data() + digit * p_words;
+                GpuWord *modup_q = workspace.batch_modup_q.data() + b * q_words;
+                GpuWord *modup_p = workspace.batch_modup_p.data() + b * p_words;
+                modup_args.modup_q[b] = modup_q;
+                modup_args.modup_p[b] = modup_p;
+                modup_args.c2_coeff[b] = source_intt_ptrs[b];
+                modup_args.c2_ntt[b] = copy_args.source_q[b];
+                ntt_args.destination_q[b] = digit_q;
+                ntt_args.destination_p[b] = digit_p;
+                ntt_args.source_q[b] = modup_q;
+                ntt_args.source_p[b] = modup_p;
+            }
+            kernel::launch_hybrid_modup_decomposition_batch(
+                modup_args,
+                chunk,
+                digit,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree);
+            kernel::launch_forward_ntt_qp_active_batch_fourstep_65536(
+                ntt_args,
+                chunk,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree,
+                false);
+        }
+    }
+}
+
+void GpuKeySwitchHandler::keyswitch_multsum_pre_rotated_pair_no_moddown(
+    const GpuHoistedDecomposition &hoisted_a,
+    const GpuHoistedDecomposition &hoisted_b,
+    std::uint32_t galois_elt,
+    const GpuConstEvaluationKeyView &keys,
+    const GpuEvaluationKeyData &key_storage,
+    std::size_t key_index,
+    GpuQPCiphertextBuffer &destination,
+    const GpuLevelInfo &level_info,
+    const GpuWord *lifted_c0_a_q,
+    const GpuWord *lifted_c0_b_q) const
+{
+    NvtxRange range("double_hoist.keymult_pair_no_moddown");
+    if (!(hoisted_a.parms_id == level_info.parms_id) ||
+        !(hoisted_b.parms_id == level_info.parms_id) ||
+        hoisted_a.degree != level_info.degree ||
+        hoisted_b.degree != level_info.degree ||
+        hoisted_a.q_count != level_info.q_count ||
+        hoisted_b.q_count != level_info.q_count ||
+        hoisted_a.p_count == 0 ||
+        hoisted_a.p_count != hoisted_b.p_count ||
+        hoisted_a.dnum == 0 ||
+        hoisted_a.dnum != hoisted_b.dnum ||
+        hoisted_a.device_id != hoisted_b.device_id)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::keyswitch_multsum_pre_rotated_pair_no_moddown: hoisted shape mismatch");
+    }
+    if (destination.batch_count < 2 ||
+        destination.degree != hoisted_a.degree ||
+        destination.q_count != hoisted_a.q_count ||
+        destination.p_count != hoisted_a.p_count ||
+        destination.device_id != hoisted_a.device_id)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::keyswitch_multsum_pre_rotated_pair_no_moddown: destination shape mismatch");
+    }
+    if (keys.meta.galois_format != GpuGaloisKeyFormat::InversePreRotated ||
+        keys.meta.q_count != hoisted_a.q_count ||
+        keys.meta.p_count != hoisted_a.p_count ||
+        keys.storage_q_count != key_storage.meta.q_count ||
+        key_index >= keys.meta.key_count ||
+        key_storage.galois_elts_by_key_index.size() <= key_index ||
+        key_storage.galois_elts_by_key_index[key_index] != galois_elt)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::keyswitch_multsum_pre_rotated_pair_no_moddown: key metadata mismatch");
+    }
+
+    const std::size_t pointer_offset = key_index * key_storage.meta.decomposition_count;
+    const std::size_t pointer_end = pointer_offset + hoisted_a.dnum;
+    if (key_storage.galois_key_q0_ptrs.size() < pointer_end ||
+        key_storage.galois_key_p0_ptrs.size() < pointer_end ||
+        key_storage.galois_key_q1_ptrs.size() < pointer_end ||
+        key_storage.galois_key_p1_ptrs.size() < pointer_end)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::keyswitch_multsum_pre_rotated_pair_no_moddown: incomplete key ptrs");
+    }
+
+    GpuConstPolyShardView level_probe{
+        hoisted_a.device_id,
+        hoisted_a.digits_q_ntt.data(),
+        0,
+        hoisted_a.q_count,
+        0,
+        hoisted_a.degree};
+    const auto *parameter_shard = find_parameter_shard(level_info, level_probe);
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::keyswitch_multsum_pre_rotated_pair_no_moddown: no matching parameter shard");
+    }
+
+    kernel::launch_double_hoist_pre_rotated_keymul_pair(
+        destination.q_component(0, 0),
+        destination.p_component(0, 0),
+        destination.q_component(0, 1),
+        destination.p_component(0, 1),
+        destination.q_component(1, 0),
+        destination.p_component(1, 0),
+        destination.q_component(1, 1),
+        destination.p_component(1, 1),
+        hoisted_a.digits_q_ntt.data(),
+        hoisted_a.digits_p_ntt.data(),
+        hoisted_b.digits_q_ntt.data(),
+        hoisted_b.digits_p_ntt.data(),
+        key_storage.galois_key_q0_ptrs.data() + pointer_offset,
+        key_storage.galois_key_p0_ptrs.data() + pointer_offset,
+        key_storage.galois_key_q1_ptrs.data() + pointer_offset,
+        key_storage.galois_key_p1_ptrs.data() + pointer_offset,
+        hoisted_a.dnum,
+        galois_elt,
+        lifted_c0_a_q,
+        lifted_c0_b_q,
+        *parameter_shard,
+        hoisted_a.degree);
 }
 
 void GpuKeySwitchHandler::keyswitch_multsum_no_moddown(
@@ -2857,42 +3514,14 @@ void GpuKeySwitchHandler::moddown_qp_ciphertext_to_q(
 
     auto destination_view = destination.make_view();
 
-    GpuPolyShardView p_coeff0{
+    launch_double_hoist_inverse_ntt_p_two_components(
         source.device_id,
         workspace.p_coeff0.data(),
-        source.q_count,
-        source.p_count,
-        0,
-        source.degree};
-    GpuPolyShardView p_coeff1{
-        source.device_id,
         workspace.p_coeff1.data(),
-        source.q_count,
-        source.p_count,
-        0,
-        source.degree};
-    GpuConstPolyShardView p_ntt0{
-        source.device_id,
         source.p_component(source_batch, 0),
-        source.q_count,
-        source.p_count,
-        0,
-        source.degree};
-    GpuConstPolyShardView p_ntt1{
-        source.device_id,
         source.p_component(source_batch, 1),
         source.q_count,
         source.p_count,
-        0,
-        source.degree};
-    kernel::launch_inverse_ntt_poly_shard(
-        p_coeff0,
-        p_ntt0,
-        *parameter_shard,
-        source.degree);
-    kernel::launch_inverse_ntt_poly_shard(
-        p_coeff1,
-        p_ntt1,
         *parameter_shard,
         source.degree);
     launch_double_hoist_p_to_q_forward_ntt(
@@ -2978,51 +3607,91 @@ void GpuKeySwitchHandler::moddown_qp_ciphertext_batch_to_q(
      * the fused conversion/forward-NTT phase, instead of serializing a
      * complete ModDown pipeline per group.
      */
-    for (std::size_t component = 0;
-         component < component_count;
-         ++component)
+    if (can_batch_fourstep_p_intt(source.degree, *parameter_shard))
     {
-        const GpuPolyShardView p_coeff_component{
+        NvtxRange range("double_hoist.moddown_batch.intt_p.fourstep_batch");
+        const GpuPolyShardView first_p_coeff{
             source.device_id,
-            p_coeff.data() + component * p_component_words,
+            p_coeff.data(),
             source.q_count,
             source.p_count,
             0,
             source.degree};
-        const GpuConstPolyShardView p_ntt_component{
+        const GpuConstPolyShardView first_p_ntt{
             source.device_id,
-            source.p.data() + component * p_component_words,
+            source.p.data(),
             source.q_count,
             source.p_count,
             0,
             source.degree};
-        kernel::launch_inverse_ntt_poly_shard(
-            p_coeff_component,
-            p_ntt_component,
+        kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+            first_p_coeff,
+            first_p_ntt,
+            *parameter_shard,
+            source.degree,
+            component_count,
+            p_component_words,
+            p_component_words);
+    }
+    else
+    {
+        for (std::size_t component = 0;
+             component < component_count;
+             ++component)
+        {
+            const GpuPolyShardView p_coeff_component{
+                source.device_id,
+                p_coeff.data() + component * p_component_words,
+                source.q_count,
+                source.p_count,
+                0,
+                source.degree};
+            const GpuConstPolyShardView p_ntt_component{
+                source.device_id,
+                source.p.data() + component * p_component_words,
+                source.q_count,
+                source.p_count,
+                0,
+                source.degree};
+            kernel::launch_inverse_ntt_poly_shard(
+                p_coeff_component,
+                p_ntt_component,
+                *parameter_shard,
+                source.degree);
+        }
+    }
+
+    const bool batch_lazy_fourstep_p_to_q =
+        use_small_p_fourstep(source.degree, source.p_count) &&
+        parameter_shard->limb_begin == 0 &&
+        parameter_shard->hybrid_base_q_count == source.q_count &&
+        !use_double_hoist_p9_preweight_p(source.degree, source.p_count);
+    if (batch_lazy_fourstep_p_to_q)
+    {
+        NvtxRange range("double_hoist.moddown_batch.p_to_q.fourstep_lazy_batch");
+        launch_batch_lazy_convert_and_forward_ntt_fourstep_65536(
+            converted_q.data(),
+            p_coeff.data(),
+            batch_count,
             *parameter_shard,
             source.degree);
     }
-
-    /*
-     * Preserve the existing two-component fusion: it combines P->Q basis
-     * conversion with the first forward-NTT stage. Splitting that kernel just
-     * to expose a larger batch increases global-memory traffic at N=16384.
-     * The groups are still phase-scheduled (all INTTs first, then all fused
-     * convert/NTTs, then one out-of-place apply).
-     */
-    for (std::size_t batch = 0; batch < batch_count; ++batch)
+    else
     {
-        launch_double_hoist_p_to_q_forward_ntt(
-            converted_q.data() +
-                (batch * 2) * q_component_words,
-            converted_q.data() +
-                (batch * 2 + 1) * q_component_words,
-            p_coeff.data() +
-                (batch * 2) * p_component_words,
-            p_coeff.data() +
-                (batch * 2 + 1) * p_component_words,
-            *parameter_shard,
-            source.degree);
+        for (std::size_t batch = 0; batch < batch_count; ++batch)
+        {
+            launch_double_hoist_p_to_q_forward_ntt(
+                converted_q.data() +
+                    (batch * 2) * q_component_words,
+                converted_q.data() +
+                    (batch * 2 + 1) * q_component_words,
+                p_coeff.data() +
+                    (batch * 2) * p_component_words,
+                p_coeff.data() +
+                    (batch * 2 + 1) * p_component_words,
+                *parameter_shard,
+                source.degree);
+        }
     }
 
     kernel::launch_hybrid_apply_moddown_ntt_out_of_place_batch(
@@ -3124,27 +3793,84 @@ void GpuKeySwitchHandler::moddown_qp_c1_groups_to_q(
         converted_q.allocate(q_words, source.device_id);
     }
 
-    for (std::size_t slot = 0; slot < count; ++slot)
+    std::size_t constant_source_stride = p_component_words;
+    bool constant_stride_intt = can_batch_fourstep_p_intt(source.degree, *parameter_shard);
+    if (constant_stride_intt && count > 1)
     {
-        const GpuPolyShardView p_coeff_component{
+        const std::ptrdiff_t first_diff =
+            source.p_component(groups[1], 1) - source.p_component(groups[0], 1);
+        if (first_diff < static_cast<std::ptrdiff_t>(p_component_words))
+        {
+            constant_stride_intt = false;
+        }
+        else
+        {
+            for (std::size_t slot = 2; slot < count; ++slot)
+            {
+                if (source.p_component(groups[slot], 1) -
+                        source.p_component(groups[slot - 1], 1) !=
+                    first_diff)
+                {
+                    constant_stride_intt = false;
+                    break;
+                }
+            }
+            if (constant_stride_intt)
+            {
+                constant_source_stride = static_cast<std::size_t>(first_diff);
+            }
+        }
+    }
+    if (constant_stride_intt)
+    {
+        NvtxRange range("double_hoist.moddown_c1_batch.intt_p.fourstep_batch");
+        const GpuPolyShardView first_p_coeff{
             source.device_id,
-            p_coeff.data() + slot * p_component_words,
+            p_coeff.data(),
             source.q_count,
             source.p_count,
             0,
             source.degree};
-        const GpuConstPolyShardView p_ntt_component{
+        const GpuConstPolyShardView first_p_ntt{
             source.device_id,
-            source.p_component(groups[slot], 1),
+            source.p_component(groups[0], 1),
             source.q_count,
             source.p_count,
             0,
             source.degree};
-        kernel::launch_inverse_ntt_poly_shard(
-            p_coeff_component,
-            p_ntt_component,
+        kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+            first_p_coeff,
+            first_p_ntt,
             *parameter_shard,
-            source.degree);
+            source.degree,
+            count,
+            p_component_words,
+            constant_source_stride);
+    }
+    else
+    {
+        for (std::size_t slot = 0; slot < count; ++slot)
+        {
+            const GpuPolyShardView p_coeff_component{
+                source.device_id,
+                p_coeff.data() + slot * p_component_words,
+                source.q_count,
+                source.p_count,
+                0,
+                source.degree};
+            const GpuConstPolyShardView p_ntt_component{
+                source.device_id,
+                source.p_component(groups[slot], 1),
+                source.q_count,
+                source.p_count,
+                0,
+                source.degree};
+            kernel::launch_inverse_ntt_poly_shard(
+                p_coeff_component,
+                p_ntt_component,
+                *parameter_shard,
+                source.degree);
+        }
     }
     if (slots != count)
     {
@@ -3157,15 +3883,33 @@ void GpuKeySwitchHandler::moddown_qp_c1_groups_to_q(
                 gpu_execution_stream()),
             name);
     }
-    for (std::size_t slot = 0; slot < slots; slot += 2)
+    const bool batch_lazy_fourstep_p_to_q =
+        use_small_p_fourstep(source.degree, source.p_count) &&
+        parameter_shard->limb_begin == 0 &&
+        parameter_shard->hybrid_base_q_count == source.q_count &&
+        !use_double_hoist_p9_preweight_p(source.degree, source.p_count);
+    if (batch_lazy_fourstep_p_to_q)
     {
-        launch_double_hoist_p_to_q_forward_ntt(
-            converted_q.data() + slot * q_component_words,
-            converted_q.data() + (slot + 1) * q_component_words,
-            p_coeff.data() + slot * p_component_words,
-            p_coeff.data() + (slot + 1) * p_component_words,
+        NvtxRange range("double_hoist.moddown_c1_batch.p_to_q.fourstep_lazy_batch");
+        launch_batch_lazy_convert_and_forward_ntt_fourstep_65536(
+            converted_q.data(),
+            p_coeff.data(),
+            slots / 2,
             *parameter_shard,
             source.degree);
+    }
+    else
+    {
+        for (std::size_t slot = 0; slot < slots; slot += 2)
+        {
+            launch_double_hoist_p_to_q_forward_ntt(
+                converted_q.data() + slot * q_component_words,
+                converted_q.data() + (slot + 1) * q_component_words,
+                p_coeff.data() + slot * p_component_words,
+                p_coeff.data() + (slot + 1) * p_component_words,
+                *parameter_shard,
+                source.degree);
+        }
     }
 
     std::vector<std::uint32_t> component_indices(count);
@@ -3242,42 +3986,14 @@ void GpuKeySwitchHandler::moddown_qp_groups_to_q(
         *parameter_shard,
         source_groups.degree);
 
-    const GpuPolyShardView p_coeff0{
+    launch_double_hoist_inverse_ntt_p_two_components(
         source_groups.device_id,
         workspace.p_coeff0.data(),
-        source_groups.q_count,
-        source_groups.p_count,
-        0,
-        source_groups.degree};
-    const GpuPolyShardView p_coeff1{
-        source_groups.device_id,
         workspace.p_coeff1.data(),
-        source_groups.q_count,
-        source_groups.p_count,
-        0,
-        source_groups.degree};
-    const GpuConstPolyShardView p_ntt0{
-        source_groups.device_id,
         reduced_p_ntt.data(),
-        source_groups.q_count,
-        source_groups.p_count,
-        0,
-        source_groups.degree};
-    const GpuConstPolyShardView p_ntt1{
-        source_groups.device_id,
         reduced_p_ntt.data() + p_component_words,
         source_groups.q_count,
         source_groups.p_count,
-        0,
-        source_groups.degree};
-    kernel::launch_inverse_ntt_poly_shard(
-        p_coeff0,
-        p_ntt0,
-        *parameter_shard,
-        source_groups.degree);
-    kernel::launch_inverse_ntt_poly_shard(
-        p_coeff1,
-        p_ntt1,
         *parameter_shard,
         source_groups.degree);
     launch_double_hoist_p_to_q_forward_ntt(
@@ -3846,17 +4562,19 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext(
         &source_view.polys[1]);
 }
 
-void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
-    GpuCiphertextView &destination_view,
+namespace
+{
+
+void validate_hybrid_relin_rescale_x2_shape(
+    const GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &source_view,
     const GpuConstEvaluationKeyView &relin_keys_view,
     const GpuEvaluationKeyData &relin_keys_data,
     const GpuLevelInfo &source_level_info,
-    const GpuLevelInfo &destination_level_info) const
+    const GpuLevelInfo &destination_level_info)
 {
     if (!(source_view.meta.parms_id == source_level_info.parms_id) ||
-        !(destination_view.meta.parms_id ==
-          destination_level_info.parms_id) ||
+        !(destination_view.meta.parms_id == destination_level_info.parms_id) ||
         !source_view.meta.is_ntt_form ||
         !destination_view.meta.is_ntt_form ||
         source_view.polys.size() != 3 ||
@@ -3875,8 +4593,7 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
         throw std::invalid_argument(
             "GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2: shape mismatch");
     }
-    if (!(relin_keys_view.meta.key_parms_id ==
-          relin_keys_data.meta.key_parms_id) ||
+    if (!(relin_keys_view.meta.key_parms_id == relin_keys_data.meta.key_parms_id) ||
         relin_keys_view.storage_q_count != relin_keys_data.meta.q_count ||
         relin_keys_view.meta.q_count != source_view.meta.q_count ||
         relin_keys_view.meta.key_count == 0 ||
@@ -3888,8 +4605,7 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
         throw std::invalid_argument(
             "GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2: invalid relin key metadata");
     }
-    for (std::size_t component = 0; component < source_view.polys.size();
-         ++component)
+    for (std::size_t component = 0; component < source_view.polys.size(); ++component)
     {
         validate_single_full_shard(
             "GpuKeySwitchHandler relin-rescale source",
@@ -3912,6 +4628,25 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
             destination_view.meta.degree,
             destination_view.meta.q_count);
     }
+}
+
+}  // namespace
+
+void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuConstEvaluationKeyView &relin_keys_view,
+    const GpuEvaluationKeyData &relin_keys_data,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    validate_hybrid_relin_rescale_x2_shape(
+        destination_view,
+        source_view,
+        relin_keys_view,
+        relin_keys_data,
+        source_level_info,
+        destination_level_info);
 
     switch_key_hybrid_ciphertext_impl(
         destination_view,
@@ -3923,6 +4658,537 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
         &source_view.polys[0],
         &source_view.polys[1],
         &destination_level_info);
+}
+
+namespace
+{
+
+void run_hybrid_keyswitch_pair_accum(
+    HybridScratchPair &scratch,
+    const GpuConstRNSPolyView &c2_a,
+    const GpuConstRNSPolyView &c2_b,
+    const GpuConstEvaluationKeyView &relin_keys_view,
+    const GpuEvaluationKeyData &relin_keys_data,
+    const GpuLevelInfo &level_info,
+    const GpuParameterShard *&out_parameter_shard)
+{
+    const std::size_t base_q_size = level_info.q_count;
+    const std::size_t base_p_size = relin_keys_view.meta.p_count;
+    const std::size_t expected_decomposition_count =
+        (base_q_size + base_p_size - 1) / base_p_size;
+
+    const auto &src_shard_a = c2_a.shards.front();
+    const auto &src_shard_b = c2_b.shards.front();
+    const auto *parameter_shard = find_parameter_shard(level_info, src_shard_a);
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::relinearize_pair: no matching parameter shard");
+    }
+    if (parameter_shard->hybrid_base_q_count != scratch.base_q_size ||
+        parameter_shard->hybrid_base_p_count != scratch.base_p_size)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::relinearize_pair: HYBRID parameter shape mismatch");
+    }
+    out_parameter_shard = parameter_shard;
+
+    if (scratch.degree == 65536 && is_fourstep_ntt_algo_enabled())
+    {
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            scratch.c2_intt[0].data(),
+            scratch.c2_intt[1].data(),
+            src_shard_a.ptr,
+            src_shard_b.ptr,
+            0,
+            scratch.base_q_size,
+            *parameter_shard);
+    }
+    else
+    {
+        for (int lane = 0; lane < 2; ++lane)
+        {
+            GpuPolyShardView dst_view{
+                scratch.device_id, scratch.c2_intt[lane].data(),
+                0, scratch.base_q_size, 0, scratch.degree};
+            kernel::launch_inverse_ntt_poly_shard(
+                dst_view,
+                lane == 0 ? src_shard_a : src_shard_b,
+                *parameter_shard,
+                scratch.degree);
+        }
+    }
+
+    for (std::size_t decomp_index = 0;
+         decomp_index < expected_decomposition_count;
+         ++decomp_index)
+    {
+        const std::size_t decomp_limb_begin = decomp_index * base_p_size;
+        const std::size_t decomp_limb_count = std::min(
+            base_p_size,
+            base_q_size - decomp_limb_begin);
+
+        const auto &key_component0 = find_key_poly(
+            relin_keys_view,
+            relin_keys_data,
+            kRelinKeyPower2Index,
+            decomp_index,
+            0);
+        const auto &key_component1 = find_key_poly(
+            relin_keys_view,
+            relin_keys_data,
+            kRelinKeyPower2Index,
+            decomp_index,
+            1);
+        validate_single_full_shard(
+            "GpuKeySwitchHandler pair relin key c0",
+            key_component0,
+            relin_keys_data.meta.degree,
+            relin_keys_data.meta.q_count + relin_keys_data.meta.p_count);
+        validate_single_full_shard(
+            "GpuKeySwitchHandler pair relin key c1",
+            key_component1,
+            relin_keys_data.meta.degree,
+            relin_keys_data.meta.q_count + relin_keys_data.meta.p_count);
+
+        const auto key0 = make_hybrid_key_component_view(
+            key_component0, relin_keys_view, relin_keys_data);
+        const auto key1 = make_hybrid_key_component_view(
+            key_component1, relin_keys_view, relin_keys_data);
+
+        kernel::launch_hybrid_modup_decomposition_pair(
+            scratch.modup_q[0].data(),
+            scratch.modup_p[0].data(),
+            scratch.c2_intt[0].data(),
+            src_shard_a.ptr,
+            scratch.modup_q[1].data(),
+            scratch.modup_p[1].data(),
+            scratch.c2_intt[1].data(),
+            src_shard_b.ptr,
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            *parameter_shard,
+            scratch.degree);
+
+        GpuWord *accum_p0_a = scratch.accum_p_pair.data();
+        GpuWord *accum_p1_a = scratch.accum_p_pair.data() + scratch.p_word_count;
+        GpuWord *accum_p0_b = scratch.accum_p_pair.data() + 2 * scratch.p_word_count;
+        GpuWord *accum_p1_b = scratch.accum_p_pair.data() + 3 * scratch.p_word_count;
+        kernel::launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_pair_65536(
+            scratch.fourstep_q0[0].data(),
+            scratch.fourstep_p0[0].data(),
+            scratch.modup_q[0].data(),
+            scratch.modup_p[0].data(),
+            scratch.accum_q0[0].data(),
+            accum_p0_a,
+            scratch.accum_q1[0].data(),
+            accum_p1_a,
+            src_shard_a.ptr,
+            scratch.fourstep_q0[1].data(),
+            scratch.fourstep_p0[1].data(),
+            scratch.modup_q[1].data(),
+            scratch.modup_p[1].data(),
+            scratch.accum_q0[1].data(),
+            accum_p0_b,
+            scratch.accum_q1[1].data(),
+            accum_p1_b,
+            src_shard_b.ptr,
+            key0.q_ptr,
+            key0.p_ptr,
+            key1.q_ptr,
+            key1.p_ptr,
+            decomp_limb_begin,
+            decomp_limb_count,
+            decomp_index == 0,
+            *parameter_shard,
+            scratch.degree,
+            false);
+    }
+}
+
+void convert_pair_p_to_q_ntt(
+    HybridScratchPair &scratch,
+    const GpuParameterShard &parameter_shard)
+{
+    GpuPolyShardView p_coeff_first{
+        scratch.device_id,
+        scratch.fourstep_p_pair.data(),
+        scratch.base_q_size,
+        scratch.base_p_size,
+        0,
+        scratch.degree};
+    GpuConstPolyShardView accum_p_first{
+        scratch.device_id,
+        scratch.accum_p_pair.data(),
+        scratch.base_q_size,
+        scratch.base_p_size,
+        0,
+        scratch.degree};
+    kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+        p_coeff_first,
+        accum_p_first,
+        parameter_shard,
+        scratch.degree,
+        4,
+        scratch.p_word_count,
+        scratch.p_word_count);
+    launch_batch_lazy_convert_and_forward_ntt_fourstep_65536(
+        scratch.converted_q_pair.data(),
+        scratch.fourstep_p_pair.data(),
+        2,
+        parameter_shard,
+        scratch.degree);
+}
+
+}  // namespace
+
+void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView &source_b_view,
+    const GpuConstEvaluationKeyView &relin_keys_view,
+    const GpuEvaluationKeyData &relin_keys_data,
+    const GpuLevelInfo &level_info) const
+{
+    validate_hybrid_relinearize_shape(
+        destination_a_view, source_a_view, relin_keys_view, relin_keys_data, level_info);
+    validate_hybrid_relinearize_shape(
+        destination_b_view, source_b_view, relin_keys_view, relin_keys_data, level_info);
+
+    const std::size_t base_q_size = level_info.q_count;
+    const std::size_t base_p_size = relin_keys_view.meta.p_count;
+    const int device_id = source_a_view.polys[0].shards.front().device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(level_info, source_a_view.polys[2].shards.front());
+    const bool can_pair =
+        parameter_shard != nullptr &&
+        source_b_view.polys[0].shards.front().device_id == device_id &&
+        source_a_view.polys[2].shards.front().ptr != source_b_view.polys[2].shards.front().ptr &&
+        use_persistent_relinearize() &&
+        use_fourstep_qp_any_p(level_info.degree, base_p_size) &&
+        use_fourstep_phase2_mac() &&
+        use_small_p_fourstep(level_info.degree, base_p_size) &&
+        can_batch_fourstep_p_intt(level_info.degree, *parameter_shard);
+    if (!can_pair)
+    {
+        relinearize_hybrid_ciphertext(
+            destination_a_view, source_a_view, relin_keys_view, relin_keys_data, level_info);
+        relinearize_hybrid_ciphertext(
+            destination_b_view, source_b_view, relin_keys_view, relin_keys_data, level_info);
+        return;
+    }
+
+    auto &scratch = persistent_workspace_->relinearize_pair;
+    ensure_hybrid_scratch_pair(
+        scratch, device_id, level_info.degree, base_q_size, base_p_size);
+
+    const GpuParameterShard *resolved_shard = nullptr;
+    run_hybrid_keyswitch_pair_accum(
+        scratch,
+        source_a_view.polys[2],
+        source_b_view.polys[2],
+        relin_keys_view,
+        relin_keys_data,
+        level_info,
+        resolved_shard);
+    convert_pair_p_to_q_ntt(scratch, *resolved_shard);
+
+    const GpuWord *conv_a0 = scratch.converted_q_pair.data();
+    const GpuWord *conv_a1 = scratch.converted_q_pair.data() + scratch.q_word_count;
+    const GpuWord *conv_b0 = scratch.converted_q_pair.data() + 2 * scratch.q_word_count;
+    const GpuWord *conv_b1 = scratch.converted_q_pair.data() + 3 * scratch.q_word_count;
+
+    kernel::launch_hybrid_apply_moddown_ntt_add_back(
+        destination_a_view.polys[0].shards.front(),
+        destination_a_view.polys[1].shards.front(),
+        scratch.accum_q0[0].data(),
+        scratch.accum_q1[0].data(),
+        conv_a0,
+        conv_a1,
+        *resolved_shard,
+        scratch.degree,
+        &source_a_view.polys[0].shards.front(),
+        &source_a_view.polys[1].shards.front());
+    kernel::launch_hybrid_apply_moddown_ntt_add_back(
+        destination_b_view.polys[0].shards.front(),
+        destination_b_view.polys[1].shards.front(),
+        scratch.accum_q0[1].data(),
+        scratch.accum_q1[1].data(),
+        conv_b0,
+        conv_b1,
+        *resolved_shard,
+        scratch.degree,
+        &source_b_view.polys[0].shards.front(),
+        &source_b_view.polys[1].shards.front());
+}
+
+void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView &source_b_view,
+    const GpuConstEvaluationKeyView &relin_keys_view,
+    const GpuEvaluationKeyData &relin_keys_data,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    validate_hybrid_relin_rescale_x2_shape(
+        destination_a_view, source_a_view, relin_keys_view, relin_keys_data,
+        source_level_info, destination_level_info);
+    validate_hybrid_relin_rescale_x2_shape(
+        destination_b_view, source_b_view, relin_keys_view, relin_keys_data,
+        source_level_info, destination_level_info);
+
+    const std::size_t base_q_size = source_level_info.q_count;
+    const std::size_t base_p_size = relin_keys_view.meta.p_count;
+    const int device_id = source_a_view.polys[0].shards.front().device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(source_level_info, source_a_view.polys[2].shards.front());
+    const bool can_pair =
+        parameter_shard != nullptr &&
+        source_b_view.polys[0].shards.front().device_id == device_id &&
+        source_a_view.polys[2].shards.front().ptr != source_b_view.polys[2].shards.front().ptr &&
+        use_persistent_relinearize() &&
+        use_fourstep_qp_any_p(source_level_info.degree, base_p_size) &&
+        use_fourstep_phase2_mac() &&
+        use_small_p_fourstep(source_level_info.degree, base_p_size) &&
+        can_batch_fourstep_p_intt(source_level_info.degree, *parameter_shard) &&
+        allow_fourstep_rescale_x2(source_level_info.degree, *parameter_shard) &&
+        parameter_shard->q_last_two_product != 0;
+    if (!can_pair)
+    {
+        relinearize_hybrid_ciphertext_rescale_x2(
+            destination_a_view, source_a_view, relin_keys_view, relin_keys_data,
+            source_level_info, destination_level_info);
+        relinearize_hybrid_ciphertext_rescale_x2(
+            destination_b_view, source_b_view, relin_keys_view, relin_keys_data,
+            source_level_info, destination_level_info);
+        return;
+    }
+
+    auto &scratch = persistent_workspace_->relinearize_pair;
+    ensure_hybrid_scratch_pair(
+        scratch, device_id, source_level_info.degree, base_q_size, base_p_size);
+    ensure_hybrid_pair_rescale_x2_scratch(scratch);
+
+    const GpuParameterShard *resolved_shard = nullptr;
+    run_hybrid_keyswitch_pair_accum(
+        scratch,
+        source_a_view.polys[2],
+        source_b_view.polys[2],
+        relin_keys_view,
+        relin_keys_data,
+        source_level_info,
+        resolved_shard);
+    convert_pair_p_to_q_ntt(scratch, *resolved_shard);
+
+    const std::size_t dst_q_count = destination_level_info.q_count;
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src = lane == 0 ? source_a_view : source_b_view;
+        auto &dst = lane == 0 ? destination_a_view : destination_b_view;
+        const GpuWord *conv_q0 =
+            scratch.converted_q_pair.data() + (lane * 2) * scratch.q_word_count;
+        const GpuWord *conv_q1 = conv_q0 + scratch.q_word_count;
+
+        GpuPolyShardView dropped_ntt0{
+            scratch.device_id, scratch.dropped_ntt[lane].data(),
+            dst_q_count, 2, 0, scratch.degree};
+        GpuPolyShardView dropped_ntt1{
+            scratch.device_id, scratch.dropped_ntt[lane].data() + 2 * scratch.degree,
+            dst_q_count, 2, 0, scratch.degree};
+        const auto &add0 = src.polys[0].shards.front();
+        const auto &add1 = src.polys[1].shards.front();
+        GpuConstPolyShardView add_tail0{
+            add0.device_id, add0.ptr + dst_q_count * scratch.degree,
+            dst_q_count, 2, 0, scratch.degree};
+        GpuConstPolyShardView add_tail1{
+            add1.device_id, add1.ptr + dst_q_count * scratch.degree,
+            dst_q_count, 2, 0, scratch.degree};
+        kernel::launch_hybrid_apply_moddown_ntt_add_back(
+            dropped_ntt0, dropped_ntt1,
+            scratch.accum_q0[lane].data(), scratch.accum_q1[lane].data(),
+            conv_q0, conv_q1,
+            *resolved_shard, scratch.degree, &add_tail0, &add_tail1);
+
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            scratch.dropped_coeff[lane].data(),
+            scratch.dropped_coeff[lane].data() + 2 * scratch.degree,
+            scratch.dropped_ntt[lane].data(),
+            scratch.dropped_ntt[lane].data() + 2 * scratch.degree,
+            dst_q_count, 2, *resolved_shard);
+        kernel::launch_build_q_last_two_rescale_correction_batch_fused(
+            scratch.correction[lane].data(),
+            scratch.dropped_coeff[lane].data(),
+            2, dst_q_count, *resolved_shard, scratch.degree);
+
+        GpuPolyShardView corr_ntt0{
+            scratch.device_id, scratch.correction_ntt[lane].data(),
+            0, dst_q_count, 0, scratch.degree};
+        GpuPolyShardView corr_ntt1{
+            scratch.device_id,
+            scratch.correction_ntt[lane].data() + dst_q_count * scratch.degree,
+            0, dst_q_count, 0, scratch.degree};
+        GpuConstPolyShardView corr0{
+            scratch.device_id, scratch.correction[lane].data(),
+            0, dst_q_count, 0, scratch.degree};
+        kernel::launch_forward_ntt_poly_shard_batch_fourstep_65536(
+            corr_ntt0, corr0, *resolved_shard, scratch.degree, 2);
+
+        kernel::launch_hybrid_apply_moddown_ntt_add_back_rescale_x2(
+            dst.polys[0].shards.front(),
+            dst.polys[1].shards.front(),
+            as_const_shard(corr_ntt0),
+            as_const_shard(corr_ntt1),
+            scratch.accum_q0[lane].data(),
+            scratch.accum_q1[lane].data(),
+            conv_q0,
+            conv_q1,
+            *resolved_shard,
+            scratch.degree,
+            &add0,
+            &add1);
+    }
+}
+
+bool GpuKeySwitchHandler::relinearize_hybrid_ciphertext_batch_to_buffer(
+    const std::vector<GpuConstCiphertextView> &source_views,
+    const GpuConstEvaluationKeyView &relin_keys_view,
+    const GpuEvaluationKeyData &relin_keys_data,
+    const GpuLevelInfo &level_info,
+    GpuDoubleHoistWorkspace &workspace) const
+{
+    const std::size_t batch_count = source_views.size();
+    if (batch_count == 0 || batch_count > kernel::kMaxRelinBatchSources)
+    {
+        return false;
+    }
+    const std::size_t base_q_size = level_info.q_count;
+    const std::size_t base_p_size = relin_keys_view.meta.p_count;
+    if (base_p_size == 0 ||
+        !(relin_keys_view.meta.key_parms_id == relin_keys_data.meta.key_parms_id) ||
+        relin_keys_view.storage_q_count != relin_keys_data.meta.q_count ||
+        relin_keys_view.meta.q_count != base_q_size ||
+        relin_keys_view.meta.key_count <= kRelinKeyPower2Index ||
+        relin_keys_view.meta.decomposition_count == 0 ||
+        relin_keys_view.meta.component_count < kSwitchKeyComponentCount ||
+        relin_keys_data.poly_metadata_.empty() ||
+        relin_keys_data.polys_.size() != relin_keys_view.polys.size())
+    {
+        return false;
+    }
+    const std::size_t expected_dnum =
+        (base_q_size + base_p_size - 1) / base_p_size;
+    if (expected_dnum == 0 ||
+        expected_dnum > kernel::kMaxRelinDnum ||
+        relin_keys_view.meta.decomposition_count < expected_dnum)
+    {
+        return false;
+    }
+
+    const int device_id = source_views[0].polys[0].shards.front().device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(level_info, source_views[0].polys[2].shards.front());
+    if (parameter_shard == nullptr ||
+        parameter_shard->hybrid_base_q_count != base_q_size ||
+        parameter_shard->hybrid_base_p_count != base_p_size)
+    {
+        return false;
+    }
+
+    std::vector<GpuConstRNSPolyView> c2_polys;
+    c2_polys.reserve(batch_count);
+    for (std::size_t s = 0; s < batch_count; ++s)
+    {
+        const auto &src = source_views[s];
+        if (!(src.meta.parms_id == level_info.parms_id) ||
+            !src.meta.is_ntt_form ||
+            src.polys.size() != 3 ||
+            src.meta.component_count != 3 ||
+            src.meta.degree != level_info.degree ||
+            src.meta.q_count != base_q_size ||
+            src.meta.p_count != 0)
+        {
+            return false;
+        }
+        for (std::size_t c = 0; c < 3; ++c)
+        {
+            if (src.polys[c].shards.size() != 1 ||
+                src.polys[c].shards.front().device_id != device_id ||
+                src.polys[c].shards.front().limb_begin != 0 ||
+                src.polys[c].shards.front().limb_count != base_q_size ||
+                src.polys[c].shards.front().coeff_begin != 0 ||
+                src.polys[c].shards.front().coeff_count != level_info.degree)
+            {
+                return false;
+            }
+        }
+        c2_polys.push_back(src.polys[2]);
+    }
+
+    workspace.outer_group_hoists.resize(batch_count);
+    std::vector<GpuHoistedDecomposition *> hoist_dests(batch_count);
+    for (std::size_t s = 0; s < batch_count; ++s)
+    {
+        hoist_dests[s] = &workspace.outer_group_hoists[s];
+    }
+    hoist_decompose_modup_ntt_batch(
+        c2_polys, level_info, hoist_dests, workspace.keyswitch);
+
+    kernel::RelinKeymulBatchArgs args{};
+    for (std::size_t s = 0; s < batch_count; ++s)
+    {
+        args.digits_q[s] = workspace.outer_group_hoists[s].digits_q_ntt.data();
+        args.digits_p[s] = workspace.outer_group_hoists[s].digits_p_ntt.data();
+        args.c0_q[s] = source_views[s].polys[0].shards.front().ptr;
+        args.c1_q[s] = source_views[s].polys[1].shards.front().ptr;
+    }
+    for (std::size_t digit = 0; digit < expected_dnum; ++digit)
+    {
+        const auto &key_c0 = find_key_poly(
+            relin_keys_view, relin_keys_data, kRelinKeyPower2Index, digit, 0);
+        const auto &key_c1 = find_key_poly(
+            relin_keys_view, relin_keys_data, kRelinKeyPower2Index, digit, 1);
+        validate_single_full_shard(
+            "GpuKeySwitchHandler batch relin key c0",
+            key_c0,
+            relin_keys_data.meta.degree,
+            relin_keys_data.meta.q_count + relin_keys_data.meta.p_count);
+        validate_single_full_shard(
+            "GpuKeySwitchHandler batch relin key c1",
+            key_c1,
+            relin_keys_data.meta.degree,
+            relin_keys_data.meta.q_count + relin_keys_data.meta.p_count);
+        const auto k0 = make_hybrid_key_component_view(
+            key_c0, relin_keys_view, relin_keys_data);
+        const auto k1 = make_hybrid_key_component_view(
+            key_c1, relin_keys_view, relin_keys_data);
+        args.key_q0[digit] = k0.q_ptr;
+        args.key_p0[digit] = k0.p_ptr;
+        args.key_q1[digit] = k1.q_ptr;
+        args.key_p1[digit] = k1.p_ptr;
+    }
+
+    workspace.outer_accumulator.ensure_capacity(
+        device_id, level_info.degree, base_q_size, base_p_size, batch_count);
+    kernel::launch_relin_keymul_batch(
+        workspace.outer_accumulator.q.data(),
+        workspace.outer_accumulator.p.data(),
+        args,
+        batch_count,
+        expected_dnum,
+        *parameter_shard,
+        level_info.degree);
+    moddown_qp_ciphertext_batch_to_q(
+        workspace.outer_accumulator,
+        batch_count,
+        workspace.inner_q_batch,
+        level_info,
+        workspace.batch_p_coeff,
+        workspace.batch_converted_q);
+    return true;
 }
 
 }  // namespace gpu

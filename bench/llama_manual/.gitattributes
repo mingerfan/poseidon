@@ -1,0 +1,3 @@
+# Preserve SHA-bound fixture bytes and the original third-party license text.
+inputs/r20_fixture.txt -text whitespace=cr-at-eol
+LICENSE_*.txt -text -whitespace

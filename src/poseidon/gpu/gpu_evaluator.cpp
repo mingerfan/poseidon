@@ -4,6 +4,7 @@
 #include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
+#include "poseidon/gpu/kernels/gpu_rescale_kernels.h"
 
 #include "poseidon/advance/homomorphic_linear_transform.h"
 
@@ -13,6 +14,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
@@ -268,6 +270,21 @@ bool use_evalmod_lazy_relinearization()
 bool use_evalmod_caccum_leaf()
 {
     const char *raw = std::getenv("POSEIDON_EVALMOD_CACCUM_LEAF");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_evalmod_pair()
+{
+    const char *raw = std::getenv("POSEIDON_EVAL_MOD_PAIR");
     if (raw == nullptr || *raw == '\0')
     {
         return true;
@@ -2120,6 +2137,43 @@ void GpuEvaluator::multiply_q_prefix(
     destination_ciphertext = std::move(result);
 }
 
+void GpuEvaluator::add_sub_q_prefix(
+    const GpuCiphertextData &left, const GpuCiphertextData &right,
+    GpuCiphertextData &destination, parms_id_type target_parms_id,
+    bool subtract) const
+{
+    const auto &target = params_.get_level(target_parms_id);
+    validate_q_prefix_source("add_sub_q_prefix left", left,
+        params_.get_level(left.meta.parms_id), target);
+    validate_q_prefix_source("add_sub_q_prefix right", right,
+        params_.get_level(right.meta.parms_id), target);
+    if (left.meta.degree != right.meta.degree ||
+        left.fields_.front().device_id != right.fields_.front().device_id ||
+        !same_scale(left.meta.scale, right.meta.scale) ||
+        !(left.meta.scale > 0.0) || !std::isfinite(left.meta.scale) ||
+        !(right.meta.scale > 0.0) || !std::isfinite(right.meta.scale))
+        throw std::invalid_argument("add_sub_q_prefix: incompatible shape/device/scale");
+    const auto layout = make_q_prefix_layout(left, target);
+    const auto right_layout = make_q_prefix_layout(right, target);
+    if (!same_logical_shard_layout(layout, right_layout))
+        throw std::invalid_argument("add_sub_q_prefix: incompatible shard layouts");
+    const auto components = std::max(left.size(), right.size());
+    auto result = GpuCiphertextData::allocate_single_device_sharded(
+        target.degree, target.q_count, components,
+        left.fields_.front().device_id, layout.shards, 0);
+    result.meta = left.meta;
+    result.meta.parms_id = target.parms_id;
+    result.meta.q_count = target.q_count;
+    result.meta.p_count = 0;
+    result.meta.component_count = components;
+    auto left_view = make_q_prefix_view(left, target);
+    auto right_view = make_q_prefix_view(right, target);
+    auto result_view = result.make_view();
+    if (subtract)elementwise_handler_.sub_ciphertext(result_view, left_view, right_view, target);
+    else elementwise_handler_.add_ciphertext(result_view, left_view, right_view, target);
+    destination = std::move(result);
+}
+
 void GpuEvaluator::square(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
@@ -2803,6 +2857,819 @@ void GpuEvaluator::drop_modulus_inplace(
     }
 }
 
+namespace
+{
+
+bool pair_has_single_full_shard(const GpuCiphertextData &ct)
+{
+    if (ct.empty() || ct.fields_.empty() || ct.meta.p_count != 0 ||
+        ct.meta.component_count != ct.size() ||
+        !all_components_use_layout(ct, ct.polys_.at(0)) ||
+        ct.polys_.at(0).shards.size() != 1)
+    {
+        return false;
+    }
+    const auto &s = ct.polys_.at(0).shards.front();
+    return s.limb_begin == 0 && s.limb_count == ct.meta.q_count &&
+           s.coeff_begin == 0 && s.coeff_count == ct.meta.degree;
+}
+
+bool plain_has_single_full_shard(const GpuPlaintextData &pt)
+{
+    if (pt.empty() || pt.fields_.empty() || pt.meta.p_count != 0 || pt.poly_.shards.size() != 1)
+    {
+        return false;
+    }
+    const auto &s = pt.poly_.shards.front();
+    return s.limb_begin == 0 && s.limb_count == pt.meta.q_count &&
+           s.coeff_begin == 0 && s.coeff_count == pt.meta.degree;
+}
+
+GpuConstCiphertextView make_q_prefix_const_view(
+    const GpuCiphertextData &ct,
+    const GpuLevelInfo &dst_level)
+{
+    GpuConstCiphertextView view = ct.make_const_view();
+    view.meta.parms_id = dst_level.parms_id;
+    view.meta.q_count = dst_level.q_count;
+    for (auto &poly : view.polys)
+    {
+        poly.shards.front().limb_count = dst_level.q_count;
+    }
+    return view;
+}
+
+GpuCiphertextView make_q_prefix_mutable_view(
+    GpuCiphertextData &ct,
+    const GpuCiphertextMeta &dst_meta)
+{
+    GpuCiphertextView view = ct.make_view();
+    view.meta = dst_meta;
+    for (auto &poly : view.polys)
+    {
+        poly.shards.front().limb_count = dst_meta.q_count;
+    }
+    return view;
+}
+
+GpuConstRNSPolyView make_plain_q_prefix_const_view(
+    const GpuPlaintextData &pt,
+    std::size_t q_count)
+{
+    GpuConstRNSPolyView view = pt.make_const_view().poly;
+    view.shards.front().limb_count = q_count;
+    return view;
+}
+
+bool ciphertext_storage_supports_q_prefix(
+    const GpuCiphertextData &dst,
+    const GpuCiphertextMeta &meta,
+    std::size_t component_count,
+    int device_id)
+{
+    return !dst.empty() &&
+           !dst.fields_.empty() &&
+           (dst.fields_.size() == 1 || dst.fields_.size() == component_count) &&
+           dst.polys_.size() == component_count &&
+           dst.meta.degree == meta.degree &&
+           dst.meta.q_count >= meta.q_count &&
+           dst.meta.p_count == 0 &&
+           all_components_use_layout(dst, dst.polys_.at(0)) &&
+           dst.polys_.at(0).shards.size() == 1 &&
+           dst.fields_.at(0).device_id == device_id &&
+           dst.polys_.at(0).shards.front().limb_begin == 0 &&
+           dst.polys_.at(0).shards.front().limb_count >= meta.q_count &&
+           dst.polys_.at(0).shards.front().coeff_begin == 0 &&
+           dst.polys_.at(0).shards.front().coeff_count == meta.degree;
+}
+
+void commit_q_prefix_metadata(
+    GpuCiphertextData &dst,
+    const GpuCiphertextMeta &meta)
+{
+    dst.meta = meta;
+    for (auto &poly : dst.polys_)
+    {
+        poly.q_count = meta.q_count;
+        poly.p_count = 0;
+        poly.shards.front().limb_count = meta.q_count;
+    }
+}
+
+}  // namespace
+
+void GpuEvaluator::add_pair(
+    const GpuCiphertextData &left_a,
+    const GpuCiphertextData &right_a,
+    const GpuCiphertextData &left_b,
+    const GpuCiphertextData &right_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &left_b && &destination_a != &right_b &&
+        &destination_b != &left_a && &destination_b != &right_a;
+    if (!no_cross_alias ||
+        !pair_has_single_full_shard(left_a) || !pair_has_single_full_shard(right_a) ||
+        !pair_has_single_full_shard(left_b) || !pair_has_single_full_shard(right_b) ||
+        !(left_a.meta.parms_id == right_a.meta.parms_id) ||
+        !(left_a.meta.parms_id == left_b.meta.parms_id) ||
+        !(left_a.meta.parms_id == right_b.meta.parms_id) ||
+        !left_a.meta.is_ntt_form || !right_a.meta.is_ntt_form ||
+        !left_b.meta.is_ntt_form || !right_b.meta.is_ntt_form ||
+        left_a.size() != right_a.size() ||
+        left_b.size() != right_b.size() ||
+        left_a.size() + left_b.size() > kernel::kMaxElementwisePairPtrs ||
+        !same_scale(left_a.meta.scale, right_a.meta.scale) ||
+        !same_scale(left_b.meta.scale, right_b.meta.scale) ||
+        left_a.fields_[0].device_id != left_b.fields_[0].device_id)
+    {
+        add(left_a, right_a, destination_a);
+        add(left_b, right_b, destination_b);
+        return;
+    }
+
+    const int device_id = left_a.fields_[0].device_id;
+    const auto &level_info = params_.get_level(left_a.meta.parms_id);
+    prepare_ciphertext_destination(
+        destination_a, nullptr, nullptr, left_a.meta, left_a.size(), device_id, left_a.polys_[0]);
+    prepare_ciphertext_destination(
+        destination_b, nullptr, nullptr, left_b.meta, left_b.size(), device_id, left_b.polys_[0]);
+    auto dst_a_view = destination_a.make_view();
+    auto dst_b_view = destination_b.make_view();
+    elementwise_handler_.add_or_sub_ciphertext_pair(
+        dst_a_view, dst_b_view,
+        left_a.make_const_view(), right_a.make_const_view(),
+        left_b.make_const_view(), right_b.make_const_view(),
+        false, level_info);
+}
+
+void GpuEvaluator::sub_pair(
+    const GpuCiphertextData &left_a,
+    const GpuCiphertextData &right_a,
+    const GpuCiphertextData &left_b,
+    const GpuCiphertextData &right_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &left_b && &destination_a != &right_b &&
+        &destination_b != &left_a && &destination_b != &right_a;
+    if (!no_cross_alias ||
+        !pair_has_single_full_shard(left_a) || !pair_has_single_full_shard(right_a) ||
+        !pair_has_single_full_shard(left_b) || !pair_has_single_full_shard(right_b) ||
+        !(left_a.meta.parms_id == right_a.meta.parms_id) ||
+        !(left_a.meta.parms_id == left_b.meta.parms_id) ||
+        !(left_a.meta.parms_id == right_b.meta.parms_id) ||
+        !left_a.meta.is_ntt_form || !right_a.meta.is_ntt_form ||
+        !left_b.meta.is_ntt_form || !right_b.meta.is_ntt_form ||
+        left_a.size() != right_a.size() ||
+        left_b.size() != right_b.size() ||
+        left_a.size() + left_b.size() > kernel::kMaxElementwisePairPtrs ||
+        !same_scale(left_a.meta.scale, right_a.meta.scale) ||
+        !same_scale(left_b.meta.scale, right_b.meta.scale) ||
+        left_a.fields_[0].device_id != left_b.fields_[0].device_id)
+    {
+        sub(left_a, right_a, destination_a);
+        sub(left_b, right_b, destination_b);
+        return;
+    }
+
+    const int device_id = left_a.fields_[0].device_id;
+    const auto &level_info = params_.get_level(left_a.meta.parms_id);
+    prepare_ciphertext_destination(
+        destination_a, nullptr, nullptr, left_a.meta, left_a.size(), device_id, left_a.polys_[0]);
+    prepare_ciphertext_destination(
+        destination_b, nullptr, nullptr, left_b.meta, left_b.size(), device_id, left_b.polys_[0]);
+    auto dst_a_view = destination_a.make_view();
+    auto dst_b_view = destination_b.make_view();
+    elementwise_handler_.add_or_sub_ciphertext_pair(
+        dst_a_view, dst_b_view,
+        left_a.make_const_view(), right_a.make_const_view(),
+        left_b.make_const_view(), right_b.make_const_view(),
+        true, level_info);
+}
+
+void GpuEvaluator::multiply_pair(
+    const GpuCiphertextData &left_a,
+    const GpuCiphertextData &right_a,
+    const GpuCiphertextData &left_b,
+    const GpuCiphertextData &right_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &left_b && &destination_a != &right_b &&
+        &destination_b != &left_a && &destination_b != &right_a;
+    if (!no_cross_alias ||
+        !pair_has_single_full_shard(left_a) || !pair_has_single_full_shard(right_a) ||
+        !pair_has_single_full_shard(left_b) || !pair_has_single_full_shard(right_b) ||
+        !(left_a.meta.parms_id == right_a.meta.parms_id) ||
+        !(left_a.meta.parms_id == left_b.meta.parms_id) ||
+        !(left_a.meta.parms_id == right_b.meta.parms_id) ||
+        !left_a.meta.is_ntt_form || !right_a.meta.is_ntt_form ||
+        !left_b.meta.is_ntt_form || !right_b.meta.is_ntt_form ||
+        left_a.size() != 2 || right_a.size() != 2 ||
+        left_b.size() != 2 || right_b.size() != 2 ||
+        left_a.fields_[0].device_id != left_b.fields_[0].device_id)
+    {
+        multiply(left_a, right_a, destination_a);
+        multiply(left_b, right_b, destination_b);
+        return;
+    }
+
+    GpuCiphertextMeta meta_a = left_a.meta;
+    meta_a.component_count = 3;
+    meta_a.is_ntt_form = true;
+    meta_a.scale = left_a.meta.scale * right_a.meta.scale;
+    GpuCiphertextMeta meta_b = left_b.meta;
+    meta_b.component_count = 3;
+    meta_b.is_ntt_form = true;
+    meta_b.scale = left_b.meta.scale * right_b.meta.scale;
+    if (!(meta_a.scale > 0.0) || !std::isfinite(meta_a.scale) ||
+        !(meta_b.scale > 0.0) || !std::isfinite(meta_b.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_pair: invalid result scale");
+    }
+
+    const int device_id = left_a.fields_[0].device_id;
+    const auto &level_info = params_.get_level(left_a.meta.parms_id);
+    const bool alias_a = &destination_a == &left_a || &destination_a == &right_a;
+    const bool alias_b = &destination_b == &left_b || &destination_b == &right_b;
+    GpuCiphertextData local_a, local_b;
+    GpuCiphertextData *out_a = alias_a ? &local_a : &destination_a;
+    GpuCiphertextData *out_b = alias_b ? &local_b : &destination_b;
+    prepare_ciphertext_destination(
+        *out_a, nullptr, nullptr, meta_a, 3, device_id, left_a.polys_[0]);
+    prepare_ciphertext_destination(
+        *out_b, nullptr, nullptr, meta_b, 3, device_id, left_b.polys_[0]);
+
+    auto dst_a_view = out_a->make_view();
+    auto dst_b_view = out_b->make_view();
+    elementwise_handler_.multiply_ciphertext_pair(
+        dst_a_view, dst_b_view,
+        left_a.make_const_view(), right_a.make_const_view(),
+        left_b.make_const_view(), right_b.make_const_view(),
+        level_info);
+    if (alias_a) destination_a = std::move(local_a);
+    if (alias_b) destination_b = std::move(local_b);
+}
+
+void GpuEvaluator::multiply_q_prefix_pair(
+    const GpuCiphertextData &left_a,
+    const GpuCiphertextData &right_a,
+    const GpuCiphertextData &left_b,
+    const GpuCiphertextData &right_b,
+    parms_id_type target_parms_id,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    const auto &target_level = params_.get_level(target_parms_id);
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &left_b && &destination_a != &right_b &&
+        &destination_b != &left_a && &destination_b != &right_a;
+    const bool fast_ok =
+        no_cross_alias &&
+        target_level.p_count == 0 && target_level.q_count != 0 &&
+        pair_has_single_full_shard(left_a) && pair_has_single_full_shard(right_a) &&
+        pair_has_single_full_shard(left_b) && pair_has_single_full_shard(right_b) &&
+        left_a.size() == 2 && right_a.size() == 2 &&
+        left_b.size() == 2 && right_b.size() == 2 &&
+        left_a.meta.is_ntt_form && right_a.meta.is_ntt_form &&
+        left_b.meta.is_ntt_form && right_b.meta.is_ntt_form &&
+        left_a.meta.degree == target_level.degree &&
+        right_a.meta.degree == target_level.degree &&
+        left_b.meta.degree == target_level.degree &&
+        right_b.meta.degree == target_level.degree &&
+        left_a.meta.q_count >= target_level.q_count &&
+        right_a.meta.q_count >= target_level.q_count &&
+        left_b.meta.q_count >= target_level.q_count &&
+        right_b.meta.q_count >= target_level.q_count &&
+        left_a.fields_[0].device_id == left_b.fields_[0].device_id;
+
+    if (!fast_ok)
+    {
+        multiply_q_prefix(left_a, right_a, destination_a, target_parms_id);
+        multiply_q_prefix(left_b, right_b, destination_b, target_parms_id);
+        return;
+    }
+
+    GpuCiphertextMeta meta_a = left_a.meta;
+    meta_a.parms_id = target_level.parms_id;
+    meta_a.q_count = target_level.q_count;
+    meta_a.component_count = 3;
+    meta_a.scale = left_a.meta.scale * right_a.meta.scale;
+    GpuCiphertextMeta meta_b = left_b.meta;
+    meta_b.parms_id = target_level.parms_id;
+    meta_b.q_count = target_level.q_count;
+    meta_b.component_count = 3;
+    meta_b.scale = left_b.meta.scale * right_b.meta.scale;
+    if (!(meta_a.scale > 0.0) || !std::isfinite(meta_a.scale) ||
+        !(meta_b.scale > 0.0) || !std::isfinite(meta_b.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_q_prefix_pair: invalid result scale");
+    }
+
+    const int device_id = left_a.fields_[0].device_id;
+    GpuRNSPoly ref_layout = left_a.polys_[0];
+    ref_layout.q_count = target_level.q_count;
+    ref_layout.shards.front().limb_count = target_level.q_count;
+    const bool alias_a = &destination_a == &left_a || &destination_a == &right_a;
+    const bool alias_b = &destination_b == &left_b || &destination_b == &right_b;
+    GpuCiphertextData local_a, local_b;
+    GpuCiphertextData *out_a = alias_a ? &local_a : &destination_a;
+    GpuCiphertextData *out_b = alias_b ? &local_b : &destination_b;
+    prepare_ciphertext_destination(
+        *out_a, nullptr, nullptr, meta_a, 3, device_id, ref_layout);
+    prepare_ciphertext_destination(
+        *out_b, nullptr, nullptr, meta_b, 3, device_id, ref_layout);
+
+    auto dst_a_view = out_a->make_view();
+    auto dst_b_view = out_b->make_view();
+    elementwise_handler_.multiply_ciphertext_pair(
+        dst_a_view, dst_b_view,
+        make_q_prefix_const_view(left_a, target_level),
+        make_q_prefix_const_view(right_a, target_level),
+        make_q_prefix_const_view(left_b, target_level),
+        make_q_prefix_const_view(right_b, target_level),
+        target_level);
+    if (alias_a) destination_a = std::move(local_a);
+    if (alias_b) destination_b = std::move(local_b);
+}
+
+void GpuEvaluator::square_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    multiply_pair(source_a, source_a, source_b, source_b, destination_a, destination_b);
+}
+
+void GpuEvaluator::multiply_plain_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &source_b && &destination_b != &source_a;
+    if (!no_cross_alias ||
+        !pair_has_single_full_shard(source_a) || !pair_has_single_full_shard(source_b) ||
+        !plain_has_single_full_shard(source_plaintext) ||
+        !(source_a.meta.parms_id == source_plaintext.meta.parms_id) ||
+        !(source_b.meta.parms_id == source_plaintext.meta.parms_id) ||
+        !source_a.meta.is_ntt_form || !source_b.meta.is_ntt_form ||
+        !source_plaintext.meta.is_ntt_form ||
+        source_a.size() + source_b.size() > kernel::kMaxElementwisePairPtrs ||
+        source_a.fields_[0].device_id != source_b.fields_[0].device_id ||
+        source_a.fields_[0].device_id != source_plaintext.fields_.front().device_id)
+    {
+        multiply_plain(source_a, source_plaintext, destination_a);
+        multiply_plain(source_b, source_plaintext, destination_b);
+        return;
+    }
+
+    GpuCiphertextMeta meta_a = source_a.meta;
+    meta_a.scale = source_a.meta.scale * source_plaintext.meta.scale;
+    GpuCiphertextMeta meta_b = source_b.meta;
+    meta_b.scale = source_b.meta.scale * source_plaintext.meta.scale;
+    const int device_id = source_a.fields_[0].device_id;
+    const auto &level_info = params_.get_level(source_plaintext.meta.parms_id);
+
+    prepare_ciphertext_destination(
+        destination_a, nullptr, nullptr, meta_a, source_a.size(), device_id, source_a.polys_[0]);
+    prepare_ciphertext_destination(
+        destination_b, nullptr, nullptr, meta_b, source_b.size(), device_id, source_b.polys_[0]);
+
+    auto dst_a_view = destination_a.make_view();
+    auto dst_b_view = destination_b.make_view();
+    elementwise_handler_.multiply_plain_pair(
+        dst_a_view, dst_b_view,
+        source_a.make_const_view(), source_b.make_const_view(),
+        source_plaintext.make_const_view().poly,
+        level_info);
+}
+
+void GpuEvaluator::multiply_plain_q_prefix_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    const auto &level_info = params_.get_level(source_plaintext.meta.parms_id);
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &source_b && &destination_b != &source_a;
+    const bool fast_ok =
+        no_cross_alias &&
+        level_info.p_count == 0 && level_info.q_count != 0 &&
+        pair_has_single_full_shard(source_a) && pair_has_single_full_shard(source_b) &&
+        plain_has_single_full_shard(source_plaintext) &&
+        source_a.meta.is_ntt_form && source_b.meta.is_ntt_form &&
+        source_plaintext.meta.is_ntt_form &&
+        source_a.meta.degree == level_info.degree &&
+        source_b.meta.degree == level_info.degree &&
+        source_a.meta.q_count >= level_info.q_count &&
+        source_b.meta.q_count >= level_info.q_count &&
+        source_a.size() + source_b.size() <= kernel::kMaxElementwisePairPtrs &&
+        source_a.fields_[0].device_id == source_b.fields_[0].device_id &&
+        source_a.fields_[0].device_id == source_plaintext.fields_.front().device_id;
+
+    if (!fast_ok)
+    {
+        multiply_plain_q_prefix(source_a, source_plaintext, destination_a);
+        multiply_plain_q_prefix(source_b, source_plaintext, destination_b);
+        return;
+    }
+
+    GpuCiphertextMeta meta_a = source_a.meta;
+    meta_a.parms_id = level_info.parms_id;
+    meta_a.q_count = level_info.q_count;
+    meta_a.scale = source_a.meta.scale * source_plaintext.meta.scale;
+    GpuCiphertextMeta meta_b = source_b.meta;
+    meta_b.parms_id = level_info.parms_id;
+    meta_b.q_count = level_info.q_count;
+    meta_b.scale = source_b.meta.scale * source_plaintext.meta.scale;
+    const int device_id = source_a.fields_[0].device_id;
+
+    GpuRNSPoly ref_layout = source_a.polys_[0];
+    ref_layout.q_count = level_info.q_count;
+    ref_layout.shards.front().limb_count = level_info.q_count;
+
+    const bool reuse_a =
+        ciphertext_storage_supports_q_prefix(destination_a, meta_a, source_a.size(), device_id);
+    const bool reuse_b =
+        ciphertext_storage_supports_q_prefix(destination_b, meta_b, source_b.size(), device_id);
+    if (!reuse_a)
+    {
+        prepare_ciphertext_destination(
+            destination_a, &source_a, nullptr, meta_a, source_a.size(), device_id, ref_layout);
+    }
+    if (!reuse_b)
+    {
+        prepare_ciphertext_destination(
+            destination_b, &source_b, nullptr, meta_b, source_b.size(), device_id, ref_layout);
+    }
+
+    auto dst_a_view = reuse_a
+        ? make_q_prefix_mutable_view(destination_a, meta_a)
+        : destination_a.make_view();
+    auto dst_b_view = reuse_b
+        ? make_q_prefix_mutable_view(destination_b, meta_b)
+        : destination_b.make_view();
+    elementwise_handler_.multiply_plain_pair(
+        dst_a_view, dst_b_view,
+        make_q_prefix_const_view(source_a, level_info),
+        make_q_prefix_const_view(source_b, level_info),
+        source_plaintext.make_const_view().poly,
+        level_info);
+    if (reuse_a)
+    {
+        commit_q_prefix_metadata(destination_a, meta_a);
+    }
+    if (reuse_b)
+    {
+        commit_q_prefix_metadata(destination_b, meta_b);
+    }
+}
+
+void GpuEvaluator::double_sub_or_add_plain_pair(
+    kernel::DoublePlainPairOp op,
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData *source_b,
+    const GpuPlaintextData &plaintext,
+    const GpuCiphertextData *correction_a,
+    const GpuCiphertextData *correction_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData *destination_b,
+    const char *caller_name) const
+{
+    if (!pair_has_single_full_shard(source_a) ||
+        source_a.size() != 2 ||
+        !source_a.meta.is_ntt_form ||
+        !plain_has_single_full_shard(plaintext) ||
+        !plaintext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument(std::string(caller_name) + ": invalid lane A / plaintext input");
+    }
+    const bool has_b = source_b != nullptr && destination_b != nullptr;
+    if ((source_b == nullptr) != (destination_b == nullptr))
+    {
+        throw std::invalid_argument(std::string(caller_name) + ": invalid lane B pair pointers");
+    }
+    if (has_b &&
+        (!pair_has_single_full_shard(*source_b) ||
+         source_b->size() != 2 ||
+         !source_b->meta.is_ntt_form ||
+         !(source_b->meta.parms_id == source_a.meta.parms_id) ||
+         source_b->fields_[0].device_id != source_a.fields_[0].device_id))
+    {
+        throw std::invalid_argument(std::string(caller_name) + ": lane B mismatch");
+    }
+
+    const int device_id = source_a.fields_[0].device_id;
+    const auto &level_info = params_.get_level(source_a.meta.parms_id);
+    if (plaintext.meta.q_count < source_a.meta.q_count)
+    {
+        throw std::invalid_argument(std::string(caller_name) + ": plaintext q_count below source");
+    }
+    if (plaintext.meta.q_count == source_a.meta.q_count &&
+        !(plaintext.meta.parms_id == source_a.meta.parms_id))
+    {
+        throw std::invalid_argument(std::string(caller_name) + ": plaintext parms_id mismatch");
+    }
+    const GpuConstRNSPolyView plain_view = plaintext.meta.q_count == level_info.q_count
+        ? plaintext.make_const_view().poly
+        : make_plain_q_prefix_const_view(plaintext, level_info.q_count);
+
+    GpuConstCiphertextView corr_a_view;
+    GpuConstCiphertextView corr_b_view;
+    if (op == kernel::DoublePlainPairOp::SubCorr)
+    {
+        if (correction_a == nullptr || !pair_has_single_full_shard(*correction_a) ||
+            correction_a->size() != 2 || !correction_a->meta.is_ntt_form ||
+            correction_a->meta.q_count < level_info.q_count ||
+            (correction_a->meta.q_count == level_info.q_count &&
+             !(correction_a->meta.parms_id == level_info.parms_id)))
+        {
+            throw std::invalid_argument(std::string(caller_name) + ": invalid correction A");
+        }
+        corr_a_view = correction_a->meta.q_count == level_info.q_count
+            ? correction_a->make_const_view()
+            : make_q_prefix_const_view(*correction_a, level_info);
+        if (has_b)
+        {
+            if (correction_b == nullptr || !pair_has_single_full_shard(*correction_b) ||
+                correction_b->size() != 2 || !correction_b->meta.is_ntt_form ||
+                correction_b->meta.q_count < level_info.q_count ||
+                (correction_b->meta.q_count == level_info.q_count &&
+                 !(correction_b->meta.parms_id == level_info.parms_id)))
+            {
+                throw std::invalid_argument(std::string(caller_name) + ": invalid correction B");
+            }
+            corr_b_view = correction_b->meta.q_count == level_info.q_count
+                ? correction_b->make_const_view()
+                : make_q_prefix_const_view(*correction_b, level_info);
+        }
+    }
+
+    // Alias-safe per-lane (src -> dst); allocate only on cross-lane aliasing.
+    prepare_ciphertext_destination(
+        destination_a,
+        has_b ? source_b : nullptr,
+        has_b ? correction_b : nullptr,
+        source_a.meta,
+        2,
+        device_id,
+        source_a.polys_[0]);
+    if (has_b)
+    {
+        prepare_ciphertext_destination(
+            *destination_b,
+            &source_a,
+            correction_a,
+            source_b->meta,
+            2,
+            device_id,
+            source_b->polys_[0]);
+    }
+
+    auto dst_a_view = destination_a.make_view();
+    GpuCiphertextView dst_b_view;
+    GpuConstCiphertextView src_b_view;
+    if (has_b)
+    {
+        dst_b_view = destination_b->make_view();
+        src_b_view = source_b->make_const_view();
+    }
+    elementwise_handler_.double_sub_or_add_plain_pair(
+        op,
+        dst_a_view,
+        has_b ? &dst_b_view : nullptr,
+        source_a.make_const_view(),
+        has_b ? &src_b_view : nullptr,
+        plain_view,
+        op == kernel::DoublePlainPairOp::SubCorr ? &corr_a_view : nullptr,
+        (has_b && op == kernel::DoublePlainPairOp::SubCorr) ? &corr_b_view : nullptr,
+        level_info);
+}
+
+void GpuEvaluator::rescale_many_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b,
+    std::uint32_t rescale_count) const
+{
+    if (rescale_count == 0)
+    {
+        if (&destination_a != &source_a)
+        {
+            copy_ciphertext_data(source_a, destination_a, "rescale_many_pair zero copy A");
+        }
+        if (&destination_b != &source_b)
+        {
+            copy_ciphertext_data(source_b, destination_b, "rescale_many_pair zero copy B");
+        }
+        return;
+    }
+
+    const bool no_cross_alias =
+        &destination_a != &destination_b &&
+        &destination_a != &source_b &&
+        &destination_b != &source_a;
+    const bool fast_ok =
+        no_cross_alias &&
+        pair_has_single_full_shard(source_a) &&
+        pair_has_single_full_shard(source_b) &&
+        !(source_a.meta.parms_id != source_b.meta.parms_id) &&
+        source_a.meta.is_ntt_form && source_b.meta.is_ntt_form &&
+        source_a.meta.q_count > rescale_count &&
+        source_a.size() == source_b.size() &&
+        source_a.fields_[0].device_id == source_b.fields_[0].device_id;
+
+    if (!fast_ok)
+    {
+        rescale_many(source_a, destination_a, rescale_count);
+        rescale_many(source_b, destination_b, rescale_count);
+        return;
+    }
+
+    const auto &src_level_info = params_.get_level(source_a.meta.parms_id);
+    const GpuLevelInfo *cur = &src_level_info;
+    long double scale_a = static_cast<long double>(source_a.meta.scale);
+    long double scale_b = static_cast<long double>(source_b.meta.scale);
+    for (std::uint32_t s = 0; s < rescale_count; ++s)
+    {
+        const GpuWord q_last = cur->shards.front().q_last;
+        scale_a /= static_cast<long double>(q_last);
+        scale_b /= static_cast<long double>(q_last);
+        cur = &params_.get_next_level(cur->parms_id);
+    }
+    const auto &dst_level_info = *cur;
+    GpuCiphertextMeta meta_a = source_a.meta;
+    meta_a.parms_id = dst_level_info.parms_id;
+    meta_a.q_count = dst_level_info.q_count;
+    meta_a.scale = static_cast<double>(scale_a);
+    GpuCiphertextMeta meta_b = source_b.meta;
+    meta_b.parms_id = dst_level_info.parms_id;
+    meta_b.q_count = dst_level_info.q_count;
+    meta_b.scale = static_cast<double>(scale_b);
+
+    const int device_id = source_a.fields_[0].device_id;
+    const std::size_t components = source_a.size();
+    GpuRNSPoly ref_layout = source_a.polys_[0];
+    ref_layout.q_count = dst_level_info.q_count;
+    ref_layout.shards.front().limb_count = dst_level_info.q_count;
+
+    auto src_a_view = source_a.make_const_view();
+    auto src_b_view = source_b.make_const_view();
+
+    const bool reuse_a =
+        ciphertext_storage_supports_q_prefix(destination_a, meta_a, components, device_id);
+    const bool reuse_b =
+        ciphertext_storage_supports_q_prefix(destination_b, meta_b, components, device_id);
+    const bool need_local_a = !reuse_a && &destination_a == &source_a;
+    const bool need_local_b = !reuse_b && &destination_b == &source_b;
+    GpuCiphertextData local_a, local_b;
+    GpuCiphertextData *out_a = need_local_a ? &local_a : &destination_a;
+    GpuCiphertextData *out_b = need_local_b ? &local_b : &destination_b;
+    if (!reuse_a)
+    {
+        prepare_ciphertext_destination(
+            *out_a, nullptr, nullptr, meta_a, components, device_id, ref_layout);
+    }
+    if (!reuse_b)
+    {
+        prepare_ciphertext_destination(
+            *out_b, nullptr, nullptr, meta_b, components, device_id, ref_layout);
+    }
+
+    auto dst_a_view = reuse_a
+        ? make_q_prefix_mutable_view(*out_a, meta_a)
+        : out_a->make_view();
+    auto dst_b_view = reuse_b
+        ? make_q_prefix_mutable_view(*out_b, meta_b)
+        : out_b->make_view();
+
+    bool handled = false;
+    if (rescale_count == 1)
+    {
+        handled = modswitch_handler_.rescale_ciphertext_pair(
+            dst_a_view, dst_b_view, src_a_view, src_b_view, src_level_info, dst_level_info);
+    }
+    else if (rescale_count == 2)
+    {
+        handled = modswitch_handler_.rescale_ciphertext_x2_pair(
+            dst_a_view, dst_b_view, src_a_view, src_b_view, src_level_info, dst_level_info);
+    }
+    else
+    {
+        handled = modswitch_handler_.rescale_ciphertext_many_pair(
+            dst_a_view, dst_b_view, src_a_view, src_b_view, src_level_info, dst_level_info, rescale_count);
+    }
+
+    if (!handled)
+    {
+        rescale_many(source_a, destination_a, rescale_count);
+        rescale_many(source_b, destination_b, rescale_count);
+        return;
+    }
+
+    if (reuse_a)
+    {
+        commit_q_prefix_metadata(*out_a, meta_a);
+    }
+    else if (need_local_a)
+    {
+        destination_a = std::move(local_a);
+    }
+    if (reuse_b)
+    {
+        commit_q_prefix_metadata(*out_b, meta_b);
+    }
+    else if (need_local_b)
+    {
+        destination_b = std::move(local_b);
+    }
+}
+
+void GpuEvaluator::rescale_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    rescale_many_pair(source_a, source_b, destination_a, destination_b, 1);
+}
+
+void GpuEvaluator::rescale_x2_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    rescale_many_pair(source_a, source_b, destination_a, destination_b, 2);
+}
+
+void GpuEvaluator::rescale_dynamic_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b,
+    double min_scale) const
+{
+    if (!pair_has_single_full_shard(source_a) ||
+        !pair_has_single_full_shard(source_b) ||
+        !(source_a.meta.parms_id == source_b.meta.parms_id) ||
+        !source_a.meta.is_ntt_form || !source_b.meta.is_ntt_form ||
+        source_a.size() != source_b.size() ||
+        !same_scale(source_a.meta.scale, source_b.meta.scale))
+    {
+        rescale_dynamic(source_a, destination_a, min_scale);
+        rescale_dynamic(source_b, destination_b, min_scale);
+        return;
+    }
+
+    const std::size_t q_count = source_a.meta.q_count;
+    std::vector<std::uint64_t> active_moduli(q_count);
+    const GpuLevelInfo *lvl = &params_.get_level(source_a.meta.parms_id);
+    for (std::size_t idx = q_count; idx-- > 0;)
+    {
+        const GpuWord ql = lvl->shards.front().q_last;
+        active_moduli[idx] = ql != 0 ? ql : 1ULL;
+        if (idx > 0)
+        {
+            lvl = &params_.get_next_level(lvl->parms_id);
+        }
+    }
+    const auto plan = plan_gpu_dynamic_rescale(
+        source_a.meta.scale, min_scale, active_moduli, false);
+    if (plan.rescale_count == 0)
+    {
+        if (&destination_a != &source_a)
+        {
+            copy_ciphertext_data(source_a, destination_a, "rescale_dynamic_pair zero A");
+        }
+        if (&destination_b != &source_b)
+        {
+            copy_ciphertext_data(source_b, destination_b, "rescale_dynamic_pair zero B");
+        }
+        return;
+    }
+    rescale_many_pair(source_a, source_b, destination_a, destination_b, plan.rescale_count);
+    destination_a.meta.scale = plan.output_scale;
+    destination_b.meta.scale = plan.output_scale;
+}
+
 void GpuEvaluator::multiply_scalar(
     const GpuCiphertextData &source_ciphertext,
     std::uint64_t scalar,
@@ -3158,6 +4025,92 @@ void GpuEvaluator::relinearize(
     }
 }
 
+void GpuEvaluator::relinearize_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    const GpuRelinKeysData &relin_keys_in,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    if (&destination_a == &destination_b)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_pair: destinations must be distinct");
+    }
+    if (!(source_a.meta.parms_id == source_b.meta.parms_id) ||
+        source_a.meta.degree != source_b.meta.degree ||
+        source_a.meta.q_count != source_b.meta.q_count ||
+        source_a.meta.p_count != 0 || source_b.meta.p_count != 0)
+    {
+        relinearize(source_a, relin_keys_in, destination_a);
+        relinearize(source_b, relin_keys_in, destination_b);
+        return;
+    }
+
+    const auto &relin_keys = level_key_for(
+        params_, relin_keys_in, source_a.meta, "GpuEvaluator::relinearize_pair");
+    const std::array<const GpuCiphertextData *, 2> srcs{&source_a, &source_b};
+    const std::array<GpuCiphertextData *, 2> dsts{&destination_a, &destination_b};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src = *srcs[lane];
+        if (src.empty() || src.fields_.empty() || relin_keys.empty() ||
+            !src.meta.is_ntt_form || src.meta.component_count != src.size() ||
+            src.size() != 3 || src.meta.p_count != 0 ||
+            !all_components_use_layout(src, src.polys_.at(0)))
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::relinearize_pair: invalid input ciphertext");
+        }
+    }
+
+    std::array<bool, 2> aliases{};
+    std::array<GpuCiphertextData, 2> locals;
+    std::array<GpuCiphertextData *, 2> targets{};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src = *srcs[lane];
+        const auto &ref_layout = src.polys_.at(0);
+        const int device_id = src.fields_.at(0).device_id;
+        GpuCiphertextMeta meta = src.meta;
+        meta.component_count = 2;
+        meta.is_ntt_form = true;
+        aliases[lane] = (dsts[lane] == &source_a || dsts[lane] == &source_b);
+        if (aliases[lane])
+        {
+            locals[lane] = GpuCiphertextData::allocate_single_device_sharded(
+                src.meta.degree, src.meta.q_count, 2, device_id,
+                ref_layout.shards, 0);
+            locals[lane].meta = meta;
+            targets[lane] = &locals[lane];
+        }
+        else
+        {
+            prepare_ciphertext_destination(
+                *dsts[lane], nullptr, nullptr, meta, 2, device_id, ref_layout);
+            targets[lane] = dsts[lane];
+        }
+    }
+
+    auto src_a_view = source_a.make_const_view();
+    auto src_b_view = source_b.make_const_view();
+    auto dst_a_view = targets[0]->make_view();
+    auto dst_b_view = targets[1]->make_view();
+    const auto &relin_keys_view = relin_keys.const_view(source_a.meta.q_count);
+    const auto &level_info = params_.get_level(source_a.meta.parms_id);
+    keyswitch_handler_.relinearize_hybrid_ciphertext_pair(
+        dst_a_view, dst_b_view, src_a_view, src_b_view,
+        relin_keys_view, relin_keys, level_info);
+
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        if (aliases[lane])
+        {
+            *dsts[lane] = std::move(locals[lane]);
+        }
+    }
+}
+
 void GpuEvaluator::relinearize_rescale_x2_hybrid(
     const GpuCiphertextData &source_ciphertext,
     const GpuRelinKeysData &relin_keys_in,
@@ -3277,7 +4230,954 @@ void GpuEvaluator::relinearize_rescale_x2_hybrid(
     }
 }
 
-/*顶层旋转操作入口*/
+void GpuEvaluator::relinearize_rescale_x2_hybrid_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    const GpuRelinKeysData &relin_keys_in,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    if (&destination_a == &destination_b)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_rescale_x2_hybrid_pair: destinations must be distinct");
+    }
+    if (!(source_a.meta.parms_id == source_b.meta.parms_id) ||
+        source_a.meta.degree != source_b.meta.degree ||
+        source_a.meta.q_count != source_b.meta.q_count ||
+        source_a.meta.p_count != 0 || source_b.meta.p_count != 0)
+    {
+        relinearize_rescale_x2_hybrid(source_a, relin_keys_in, destination_a);
+        relinearize_rescale_x2_hybrid(source_b, relin_keys_in, destination_b);
+        return;
+    }
+
+    const auto &relin_keys = level_key_for(
+        params_, relin_keys_in, source_a.meta,
+        "GpuEvaluator::relinearize_rescale_x2_hybrid_pair");
+    const std::array<const GpuCiphertextData *, 2> srcs{&source_a, &source_b};
+    const std::array<GpuCiphertextData *, 2> dsts{&destination_a, &destination_b};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src = *srcs[lane];
+        if (src.empty() || src.fields_.empty() || relin_keys.empty() ||
+            !src.meta.is_ntt_form || src.meta.p_count != 0 ||
+            src.meta.component_count != 3 || src.size() != 3 ||
+            src.meta.q_count < 3 ||
+            !all_components_use_layout(src, src.polys_.at(0)))
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::relinearize_rescale_x2_hybrid_pair: unsupported ciphertext shape");
+        }
+    }
+
+    const auto &source_level_info = params_.get_level(source_a.meta.parms_id);
+    const auto &intermediate_level_info =
+        params_.get_next_level(source_a.meta.parms_id);
+    const auto &destination_level_info =
+        params_.get_next_level(intermediate_level_info.parms_id);
+    if (source_level_info.q_count != source_a.meta.q_count ||
+        destination_level_info.q_count + 2 != source_level_info.q_count ||
+        source_level_info.shards.empty() ||
+        source_level_info.shards.front().q_last_two_product == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_rescale_x2_hybrid_pair: level/constants mismatch");
+    }
+
+    const std::size_t dst_q_count = source_a.meta.q_count - 2;
+    const double q_last_two = static_cast<double>(
+        source_level_info.shards.front().q_last_two_product);
+    GpuPolyShard dst_shard;
+    dst_shard.field_index = 0;
+    dst_shard.field_offset = 0;
+    dst_shard.limb_begin = 0;
+    dst_shard.limb_count = dst_q_count;
+    dst_shard.coeff_begin = 0;
+    dst_shard.coeff_count = source_a.meta.degree;
+    GpuRNSPoly ref_layout;
+    ref_layout.degree = source_a.meta.degree;
+    ref_layout.q_count = dst_q_count;
+    ref_layout.p_count = 0;
+    ref_layout.shards.push_back(dst_shard);
+
+    std::array<bool, 2> aliases{};
+    std::array<GpuCiphertextData, 2> locals;
+    std::array<GpuCiphertextData *, 2> targets{};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src = *srcs[lane];
+        const int device_id = src.fields_.at(0).device_id;
+        GpuCiphertextMeta meta = src.meta;
+        meta.parms_id = destination_level_info.parms_id;
+        meta.q_count = dst_q_count;
+        meta.p_count = 0;
+        meta.component_count = 2;
+        meta.is_ntt_form = true;
+        meta.scale = src.meta.scale / q_last_two;
+        if (!(meta.scale > 0.0) || !std::isfinite(meta.scale))
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::relinearize_rescale_x2_hybrid_pair: invalid result scale");
+        }
+        aliases[lane] = (dsts[lane] == &source_a || dsts[lane] == &source_b);
+        if (aliases[lane])
+        {
+            locals[lane] = GpuCiphertextData::allocate_single_device_sharded(
+                src.meta.degree, dst_q_count, 2, device_id,
+                std::vector<GpuPolyShard>{dst_shard}, 0);
+            locals[lane].meta = meta;
+            targets[lane] = &locals[lane];
+        }
+        else
+        {
+            prepare_ciphertext_destination(
+                *dsts[lane], nullptr, nullptr, meta, 2, device_id, ref_layout);
+            targets[lane] = dsts[lane];
+        }
+    }
+
+    auto src_a_view = source_a.make_const_view();
+    auto src_b_view = source_b.make_const_view();
+    auto dst_a_view = targets[0]->make_view();
+    auto dst_b_view = targets[1]->make_view();
+    const auto &relin_keys_view = relin_keys.const_view(source_a.meta.q_count);
+    keyswitch_handler_.relinearize_hybrid_ciphertext_rescale_x2_pair(
+        dst_a_view, dst_b_view, src_a_view, src_b_view,
+        relin_keys_view, relin_keys, source_level_info, destination_level_info);
+
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        if (aliases[lane])
+        {
+            *dsts[lane] = std::move(locals[lane]);
+        }
+    }
+}
+
+namespace
+{
+
+bool prepare_binary_prefix_batch(
+    const GpuParameterData &params,
+    const std::vector<const GpuCiphertextData *> &lefts,
+    const std::vector<const GpuCiphertextData *> &rights,
+    bool allow_size3,
+    std::size_t max_total_polys,
+    std::size_t max_ciphertexts,
+    const GpuLevelInfo *&target_level_out,
+    GpuRNSPoly &dst_layout_out,
+    int &device_id_out,
+    std::vector<GpuConstCiphertextView> &lhs_views_out,
+    std::vector<GpuConstCiphertextView> &rhs_views_out)
+{
+    const std::size_t count = lefts.size();
+    if (count < 2 || count > max_ciphertexts || rights.size() != count)
+    {
+        return false;
+    }
+    const auto &ref_l = *lefts[0];
+    const auto &ref_r = *rights[0];
+    if (ref_l.empty() || ref_r.empty() || ref_l.fields_.empty() || ref_r.fields_.empty())
+    {
+        return false;
+    }
+    const std::size_t comp_count = ref_l.size();
+    if ((comp_count != 2 && !(allow_size3 && comp_count == 3)) ||
+        comp_count * count > max_total_polys ||
+        !ref_l.meta.is_ntt_form || ref_l.meta.p_count != 0)
+    {
+        return false;
+    }
+    const std::size_t dst_q = std::min(ref_l.meta.q_count, ref_r.meta.q_count);
+    const std::size_t degree = ref_l.meta.degree;
+    const int device_id = ref_l.fields_[0].device_id;
+    const parms_id_type target_parms_id =
+        ref_l.meta.q_count == dst_q ? ref_l.meta.parms_id : ref_r.meta.parms_id;
+
+    auto same_chain_prefix = [&](const GpuCiphertextData &ct) {
+        if (ct.meta.q_count < dst_q) return false;
+        if (ct.meta.parms_id == target_parms_id) return true;
+        if (ct.meta.q_count == dst_q) return false;
+        parms_id_type cur = ct.meta.parms_id;
+        for (std::size_t s = 0; s < ct.meta.q_count - dst_q; ++s)
+        {
+            cur = params.get_next_level(cur).parms_id;
+        }
+        return cur == target_parms_id;
+    };
+
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        const auto &l = *lefts[i];
+        const auto &r = *rights[i];
+        if (l.empty() || r.empty() || l.fields_.empty() || r.fields_.empty() ||
+            !l.meta.is_ntt_form || !r.meta.is_ntt_form ||
+            l.meta.p_count != 0 || r.meta.p_count != 0 ||
+            l.meta.degree != degree || r.meta.degree != degree ||
+            std::min(l.meta.q_count, r.meta.q_count) != dst_q ||
+            l.size() != comp_count || r.size() != comp_count ||
+            l.meta.component_count != comp_count || r.meta.component_count != comp_count ||
+            l.polys_[0].shards.size() != 1 || r.polys_[0].shards.size() != 1 ||
+            l.fields_[0].device_id != device_id || r.fields_[0].device_id != device_id ||
+            !all_components_use_layout(l, l.polys_[0]) ||
+            !all_components_use_layout(r, r.polys_[0]) ||
+            l.polys_[0].shards[0].limb_begin != 0 || l.polys_[0].shards[0].limb_count < dst_q ||
+            l.polys_[0].shards[0].coeff_begin != 0 || l.polys_[0].shards[0].coeff_count != degree ||
+            r.polys_[0].shards[0].limb_begin != 0 || r.polys_[0].shards[0].limb_count < dst_q ||
+            r.polys_[0].shards[0].coeff_begin != 0 || r.polys_[0].shards[0].coeff_count != degree ||
+            !same_chain_prefix(l) || !same_chain_prefix(r))
+        {
+            return false;
+        }
+    }
+
+    target_level_out = &params.get_level(target_parms_id);
+    if (target_level_out->q_count != dst_q)
+    {
+        return false;
+    }
+    device_id_out = device_id;
+    GpuPolyShard dst_shard;
+    dst_shard.field_index = 0;
+    dst_shard.field_offset = 0;
+    dst_shard.limb_begin = 0;
+    dst_shard.limb_count = dst_q;
+    dst_shard.coeff_begin = 0;
+    dst_shard.coeff_count = degree;
+    dst_layout_out = GpuRNSPoly{};
+    dst_layout_out.degree = degree;
+    dst_layout_out.q_count = dst_q;
+    dst_layout_out.p_count = 0;
+    dst_layout_out.shards.push_back(dst_shard);
+
+    auto make_narrowed = [&](const GpuCiphertextData &ct) {
+        auto view = ct.make_const_view();
+        view.meta.parms_id = target_parms_id;
+        view.meta.q_count = dst_q;
+        for (auto &poly : view.polys)
+        {
+            poly.shards[0].limb_count = dst_q;
+        }
+        return view;
+    };
+    lhs_views_out.clear();
+    rhs_views_out.clear();
+    lhs_views_out.reserve(count);
+    rhs_views_out.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        lhs_views_out.push_back(make_narrowed(*lefts[i]));
+        rhs_views_out.push_back(make_narrowed(*rights[i]));
+    }
+    return true;
+}
+
+}  // namespace
+
+void GpuEvaluator::add_or_sub_batch_impl(
+    const std::vector<const GpuCiphertextData *> &lefts,
+    const std::vector<const GpuCiphertextData *> &rights,
+    bool subtract,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    const std::size_t count = lefts.size();
+    if (rights.size() != count)
+    {
+        throw std::invalid_argument("GpuEvaluator::add_or_sub_batch: input size mismatch");
+    }
+    destinations.resize(count);
+    if (count == 0)
+    {
+        return;
+    }
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (lefts[i] == nullptr || rights[i] == nullptr)
+        {
+            throw std::invalid_argument("GpuEvaluator::add_or_sub_batch: null source");
+        }
+    }
+    auto fallback = [&]() {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            if (subtract) sub(*lefts[i], *rights[i], destinations[i]);
+            else add(*lefts[i], *rights[i], destinations[i]);
+        }
+    };
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (!same_scale(lefts[i]->meta.scale, rights[i]->meta.scale))
+        {
+            throw std::invalid_argument("GpuEvaluator::add_or_sub_batch: scale mismatch");
+        }
+    }
+
+    const GpuLevelInfo *level_info_ptr = nullptr;
+    GpuRNSPoly dst_layout;
+    int device_id = 0;
+    std::vector<GpuConstCiphertextView> lhs_views, rhs_views;
+    if (!prepare_binary_prefix_batch(
+            params_, lefts, rights, true,
+            kernel::kMaxElementwisePairPtrs, kernel::kMaxElementwisePairPtrs / 2,
+            level_info_ptr, dst_layout, device_id, lhs_views, rhs_views))
+    {
+        fallback();
+        return;
+    }
+
+    const std::size_t comp_count = lefts[0]->size();
+    std::vector<GpuCiphertextData> local_dsts;
+    std::vector<GpuCiphertextData *> targets(count);
+    bool any_alias = false;
+    for (std::size_t i = 0; i < count && !any_alias; ++i)
+    {
+        for (std::size_t j = 0; j < count; ++j)
+        {
+            if (&destinations[i] == lefts[j] || &destinations[i] == rights[j])
+            {
+                any_alias = true;
+                break;
+            }
+        }
+    }
+    if (any_alias) local_dsts.resize(count);
+    std::vector<GpuCiphertextView> dst_views;
+    dst_views.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        targets[i] = any_alias ? &local_dsts[i] : &destinations[i];
+        GpuCiphertextMeta meta = lefts[i]->meta;
+        meta.parms_id = level_info_ptr->parms_id;
+        meta.q_count = level_info_ptr->q_count;
+        meta.component_count = comp_count;
+        meta.scale = std::max(lefts[i]->meta.scale, rights[i]->meta.scale);
+        prepare_ciphertext_destination(
+            *targets[i], lefts[i], rights[i], meta, comp_count, device_id, dst_layout);
+        dst_views.push_back(targets[i]->make_view());
+    }
+    elementwise_handler_.add_or_sub_ciphertext_batch(
+        dst_views, lhs_views, rhs_views, subtract, *level_info_ptr);
+    if (any_alias)
+    {
+        for (std::size_t i = 0; i < count; ++i) destinations[i] = std::move(local_dsts[i]);
+    }
+}
+
+void GpuEvaluator::add_batch(
+    const std::vector<const GpuCiphertextData *> &lefts,
+    const std::vector<const GpuCiphertextData *> &rights,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    add_or_sub_batch_impl(lefts, rights, false, destinations);
+}
+
+void GpuEvaluator::sub_batch(
+    const std::vector<const GpuCiphertextData *> &lefts,
+    const std::vector<const GpuCiphertextData *> &rights,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    add_or_sub_batch_impl(lefts, rights, true, destinations);
+}
+
+void GpuEvaluator::multiply_batch(
+    const std::vector<const GpuCiphertextData *> &lefts,
+    const std::vector<const GpuCiphertextData *> &rights,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    const std::size_t count = lefts.size();
+    if (rights.size() != count)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_batch: input size mismatch");
+    }
+    destinations.resize(count);
+    if (count == 0)
+    {
+        return;
+    }
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (lefts[i] == nullptr || rights[i] == nullptr)
+        {
+            throw std::invalid_argument("GpuEvaluator::multiply_batch: null source");
+        }
+        const double out_scale = lefts[i]->meta.scale * rights[i]->meta.scale;
+        if (!(out_scale > 0.0) || !std::isfinite(out_scale))
+        {
+            throw std::invalid_argument("GpuEvaluator::multiply_batch: invalid result scale");
+        }
+    }
+    bool is_square = true;
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        if (lefts[i] != rights[i])
+        {
+            is_square = false;
+            break;
+        }
+    }
+    auto fallback = [&]() {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            if (lefts[i] == rights[i])
+            {
+                square(*lefts[i], destinations[i]);
+            }
+            else if (!(lefts[i]->meta.parms_id == rights[i]->meta.parms_id))
+            {
+                const std::size_t q = std::min(lefts[i]->meta.q_count, rights[i]->meta.q_count);
+                multiply_q_prefix(
+                    *lefts[i], *rights[i], destinations[i],
+                    params_.get_level_by_q_count(q).parms_id);
+            }
+            else
+            {
+                multiply(*lefts[i], *rights[i], destinations[i]);
+            }
+        }
+    };
+
+    const GpuLevelInfo *level_info_ptr = nullptr;
+    GpuRNSPoly dst_layout;
+    int device_id = 0;
+    std::vector<GpuConstCiphertextView> lhs_views, rhs_views;
+    if (!prepare_binary_prefix_batch(
+            params_, lefts, rights, false,
+            kernel::kMaxElementwiseCiphertextBatch * 2, kernel::kMaxElementwiseCiphertextBatch,
+            level_info_ptr, dst_layout, device_id, lhs_views, rhs_views))
+    {
+        fallback();
+        return;
+    }
+
+    std::vector<GpuCiphertextData> local_dsts;
+    std::vector<GpuCiphertextData *> targets(count);
+    bool any_alias = false;
+    for (std::size_t i = 0; i < count && !any_alias; ++i)
+    {
+        for (std::size_t j = 0; j < count; ++j)
+        {
+            if (&destinations[i] == lefts[j] || &destinations[i] == rights[j])
+            {
+                any_alias = true;
+                break;
+            }
+        }
+    }
+    if (any_alias) local_dsts.resize(count);
+    std::vector<GpuCiphertextView> dst_views;
+    dst_views.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        targets[i] = any_alias ? &local_dsts[i] : &destinations[i];
+        GpuCiphertextMeta meta = lefts[i]->meta;
+        meta.parms_id = level_info_ptr->parms_id;
+        meta.q_count = level_info_ptr->q_count;
+        meta.component_count = 3;
+        meta.scale = lefts[i]->meta.scale * rights[i]->meta.scale;
+        prepare_ciphertext_destination(
+            *targets[i], lefts[i], rights[i], meta, 3, device_id, dst_layout);
+        dst_views.push_back(targets[i]->make_view());
+    }
+    elementwise_handler_.multiply_ciphertext_batch(
+        dst_views, lhs_views, rhs_views, is_square, *level_info_ptr);
+    if (any_alias)
+    {
+        for (std::size_t i = 0; i < count; ++i) destinations[i] = std::move(local_dsts[i]);
+    }
+}
+
+void GpuEvaluator::square_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    multiply_batch(sources, sources, destinations);
+}
+
+void GpuEvaluator::multiply_plain_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const GpuPlaintextData &source_plaintext,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    const std::size_t count = sources.size();
+    destinations.resize(count);
+    if (count == 0)
+    {
+        return;
+    }
+    for (const auto *src : sources)
+    {
+        if (src == nullptr)
+        {
+            throw std::invalid_argument("GpuEvaluator::multiply_plain_batch: null source");
+        }
+    }
+    auto fallback = [&]() {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            multiply_plain(*sources[i], source_plaintext, destinations[i]);
+        }
+    };
+    const auto &ref = *sources[0];
+    bool fast_ok =
+        count >= 2 &&
+        !ref.empty() && !ref.fields_.empty() &&
+        !source_plaintext.empty() &&
+        ref.size() == 2 && ref.meta.component_count == 2 &&
+        ref.size() * count <= kernel::kMaxElementwisePairPtrs &&
+        ref.meta.is_ntt_form && source_plaintext.meta.is_ntt_form &&
+        ref.meta.p_count == 0 &&
+        !(ref.meta.parms_id != source_plaintext.meta.parms_id) &&
+        ref.polys_[0].shards.size() == 1 &&
+        source_plaintext.poly_.shards.size() == 1;
+    const int device_id = fast_ok ? ref.fields_[0].device_id : 0;
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        const auto &s = *sources[i];
+        const double out_scale = s.meta.scale * source_plaintext.meta.scale;
+        if (s.empty() || s.fields_.empty() ||
+            !(s.meta.parms_id == ref.meta.parms_id) ||
+            !s.meta.is_ntt_form || s.meta.p_count != 0 ||
+            s.size() != 2 || s.meta.component_count != 2 ||
+            !(out_scale > 0.0) || !std::isfinite(out_scale) ||
+            s.polys_[0].shards.size() != 1 ||
+            s.fields_[0].device_id != device_id ||
+            !all_components_use_layout(s, s.polys_[0]))
+        {
+            fast_ok = false;
+        }
+    }
+    if (!fast_ok)
+    {
+        fallback();
+        return;
+    }
+
+    const auto &level_info = params_.get_level(ref.meta.parms_id);
+    std::vector<GpuCiphertextData> local_dsts;
+    std::vector<GpuCiphertextData *> targets(count);
+    bool any_alias = false;
+    for (std::size_t i = 0; i < count && !any_alias; ++i)
+    {
+        for (std::size_t j = 0; j < count; ++j)
+        {
+            if (&destinations[i] == sources[j])
+            {
+                any_alias = true;
+                break;
+            }
+        }
+    }
+    if (any_alias) local_dsts.resize(count);
+    std::vector<GpuConstCiphertextView> src_views;
+    std::vector<GpuCiphertextView> dst_views;
+    src_views.reserve(count);
+    dst_views.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        targets[i] = any_alias ? &local_dsts[i] : &destinations[i];
+        GpuCiphertextMeta meta = sources[i]->meta;
+        meta.component_count = 2;
+        meta.scale = sources[i]->meta.scale * source_plaintext.meta.scale;
+        prepare_ciphertext_destination(
+            *targets[i], sources[i], nullptr, meta, 2, device_id, sources[i]->polys_[0]);
+        src_views.push_back(sources[i]->make_const_view());
+        dst_views.push_back(targets[i]->make_view());
+    }
+    elementwise_handler_.multiply_plain_batch(
+        dst_views, src_views, source_plaintext.make_const_view(), level_info);
+    if (any_alias)
+    {
+        for (std::size_t i = 0; i < count; ++i) destinations[i] = std::move(local_dsts[i]);
+    }
+}
+
+void GpuEvaluator::rescale_many_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    std::vector<GpuCiphertextData> &destinations,
+    std::uint32_t rescale_count) const
+{
+    const std::size_t count = sources.size();
+    destinations.resize(count);
+    if (count == 0)
+    {
+        return;
+    }
+    for (const auto *src : sources)
+    {
+        if (src == nullptr)
+        {
+            throw std::invalid_argument("GpuEvaluator::rescale_many_batch: null source");
+        }
+    }
+    auto fallback = [&]() {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            rescale_many(*sources[i], destinations[i], rescale_count);
+        }
+    };
+    if (rescale_count == 0 || count < 2)
+    {
+        fallback();
+        return;
+    }
+    const auto &ref = *sources[0];
+    bool fast_ok =
+        !ref.empty() && !ref.fields_.empty() &&
+        ref.size() == 2 && ref.meta.component_count == 2 &&
+        ref.size() * count <= kernel::kMaxInntPtrsBatch &&
+        ref.size() * count <= kernel::kMaxRescaleBatchComponents &&
+        ref.meta.is_ntt_form && ref.meta.p_count == 0 &&
+        ref.meta.q_count > rescale_count &&
+        ref.polys_[0].shards.size() == 1;
+    const int device_id = fast_ok ? ref.fields_[0].device_id : 0;
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        const auto &s = *sources[i];
+        if (s.empty() || s.fields_.empty() ||
+            !(s.meta.parms_id == ref.meta.parms_id) ||
+            !s.meta.is_ntt_form || s.meta.p_count != 0 ||
+            s.size() != 2 || s.meta.component_count != 2 ||
+            s.polys_[0].shards.size() != 1 ||
+            s.fields_[0].device_id != device_id ||
+            !all_components_use_layout(s, s.polys_[0]))
+        {
+            fast_ok = false;
+        }
+    }
+    if (!fast_ok)
+    {
+        fallback();
+        return;
+    }
+
+    const auto &source_level = params_.get_level(ref.meta.parms_id);
+    const GpuLevelInfo *dest_level = &source_level;
+    long double divisor = 1.0L;
+    for (std::uint32_t step = 0; step < rescale_count; ++step)
+    {
+        if (dest_level->shards.empty() || dest_level->shards.front().q_last == 0)
+        {
+            fallback();
+            return;
+        }
+        divisor *= static_cast<long double>(dest_level->shards.front().q_last);
+        dest_level = &params_.get_next_level(dest_level->parms_id);
+    }
+    const std::size_t dst_q = ref.meta.q_count - rescale_count;
+    GpuPolyShard dst_shard;
+    dst_shard.field_index = 0;
+    dst_shard.field_offset = 0;
+    dst_shard.limb_begin = 0;
+    dst_shard.limb_count = dst_q;
+    dst_shard.coeff_begin = 0;
+    dst_shard.coeff_count = ref.meta.degree;
+    GpuRNSPoly dst_layout;
+    dst_layout.degree = ref.meta.degree;
+    dst_layout.q_count = dst_q;
+    dst_layout.p_count = 0;
+    dst_layout.shards.push_back(dst_shard);
+
+    std::vector<GpuCiphertextData> local_dsts;
+    std::vector<GpuCiphertextData *> targets(count);
+    bool any_alias = false;
+    for (std::size_t i = 0; i < count && !any_alias; ++i)
+    {
+        for (std::size_t j = 0; j < count; ++j)
+        {
+            if (&destinations[i] == sources[j])
+            {
+                any_alias = true;
+                break;
+            }
+        }
+    }
+    if (any_alias) local_dsts.resize(count);
+    std::vector<GpuConstCiphertextView> src_views;
+    std::vector<GpuCiphertextView> dst_views;
+    src_views.reserve(count);
+    dst_views.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        targets[i] = any_alias ? &local_dsts[i] : &destinations[i];
+        GpuCiphertextMeta meta = sources[i]->meta;
+        meta.parms_id = dest_level->parms_id;
+        meta.q_count = dst_q;
+        meta.p_count = 0;
+        meta.component_count = 2;
+        meta.is_ntt_form = true;
+        meta.scale = static_cast<double>(
+            static_cast<long double>(sources[i]->meta.scale) / divisor);
+        if (!(meta.scale > 0.0) || !std::isfinite(meta.scale))
+        {
+            throw std::invalid_argument("GpuEvaluator::rescale_many_batch: invalid result scale");
+        }
+        prepare_ciphertext_destination(
+            *targets[i], sources[i], nullptr, meta, 2, device_id, dst_layout);
+        src_views.push_back(sources[i]->make_const_view());
+        dst_views.push_back(targets[i]->make_view());
+    }
+    if (!modswitch_handler_.rescale_ciphertext_many_batch(
+            dst_views, src_views, source_level, *dest_level, rescale_count))
+    {
+        fallback();
+        return;
+    }
+    if (any_alias)
+    {
+        for (std::size_t i = 0; i < count; ++i) destinations[i] = std::move(local_dsts[i]);
+    }
+}
+
+void GpuEvaluator::relinearize_batch_impl(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const GpuRelinKeysData &relin_keys_in,
+    bool rescale_x2,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    const std::size_t count = sources.size();
+    destinations.resize(count);
+    if (count == 0)
+    {
+        return;
+    }
+    for (const auto *src : sources)
+    {
+        if (src == nullptr)
+        {
+            throw std::invalid_argument("GpuEvaluator::relinearize_batch: null source");
+        }
+    }
+    auto fallback = [&]() {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            if (rescale_x2) relinearize_rescale_x2_hybrid(*sources[i], relin_keys_in, destinations[i]);
+            else relinearize(*sources[i], relin_keys_in, destinations[i]);
+        }
+    };
+    const auto &ref = *sources[0];
+    if (count < 2 || count > kernel::kMaxRelinBatchSources ||
+        ref.empty() || ref.fields_.empty())
+    {
+        fallback();
+        return;
+    }
+    const char *op_name = rescale_x2
+        ? "GpuEvaluator::relinearize_rescale_x2_hybrid_batch"
+        : "GpuEvaluator::relinearize_batch";
+    const auto &relin_keys = level_key_for(params_, relin_keys_in, ref.meta, op_name);
+    const int device_id = ref.fields_[0].device_id;
+    bool fast_ok =
+        !relin_keys.empty() &&
+        ref.size() == 3 && ref.meta.component_count == 3 &&
+        ref.meta.is_ntt_form && ref.meta.p_count == 0 &&
+        (!rescale_x2 || ref.meta.q_count >= 3) &&
+        ref.polys_[0].shards.size() == 1;
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        const auto &s = *sources[i];
+        if (s.empty() || s.fields_.empty() ||
+            !(s.meta.parms_id == ref.meta.parms_id) ||
+            !s.meta.is_ntt_form || s.meta.p_count != 0 ||
+            s.size() != 3 || s.meta.component_count != 3 ||
+            s.polys_[0].shards.size() != 1 ||
+            s.fields_[0].device_id != device_id ||
+            !all_components_use_layout(s, s.polys_[0]))
+        {
+            fast_ok = false;
+        }
+    }
+    if (!fast_ok)
+    {
+        fallback();
+        return;
+    }
+
+    const auto &source_level = params_.get_level(ref.meta.parms_id);
+    const GpuLevelInfo *dest_level = &source_level;
+    double q_last_two = 1.0;
+    if (rescale_x2)
+    {
+        const auto &mid = params_.get_next_level(source_level.parms_id);
+        dest_level = &params_.get_next_level(mid.parms_id);
+        if (source_level.q_count != ref.meta.q_count ||
+            dest_level->q_count + 2 != source_level.q_count ||
+            source_level.shards.empty() ||
+            source_level.shards.front().q_last_two_product == 0 ||
+            count * 2 > kernel::kMaxInntPtrsBatch ||
+            count * 2 > kernel::kMaxRescaleBatchComponents)
+        {
+            fallback();
+            return;
+        }
+        q_last_two = static_cast<double>(source_level.shards.front().q_last_two_product);
+    }
+
+    static const bool persistent_scratch = [] {
+        const char *raw = std::getenv("POSEIDON_GPU_PERSISTENT_ROTATE_WORKSPACE");
+        return raw != nullptr && std::string(raw) == "1";
+    }();
+    GpuDoubleHoistWorkspace local_staged;
+    std::unique_lock<std::mutex> scratch_lock;
+    if (persistent_scratch)
+    {
+        scratch_lock = std::unique_lock<std::mutex>(rotate_scratch_->mutex);
+    }
+    GpuDoubleHoistWorkspace &staged =
+        persistent_scratch ? rotate_scratch_->workspace : local_staged;
+
+    std::vector<GpuConstCiphertextView> src_views;
+    src_views.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        src_views.push_back(sources[i]->make_const_view());
+    }
+    const auto &relin_keys_view = relin_keys.const_view(ref.meta.q_count);
+    if (!keyswitch_handler_.relinearize_hybrid_ciphertext_batch_to_buffer(
+            src_views, relin_keys_view, relin_keys, source_level, staged))
+    {
+        fallback();
+        return;
+    }
+
+    const std::size_t degree = ref.meta.degree;
+    const std::size_t src_q = ref.meta.q_count;
+    const std::size_t dst_q = rescale_x2 ? (src_q - 2) : src_q;
+    const std::size_t src_q_words = src_q * degree;
+    GpuPolyShard dst_shard;
+    dst_shard.field_index = 0;
+    dst_shard.field_offset = 0;
+    dst_shard.limb_begin = 0;
+    dst_shard.limb_count = dst_q;
+    dst_shard.coeff_begin = 0;
+    dst_shard.coeff_count = degree;
+    GpuRNSPoly dst_layout;
+    dst_layout.degree = degree;
+    dst_layout.q_count = dst_q;
+    dst_layout.p_count = 0;
+    dst_layout.shards.push_back(dst_shard);
+
+    std::vector<GpuCiphertextData> local_dsts;
+    std::vector<GpuCiphertextData *> targets(count);
+    bool cross_alias = false;
+    for (std::size_t i = 0; i < count && !cross_alias; ++i)
+    {
+        for (std::size_t j = 0; j < count; ++j)
+        {
+            if (&destinations[i] == sources[j])
+            {
+                cross_alias = true;
+                break;
+            }
+        }
+    }
+    if (cross_alias) local_dsts.resize(count);
+
+    std::vector<GpuCiphertextView> dst_views;
+    dst_views.reserve(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        targets[i] = cross_alias ? &local_dsts[i] : &destinations[i];
+        GpuCiphertextMeta meta = sources[i]->meta;
+        meta.parms_id = dest_level->parms_id;
+        meta.q_count = dst_q;
+        meta.p_count = 0;
+        meta.component_count = 2;
+        meta.is_ntt_form = true;
+        if (rescale_x2)
+        {
+            meta.scale = sources[i]->meta.scale / q_last_two;
+            if (!(meta.scale > 0.0) || !std::isfinite(meta.scale))
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::relinearize_rescale_x2_hybrid_batch: invalid result scale");
+            }
+        }
+        prepare_ciphertext_destination(
+            *targets[i], nullptr, nullptr, meta, 2, device_id, dst_layout);
+        dst_views.push_back(targets[i]->make_view());
+    }
+
+    if (!rescale_x2)
+    {
+        const auto stream = gpu_execution_stream();
+        gpu_check_cuda(cudaSetDevice(device_id), "relinearize_batch cudaSetDevice");
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            GpuWord *dst0 = dst_views[i].polys[0].shards.front().ptr;
+            GpuWord *dst1 = dst_views[i].polys[1].shards.front().ptr;
+            const GpuWord *src0 =
+                staged.inner_q_batch.q.data() + (i * 2) * src_q_words;
+            if (dst1 == dst0 + src_q_words)
+            {
+                gpu_check_cuda(
+                    cudaMemcpyAsync(
+                        dst0, src0, 2 * src_q_words * sizeof(GpuWord),
+                        cudaMemcpyDeviceToDevice, stream),
+                    "relinearize_batch d2d");
+            }
+            else
+            {
+                gpu_check_cuda(
+                    cudaMemcpyAsync(
+                        dst0, src0, src_q_words * sizeof(GpuWord),
+                        cudaMemcpyDeviceToDevice, stream),
+                    "relinearize_batch d2d c0");
+                gpu_check_cuda(
+                    cudaMemcpyAsync(
+                        dst1, src0 + src_q_words, src_q_words * sizeof(GpuWord),
+                        cudaMemcpyDeviceToDevice, stream),
+                    "relinearize_batch d2d c1");
+            }
+        }
+    }
+    else
+    {
+        std::vector<GpuConstCiphertextView> relin_views(count);
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            auto &v = relin_views[i];
+            v.meta = sources[i]->meta;
+            v.meta.component_count = 2;
+            v.meta.is_ntt_form = true;
+            v.polys.resize(2);
+            for (std::size_t c = 0; c < 2; ++c)
+            {
+                v.polys[c].shards.push_back(GpuConstPolyShardView{
+                    device_id,
+                    staged.inner_q_batch.q.data() + (i * 2 + c) * src_q_words,
+                    0, src_q, 0, degree});
+            }
+        }
+        if (!modswitch_handler_.rescale_ciphertext_many_batch(
+                dst_views, relin_views, source_level, *dest_level, 2))
+        {
+            fallback();
+            return;
+        }
+    }
+
+    if (cross_alias)
+    {
+        for (std::size_t i = 0; i < count; ++i) destinations[i] = std::move(local_dsts[i]);
+    }
+}
+
+void GpuEvaluator::relinearize_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const GpuRelinKeysData &relin_keys,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    relinearize_batch_impl(sources, relin_keys, false, destinations);
+}
+
+void GpuEvaluator::relinearize_rescale_x2_hybrid_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const GpuRelinKeysData &relin_keys,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    relinearize_batch_impl(sources, relin_keys, true, destinations);
+}
 static void validate_rotate_input(const GpuCiphertextData &source_ciphertext)
 {
     validate_ntt_ciphertext_input(
@@ -3566,6 +5466,187 @@ void GpuEvaluator::switch_key(
 namespace
 {
 
+void collect_and_hoist_giant_groups(
+    const GpuKeySwitchHandler &keyswitch_handler,
+    const GpuLevelInfo &level_info,
+    GpuDoubleHoistWorkspace &workspace,
+    int device_id,
+    std::size_t degree,
+    std::size_t q_count,
+    const std::vector<int> &giant_steps,
+    const GpuWord *inner_q_batch,
+    std::size_t group_stride_words,
+    bool batched_giant_intt,
+    std::vector<const GpuWord *> &digit_q_ptrs,
+    std::vector<const GpuWord *> &digit_p_ptrs,
+    std::vector<std::uint32_t> &group_indices,
+    std::vector<std::uint32_t> &galois_elts,
+    std::vector<std::uint32_t> &key_indices,
+    std::size_t *decompose_count = nullptr)
+{
+    const std::size_t group_count = giant_steps.size();
+    const std::size_t q_words = q_count * degree;
+    if (workspace.outer_group_hoists.size() < group_count)
+    {
+        workspace.outer_group_hoists.resize(group_count);
+    }
+    digit_q_ptrs.clear();
+    digit_p_ptrs.clear();
+    group_indices.clear();
+    galois_elts.clear();
+    key_indices.clear();
+    digit_q_ptrs.reserve(group_count);
+    digit_p_ptrs.reserve(group_count);
+    group_indices.reserve(group_count);
+    galois_elts.reserve(group_count);
+    key_indices.reserve(group_count);
+
+    std::vector<GpuConstRNSPolyView> switch_polys_ntt;
+    std::vector<GpuHoistedDecomposition *> destinations;
+    switch_polys_ntt.reserve(group_count);
+    destinations.reserve(group_count);
+
+    for (std::size_t group = 0; group < group_count; ++group)
+    {
+        const int giant_step = giant_steps[group];
+        if (giant_step == 0)
+        {
+            continue;
+        }
+        GpuConstRNSPolyView inner_c1;
+        inner_c1.poly_id = 1;
+        inner_c1.shards.push_back(GpuConstPolyShardView{
+            device_id,
+            inner_q_batch + group * group_stride_words + q_words,
+            0,
+            q_count,
+            0,
+            degree});
+        switch_polys_ntt.push_back(std::move(inner_c1));
+        destinations.push_back(&workspace.outer_group_hoists[group]);
+
+        const std::uint32_t galois_elt =
+            galois_elt_from_rotation_step(degree, giant_step);
+        const std::size_t key_index = galois_key_index(galois_elt);
+        if (key_index > std::numeric_limits<std::uint32_t>::max())
+        {
+            throw std::overflow_error(
+                "double-hoist giant key index exceeds uint32_t");
+        }
+        group_indices.push_back(static_cast<std::uint32_t>(group));
+        galois_elts.push_back(galois_elt);
+        key_indices.push_back(static_cast<std::uint32_t>(key_index));
+    }
+
+    if (switch_polys_ntt.empty())
+    {
+        return;
+    }
+
+    keyswitch_handler.hoist_decompose_modup_ntt_batch(
+        switch_polys_ntt,
+        level_info,
+        destinations,
+        workspace.keyswitch,
+        batched_giant_intt ? workspace.outer_source_intt_q_batch.data() : nullptr,
+        batched_giant_intt ? q_words : 0);
+
+    for (const GpuHoistedDecomposition *hoist : destinations)
+    {
+        digit_q_ptrs.push_back(hoist->digits_q_ntt.data());
+        digit_p_ptrs.push_back(hoist->digits_p_ntt.data());
+    }
+    if (decompose_count != nullptr)
+    {
+        *decompose_count += destinations.size();
+    }
+}
+
+bool launch_hoisted_keymul_many_if_eligible(
+    const GpuHoistedDecomposition &source_hoist,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys,
+    const GpuParameterShard &parameter_shard,
+    const GpuWord *source_c0,
+    const GpuWord *source_c1,
+    bool fuse_c0,
+    GpuQPCiphertextBuffer &destination)
+{
+    if (galois_keys.meta.galois_format !=
+            GpuGaloisKeyFormat::InversePreRotated ||
+        galois_keys.galois_key_q0_ptrs.empty() ||
+        galois_keys.galois_key_p0_ptrs.empty() ||
+        galois_keys.galois_key_q1_ptrs.empty() ||
+        galois_keys.galois_key_p1_ptrs.empty())
+    {
+        return false;
+    }
+
+    const std::size_t degree = source_hoist.degree;
+    const std::size_t q_count = parameter_shard.hybrid_base_q_count;
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const std::size_t dnum = source_hoist.dnum;
+    const std::size_t storage_dnum = galois_keys.meta.decomposition_count;
+    if (dnum == 0 || storage_dnum < dnum)
+    {
+        return false;
+    }
+
+    const std::size_t q_words_per_batch = 2 * q_count * degree;
+    const std::size_t p_words_per_batch = 2 * p_count * degree;
+    for (std::size_t offset = 0;
+         offset < steps.size();
+         offset += kernel::kMaxDoubleHoistKeymulManySteps)
+    {
+        const std::size_t chunk = std::min(
+            kernel::kMaxDoubleHoistKeymulManySteps,
+            steps.size() - offset);
+        kernel::DoubleHoistKeymulManyArgs args{};
+        for (std::size_t s = 0; s < chunk; ++s)
+        {
+            const int step = steps[offset + s];
+            if (step == 0)
+            {
+                args.galois_elts[s] = 0;
+                args.key_indices[s] = 0;
+                continue;
+            }
+            const std::uint32_t galois_elt =
+                galois_elt_from_rotation_step(degree, step);
+            const std::size_t key_index = galois_key_index(galois_elt);
+            if (key_index > std::numeric_limits<std::uint32_t>::max() ||
+                galois_keys.galois_elts_by_key_index.size() <= key_index ||
+                galois_keys.galois_elts_by_key_index[key_index] != galois_elt ||
+                (key_index + 1) * storage_dnum >
+                    galois_keys.galois_key_q0_ptrs.size())
+            {
+                throw std::invalid_argument(
+                    "launch_hoisted_keymul_many_if_eligible: Galois key mismatch");
+            }
+            args.galois_elts[s] = galois_elt;
+            args.key_indices[s] = static_cast<std::uint32_t>(key_index);
+        }
+        kernel::launch_double_hoist_pre_rotated_keymul_many(
+            destination.q.data() + offset * q_words_per_batch,
+            destination.p.data() + offset * p_words_per_batch,
+            source_hoist.digits_q_ntt.data(),
+            source_hoist.digits_p_ntt.data(),
+            fuse_c0 ? source_c0 : nullptr,
+            source_c1,
+            galois_keys.galois_key_q0_ptrs.data(),
+            galois_keys.galois_key_p0_ptrs.data(),
+            galois_keys.galois_key_q1_ptrs.data(),
+            galois_keys.galois_key_p1_ptrs.data(),
+            args,
+            chunk,
+            dnum,
+            storage_dnum,
+            parameter_shard,
+            degree);
+    }
+    return true;
+}
+
 bool is_workspace_hoist(
     const GpuHoistedDecomposition &hoisted,
     const GpuDoubleHoistWorkspace &workspace)
@@ -3747,38 +5828,35 @@ void GpuEvaluator::rotate_from_hoist(
         workspace.outer_accumulator, 0, destination, source.meta, level, workspace.keyswitch);
 }
 
-void GpuEvaluator::rotate_many_hoisted(
+namespace
+{
+
+const GpuParameterShard &rotate_many_hoisted_qp_impl(
+    const char *caller,
+    const GpuParameterData &params,
+    const GpuKeySwitchHandler &keyswitch_handler,
     const GpuCiphertextData &source_ciphertext,
     const std::vector<int> &steps,
     const GpuGaloisKeysData &galois_keys_in,
     GpuDoubleHoistWorkspace &workspace,
-    std::vector<GpuCiphertextData> &destination_ciphertexts) const
+    const GpuLevelInfo *&level_info_out)
 {
-    const auto &galois_keys = level_key_for(params_, galois_keys_in, source_ciphertext.meta, "GpuEvaluator::rotate_many_hoisted");
-    validate_ntt_ciphertext_input(
-        "GpuEvaluator::rotate_many_hoisted",
-        source_ciphertext,
-        true);
-    if (source_ciphertext.size() != 2 ||
+    const auto &galois_keys =
+        level_key_for(params, galois_keys_in, source_ciphertext.meta, caller);
+    if (source_ciphertext.empty() || source_ciphertext.fields_.empty() ||
+        !source_ciphertext.meta.is_ntt_form || source_ciphertext.size() != 2 ||
         source_ciphertext.meta.p_count != 0 ||
         source_ciphertext.polys_.at(0).shards.size() != 1)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::rotate_many_hoisted: requires one-shard, size-2, Q-only input");
-    }
-    if (steps.empty())
-    {
-        destination_ciphertexts.clear();
-        return;
+            std::string(caller) + ": requires one-shard, size-2, Q-only NTT input");
     }
     if (galois_keys.empty())
     {
         throw std::invalid_argument(
-            "GpuEvaluator::rotate_many_hoisted: empty Galois keys");
+            std::string(caller) + ": empty Galois keys");
     }
-
-    const auto &level_info =
-        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto &level_info = params.get_level(source_ciphertext.meta.parms_id);
     const auto source_view = source_ciphertext.make_const_view();
     const auto &source0 = source_view.polys[0].shards.front();
     const GpuParameterShard *parameter_shard = nullptr;
@@ -3795,7 +5873,15 @@ void GpuEvaluator::rotate_many_hoisted(
         parameter_shard->hybrid_base_p_count == 0)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::rotate_many_hoisted: HYBRID parameter shard is absent");
+            std::string(caller) + ": HYBRID parameter shard is absent");
+    }
+    for (const int step : steps)
+    {
+        if (step == 0)
+        {
+            throw std::invalid_argument(
+                std::string(caller) + ": zero step is not supported");
+        }
     }
 
     workspace.outer_accumulator.ensure_capacity(
@@ -3804,7 +5890,7 @@ void GpuEvaluator::rotate_many_hoisted(
         source_ciphertext.meta.q_count,
         parameter_shard->hybrid_base_p_count,
         steps.size());
-    keyswitch_handler_.hoist_decompose_modup_ntt(
+    keyswitch_handler.hoist_decompose_modup_ntt(
         source_view.polys[1],
         level_info,
         workspace.source_hoist,
@@ -3812,37 +5898,142 @@ void GpuEvaluator::rotate_many_hoisted(
     const auto &key_view =
         galois_keys.const_view(source_ciphertext.meta.q_count);
 
-    for (std::size_t index = 0; index < steps.size(); ++index)
-    {
-        if (steps[index] == 0)
-        {
-            throw std::invalid_argument(
-                "GpuEvaluator::rotate_many_hoisted: zero step is not supported");
-        }
-        const std::uint32_t galois_elt =
-            galois_elt_from_rotation_step(
-                source_ciphertext.meta.degree, steps[index]);
-        const std::size_t key_index = galois_key_index(galois_elt);
-        keyswitch_handler_.keyswitch_multsum_no_moddown(
+    const bool use_fused_keymul_many =
+        steps.size() >= 2 &&
+        use_double_hoist_fused_baby_keyswitch_c0() &&
+        launch_hoisted_keymul_many_if_eligible(
             workspace.source_hoist,
-            galois_elt,
-            key_view,
+            steps,
             galois_keys,
-            key_index,
-            workspace.outer_accumulator,
-            index,
-            true,
-            level_info,
-            workspace.keyswitch);
-        kernel::launch_double_hoist_add_lifted_galois_c0(
-            workspace.outer_accumulator.q_component(index, 0),
-            source0.ptr,
-            galois_elt,
             *parameter_shard,
-            source_ciphertext.meta.degree);
+            source0.ptr,
+            source_view.polys[1].shards.front().ptr,
+            true,
+            workspace.outer_accumulator);
+    if (!use_fused_keymul_many)
+    {
+        for (std::size_t index = 0; index < steps.size(); ++index)
+        {
+            const std::uint32_t galois_elt =
+                galois_elt_from_rotation_step(
+                    source_ciphertext.meta.degree, steps[index]);
+            const std::size_t key_index = galois_key_index(galois_elt);
+            keyswitch_handler.keyswitch_multsum_no_moddown(
+                workspace.source_hoist,
+                galois_elt,
+                key_view,
+                galois_keys,
+                key_index,
+                workspace.outer_accumulator,
+                index,
+                true,
+                level_info,
+                workspace.keyswitch);
+            kernel::launch_double_hoist_add_lifted_galois_c0(
+                workspace.outer_accumulator.q_component(index, 0),
+                source0.ptr,
+                galois_elt,
+                *parameter_shard,
+                source_ciphertext.meta.degree);
+        }
     }
+    level_info_out = &level_info;
+    return *parameter_shard;
+}
+
+}  // namespace
+
+void GpuEvaluator::rotate_many_hoisted(
+    const GpuCiphertextData &source_ciphertext,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuDoubleHoistWorkspace &workspace,
+    std::vector<GpuCiphertextData> &destination_ciphertexts) const
+{
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::rotate_many_hoisted",
+        source_ciphertext,
+        true);
+    if (steps.empty())
+    {
+        destination_ciphertexts.clear();
+        return;
+    }
+    const GpuLevelInfo *level_info_ptr = nullptr;
+    (void)rotate_many_hoisted_qp_impl(
+        "GpuEvaluator::rotate_many_hoisted",
+        params_,
+        keyswitch_handler_,
+        source_ciphertext,
+        steps,
+        galois_keys_in,
+        workspace,
+        level_info_ptr);
+    const auto &level_info = *level_info_ptr;
+    const int device_id = source_ciphertext.fields_.front().device_id;
 
     destination_ciphertexts.resize(steps.size());
+    if (steps.size() >= 2)
+    {
+        keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
+            workspace.outer_accumulator,
+            steps.size(),
+            workspace.inner_q_batch,
+            level_info,
+            workspace.batch_p_coeff,
+            workspace.batch_converted_q);
+        const std::size_t q_words =
+            source_ciphertext.meta.q_count * source_ciphertext.meta.degree;
+        const auto stream = gpu_execution_stream();
+        gpu_check_cuda(
+            cudaSetDevice(device_id),
+            "GpuEvaluator::rotate_many_hoisted batch cudaSetDevice");
+        GpuRNSPoly layout;
+        layout.degree = source_ciphertext.meta.degree;
+        layout.q_count = source_ciphertext.meta.q_count;
+        layout.p_count = 0;
+        layout.shards.push_back(GpuPolyShard{
+            0, 0, 0, source_ciphertext.meta.q_count, 0,
+            source_ciphertext.meta.degree});
+        for (std::size_t index = 0; index < steps.size(); ++index)
+        {
+            prepare_ciphertext_destination(
+                destination_ciphertexts[index],
+                &source_ciphertext,
+                nullptr,
+                source_ciphertext.meta,
+                2,
+                device_id,
+                layout);
+            const auto dst_view = destination_ciphertexts[index].make_view();
+            GpuWord *dst0 = dst_view.polys[0].shards.front().ptr;
+            GpuWord *dst1 = dst_view.polys[1].shards.front().ptr;
+            const GpuWord *src0 =
+                workspace.inner_q_batch.q.data() + (index * 2) * q_words;
+            if (dst1 == dst0 + q_words)
+            {
+                gpu_check_cuda(
+                    cudaMemcpyAsync(
+                        dst0, src0, 2 * q_words * sizeof(GpuWord),
+                        cudaMemcpyDeviceToDevice, stream),
+                    "GpuEvaluator::rotate_many_hoisted batch d2d");
+            }
+            else
+            {
+                gpu_check_cuda(
+                    cudaMemcpyAsync(
+                        dst0, src0, q_words * sizeof(GpuWord),
+                        cudaMemcpyDeviceToDevice, stream),
+                    "GpuEvaluator::rotate_many_hoisted batch d2d c0");
+                gpu_check_cuda(
+                    cudaMemcpyAsync(
+                        dst1, src0 + q_words, q_words * sizeof(GpuWord),
+                        cudaMemcpyDeviceToDevice, stream),
+                    "GpuEvaluator::rotate_many_hoisted batch d2d c1");
+            }
+        }
+        return;
+    }
     for (std::size_t index = 0; index < steps.size(); ++index)
     {
         keyswitch_handler_.moddown_qp_ciphertext_to_q(
@@ -3853,6 +6044,444 @@ void GpuEvaluator::rotate_many_hoisted(
             level_info,
             workspace.keyswitch);
     }
+}
+
+namespace
+{
+template <typename FallbackFn, typename EmitChunkFn>
+void rotate_many_hoisted_batch_impl(
+    const char *caller,
+    const GpuParameterData &params,
+    const GpuKeySwitchHandler &keyswitch_handler,
+    const std::vector<const GpuCiphertextData *> &sources,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuDoubleHoistWorkspace &workspace,
+    FallbackFn &&fallback,
+    EmitChunkFn &&emit_chunk)
+{
+    for (const auto *src : sources)
+    {
+        if (src == nullptr)
+        {
+            throw std::invalid_argument(std::string(caller) + ": null source pointer");
+        }
+    }
+    for (const int step : steps)
+    {
+        if (step == 0)
+        {
+            throw std::invalid_argument(std::string(caller) + ": zero step is not supported");
+        }
+    }
+
+    const std::size_t source_count = sources.size();
+    if (source_count < 2 || source_count > kernel::kMaxDoubleHoistKeymulBatchSources)
+    {
+        fallback();
+        return;
+    }
+
+    const auto &ref = *sources[0];
+    validate_ntt_ciphertext_input(caller, ref, true);
+    const auto &galois_keys = level_key_for(params, galois_keys_in, ref.meta, caller);
+    const int device_id = ref.fields_.front().device_id;
+    const std::size_t degree = ref.meta.degree;
+    const std::size_t q_count = ref.meta.q_count;
+    const auto &level_info = params.get_level(ref.meta.parms_id);
+
+    const GpuParameterShard *parameter_shard = nullptr;
+    for (const auto &candidate : level_info.shards)
+    {
+        if (candidate.device_id == device_id &&
+            candidate.hybrid_base_q_count == q_count)
+        {
+            parameter_shard = &candidate;
+            break;
+        }
+    }
+
+    bool fast_ok =
+        parameter_shard != nullptr &&
+        parameter_shard->hybrid_base_p_count > 0 &&
+        !galois_keys.empty() &&
+        galois_keys.meta.galois_format == GpuGaloisKeyFormat::InversePreRotated &&
+        galois_keys.meta.degree == degree &&
+        galois_keys.meta.q_count >= q_count &&
+        galois_keys.meta.p_count == parameter_shard->hybrid_base_p_count &&
+        !galois_keys.galois_key_q0_ptrs.empty() &&
+        !galois_keys.galois_key_p0_ptrs.empty() &&
+        !galois_keys.galois_key_q1_ptrs.empty() &&
+        !galois_keys.galois_key_p1_ptrs.empty();
+
+    const std::size_t p_count = fast_ok ? parameter_shard->hybrid_base_p_count : 0;
+    const std::size_t dnum = fast_ok ? (q_count + p_count - 1) / p_count : 0;
+    const std::size_t storage_dnum = galois_keys.meta.decomposition_count;
+    if (dnum == 0 || storage_dnum < dnum)
+    {
+        fast_ok = false;
+    }
+
+    for (std::size_t s = 0; fast_ok && s < source_count; ++s)
+    {
+        const auto &src = *sources[s];
+        if (src.empty() || src.fields_.empty() ||
+            !(src.meta.parms_id == ref.meta.parms_id) ||
+            !src.meta.is_ntt_form ||
+            src.meta.degree != degree ||
+            src.meta.q_count != q_count ||
+            src.meta.p_count != 0 ||
+            src.size() != 2 ||
+            src.meta.component_count != 2 ||
+            src.polys_[0].shards.size() != 1 ||
+            !all_components_use_layout(src, src.polys_[0]) ||
+            src.fields_[0].device_id != device_id ||
+            src.polys_[0].shards[0].limb_begin != 0 ||
+            src.polys_[0].shards[0].limb_count != q_count ||
+            src.polys_[0].shards[0].coeff_begin != 0 ||
+            src.polys_[0].shards[0].coeff_count != degree)
+        {
+            fast_ok = false;
+        }
+    }
+
+    std::vector<std::uint32_t> step_elts(steps.size());
+    std::vector<std::uint32_t> step_key_indices(steps.size());
+    for (std::size_t i = 0; fast_ok && i < steps.size(); ++i)
+    {
+        const std::uint32_t elt = galois_elt_from_rotation_step(degree, steps[i]);
+        const std::size_t key_index = galois_key_index(elt);
+        if (key_index > std::numeric_limits<std::uint32_t>::max() ||
+            galois_keys.galois_elts_by_key_index.size() <= key_index ||
+            galois_keys.galois_elts_by_key_index[key_index] != elt ||
+            (key_index + 1) * storage_dnum > galois_keys.galois_key_q0_ptrs.size())
+        {
+            fast_ok = false;
+        }
+        else
+        {
+            step_elts[i] = elt;
+            step_key_indices[i] = static_cast<std::uint32_t>(key_index);
+        }
+    }
+
+    if (!fast_ok)
+    {
+        fallback();
+        return;
+    }
+
+    std::vector<GpuConstCiphertextView> src_views;
+    src_views.reserve(source_count);
+    std::vector<GpuConstRNSPolyView> c1_polys;
+    c1_polys.reserve(source_count);
+    workspace.outer_group_hoists.resize(source_count);
+    std::vector<GpuHoistedDecomposition *> hoist_dests;
+    hoist_dests.reserve(source_count);
+    for (std::size_t s = 0; s < source_count; ++s)
+    {
+        src_views.push_back(sources[s]->make_const_view());
+        c1_polys.push_back(src_views.back().polys[1]);
+        hoist_dests.push_back(&workspace.outer_group_hoists[s]);
+    }
+
+    (void)galois_keys.const_view(q_count);
+    keyswitch_handler.hoist_decompose_modup_ntt_batch(
+        c1_polys, level_info, hoist_dests, workspace.keyswitch);
+
+    const std::size_t q_words = q_count * degree;
+    const std::size_t p_words = p_count * degree;
+    constexpr std::size_t kMaxBatchModDownCts = 32;
+    const std::size_t max_chunk_steps = std::min(
+        kernel::kMaxDoubleHoistKeymulManySteps,
+        std::max<std::size_t>(1, kMaxBatchModDownCts / source_count));
+    const std::size_t max_chunk_cts =
+        std::min(steps.size(), max_chunk_steps) * source_count;
+    workspace.outer_accumulator.ensure_capacity(
+        device_id, degree, q_count, p_count, max_chunk_cts);
+
+    GpuRNSPoly layout;
+    layout.degree = degree;
+    layout.q_count = q_count;
+    layout.p_count = 0;
+    layout.shards.push_back(GpuPolyShard{0, 0, 0, q_count, 0, degree});
+
+    const auto stream = gpu_execution_stream();
+    for (std::size_t offset = 0; offset < steps.size(); offset += max_chunk_steps)
+    {
+        const std::size_t chunk_steps = std::min(max_chunk_steps, steps.size() - offset);
+        const std::size_t chunk_cts = chunk_steps * source_count;
+
+        kernel::DoubleHoistKeymulManyBatchArgs args{};
+        for (std::size_t k = 0; k < chunk_steps; ++k)
+        {
+            args.galois_elts[k] = step_elts[offset + k];
+            args.key_indices[k] = step_key_indices[offset + k];
+        }
+        for (std::size_t s = 0; s < source_count; ++s)
+        {
+            const auto &h = workspace.outer_group_hoists[s];
+            args.digits_q[s] = h.digits_q_ntt.data();
+            args.digits_p[s] = h.digits_p_ntt.data();
+            args.lifted_c0_q[s] = src_views[s].polys[0].shards.front().ptr;
+            args.destination_q[s] = workspace.outer_accumulator.q.data() + s * (2 * q_words);
+            args.destination_p[s] = workspace.outer_accumulator.p.data() + s * (2 * p_words);
+        }
+
+        kernel::launch_double_hoist_pre_rotated_keymul_many_batch(
+            args,
+            source_count,
+            chunk_steps,
+            source_count * 2 * q_words,
+            source_count * 2 * p_words,
+            galois_keys.galois_key_q0_ptrs.data(),
+            galois_keys.galois_key_p0_ptrs.data(),
+            galois_keys.galois_key_q1_ptrs.data(),
+            galois_keys.galois_key_p1_ptrs.data(),
+            dnum,
+            storage_dnum,
+            *parameter_shard,
+            degree);
+
+        keyswitch_handler.moddown_qp_ciphertext_batch_to_q(
+            workspace.outer_accumulator,
+            chunk_cts,
+            workspace.inner_q_batch,
+            level_info,
+            workspace.batch_p_coeff,
+            workspace.batch_converted_q);
+
+        gpu_check_cuda(
+            cudaSetDevice(device_id),
+            (std::string(caller) + " cudaSetDevice").c_str());
+        emit_chunk(offset, chunk_steps, q_words, device_id, layout, stream);
+    }
+}
+}  // namespace
+
+void GpuEvaluator::rotate_many_hoisted_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuDoubleHoistWorkspace &workspace,
+    std::vector<std::vector<GpuCiphertextData>> &destination_batches) const
+{
+    const char *caller = "GpuEvaluator::rotate_many_hoisted_batch";
+    destination_batches.resize(sources.size());
+    if (sources.empty() || steps.empty())
+    {
+        for (auto &batch : destination_batches)
+        {
+            batch.clear();
+        }
+        return;
+    }
+    auto fallback = [&]() {
+        for (std::size_t s = 0; s < sources.size(); ++s)
+        {
+            rotate_many_hoisted(
+                *sources[s], steps, galois_keys_in, workspace, destination_batches[s]);
+        }
+    };
+    const std::size_t source_count = sources.size();
+    bool resized = false;
+    auto emit_chunk = [&](std::size_t offset, std::size_t chunk_steps,
+                          std::size_t q_words, int device_id,
+                          const GpuRNSPoly &layout, cudaStream_t stream) {
+        if (!resized)
+        {
+            for (std::size_t s = 0; s < source_count; ++s)
+            {
+                destination_batches[s].resize(steps.size());
+            }
+            resized = true;
+        }
+        for (std::size_t k = 0; k < chunk_steps; ++k)
+        {
+            for (std::size_t s = 0; s < source_count; ++s)
+            {
+                auto &dst = destination_batches[s][offset + k];
+                prepare_ciphertext_destination(
+                    dst,
+                    sources[s],
+                    nullptr,
+                    sources[s]->meta,
+                    2,
+                    device_id,
+                    layout);
+                const auto dst_view = dst.make_view();
+                GpuWord *dst0 = dst_view.polys[0].shards.front().ptr;
+                GpuWord *dst1 = dst_view.polys[1].shards.front().ptr;
+                const std::size_t batch_idx = k * source_count + s;
+                const GpuWord *src0 =
+                    workspace.inner_q_batch.q.data() + (batch_idx * 2) * q_words;
+                if (dst1 == dst0 + q_words)
+                {
+                    gpu_check_cuda(
+                        cudaMemcpyAsync(
+                            dst0, src0, 2 * q_words * sizeof(GpuWord),
+                            cudaMemcpyDeviceToDevice, stream),
+                        "GpuEvaluator::rotate_many_hoisted_batch d2d");
+                }
+                else
+                {
+                    gpu_check_cuda(
+                        cudaMemcpyAsync(
+                            dst0, src0, q_words * sizeof(GpuWord),
+                            cudaMemcpyDeviceToDevice, stream),
+                        "GpuEvaluator::rotate_many_hoisted_batch d2d c0");
+                    gpu_check_cuda(
+                        cudaMemcpyAsync(
+                            dst1, src0 + q_words, q_words * sizeof(GpuWord),
+                            cudaMemcpyDeviceToDevice, stream),
+                        "GpuEvaluator::rotate_many_hoisted_batch d2d c1");
+                }
+            }
+        }
+    };
+    rotate_many_hoisted_batch_impl(
+        caller, params_, keyswitch_handler_, sources, steps,
+        galois_keys_in, workspace, fallback, emit_chunk);
+}
+
+void GpuEvaluator::rotate_many_hoisted_batch_contiguous(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuDoubleHoistWorkspace &workspace,
+    const std::vector<GpuWord *> &destination_qs) const
+{
+    const char *caller = "GpuEvaluator::rotate_many_hoisted_batch_contiguous";
+    if (destination_qs.size() != sources.size())
+    {
+        throw std::invalid_argument(
+            std::string(caller) + ": destination_qs size mismatch");
+    }
+    if (sources.empty() || steps.empty())
+    {
+        return;
+    }
+    for (const auto *dst : destination_qs)
+    {
+        if (dst == nullptr)
+        {
+            throw std::invalid_argument(std::string(caller) + ": null destination");
+        }
+    }
+    auto fallback = [&]() {
+        for (std::size_t s = 0; s < sources.size(); ++s)
+        {
+            rotate_many_hoisted_contiguous(
+                *sources[s], steps, galois_keys_in, workspace, destination_qs[s]);
+        }
+    };
+    const std::size_t source_count = sources.size();
+    auto emit_chunk = [&](std::size_t offset, std::size_t chunk_steps,
+                          std::size_t q_words, int, const GpuRNSPoly &,
+                          cudaStream_t stream) {
+        const std::size_t row_bytes = 2 * q_words * sizeof(GpuWord);
+        for (std::size_t s = 0; s < source_count; ++s)
+        {
+            gpu_check_cuda(
+                cudaMemcpy2DAsync(
+                    destination_qs[s] + offset * 2 * q_words,
+                    row_bytes,
+                    workspace.inner_q_batch.q.data() + s * 2 * q_words,
+                    source_count * row_bytes,
+                    row_bytes,
+                    chunk_steps,
+                    cudaMemcpyDeviceToDevice,
+                    stream),
+                "GpuEvaluator::rotate_many_hoisted_batch_contiguous d2d");
+        }
+    };
+    rotate_many_hoisted_batch_impl(
+        caller, params_, keyswitch_handler_, sources, steps,
+        galois_keys_in, workspace, fallback, emit_chunk);
+}
+
+void GpuEvaluator::rotate_many_hoisted_contiguous(
+    const GpuCiphertextData &source_ciphertext,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuWord *destination_q) const
+{
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::rotate_many_hoisted_contiguous",
+        source_ciphertext,
+        true);
+    if (steps.empty())
+    {
+        return;
+    }
+    if (destination_q == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate_many_hoisted_contiguous: null destination");
+    }
+    const GpuLevelInfo *level_info_ptr = nullptr;
+    (void)rotate_many_hoisted_qp_impl(
+        "GpuEvaluator::rotate_many_hoisted_contiguous",
+        params_,
+        keyswitch_handler_,
+        source_ciphertext,
+        steps,
+        galois_keys_in,
+        workspace,
+        level_info_ptr);
+    const auto &level_info = *level_info_ptr;
+    const int device_id = source_ciphertext.fields_.front().device_id;
+    const std::size_t q_words =
+        source_ciphertext.meta.q_count * source_ciphertext.meta.degree;
+    const auto stream = gpu_execution_stream();
+    gpu_check_cuda(
+        cudaSetDevice(device_id),
+        "GpuEvaluator::rotate_many_hoisted_contiguous cudaSetDevice");
+
+    if (steps.size() >= 2)
+    {
+        keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
+            workspace.outer_accumulator,
+            steps.size(),
+            workspace.inner_q_batch,
+            level_info,
+            workspace.batch_p_coeff,
+            workspace.batch_converted_q);
+        gpu_check_cuda(
+            cudaMemcpyAsync(
+                destination_q,
+                workspace.inner_q_batch.q.data(),
+                steps.size() * 2 * q_words * sizeof(GpuWord),
+                cudaMemcpyDeviceToDevice,
+                stream),
+            "GpuEvaluator::rotate_many_hoisted_contiguous batch d2d");
+        return;
+    }
+    keyswitch_handler_.moddown_qp_ciphertext_to_q(
+        workspace.outer_accumulator,
+        0,
+        workspace.inner_q,
+        source_ciphertext.meta,
+        level_info,
+        workspace.keyswitch);
+    const auto dst_view = workspace.inner_q.make_const_view();
+    gpu_check_cuda(
+        cudaMemcpyAsync(
+            destination_q,
+            dst_view.polys[0].shards.front().ptr,
+            q_words * sizeof(GpuWord),
+            cudaMemcpyDeviceToDevice,
+            stream),
+        "GpuEvaluator::rotate_many_hoisted_contiguous single d2d c0");
+    gpu_check_cuda(
+        cudaMemcpyAsync(
+            destination_q + q_words,
+            dst_view.polys[1].shards.front().ptr,
+            q_words * sizeof(GpuWord),
+            cudaMemcpyDeviceToDevice,
+            stream),
+        "GpuEvaluator::rotate_many_hoisted_contiguous single d2d c1");
 }
 
 void GpuEvaluator::rotate_inplace(
@@ -3976,7 +6605,18 @@ void GpuEvaluator::conjugate(
     if (galois_keys.meta.galois_format ==
         GpuGaloisKeyFormat::InversePreRotated)
     {
-        GpuDoubleHoistWorkspace staged;
+        static const bool persistent_scratch = [] {
+            const char *raw = std::getenv("POSEIDON_GPU_PERSISTENT_ROTATE_WORKSPACE");
+            return raw != nullptr && std::string(raw) == "1";
+        }();
+        GpuDoubleHoistWorkspace local_staged;
+        std::unique_lock<std::mutex> scratch_lock;
+        if (persistent_scratch)
+        {
+            scratch_lock = std::unique_lock<std::mutex>(rotate_scratch_->mutex);
+        }
+        GpuDoubleHoistWorkspace &staged =
+            persistent_scratch ? rotate_scratch_->workspace : local_staged;
         conjugate_pre_rotated(
             source_ciphertext,
             galois_keys,
@@ -4047,6 +6687,283 @@ void GpuEvaluator::conjugate(
         level_info);
 
     destination_ciphertext = std::move(result);
+}
+
+void GpuEvaluator::conjugate_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    automorphism_batch_impl(
+        {&source_a, &source_b},
+        true,
+        0,
+        galois_keys_in,
+        {&destination_a, &destination_b});
+}
+
+void GpuEvaluator::rotate_pair(
+    const GpuCiphertextData &source_a,
+    const GpuCiphertextData &source_b,
+    int step,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuCiphertextData &destination_a,
+    GpuCiphertextData &destination_b) const
+{
+    automorphism_batch_impl(
+        {&source_a, &source_b},
+        false,
+        step,
+        galois_keys_in,
+        {&destination_a, &destination_b});
+}
+
+void GpuEvaluator::conjugate_batch(
+    const std::vector<const GpuCiphertextData *> &sources,
+    const GpuGaloisKeysData &galois_keys_in,
+    std::vector<GpuCiphertextData> &destinations) const
+{
+    if (sources.empty())
+    {
+        destinations.clear();
+        return;
+    }
+    destinations.resize(sources.size());
+    std::vector<GpuCiphertextData *> dst_ptrs(sources.size());
+    for (std::size_t i = 0; i < sources.size(); ++i)
+    {
+        if (sources[i] == nullptr)
+        {
+            throw std::invalid_argument("GpuEvaluator::conjugate_batch: null source");
+        }
+        dst_ptrs[i] = &destinations[i];
+    }
+    automorphism_batch_impl(sources, true, 0, galois_keys_in, dst_ptrs);
+}
+
+void GpuEvaluator::automorphism_batch_impl(
+    const std::vector<const GpuCiphertextData *> &sources,
+    bool is_conjugate,
+    int step,
+    const GpuGaloisKeysData &galois_keys_in,
+    const std::vector<GpuCiphertextData *> &destinations) const
+{
+    const std::size_t count = sources.size();
+    auto fallback = [&]() {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            if (is_conjugate) conjugate(*sources[i], galois_keys_in, *destinations[i]);
+            else rotate(*sources[i], step, galois_keys_in, *destinations[i]);
+        }
+    };
+
+    if (count < 2 || count > kernel::kMaxDoubleHoistKeymulBatchSources ||
+        (!is_conjugate && step == 0))
+    {
+        fallback();
+        return;
+    }
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        for (std::size_t j = i + 1; j < count; ++j)
+        {
+            if (destinations[i] == destinations[j])
+            {
+                fallback();
+                return;
+            }
+        }
+        for (std::size_t j = 0; j < count; ++j)
+        {
+            if (i != j && destinations[i] == sources[j])
+            {
+                fallback();
+                return;
+            }
+        }
+    }
+
+    const auto &ref = *sources[0];
+    if (ref.empty() || ref.fields_.empty())
+    {
+        fallback();
+        return;
+    }
+    const char *op_name =
+        is_conjugate ? "GpuEvaluator::conjugate_batch" : "GpuEvaluator::rotate_pair";
+    const auto &galois_keys = level_key_for(params_, galois_keys_in, ref.meta, op_name);
+    const int device_id = ref.fields_[0].device_id;
+    const std::size_t degree = ref.meta.degree;
+    const std::size_t q_count = ref.meta.q_count;
+    const auto &level_info = params_.get_level(ref.meta.parms_id);
+    const GpuParameterShard *parameter_shard = nullptr;
+    for (const auto &candidate : level_info.shards)
+    {
+        if (candidate.device_id == device_id &&
+            candidate.hybrid_base_q_count == q_count)
+        {
+            parameter_shard = &candidate;
+            break;
+        }
+    }
+
+    bool fast_ok =
+        parameter_shard != nullptr &&
+        parameter_shard->hybrid_base_p_count > 0 &&
+        !galois_keys.empty() &&
+        galois_keys.meta.galois_format == GpuGaloisKeyFormat::InversePreRotated &&
+        galois_keys.meta.degree == degree &&
+        galois_keys.meta.q_count >= q_count &&
+        galois_keys.meta.p_count == parameter_shard->hybrid_base_p_count &&
+        !galois_keys.galois_key_q0_ptrs.empty() &&
+        !galois_keys.galois_key_p0_ptrs.empty() &&
+        !galois_keys.galois_key_q1_ptrs.empty() &&
+        !galois_keys.galois_key_p1_ptrs.empty();
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        const auto &s = *sources[i];
+        if (s.empty() || s.fields_.empty() ||
+            !(s.meta.parms_id == ref.meta.parms_id) ||
+            !s.meta.is_ntt_form ||
+            s.meta.degree != degree ||
+            s.meta.q_count != q_count ||
+            s.meta.p_count != 0 ||
+            s.size() != 2 || s.meta.component_count != 2 ||
+            s.polys_[0].shards.size() != 1 ||
+            !all_components_use_layout(s, s.polys_[0]) ||
+            s.fields_[0].device_id != device_id ||
+            s.polys_[0].shards[0].limb_begin != 0 ||
+            s.polys_[0].shards[0].limb_count != q_count ||
+            s.polys_[0].shards[0].coeff_begin != 0 ||
+            s.polys_[0].shards[0].coeff_count != degree)
+        {
+            fast_ok = false;
+        }
+    }
+
+    const std::size_t p_count = fast_ok ? parameter_shard->hybrid_base_p_count : 0;
+    const std::size_t dnum = fast_ok ? (q_count + p_count - 1) / p_count : 0;
+    const std::size_t storage_dnum = galois_keys.meta.decomposition_count;
+    const std::uint32_t galois_elt = fast_ok
+        ? (is_conjugate ? galois_elt_for_conjugation(degree)
+                        : galois_elt_from_rotation_step(degree, step))
+        : 0;
+    const std::size_t key_index = fast_ok ? galois_key_index(galois_elt) : 0;
+    if (!fast_ok || dnum == 0 || storage_dnum < dnum ||
+        key_index >= galois_keys.meta.key_count ||
+        galois_keys.galois_elts_by_key_index.size() <= key_index ||
+        galois_keys.galois_elts_by_key_index[key_index] != galois_elt ||
+        (key_index + 1) * storage_dnum > galois_keys.galois_key_q0_ptrs.size())
+    {
+        fallback();
+        return;
+    }
+
+    static const bool persistent_scratch = [] {
+        const char *raw = std::getenv("POSEIDON_GPU_PERSISTENT_ROTATE_WORKSPACE");
+        return raw != nullptr && std::string(raw) == "1";
+    }();
+    GpuDoubleHoistWorkspace local_staged;
+    std::unique_lock<std::mutex> scratch_lock;
+    if (persistent_scratch)
+    {
+        scratch_lock = std::unique_lock<std::mutex>(rotate_scratch_->mutex);
+    }
+    GpuDoubleHoistWorkspace &staged =
+        persistent_scratch ? rotate_scratch_->workspace : local_staged;
+
+    std::vector<GpuConstCiphertextView> src_views;
+    std::vector<GpuConstRNSPolyView> c1_polys;
+    src_views.reserve(count);
+    c1_polys.reserve(count);
+    staged.outer_group_hoists.resize(count);
+    std::vector<GpuHoistedDecomposition *> hoist_dests(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        src_views.push_back(sources[i]->make_const_view());
+        c1_polys.push_back(src_views.back().polys[1]);
+        hoist_dests[i] = &staged.outer_group_hoists[i];
+    }
+
+    (void)galois_keys.const_view(q_count);
+    keyswitch_handler_.hoist_decompose_modup_ntt_batch(
+        c1_polys, level_info, hoist_dests, staged.keyswitch);
+
+    const std::size_t q_words = q_count * degree;
+    const std::size_t p_words = p_count * degree;
+    staged.baby_tile.ensure_capacity(device_id, degree, q_count, p_count, count);
+
+    kernel::DoubleHoistKeymulManyBatchArgs args{};
+    args.galois_elts[0] = galois_elt;
+    args.key_indices[0] = static_cast<std::uint32_t>(key_index);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        args.digits_q[i] = staged.outer_group_hoists[i].digits_q_ntt.data();
+        args.digits_p[i] = staged.outer_group_hoists[i].digits_p_ntt.data();
+        args.lifted_c0_q[i] = src_views[i].polys[0].shards.front().ptr;
+        args.destination_q[i] = staged.baby_tile.q.data() + i * (2 * q_words);
+        args.destination_p[i] = staged.baby_tile.p.data() + i * (2 * p_words);
+    }
+    kernel::launch_double_hoist_pre_rotated_keymul_many_batch(
+        args,
+        count,
+        1,
+        count * 2 * q_words,
+        count * 2 * p_words,
+        galois_keys.galois_key_q0_ptrs.data(),
+        galois_keys.galois_key_p0_ptrs.data(),
+        galois_keys.galois_key_q1_ptrs.data(),
+        galois_keys.galois_key_p1_ptrs.data(),
+        dnum,
+        storage_dnum,
+        *parameter_shard,
+        degree);
+
+    keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
+        staged.baby_tile,
+        count,
+        staged.inner_q_batch,
+        level_info,
+        staged.batch_p_coeff,
+        staged.batch_converted_q);
+
+    const auto stream = gpu_execution_stream();
+    gpu_check_cuda(cudaSetDevice(device_id), "automorphism_batch cudaSetDevice");
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        GpuCiphertextMeta meta = sources[i]->meta;
+        meta.component_count = 2;
+        meta.is_ntt_form = true;
+        prepare_ciphertext_destination(
+            *destinations[i], nullptr, nullptr, meta, 2, device_id, sources[i]->polys_[0]);
+        auto dst_view = destinations[i]->make_view();
+        GpuWord *dst0 = dst_view.polys[0].shards[0].ptr;
+        GpuWord *dst1 = dst_view.polys[1].shards[0].ptr;
+        const GpuWord *src0 = staged.inner_q_batch.q.data() + (i * 2) * q_words;
+        if (dst1 == dst0 + q_words)
+        {
+            gpu_check_cuda(
+                cudaMemcpyAsync(
+                    dst0, src0, 2 * q_words * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice, stream),
+                "automorphism_batch copy");
+        }
+        else
+        {
+            gpu_check_cuda(
+                cudaMemcpyAsync(
+                    dst0, src0, q_words * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice, stream),
+                "automorphism_batch copy c0");
+            gpu_check_cuda(
+                cudaMemcpyAsync(
+                    dst1, src0 + q_words, q_words * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice, stream),
+                "automorphism_batch copy c1");
+        }
+    }
 }
 
 void GpuEvaluator::conjugate_pre_rotated(
@@ -4412,6 +7329,71 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_loose(
     }
 }
 
+void GpuEvaluator::prepare_double_hoist_babies(
+    const GpuCiphertextData &source_ciphertext,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuDoubleHoistBabyCache &cache) const
+{
+    cache.ready = false;
+    validate_ntt_ciphertext_input("GpuEvaluator::prepare_double_hoist_babies", source_ciphertext, true);
+    if (source_ciphertext.size() != 2 || source_ciphertext.meta.p_count != 0 ||
+        source_ciphertext.polys_.at(0).shards.size() != 1 || steps.empty())
+        throw std::invalid_argument("prepare_double_hoist_babies: requires a nonempty step list and one-shard Q-only size-2 source");
+    const auto &galois_keys = level_key_for(params_, galois_keys_in,
+        source_ciphertext.meta, "GpuEvaluator::prepare_double_hoist_babies");
+    if (galois_keys.empty())throw std::invalid_argument("prepare_double_hoist_babies: empty Galois keys");
+    const auto &level = params_.get_level(source_ciphertext.meta.parms_id);
+    const auto view = source_ciphertext.make_const_view();
+    const auto &c0 = view.polys[0].shards.front();
+    const auto &c1 = view.polys[1].shards.front();
+    const GpuParameterShard *shard = nullptr;
+    for (const auto &candidate : level.shards)
+        if (candidate.device_id == c0.device_id && candidate.hybrid_base_q_count == source_ciphertext.meta.q_count)
+        {shard = &candidate;break;}
+    if (shard == nullptr || shard->hybrid_base_p_count == 0)
+        throw std::invalid_argument("prepare_double_hoist_babies: missing HYBRID parameter shard");
+    const auto degree = source_ciphertext.meta.degree;
+    const auto q = source_ciphertext.meta.q_count;
+    const auto p = shard->hybrid_base_p_count;
+    const auto dnum = (q + p - 1) / p;
+    cache.rotations.ensure_capacity(c0.device_id, degree, q, p, steps.size());
+    keyswitch_handler_.hoist_decompose_modup_ntt(view.polys[1], level, workspace.source_hoist, workspace.keyswitch);
+    const auto &key_view = galois_keys.const_view(q);
+    const bool fused_c0 = use_double_hoist_fused_baby_keyswitch_c0() &&
+        dnum == 1 && galois_keys.meta.galois_format == GpuGaloisKeyFormat::InversePreRotated;
+    if (!(fused_c0 && steps.size() >= 2 &&
+          launch_hoisted_keymul_many_if_eligible(
+              workspace.source_hoist, steps, galois_keys, *shard,
+              c0.ptr, c1.ptr, true, cache.rotations)))
+    {
+        for (std::size_t i = 0; i < steps.size(); ++i)
+        {
+            if (steps[i] == 0)
+            {
+                kernel::launch_double_hoist_lift_identity(
+                    cache.rotations.q_component(i, 0), cache.rotations.q_component(i, 1),
+                    cache.rotations.p_component(i, 0), cache.rotations.p_component(i, 1),
+                    c0.ptr, c1.ptr, *shard, degree, false);
+                continue;
+            }
+            const auto elt = galois_elt_from_rotation_step(degree, steps[i]);
+            const auto index = galois_key_index(elt);
+            keyswitch_handler_.keyswitch_multsum_no_moddown(
+                workspace.source_hoist, elt, key_view, galois_keys, index,
+                cache.rotations, i, true, level, workspace.keyswitch,
+                fused_c0 ? c0.ptr : nullptr);
+            if (!fused_c0)kernel::launch_double_hoist_add_lifted_galois_c0(
+                cache.rotations.q_component(i, 0), c0.ptr, elt, *shard, degree);
+        }
+    }
+    cache.source_meta = source_ciphertext.meta;
+    cache.source_c0 = c0.ptr;cache.source_c1 = c1.ptr;
+    cache.galois_key_identity = &galois_keys;
+    cache.steps = steps;cache.ready = true;
+}
+
 void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     const GpuCiphertextData &source_ciphertext,
     const GpuMatrixPlainQP &matrix,
@@ -4419,6 +7401,41 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     std::uint32_t rescale_count,
     GpuDoubleHoistWorkspace &workspace,
     GpuCiphertextData &destination_ciphertext) const
+{
+    multiply_by_diag_matrix_bsgs_double_hoist(source_ciphertext, matrix,
+        galois_keys_in, rescale_count, workspace, destination_ciphertext, nullptr);
+}
+
+void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
+    const GpuCiphertextData &source_ciphertext, const GpuMatrixPlainQP &matrix,
+    const GpuGaloisKeysData &galois_keys, std::uint32_t rescale_count,
+    GpuDoubleHoistWorkspace &workspace, GpuCiphertextData &destination_ciphertext,
+    const GpuDoubleHoistBabyCache *baby_cache) const
+{
+    double_hoist_impl(source_ciphertext, matrix, galois_keys, rescale_count,
+        workspace, destination_ciphertext, baby_cache, nullptr, true);
+}
+
+void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist_sum(
+    const GpuCiphertextData &source_ciphertext, const GpuMatrixPlainQP &matrix,
+    const GpuGaloisKeysData &galois_keys, std::uint32_t rescale_count,
+    GpuDoubleHoistWorkspace &workspace, GpuDoubleHoistSumState &sum_state,
+    bool final_input, GpuCiphertextData &destination_ciphertext,
+    const GpuDoubleHoistBabyCache *baby_cache) const
+{
+    double_hoist_impl(source_ciphertext, matrix, galois_keys, rescale_count,
+        workspace, destination_ciphertext, baby_cache, &sum_state, final_input);
+}
+
+void GpuEvaluator::double_hoist_impl(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuMatrixPlainQP &matrix,
+    const GpuGaloisKeysData &galois_keys_in,
+    std::uint32_t rescale_count,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext,
+    const GpuDoubleHoistBabyCache *baby_cache,
+    GpuDoubleHoistSumState *sum_state, bool final_input) const
 {
     const auto &galois_keys = level_key_for(params_, galois_keys_in, source_ciphertext.meta, "GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist");
     validate_ntt_ciphertext_input(
@@ -4552,6 +7569,33 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             "estimated workspace exceeds POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB");
     }
 
+    if (baby_cache != nullptr &&
+        (!baby_cache->ready || baby_cache->source_c0 != source_shard0.ptr ||
+         baby_cache->source_c1 != source_shard1.ptr ||
+         baby_cache->source_meta.parms_id != source_ciphertext.meta.parms_id ||
+         baby_cache->source_meta.scale != source_ciphertext.meta.scale ||
+         baby_cache->source_meta.degree != degree || baby_cache->source_meta.q_count != q_count ||
+         baby_cache->galois_key_identity != &galois_keys || baby_cache->steps != matrix.plan.baby_steps ||
+         baby_cache->rotations.device_id != source_shard0.device_id || baby_cache->rotations.degree != degree ||
+         baby_cache->rotations.q.size() < baby_count * 2 * q_count * degree ||
+         baby_cache->rotations.p.size() < baby_count * 2 * p_count * degree ||
+         baby_cache->rotations.q_count != q_count || baby_cache->rotations.p_count != p_count ||
+         baby_cache->rotations.batch_count != baby_count))
+        throw std::invalid_argument("double-hoist baby cache does not match immutable source, keys or matrix steps");
+    const bool accumulate_existing = sum_state && sum_state->initialized;
+    if (accumulate_existing &&
+        (sum_state->source_meta.parms_id != source_ciphertext.meta.parms_id ||
+         sum_state->source_meta.scale != source_ciphertext.meta.scale ||
+         sum_state->source_meta.degree != degree || sum_state->source_meta.q_count != q_count ||
+         sum_state->plaintext_scale != matrix.scale || sum_state->galois_key_identity != &galois_keys ||
+         sum_state->giant_steps != matrix.plan.giant_steps ||
+         sum_state->groups.device_id != source_shard0.device_id || sum_state->groups.degree != degree ||
+         sum_state->groups.q.size() < group_count * 2 * q_count * degree ||
+         sum_state->groups.p.size() < group_count * 2 * p_count * degree ||
+         sum_state->groups.q_count != q_count || sum_state->groups.p_count != p_count ||
+         sum_state->groups.batch_count != group_count))
+        throw std::invalid_argument("double-hoist sum physical contract or giant schedule mismatch");
+    if (sum_state)std::swap(workspace.group_accumulators, sum_state->groups);
     workspace.last_counts = {};
     workspace.last_counts.workspace_peak_bytes = estimated_workspace;
     workspace.group_accumulators.ensure_capacity(
@@ -4561,19 +7605,19 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         p_count,
         group_count);
     const bool direct_qp_mac_init =
-        use_double_hoist_qp_mac_direct_init();
-    if (!direct_qp_mac_init)
+        use_double_hoist_qp_mac_direct_init() && !accumulate_existing;
+    if (!direct_qp_mac_init && !accumulate_existing)
     {
         workspace.group_accumulators.q.fill_zero();
         workspace.group_accumulators.p.fill_zero();
     }
 
-    keyswitch_handler_.hoist_decompose_modup_ntt(
-        source_view.polys[1],
-        level_info,
-        workspace.source_hoist,
-        workspace.keyswitch);
-    workspace.last_counts.source_decompose_count = 1;
+    if (baby_cache == nullptr)
+    {
+        keyswitch_handler_.hoist_decompose_modup_ntt(
+            source_view.polys[1], level_info, workspace.source_hoist, workspace.keyswitch);
+        workspace.last_counts.source_decompose_count = 1;
+    }
 
     const auto &galois_keys_view =
         galois_keys.const_view(q_count);
@@ -4585,10 +7629,25 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     bool fused_baby_keyswitch_plain_mac =
         use_double_hoist_fused_baby_keyswitch_plain_mac() &&
         degree == 65536 &&
-        requested_tile <= kernel::kMaxDoubleHoistFusedBabySteps &&
-        group_count <= 4 &&
+        group_count <= kernel::kMaxDoubleHoistFusedBabyGroups &&
         galois_keys.meta.galois_format ==
             GpuGaloisKeyFormat::InversePreRotated;
+    const std::size_t fused_baby_tile = [&]() {
+        if (const char *raw =
+                std::getenv("POSEIDON_GPU_DOUBLE_HOIST_FUSED_BABY_TILE"))
+        {
+            const auto parsed = std::strtoull(raw, nullptr, 10);
+            if (parsed != 0)
+            {
+                return std::min<std::size_t>(
+                    baby_count,
+                    std::min<std::size_t>(
+                        static_cast<std::size_t>(parsed),
+                        kernel::kMaxDoubleHoistFusedBabySteps));
+            }
+        }
+        return std::min(baby_count, kernel::kMaxDoubleHoistFusedBabySteps);
+    }();
     if (fused_baby_keyswitch_plain_mac)
     {
         std::vector<bool> term_seen(group_count * baby_count, false);
@@ -4611,13 +7670,29 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             term_seen[slot] = true;
         }
     }
+    const std::size_t step_tile =
+        (baby_cache == nullptr && fused_baby_keyswitch_plain_mac)
+            ? fused_baby_tile
+            : requested_tile;
     for (std::size_t tile_begin = 0;
          tile_begin < baby_count;
-         tile_begin += requested_tile)
+         tile_begin += step_tile)
     {
         const std::size_t tile_count =
-            std::min(requested_tile, baby_count - tile_begin);
+            std::min(step_tile, baby_count - tile_begin);
         ++workspace.last_counts.baby_tile_count;
+        if (baby_cache != nullptr)
+        {
+            kernel::launch_double_hoist_qp_plain_mul_accumulate_groups(
+                workspace.group_accumulators.q.data(), workspace.group_accumulators.p.data(),
+                baby_cache->rotations.q_component(tile_begin, 0), baby_cache->rotations.p_component(tile_begin, 0),
+                matrix.plan.diagonal_q_ptrs.data(), matrix.plan.diagonal_p_ptrs.data(),
+                matrix.plan.diagonal_periods.data(), matrix.plan.term_baby_indices.data(),
+                matrix.plan.group_term_offsets_device.data(), group_count, matrix.plan.terms.size(),
+                tile_begin, tile_count, *parameter_shard, degree, matrix.plan.compressed_plaintexts,
+                direct_qp_mac_init && tile_begin == 0);
+            continue;
+        }
         if (fused_baby_keyswitch_plain_mac)
         {
             std::array<
@@ -4628,7 +7703,8 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
                 kernel::kMaxDoubleHoistFusedBabySteps> key_indices{};
             std::array<
                 std::uint32_t,
-                4 * kernel::kMaxDoubleHoistFusedBabySteps> term_indices{};
+                kernel::kMaxDoubleHoistFusedBabyGroups *
+                    kernel::kMaxDoubleHoistFusedBabySteps> term_indices{};
             term_indices.fill(std::numeric_limits<std::uint32_t>::max());
 
             for (std::size_t local = 0; local < tile_count; ++local)
@@ -4794,6 +7870,18 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             direct_qp_mac_init && tile_begin == 0);
     }
     workspace.last_counts.qp_pmult_count = matrix.plan.terms.size();
+    if (sum_state)
+    {
+        if (!final_input)
+        {
+            sum_state->source_meta = source_ciphertext.meta;sum_state->plaintext_scale = matrix.scale;
+            sum_state->galois_key_identity = &galois_keys;sum_state->giant_steps = matrix.plan.giant_steps;
+            sum_state->initialized = true;
+            std::swap(workspace.group_accumulators, sum_state->groups);
+            return;
+        }
+        sum_state->initialized = false;
+    }
 
     GpuCiphertextMeta product_meta = source_ciphertext.meta;
     product_meta.scale *= matrix.scale;
@@ -4952,20 +8040,9 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         std::vector<std::uint32_t> group_indices;
         std::vector<std::uint32_t> galois_elts;
         std::vector<std::uint32_t> key_indices;
-        digit_q_ptrs.reserve(group_count);
-        digit_p_ptrs.reserve(group_count);
-        group_indices.reserve(group_count);
-        galois_elts.reserve(group_count);
-        key_indices.reserve(group_count);
-        if (workspace.outer_group_hoists.size() < group_count)
-        {
-            workspace.outer_group_hoists.resize(group_count);
-        }
-
         for (std::size_t group = 0; group < group_count; ++group)
         {
-            const int giant_step = matrix.plan.giant_steps[group];
-            if (giant_step == 0)
+            if (matrix.plan.giant_steps[group] == 0)
             {
                 if (!direct_giant_accumulate)
                 {
@@ -4981,52 +8058,25 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
                         false);
                 }
                 have_outer = true;
-                continue;
             }
-
-            GpuConstRNSPolyView inner_c1;
-            inner_c1.poly_id = 1;
-            inner_c1.shards.push_back(GpuConstPolyShardView{
-                source_shard0.device_id,
-                workspace.inner_q_batch.q_component(group, 1),
-                0,
-                q_count,
-                0,
-                degree});
-            const std::size_t non_identity_group = group - 1;
-            auto &group_hoist = workspace.outer_group_hoists[group];
-            const GpuWord *precomputed_source_intt_q =
-                batched_giant_intt
-                    ? workspace.outer_source_intt_q_batch.data() +
-                          non_identity_group * q_words
-                    : nullptr;
-            keyswitch_handler_.hoist_decompose_modup_ntt(
-                inner_c1,
-                level_info,
-                group_hoist,
-                workspace.keyswitch,
-                precomputed_source_intt_q);
-            const GpuWord *digit_q_ptr =
-                group_hoist.digits_q_ntt.data();
-            const GpuWord *digit_p_ptr =
-                group_hoist.digits_p_ntt.data();
-            ++workspace.last_counts.outer_decompose_count;
-
-            const std::uint32_t galois_elt =
-                galois_elt_from_rotation_step(degree, giant_step);
-            const std::size_t key_index =
-                galois_key_index(galois_elt);
-            if (key_index > std::numeric_limits<std::uint32_t>::max())
-            {
-                throw std::overflow_error(
-                    "double-hoist giant key index exceeds uint32_t");
-            }
-            digit_q_ptrs.push_back(digit_q_ptr);
-            digit_p_ptrs.push_back(digit_p_ptr);
-            group_indices.push_back(static_cast<std::uint32_t>(group));
-            galois_elts.push_back(galois_elt);
-            key_indices.push_back(static_cast<std::uint32_t>(key_index));
         }
+        collect_and_hoist_giant_groups(
+            keyswitch_handler_,
+            level_info,
+            workspace,
+            source_shard0.device_id,
+            degree,
+            q_count,
+            matrix.plan.giant_steps,
+            workspace.inner_q_batch.q.data(),
+            2 * q_words,
+            batched_giant_intt,
+            digit_q_ptrs,
+            digit_p_ptrs,
+            group_indices,
+            galois_elts,
+            key_indices,
+            &workspace.last_counts.outer_decompose_count);
 
         const std::size_t active_group_count = group_indices.size();
         if (active_group_count != 0)
@@ -5359,6 +8409,505 @@ void GpuEvaluator::dft_loose(
     }
 
     destination_ciphertext = std::move(current);
+}
+
+void GpuEvaluator::giant_reduce_q_groups(
+    const GpuWord *inner_q_batch,
+    std::size_t q_count,
+    parms_id_type parms_id,
+    double product_scale,
+    const std::vector<int> &giant_steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    std::uint32_t rescale_count,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (inner_q_batch == nullptr || q_count == 0 || giant_steps.size() < 2)
+    {
+        throw std::invalid_argument("GpuEvaluator::giant_reduce_q_groups: invalid inputs");
+    }
+    const auto &level_info = params_.get_level(parms_id);
+    const GpuParameterShard *parameter_shard = nullptr;
+    for (const auto &candidate : level_info.shards)
+    {
+        if (candidate.hybrid_base_q_count == q_count)
+        {
+            parameter_shard = &candidate;
+            break;
+        }
+    }
+    if (parameter_shard == nullptr || parameter_shard->hybrid_base_p_count == 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::giant_reduce_q_groups: HYBRID parameter shard absent");
+    }
+    const int device_id = parameter_shard->device_id;
+    const std::size_t degree = level_info.degree;
+    const std::size_t p_count = parameter_shard->hybrid_base_p_count;
+    const std::size_t dnum = (q_count + p_count - 1) / p_count;
+    const std::size_t group_count = giant_steps.size();
+
+    GpuCiphertextMeta product_meta;
+    product_meta.parms_id = parms_id;
+    product_meta.scale = product_scale;
+    product_meta.is_ntt_form = true;
+    product_meta.degree = degree;
+    product_meta.q_count = q_count;
+    product_meta.p_count = 0;
+    product_meta.component_count = 2;
+
+    const auto &galois_keys = level_key_for(
+        params_, galois_keys_in, product_meta, "GpuEvaluator::giant_reduce_q_groups");
+    if (galois_keys.empty() ||
+        galois_keys.meta.galois_format != GpuGaloisKeyFormat::InversePreRotated)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups: requires InversePreRotated Galois keys");
+    }
+    const auto &galois_keys_view = galois_keys.const_view(q_count);
+    (void)galois_keys_view;
+
+    const auto identity_it = std::find(giant_steps.begin(), giant_steps.end(), 0);
+    if (identity_it != giant_steps.begin())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups: identity step 0 must be at group index 0");
+    }
+    const std::size_t q_words = q_count * degree;
+    const std::size_t batched_giant_count = group_count - 1;
+    const bool batched_giant_intt =
+        use_double_hoist_batched_giant_intt() && degree == 65536;
+    if (batched_giant_intt)
+    {
+        const std::size_t required_words = batched_giant_count * q_words;
+        if (workspace.outer_source_intt_q_batch.device_id() != device_id ||
+            workspace.outer_source_intt_q_batch.size() < required_words)
+        {
+            workspace.outer_source_intt_q_batch.allocate(required_words, device_id);
+        }
+        GpuPolyShardView destination_intt;
+        destination_intt.device_id = device_id;
+        destination_intt.ptr = workspace.outer_source_intt_q_batch.data();
+        destination_intt.limb_begin = 0;
+        destination_intt.limb_count = q_count;
+        destination_intt.coeff_begin = 0;
+        destination_intt.coeff_count = degree;
+
+        GpuConstPolyShardView source_ntt;
+        source_ntt.device_id = device_id;
+        source_ntt.ptr = inner_q_batch + 3 * q_words;
+        source_ntt.limb_begin = 0;
+        source_ntt.limb_count = q_count;
+        source_ntt.coeff_begin = 0;
+        source_ntt.coeff_count = degree;
+
+        kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+            destination_intt, source_ntt, *parameter_shard,
+            degree, batched_giant_count, q_words, 2 * q_words);
+    }
+
+    for (std::size_t group = 1; group < group_count; ++group)
+    {
+        if (giant_steps[group] == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::giant_reduce_q_groups: duplicate identity step 0");
+        }
+    }
+    std::vector<const GpuWord *> digit_q_ptrs;
+    std::vector<const GpuWord *> digit_p_ptrs;
+    std::vector<std::uint32_t> group_indices;
+    std::vector<std::uint32_t> galois_elts;
+    std::vector<std::uint32_t> key_indices;
+    collect_and_hoist_giant_groups(
+        keyswitch_handler_,
+        level_info,
+        workspace,
+        device_id,
+        degree,
+        q_count,
+        giant_steps,
+        inner_q_batch,
+        2 * q_words,
+        batched_giant_intt,
+        digit_q_ptrs,
+        digit_p_ptrs,
+        group_indices,
+        galois_elts,
+        key_indices);
+
+    workspace.outer_accumulator.ensure_capacity(device_id, degree, q_count, p_count, 1);
+    kernel::launch_double_hoist_pre_rotated_giant_group_accumulate(
+        workspace.outer_accumulator.q_component(0, 0),
+        workspace.outer_accumulator.q_component(0, 1),
+        workspace.outer_accumulator.p_component(0, 0),
+        workspace.outer_accumulator.p_component(0, 1),
+        inner_q_batch,
+        0,
+        digit_q_ptrs.data(),
+        digit_p_ptrs.data(),
+        group_indices.data(),
+        galois_elts.data(),
+        key_indices.data(),
+        galois_keys.galois_key_q0_ptrs.data(),
+        galois_keys.galois_key_p0_ptrs.data(),
+        galois_keys.galois_key_q1_ptrs.data(),
+        galois_keys.galois_key_p1_ptrs.data(),
+        group_indices.size(),
+        dnum,
+        galois_keys.meta.decomposition_count,
+        *parameter_shard,
+        degree);
+
+    keyswitch_handler_.moddown_qp_ciphertext_to_q(
+        workspace.outer_accumulator,
+        0,
+        workspace.result_q,
+        product_meta,
+        level_info,
+        workspace.keyswitch);
+    if (rescale_count == 0)
+    {
+        destination_ciphertext = std::move(workspace.result_q);
+    }
+    else
+    {
+        rescale_many(workspace.result_q, destination_ciphertext, rescale_count);
+    }
+}
+
+void GpuEvaluator::giant_reduce_q_groups_batch(
+    const GpuWord *inner_q_batch,
+    std::size_t batch_count,
+    std::size_t inner_batch_stride_words,
+    std::size_t q_count,
+    parms_id_type parms_id,
+    double product_scale,
+    const std::vector<int> &giant_steps,
+    const GpuGaloisKeysData &galois_keys_in,
+    std::uint32_t rescale_count,
+    GpuDoubleHoistWorkspace &workspace,
+    std::vector<GpuCiphertextData> &destination_ciphertexts) const
+{
+    if (batch_count == 0)
+    {
+        destination_ciphertexts.clear();
+        return;
+    }
+    if (inner_q_batch == nullptr || q_count == 0 || giant_steps.size() < 2)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups_batch: invalid inputs");
+    }
+    if (giant_steps[0] != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups_batch: identity step 0 must be at group index 0");
+    }
+    for (std::size_t group = 1; group < giant_steps.size(); ++group)
+    {
+        if (giant_steps[group] == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::giant_reduce_q_groups_batch: duplicate identity step 0");
+        }
+    }
+
+    const auto &level_info = params_.get_level(parms_id);
+    const GpuParameterShard *parameter_shard = nullptr;
+    for (const auto &candidate : level_info.shards)
+    {
+        if (candidate.hybrid_base_q_count == q_count)
+        {
+            parameter_shard = &candidate;
+            break;
+        }
+    }
+    if (parameter_shard == nullptr || parameter_shard->hybrid_base_p_count == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups_batch: HYBRID parameter shard absent");
+    }
+    const std::size_t degree = level_info.degree;
+    const std::size_t group_count = giant_steps.size();
+    const std::size_t batched_giant_count = group_count - 1;
+    const bool use_batch =
+        batch_count >= 2 &&
+        batch_count <= kernel::kMaxGiantReduceBatch &&
+        batched_giant_count <= kernel::kMaxGiantReduceBatchGroups &&
+        degree == 65536 &&
+        use_double_hoist_batched_giant_intt() &&
+        rescale_count <= 1 &&
+        (rescale_count == 0 || q_count >= 2);
+    if (!use_batch)
+    {
+        destination_ciphertexts.resize(batch_count);
+        for (std::size_t b = 0; b < batch_count; ++b)
+        {
+            giant_reduce_q_groups(
+                inner_q_batch + b * inner_batch_stride_words,
+                q_count,
+                parms_id,
+                product_scale,
+                giant_steps,
+                galois_keys_in,
+                rescale_count,
+                workspace,
+                destination_ciphertexts[b]);
+        }
+        return;
+    }
+
+    const int device_id = parameter_shard->device_id;
+    const std::size_t p_count = parameter_shard->hybrid_base_p_count;
+    const std::size_t dnum = (q_count + p_count - 1) / p_count;
+    const std::size_t q_words = q_count * degree;
+
+    GpuCiphertextMeta product_meta;
+    product_meta.parms_id = parms_id;
+    product_meta.scale = product_scale;
+    product_meta.is_ntt_form = true;
+    product_meta.degree = degree;
+    product_meta.q_count = q_count;
+    product_meta.p_count = 0;
+    product_meta.component_count = 2;
+
+    const auto &galois_keys = level_key_for(
+        params_, galois_keys_in, product_meta,
+        "GpuEvaluator::giant_reduce_q_groups_batch");
+    if (galois_keys.empty() ||
+        galois_keys.meta.galois_format != GpuGaloisKeyFormat::InversePreRotated)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups_batch: requires InversePreRotated Galois keys");
+    }
+
+    const std::size_t total_hoists = batch_count * batched_giant_count;
+    const std::size_t required_intt_words = total_hoists * q_words;
+    if (workspace.outer_source_intt_q_batch.device_id() != device_id ||
+        workspace.outer_source_intt_q_batch.size() < required_intt_words)
+    {
+        workspace.outer_source_intt_q_batch.allocate(required_intt_words, device_id);
+    }
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        GpuPolyShardView destination_intt{
+            device_id,
+            workspace.outer_source_intt_q_batch.data() + b * batched_giant_count * q_words,
+            0, q_count, 0, degree};
+        GpuConstPolyShardView source_ntt{
+            device_id,
+            inner_q_batch + b * inner_batch_stride_words + 3 * q_words,
+            0, q_count, 0, degree};
+        kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+            destination_intt, source_ntt, *parameter_shard,
+            degree, batched_giant_count, q_words, 2 * q_words);
+    }
+
+    if (workspace.outer_group_hoists.size() < total_hoists)
+    {
+        workspace.outer_group_hoists.resize(total_hoists);
+    }
+    std::vector<GpuConstRNSPolyView> switch_polys_ntt;
+    std::vector<GpuHoistedDecomposition *> destinations;
+    switch_polys_ntt.reserve(total_hoists);
+    destinations.reserve(total_hoists);
+
+    std::vector<std::uint32_t> group_indices(batched_giant_count);
+    std::vector<std::uint32_t> galois_elts(batched_giant_count);
+    std::vector<std::uint32_t> key_indices(batched_giant_count);
+    for (std::size_t g = 1; g < group_count; ++g)
+    {
+        const std::size_t active_idx = g - 1;
+        const std::uint32_t galois_elt =
+            galois_elt_from_rotation_step(degree, giant_steps[g]);
+        const std::size_t key_index = galois_key_index(galois_elt);
+        if (key_index > std::numeric_limits<std::uint32_t>::max())
+        {
+            throw std::overflow_error(
+                "double-hoist giant key index exceeds uint32_t");
+        }
+        group_indices[active_idx] = static_cast<std::uint32_t>(g);
+        galois_elts[active_idx] = galois_elt;
+        key_indices[active_idx] = static_cast<std::uint32_t>(key_index);
+    }
+
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        const GpuWord *batch_ptr =
+            inner_q_batch + b * inner_batch_stride_words;
+        for (std::size_t g = 1; g < group_count; ++g)
+        {
+            const std::size_t idx = b * batched_giant_count + (g - 1);
+            GpuConstRNSPolyView inner_c1;
+            inner_c1.poly_id = 1;
+            inner_c1.shards.push_back(GpuConstPolyShardView{
+                device_id,
+                batch_ptr + g * 2 * q_words + q_words,
+                0, q_count, 0, degree});
+            switch_polys_ntt.push_back(std::move(inner_c1));
+            destinations.push_back(&workspace.outer_group_hoists[idx]);
+        }
+    }
+
+    keyswitch_handler_.hoist_decompose_modup_ntt_batch(
+        switch_polys_ntt,
+        level_info,
+        destinations,
+        workspace.keyswitch,
+        workspace.outer_source_intt_q_batch.data(),
+        q_words);
+
+    std::vector<const GpuWord *> digit_q_ptrs(total_hoists);
+    std::vector<const GpuWord *> digit_p_ptrs(total_hoists);
+    for (std::size_t i = 0; i < total_hoists; ++i)
+    {
+        digit_q_ptrs[i] = destinations[i]->digits_q_ntt.data();
+        digit_p_ptrs[i] = destinations[i]->digits_p_ntt.data();
+    }
+
+    workspace.outer_accumulator.ensure_capacity(
+        device_id, degree, q_count, p_count, batch_count);
+    kernel::launch_double_hoist_pre_rotated_giant_group_accumulate_batch(
+        workspace.outer_accumulator.q.data(),
+        workspace.outer_accumulator.p.data(),
+        batch_count,
+        inner_q_batch,
+        inner_batch_stride_words,
+        0,
+        digit_q_ptrs.data(),
+        digit_p_ptrs.data(),
+        group_indices.data(),
+        galois_elts.data(),
+        key_indices.data(),
+        galois_keys.galois_key_q0_ptrs.data(),
+        galois_keys.galois_key_p0_ptrs.data(),
+        galois_keys.galois_key_q1_ptrs.data(),
+        galois_keys.galois_key_p1_ptrs.data(),
+        batched_giant_count,
+        dnum,
+        galois_keys.meta.decomposition_count,
+        *parameter_shard,
+        degree);
+
+    keyswitch_handler_.moddown_qp_ciphertext_batch_to_q(
+        workspace.outer_accumulator,
+        batch_count,
+        workspace.inner_q_batch,
+        level_info,
+        workspace.batch_p_coeff,
+        workspace.batch_converted_q);
+
+    destination_ciphertexts.resize(batch_count);
+    if (rescale_count == 0)
+    {
+        GpuRNSPoly layout;
+        layout.degree = degree;
+        layout.q_count = q_count;
+        layout.p_count = 0;
+        layout.shards.push_back(GpuPolyShard{0, 0, 0, q_count, 0, degree});
+        const auto stream = gpu_execution_stream();
+        gpu_check_cuda(
+            cudaSetDevice(device_id),
+            "GpuEvaluator::giant_reduce_q_groups_batch copy cudaSetDevice");
+        for (std::size_t b = 0; b < batch_count; ++b)
+        {
+            prepare_ciphertext_destination(
+                destination_ciphertexts[b],
+                nullptr,
+                nullptr,
+                product_meta,
+                2,
+                device_id,
+                layout);
+            const auto dst_view = destination_ciphertexts[b].make_view();
+            const GpuWord *src0 =
+                workspace.inner_q_batch.q.data() + b * 2 * q_words;
+            gpu_check_cuda(
+                cudaMemcpyAsync(
+                    dst_view.polys[0].shards.front().ptr,
+                    src0,
+                    q_words * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice,
+                    stream),
+                "GpuEvaluator::giant_reduce_q_groups_batch copy c0");
+            gpu_check_cuda(
+                cudaMemcpyAsync(
+                    dst_view.polys[1].shards.front().ptr,
+                    src0 + q_words,
+                    q_words * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice,
+                    stream),
+                "GpuEvaluator::giant_reduce_q_groups_batch copy c1");
+        }
+        return;
+    }
+
+    const auto &next_level_info = params_.get_next_level(parms_id);
+    if (level_info.shards.empty() || level_info.shards.front().q_last == 0 ||
+        next_level_info.q_count + 1 != q_count)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups_batch: rescale level mismatch");
+    }
+    const std::size_t dst_q_count = q_count - 1;
+    GpuCiphertextMeta dst_meta = product_meta;
+    dst_meta.parms_id = next_level_info.parms_id;
+    dst_meta.q_count = dst_q_count;
+    dst_meta.scale =
+        product_scale / static_cast<double>(level_info.shards.front().q_last);
+    if (!(dst_meta.scale > 0.0) || !std::isfinite(dst_meta.scale))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::giant_reduce_q_groups_batch: invalid rescaled scale");
+    }
+
+    GpuRNSPoly dst_layout;
+    dst_layout.degree = degree;
+    dst_layout.q_count = dst_q_count;
+    dst_layout.p_count = 0;
+    dst_layout.shards.push_back(GpuPolyShard{0, 0, 0, dst_q_count, 0, degree});
+
+    std::vector<GpuCiphertextView> dst_views;
+    dst_views.reserve(batch_count);
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        prepare_ciphertext_destination(
+            destination_ciphertexts[b],
+            nullptr,
+            nullptr,
+            dst_meta,
+            2,
+            device_id,
+            dst_layout);
+        dst_views.push_back(destination_ciphertexts[b].make_view());
+    }
+    if (!modswitch_handler_.rescale_q_batch_to_outputs(
+            workspace.inner_q_batch.q.data(),
+            batch_count,
+            q_count,
+            dst_views,
+            level_info,
+            next_level_info))
+    {
+        for (std::size_t b = 0; b < batch_count; ++b)
+        {
+            GpuConstCiphertextView src_view;
+            src_view.meta = product_meta;
+            src_view.polys.resize(2);
+            const GpuWord *src0 =
+                workspace.inner_q_batch.q.data() + b * 2 * q_words;
+            for (std::size_t c = 0; c < 2; ++c)
+            {
+                src_view.polys[c].poly_id = c;
+                src_view.polys[c].shards.push_back(GpuConstPolyShardView{
+                    device_id,
+                    src0 + c * q_words,
+                    0, q_count, 0, degree});
+            }
+            modswitch_handler_.rescale_ciphertext(
+                dst_views[b], src_view, level_info, next_level_info);
+        }
+    }
 }
 
 void GpuEvaluator::dft_double_hoist(
@@ -5702,6 +9251,78 @@ void GpuEvaluator::bootstrap(
     GpuBootstrapWorkspace &workspace,
     GpuCiphertextData &destination_ciphertext) const
 {
+    bootstrap_impl(source_ciphertext, bootstrap_data, relin_keys, galois_keys,
+                   workspace, destination_ciphertext, nullptr);
+}
+
+GpuEvaluator::ManualBootstrapProjections GpuEvaluator::bootstrap_manual_projections(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuRelinKeysData &relin_keys,
+    const GpuGaloisKeysData &galois_keys,
+    GpuBootstrapWorkspace &workspace) const
+{
+    const auto &m = source_ciphertext.meta;
+    if (!bootstrap_data.slot_to_coeff_first || !bootstrap_data.project_real ||
+        source_ciphertext.empty() || m.degree != 65536 || m.p_count != 0 ||
+        m.component_count != 2 || !m.is_ntt_form || m.correction_factor != 1 ||
+        m.q_count != bootstrap_data.input_q_count ||
+        !(m.scale > 0.0) || !std::isfinite(m.scale) ||
+        !(bootstrap_data.input_scale > 0.0) || !std::isfinite(bootstrap_data.input_scale) ||
+        std::abs(std::log2(m.scale / bootstrap_data.input_scale)) > 1e-8 ||
+        source_ciphertext.fields_.size() != 1)
+        throw std::invalid_argument("manual projections require external N65536 Q-only NTT input and real S2C-first contract");
+    const auto &level = params_.get_level(m.parms_id);
+    if (level.degree != 65536 || level.q_count != m.q_count || level.shards.size() != 1 ||
+        level.shards[0].device_id != source_ciphertext.fields_[0].device_id)
+        throw std::invalid_argument("manual projections input must use this evaluator's single device");
+    const auto output_q = bootstrap_data.slot_to_coeff_input_q_count
+        ? bootstrap_data.slot_to_coeff_input_q_count : bootstrap_data.eval_mod.output_q_count;
+    const auto output_id = bootstrap_data.slot_to_coeff_input_q_count
+        ? bootstrap_data.slot_to_coeff_input_parms_id : bootstrap_data.eval_mod.output_parms_id;
+    const auto &pi = bootstrap_data.plus_i_plaintext;
+    if (pi.empty() || pi.fields_.size() != 1 || pi.fields_[0].empty() ||
+        pi.fields_[0].device_id != source_ciphertext.fields_[0].device_id ||
+        pi.meta.degree != 65536 || pi.meta.p_count != 0 || !pi.meta.is_ntt_form ||
+        pi.meta.q_count != output_q || pi.meta.parms_id != output_id || pi.meta.scale != 1.0 ||
+        !(bootstrap_data.output_scale_multiplier > 0.0) || !std::isfinite(bootstrap_data.output_scale_multiplier) ||
+        !(bootstrap_data.slot_to_coeff_output_scale > 0.0) || !std::isfinite(bootstrap_data.slot_to_coeff_output_scale))
+        throw std::invalid_argument("manual projections require matching output-level scale1 +i and finite physical fold");
+    for (const auto *temporary : {
+            &workspace.modraise_input, &workspace.raised, &workspace.raised_scaled,
+            &workspace.coeff_to_slot_real, &workspace.coeff_to_slot_imag,
+            &workspace.eval_mod_real, &workspace.eval_mod_imag,
+            &workspace.scratch0, &workspace.scratch1, &workspace.scratch2,
+            &workspace.scratch3, &workspace.scratch4, &workspace.scratch5,
+            &workspace.eval_mod_trace_offset_input, &workspace.eval_mod_trace_polynomial_output,
+            &workspace.coeff_to_slot_double_hoist.inner_q, &workspace.coeff_to_slot_double_hoist.result_q,
+            &workspace.slot_to_coeff_double_hoist.inner_q, &workspace.slot_to_coeff_double_hoist.result_q})
+        if (&source_ciphertext == temporary)throw std::invalid_argument("manual projections input aliases workspace");
+    for (const auto *collection : {
+            &workspace.eval_mod_basis, &workspace.eval_mod_nodes,
+            &workspace.eval_mod_trace_double_angle_square_outputs,
+            &workspace.eval_mod_trace_double_angle_relin_outputs,
+            &workspace.eval_mod_trace_double_angle_rescaled_square_outputs,
+            &workspace.eval_mod_trace_polynomial_leaf_outputs,
+            &workspace.eval_mod_trace_polynomial_combine_outputs,
+            &workspace.eval_mod_trace_double_angle_outputs})
+        for (const auto &temporary : *collection)
+            if (&source_ciphertext == &temporary)throw std::invalid_argument("manual projections input aliases workspace vector");
+    ManualBootstrapProjections result;
+    bootstrap_impl(source_ciphertext, bootstrap_data, relin_keys, galois_keys,
+                   workspace, result.real, &result.imaginary);
+    return result;
+}
+
+void GpuEvaluator::bootstrap_impl(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuRelinKeysData &relin_keys,
+    const GpuGaloisKeysData &galois_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext,
+    GpuCiphertextData *imaginary_projection) const
+{
     const auto linear_transform_mode =
         bootstrap_data.allow_environment_linear_transform_override
             ? gpu_linear_transform_mode_from_environment(
@@ -5749,6 +9370,50 @@ void GpuEvaluator::bootstrap(
     }
 
     NvtxRange bootstrap_range("bootstrap_once");
+    const char *stage_timing_env = std::getenv("POSEIDON_BOOT_STAGE_TIMING");
+    const bool boot_stage_timing =
+        stage_timing_env != nullptr && std::string(stage_timing_env) == "1";
+    struct BootEventGuard
+    {
+        cudaEvent_t ev[7]{};
+        bool active = false;
+        GpuBootstrapWorkspace *ws = nullptr;
+        bool prev_timing = false;
+        ~BootEventGuard()
+        {
+            if (ws != nullptr)
+            {
+                ws->capture_eval_mod_stage_timing = prev_timing;
+            }
+            if (active)
+            {
+                for (auto &e : ev)
+                {
+                    if (e != nullptr)
+                    {
+                        cudaEventDestroy(e);
+                    }
+                }
+            }
+        }
+    };
+    BootEventGuard stage_guard;
+    stage_guard.ws = &workspace;
+    stage_guard.prev_timing = workspace.capture_eval_mod_stage_timing;
+    cudaEvent_t (&ev)[7] = stage_guard.ev;
+    auto mark = [&](int idx) {
+        if (boot_stage_timing)
+        {
+            gpu_check_cuda(cudaEventRecord(ev[idx], gpu_execution_stream()), "boot stage ev");
+        }
+    };
+    if (boot_stage_timing)
+    {
+        for (auto &e : ev) gpu_check_cuda(cudaEventCreate(&e), "boot stage create");
+        stage_guard.active = true;
+        workspace.capture_eval_mod_stage_timing = true;
+    }
+    mark(0);
     const GpuCiphertextData *raised_for_c2s = &workspace.raised;
     {
         NvtxRange range("ModRaise");
@@ -5786,6 +9451,7 @@ void GpuEvaluator::bootstrap(
                                        bootstrap_data.q0_over_message_ratio,
                                        "GpuEvaluator::bootstrap");
         }
+        mark(1);
 
         raise_modulus_encapsulated(
             *this, workspace.modraise_input, bootstrap_data, workspace, workspace.raised);
@@ -5814,6 +9480,7 @@ void GpuEvaluator::bootstrap(
             raised_for_c2s = &workspace.raised_scaled;
         }
     }
+    mark(2);
 
     {
         NvtxRange range("CtS");
@@ -5849,28 +9516,52 @@ void GpuEvaluator::bootstrap(
                 workspace.coeff_to_slot_imag);
         }
     }
+    mark(3);
 
+    GpuBootstrapWorkspace::EvalModStageTiming eval_real_stages{};
     {
         NvtxRange range("EvalMod");
+        if (!workspace.capture_eval_mod_trace &&
+            use_evalmod_pair() &&
+            !bootstrap_data.eval_mod.polynomial_blocks.empty())
         {
-            NvtxRange branch_range("EvalMod real");
-            eval_mod_high_precision(
+            NvtxRange branch_range("EvalMod pair");
+            eval_mod_high_precision_pair(
                 workspace.coeff_to_slot_real,
-                bootstrap_data,
-                relin_keys,
-                workspace,
-                workspace.eval_mod_real);
-        }
-        {
-            NvtxRange branch_range("EvalMod imag");
-            eval_mod_high_precision(
                 workspace.coeff_to_slot_imag,
                 bootstrap_data,
                 relin_keys,
                 workspace,
+                workspace.eval_mod_real,
                 workspace.eval_mod_imag);
+            if (boot_stage_timing) eval_real_stages = workspace.eval_mod_stage_timing;
+            mark(4);
+        }
+        else
+        {
+            {
+                NvtxRange branch_range("EvalMod real");
+                eval_mod_high_precision(
+                    workspace.coeff_to_slot_real,
+                    bootstrap_data,
+                    relin_keys,
+                    workspace,
+                    workspace.eval_mod_real);
+            }
+            if (boot_stage_timing) eval_real_stages = workspace.eval_mod_stage_timing;
+            mark(4);
+            {
+                NvtxRange branch_range("EvalMod imag");
+                eval_mod_high_precision(
+                    workspace.coeff_to_slot_imag,
+                    bootstrap_data,
+                    relin_keys,
+                    workspace,
+                    workspace.eval_mod_imag);
+            }
         }
     }
+    mark(5);
 
     if (!bootstrap_data.slot_to_coeff_first && bootstrap_data.slot_to_coeff_input_scale > 0.0)
     {
@@ -5886,21 +9577,79 @@ void GpuEvaluator::bootstrap(
         NvtxRange range("StC");
         if (bootstrap_data.slot_to_coeff_first)
         {
-            if (!bootstrap_data.project_real || bootstrap_data.output_ratio != 32)
-                throw std::invalid_argument("manual S2C-first Boot requires real projection and ratio 32");
+            if (!bootstrap_data.project_real)
+                throw std::invalid_argument("manual S2C-first Boot requires real projection");
+            const auto ratio = bootstrap_data.output_ratio;
+            if (ratio != 32)
+            {
+                const char *enabled = std::getenv("POSEIDON_MANUAL_BOOT_RANGE_EXPERIMENT");
+                if (!enabled || std::string(enabled) != "1" || ratio < 32 ||
+                    ratio > (1U << 17) || (ratio & (ratio - 1U)))
+                    throw std::invalid_argument("manual Boot range experiment requires opt-in and power-of-two ratio [32,131072]");
+            }
             multiply_plain(workspace.eval_mod_imag, bootstrap_data.plus_i_plaintext,
                 workspace.scratch0);
             add(workspace.eval_mod_real, workspace.scratch0, workspace.scratch1);
             // Match the manual order. Scaling after conjugation would also
             // amplify its key-switch rounding noise by 16.
-            multiply_scalar(workspace.scratch1, 16, workspace.scratch0);
+            multiply_scalar(workspace.scratch1, ratio / 2U, workspace.scratch0);
             conjugate(workspace.scratch0, galois_keys, workspace.scratch1);
             add(workspace.scratch0, workspace.scratch1, destination_ciphertext);
             destination_ciphertext.meta.scale *= bootstrap_data.output_scale_multiplier;
+            if (imaginary_projection && (!(destination_ciphertext.meta.scale > 0.0) ||
+                                         !std::isfinite(destination_ciphertext.meta.scale)))
+                throw std::runtime_error("nonfinite manual real projection scale");
             if (std::abs(std::log2(destination_ciphertext.meta.scale /
                     bootstrap_data.slot_to_coeff_output_scale)) > 1e-8)
                 throw std::runtime_error("manual S2C-first Boot output scale disagrees with its coefficient fold");
             destination_ciphertext.meta.scale = bootstrap_data.slot_to_coeff_output_scale;
+            if (imaginary_projection)
+            {
+                // h=(ratio/2)*(e0+i*e1); reuse its conjugation, no scale1 half.
+                sub(workspace.scratch1, workspace.scratch0, workspace.scratch2);
+                multiply_plain(workspace.scratch2, bootstrap_data.plus_i_plaintext, *imaginary_projection);
+                imaginary_projection->meta.scale *= bootstrap_data.output_scale_multiplier;
+                if (!(imaginary_projection->meta.scale > 0.0) || !std::isfinite(imaginary_projection->meta.scale))
+                    throw std::runtime_error("nonfinite manual imaginary projection scale");
+                if (std::abs(std::log2(imaginary_projection->meta.scale /
+                        bootstrap_data.slot_to_coeff_output_scale)) > 1e-8)
+                    throw std::runtime_error("manual imaginary projection scale disagrees with its coefficient fold");
+                imaginary_projection->meta.scale = bootstrap_data.slot_to_coeff_output_scale;
+            }
+            if (boot_stage_timing)
+            {
+                mark(6);
+                gpu_check_cuda(cudaEventSynchronize(ev[6]), "boot stage sync");
+                float d[6]{};
+                for (int i = 0; i < 6; ++i) gpu_check_cuda(cudaEventElapsedTime(&d[i], ev[i], ev[i + 1]), "boot stage elapsed");
+                float tot = 0; gpu_check_cuda(cudaEventElapsedTime(&tot, ev[0], ev[6]), "boot stage tot");
+                std::printf("BOOT_STAGES total=%.3f stc=%.3f sse_raise=%.3f cts=%.3f eval_r=%.3f eval_i=%.3f proj=%.3f | eval_r(in=%.3f basis=%.3f leaf=%.3f comb=%.3f da=%.3f)\n",
+                            tot, d[0], d[1], d[2], d[3], d[4], d[5],
+                            eval_real_stages.input_preparation_ms,
+                            eval_real_stages.basis_generation_ms,
+                            eval_real_stages.leaf_evaluation_ms,
+                            eval_real_stages.bsgs_combine_ms,
+                            eval_real_stages.double_angle_ms);
+                static bool printed_detail = false;
+                if (!printed_detail)
+                {
+                    printed_detail = true;
+                    for (std::size_t mi = 0; mi < workspace.coeff_to_slot_double_hoist.matrix_counts.size(); ++mi)
+                    {
+                        const auto &mc = workspace.coeff_to_slot_double_hoist.matrix_counts[mi];
+                        std::printf("  CTS_LAYER[%zu] baby_tiles=%zu in_moddn=%zu out_dec=%zu out_moddn=%zu keymul=%zu rot_k=%zu\n",
+                                    mi, mc.baby_tile_count, mc.inner_moddown_count,
+                                    mc.outer_decompose_count, mc.outer_moddown_count,
+                                    mc.keymul_count, mc.permute_count);
+                    }
+                    for (const auto &mt : workspace.eval_mod_multiply_timings)
+                    {
+                        std::printf("  EVAL_MUL %s q=%zu dnum=%zu sq=%d ms=%.3f\n",
+                                    mt.label.c_str(), mt.q_count, mt.decomposition_count,
+                                    mt.is_square ? 1 : 0, mt.gpu_ms);
+                    }
+                }
+            }
             return;
         }
         else if (use_double_hoist)
@@ -6247,6 +9996,42 @@ void GpuEvaluator::eval_mod_high_precision(
     GpuBootstrapWorkspace &workspace,
     GpuCiphertextData &destination_ciphertext) const
 {
+    eval_mod_high_precision_impl(
+        {&source_ciphertext, nullptr},
+        1,
+        bootstrap_data,
+        relin_keys,
+        workspace,
+        {&destination_ciphertext, nullptr});
+}
+
+void GpuEvaluator::eval_mod_high_precision_pair(
+    const GpuCiphertextData &source_real,
+    const GpuCiphertextData &source_imag,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuRelinKeysData &relin_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_real,
+    GpuCiphertextData &destination_imag) const
+{
+    eval_mod_high_precision_impl(
+        {&source_real, &source_imag},
+        2,
+        bootstrap_data,
+        relin_keys,
+        workspace,
+        {&destination_real, &destination_imag});
+}
+
+void GpuEvaluator::eval_mod_high_precision_impl(
+    std::array<const GpuCiphertextData *, 2> sources,
+    std::size_t lane_count,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuRelinKeysData &relin_keys,
+    GpuBootstrapWorkspace &workspace,
+    std::array<GpuCiphertextData *, 2> destinations) const
+{
+    const GpuCiphertextData &source_ciphertext = *sources[0];
     validate_ntt_ciphertext_input(
         "GpuEvaluator::eval_mod_high_precision",
         source_ciphertext,
@@ -6585,8 +10370,34 @@ void GpuEvaluator::eval_mod_high_precision(
      * relabel would amplify the decoded C2S error. Legacy setup leaves
      * input_scale unset and therefore retains the original target-scale path.
      */
+    if (lane_count == 2)
+    {
+        const GpuCiphertextData &source_imag = *sources[1];
+        if (source_imag.empty() || source_imag.fields_.empty() ||
+            !(source_imag.meta.parms_id == source_ciphertext.meta.parms_id) ||
+            source_imag.meta.is_ntt_form != source_ciphertext.meta.is_ntt_form ||
+            source_imag.meta.degree != source_ciphertext.meta.degree ||
+            source_imag.meta.q_count != source_ciphertext.meta.q_count ||
+            source_imag.meta.p_count != source_ciphertext.meta.p_count ||
+            source_imag.meta.component_count != 2 || source_imag.size() != 2 ||
+            source_imag.fields_.front().device_id != source_ciphertext.fields_.front().device_id ||
+            !same_scale(source_imag.meta.scale, source_ciphertext.meta.scale))
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::eval_mod_high_precision_pair: mismatched real/imag inputs");
+        }
+    }
     const bool legacy_horner =
         polynomial_blocks.empty() && polynomial_terms.empty();
+    if (lane_count == 2 &&
+        (legacy_horner || polynomial_blocks.empty() ||
+         workspace.capture_eval_mod_trace || !use_evalmod_pair() ||
+         destinations[0] == destinations[1]))
+    {
+        eval_mod_high_precision(*sources[0], bootstrap_data, relin_keys, workspace, *destinations[0]);
+        eval_mod_high_precision(*sources[1], bootstrap_data, relin_keys, workspace, *destinations[1]);
+        return;
+    }
     const GpuCiphertextData *x = nullptr;
     if (legacy_horner)
     {
@@ -6704,8 +10515,8 @@ void GpuEvaluator::eval_mod_high_precision(
         }
         stage_recorder.record(5);
 
-        destination_ciphertext = std::move(accumulator);
-        destination_ciphertext.meta.scale = source_ciphertext.meta.scale;
+        *destinations[0] = std::move(accumulator);
+        destinations[0]->meta.scale = source_ciphertext.meta.scale;
         stage_recorder.finish(workspace.eval_mod_stage_timing);
         return;
     }
@@ -6807,51 +10618,77 @@ void GpuEvaluator::eval_mod_high_precision(
 
     const auto required_basis_slots =
         static_cast<std::size_t>(maximum_degree) + 1;
-    if (workspace.eval_mod_basis.size() < required_basis_slots)
+    struct EvalModLane
     {
-        workspace.eval_mod_basis.resize(required_basis_slots);
+        std::vector<GpuCiphertextData> *basis = nullptr;
+        std::vector<GpuCiphertextData> *nodes = nullptr;
+        std::array<GpuCiphertextData *, 6> scratch{};
+        GpuCiphertextData accumulator;
+    };
+    EvalModLane lanes[2];
+    lanes[0].basis = &workspace.eval_mod_basis;
+    lanes[0].nodes = &workspace.eval_mod_nodes;
+    lanes[0].scratch = {
+        &workspace.scratch0, &workspace.scratch1, &workspace.scratch2,
+        &workspace.scratch3, &workspace.scratch4, &workspace.scratch5};
+    if (lane_count == 2)
+    {
+        lanes[1].basis = &workspace.eval_mod_basis_imag;
+        lanes[1].nodes = &workspace.eval_mod_nodes_imag;
+        lanes[1].scratch = {
+            &workspace.eval_mod_scratch_imag[0], &workspace.eval_mod_scratch_imag[1],
+            &workspace.eval_mod_scratch_imag[2], &workspace.eval_mod_scratch_imag[3],
+            &workspace.eval_mod_scratch_imag[4], &workspace.eval_mod_scratch_imag[5]};
     }
-    if (d2d_free_dataflow)
+    for (std::size_t lane = 0; lane < lane_count; ++lane)
     {
-        NvtxRange range("EvalMod input preparation");
-        copy_ciphertext_data(
-            source_ciphertext,
-            workspace.eval_mod_basis[1],
-            "GpuEvaluator::eval_mod_high_precision basis T1 input copy");
-        workspace.eval_mod_basis[1].meta.scale = configured_input_scale;
-        if (!configured_input_offset.empty())
+        if (lanes[lane].basis->size() < required_basis_slots)
         {
-            add_plain_inplace(
-                workspace.eval_mod_basis[1],
-                configured_input_offset,
-                "GpuEvaluator::eval_mod_high_precision basis T1 input offset");
+            lanes[lane].basis->resize(required_basis_slots);
+        }
+        auto &b1 = (*lanes[lane].basis)[1];
+        if (d2d_free_dataflow)
+        {
+            NvtxRange range("EvalMod input preparation");
+            copy_ciphertext_data(
+                *sources[lane],
+                b1,
+                "GpuEvaluator::eval_mod_high_precision basis T1 input copy");
+            b1.meta.scale = configured_input_scale;
+            if (!configured_input_offset.empty())
+            {
+                add_plain_inplace(
+                    b1,
+                    configured_input_offset,
+                    "GpuEvaluator::eval_mod_high_precision basis T1 input offset");
+            }
+        }
+        else
+        {
+            NvtxRange range("EvalMod input preparation");
+            copy_ciphertext_data(
+                *sources[lane],
+                *lanes[lane].scratch[0],
+                "GpuEvaluator::eval_mod_high_precision input copy");
+            lanes[lane].scratch[0]->meta.scale = configured_input_scale;
+            GpuCiphertextData *prepared_input = lanes[lane].scratch[0];
+            if (!configured_input_offset.empty())
+            {
+                add_plain(
+                    *lanes[lane].scratch[0],
+                    configured_input_offset,
+                    *lanes[lane].scratch[1]);
+                lanes[lane].scratch[1]->meta.scale = configured_input_scale;
+                prepared_input = lanes[lane].scratch[1];
+            }
+            copy_ciphertext_data(
+                *prepared_input,
+                b1,
+                "GpuEvaluator::eval_mod_high_precision basis T1 copy");
+            b1.meta.scale = configured_input_scale;
         }
     }
-    else
-    {
-        NvtxRange range("EvalMod input preparation");
-        copy_ciphertext_data(
-            source_ciphertext,
-            workspace.scratch0,
-            "GpuEvaluator::eval_mod_high_precision input copy");
-        workspace.scratch0.meta.scale = configured_input_scale;
-        GpuCiphertextData *prepared_input = &workspace.scratch0;
-        if (!configured_input_offset.empty())
-        {
-            add_plain(
-                workspace.scratch0,
-                configured_input_offset,
-                workspace.scratch1);
-            workspace.scratch1.meta.scale = configured_input_scale;
-            prepared_input = &workspace.scratch1;
-        }
-        copy_ciphertext_data(
-            *prepared_input,
-            workspace.eval_mod_basis[1],
-            "GpuEvaluator::eval_mod_high_precision basis T1 copy");
-        workspace.eval_mod_basis[1].meta.scale = configured_input_scale;
-    }
-    x = &workspace.eval_mod_basis[1];
+    x = &(*lanes[0].basis)[1];
     if (workspace.capture_eval_mod_trace)
     {
         copy_ciphertext_data(
@@ -6862,62 +10699,102 @@ void GpuEvaluator::eval_mod_high_precision(
     }
     stage_recorder.record(1);
 
-    auto multiply_relinearize_rescale =
-        [&](const GpuCiphertextData &left,
-            const GpuCiphertextData &right,
-            double expected_output_scale,
-            std::uint32_t rescale_count,
-            GpuCiphertextData &output) {
-            const GpuCiphertextData *left_at_level = &left;
-            const GpuCiphertextData *right_at_level = &right;
-            if (!(left.meta.parms_id == right.meta.parms_id))
+    auto relinearize_lanes =
+        [&](int src_idx, int dst_idx) {
+            if (lane_count == 2)
             {
-                if (left.meta.q_count == right.meta.q_count)
-                {
-                    throw std::invalid_argument(
-                        "GpuEvaluator::eval_mod_high_precision: equal q_count has different parms_id");
-                }
-                if (left.meta.q_count > right.meta.q_count)
-                {
-                    drop_modulus(left, workspace.scratch3, right.meta.parms_id);
-                    left_at_level = &workspace.scratch3;
-                }
-                else
-                {
-                    drop_modulus(right, workspace.scratch4, left.meta.parms_id);
-                    right_at_level = &workspace.scratch4;
-                }
-            }
-
-            if (left_at_level == right_at_level)
-            {
-                square(*left_at_level, workspace.scratch5);
+                relinearize_pair(
+                    *lanes[0].scratch[src_idx],
+                    *lanes[1].scratch[src_idx],
+                    relin_keys,
+                    *lanes[0].scratch[dst_idx],
+                    *lanes[1].scratch[dst_idx]);
             }
             else
             {
-                multiply(*left_at_level, *right_at_level, workspace.scratch5);
+                relinearize(
+                    *lanes[0].scratch[src_idx],
+                    relin_keys,
+                    *lanes[0].scratch[dst_idx]);
+            }
+        };
+
+    auto multiply_relinearize_rescale_lanes =
+        [&](std::array<const GpuCiphertextData *, 2> left_in,
+            std::array<const GpuCiphertextData *, 2> right_in,
+            double expected_output_scale,
+            std::uint32_t rescale_count,
+            std::array<GpuCiphertextData *, 2> outputs) {
+            for (std::size_t lane = 0; lane < lane_count; ++lane)
+            {
+                auto &L = lanes[lane];
+                const GpuCiphertextData *left_at_level = left_in[lane];
+                const GpuCiphertextData *right_at_level = right_in[lane];
+                if (!(left_at_level->meta.parms_id == right_at_level->meta.parms_id))
+                {
+                    if (left_at_level->meta.q_count == right_at_level->meta.q_count)
+                    {
+                        throw std::invalid_argument(
+                            "GpuEvaluator::eval_mod_high_precision: equal q_count has different parms_id");
+                    }
+                    if (left_at_level->meta.q_count > right_at_level->meta.q_count)
+                    {
+                        drop_modulus(*left_at_level, *L.scratch[3], right_at_level->meta.parms_id);
+                        left_at_level = L.scratch[3];
+                    }
+                    else
+                    {
+                        drop_modulus(*right_at_level, *L.scratch[4], left_at_level->meta.parms_id);
+                        right_at_level = L.scratch[4];
+                    }
+                }
+                if (left_at_level == right_at_level)
+                {
+                    square(*left_at_level, *L.scratch[5]);
+                }
+                else
+                {
+                    multiply(*left_at_level, *right_at_level, *L.scratch[5]);
+                }
             }
             if (rescale_count == 2 &&
                 use_rescale_x2() &&
                 use_relinearize_rescale_x2())
             {
-                relinearize_rescale_x2_hybrid(
-                    workspace.scratch5,
-                    relin_keys,
-                    output);
+                if (lane_count == 2)
+                {
+                    relinearize_rescale_x2_hybrid_pair(
+                        *lanes[0].scratch[5],
+                        *lanes[1].scratch[5],
+                        relin_keys,
+                        *outputs[0],
+                        *outputs[1]);
+                }
+                else
+                {
+                    relinearize_rescale_x2_hybrid(
+                        *lanes[0].scratch[5],
+                        relin_keys,
+                        *outputs[0]);
+                }
             }
             else
             {
-                relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
-                // rescale_dynamic is deliberately not used in the first GPU path.
-                rescale_many(
-                    workspace.scratch3,
-                    output,
-                    rescale_count);
+                relinearize_lanes(5, 3);
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    rescale_many(
+                        *lanes[lane].scratch[3],
+                        *outputs[lane],
+                        rescale_count);
+                }
             }
             if (expected_output_scale > 0.0)
             {
-                output.meta.scale = expected_output_scale;
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    outputs[lane]->meta.scale = expected_output_scale;
+                }
             }
         };
 
@@ -6984,199 +10861,434 @@ void GpuEvaluator::eval_mod_high_precision(
         NvtxRange range("EvalMod Chebyshev basis generation");
         for (const auto &step : basis_steps)
         {
-            auto &output = workspace.eval_mod_basis[step.output_degree];
-            const GpuCiphertextData *basis_left =
-                &workspace.eval_mod_basis[step.left_degree];
-            const GpuCiphertextData *basis_right =
-                &workspace.eval_mod_basis[step.right_degree];
+            std::array<const GpuCiphertextData *, 2> basis_left{};
+            std::array<const GpuCiphertextData *, 2> basis_right{};
+            std::array<GpuCiphertextData *, 2> out_ptrs{};
+            for (std::size_t lane = 0; lane < lane_count; ++lane)
+            {
+                auto &L = lanes[lane];
+                out_ptrs[lane] = &(*L.basis)[step.output_degree];
+                basis_left[lane] = &(*L.basis)[step.left_degree];
+                basis_right[lane] = &(*L.basis)[step.right_degree];
+            }
             if (!step.operand_alignment_plaintext.empty())
             {
-                const GpuCiphertextData &high_operand = step.align_left_operand
-                    ? *basis_left
-                    : *basis_right;
-                multiply_plain(
-                    high_operand,
-                    step.operand_alignment_plaintext,
-                    workspace.scratch0);
-                workspace.scratch0.meta.scale =
-                    step.operand_alignment_pre_rescale_scale;
-                rescale_many(
-                    workspace.scratch0,
-                    workspace.scratch1,
-                    step.operand_alignment_rescale_count);
-                workspace.scratch1.meta.scale =
-                    step.operand_alignment_output_scale;
-                if (step.align_left_operand)
+                const bool pair_align_ok =
+                    lane_count == 2 &&
+                    (step.align_left_operand ? basis_left[0] : basis_right[0])->meta.parms_id ==
+                        (step.align_left_operand ? basis_left[1] : basis_right[1])->meta.parms_id;
+                if (pair_align_ok)
                 {
-                    basis_left = &workspace.scratch1;
+                    const auto &h0 = step.align_left_operand ? *basis_left[0] : *basis_right[0];
+                    const auto &h1 = step.align_left_operand ? *basis_left[1] : *basis_right[1];
+                    multiply_plain_pair(
+                        h0, h1, step.operand_alignment_plaintext, *lanes[0].scratch[0], *lanes[1].scratch[0]);
+                    lanes[0].scratch[0]->meta.scale = step.operand_alignment_pre_rescale_scale;
+                    lanes[1].scratch[0]->meta.scale = step.operand_alignment_pre_rescale_scale;
+                    rescale_many_pair(
+                        *lanes[0].scratch[0], *lanes[1].scratch[0],
+                        *lanes[0].scratch[1], *lanes[1].scratch[1],
+                        step.operand_alignment_rescale_count);
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        lanes[lane].scratch[1]->meta.scale = step.operand_alignment_output_scale;
+                        if (step.align_left_operand)
+                        {
+                            basis_left[lane] = lanes[lane].scratch[1];
+                        }
+                        else
+                        {
+                            basis_right[lane] = lanes[lane].scratch[1];
+                        }
+                    }
                 }
                 else
                 {
-                    basis_right = &workspace.scratch1;
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        auto &L = lanes[lane];
+                        const GpuCiphertextData &high_operand = step.align_left_operand
+                            ? *basis_left[lane]
+                            : *basis_right[lane];
+                        multiply_plain(
+                            high_operand,
+                            step.operand_alignment_plaintext,
+                            *L.scratch[0]);
+                        L.scratch[0]->meta.scale =
+                            step.operand_alignment_pre_rescale_scale;
+                        rescale_many(
+                            *L.scratch[0],
+                            *L.scratch[1],
+                            step.operand_alignment_rescale_count);
+                        L.scratch[1]->meta.scale =
+                            step.operand_alignment_output_scale;
+                        if (step.align_left_operand)
+                        {
+                            basis_left[lane] = L.scratch[1];
+                        }
+                        else
+                        {
+                            basis_right[lane] = L.scratch[1];
+                        }
+                    }
                 }
             }
             if (bootstrap_data.eval_mod.dynamic_rescale)
             {
-                bool use_basis_prefix_multiply = false;
-                parms_id_type basis_prefix_parms_id = parms_id_zero;
-                if (!(basis_left->meta.parms_id == basis_right->meta.parms_id))
+                std::size_t multiply_q_count_0 = 0;
+                bool is_square_0 = false;
+                const bool paired_basis_mul =
+                    lane_count == 2 &&
+                    basis_left[0]->meta.parms_id == basis_left[1]->meta.parms_id &&
+                    basis_right[0]->meta.parms_id == basis_right[1]->meta.parms_id;
+                if (paired_basis_mul)
                 {
-                    if (basis_left->meta.q_count == basis_right->meta.q_count)
+                    const GpuCiphertextData *bl0 = basis_left[0];
+                    const GpuCiphertextData *br0 = basis_right[0];
+                    const GpuCiphertextData *bl1 = basis_left[1];
+                    const GpuCiphertextData *br1 = basis_right[1];
+                    bool use_basis_prefix_multiply = false;
+                    parms_id_type basis_prefix_parms_id = parms_id_zero;
+                    if (!(bl0->meta.parms_id == br0->meta.parms_id))
                     {
-                        throw std::invalid_argument(
-                            "GpuEvaluator::eval_mod_high_precision: dynamic basis equal q_count has different parms_id");
+                        if (bl0->meta.q_count == br0->meta.q_count)
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: dynamic basis equal q_count has different parms_id");
+                        }
+                        basis_prefix_parms_id =
+                            bl0->meta.q_count < br0->meta.q_count
+                                ? bl0->meta.parms_id
+                                : br0->meta.parms_id;
+                        use_basis_prefix_multiply =
+                            supports_q_prefix_multiply(*bl0, *br0, basis_prefix_parms_id) &&
+                            supports_q_prefix_multiply(*bl1, *br1, basis_prefix_parms_id);
+                        if (!use_basis_prefix_multiply && bl0->meta.q_count > br0->meta.q_count)
+                        {
+                            drop_modulus(*bl0, *lanes[0].scratch[0], br0->meta.parms_id);
+                            drop_modulus(*bl1, *lanes[1].scratch[0], br1->meta.parms_id);
+                            bl0 = lanes[0].scratch[0];
+                            bl1 = lanes[1].scratch[0];
+                        }
+                        else if (!use_basis_prefix_multiply)
+                        {
+                            drop_modulus(*br0, *lanes[0].scratch[1], bl0->meta.parms_id);
+                            drop_modulus(*br1, *lanes[1].scratch[1], bl1->meta.parms_id);
+                            br0 = lanes[0].scratch[1];
+                            br1 = lanes[1].scratch[1];
+                        }
                     }
-                    basis_prefix_parms_id =
-                        basis_left->meta.q_count < basis_right->meta.q_count
-                            ? basis_left->meta.parms_id
-                            : basis_right->meta.parms_id;
-                    use_basis_prefix_multiply =
-                        supports_q_prefix_multiply(
-                            *basis_left,
-                            *basis_right,
-                            basis_prefix_parms_id);
-                    if (!use_basis_prefix_multiply &&
-                        basis_left->meta.q_count > basis_right->meta.q_count)
+                    is_square_0 = !use_basis_prefix_multiply && bl0 == br0 && bl1 == br1;
+                    multiply_q_count_0 =
+                        use_basis_prefix_multiply
+                            ? params_.get_level(basis_prefix_parms_id).q_count
+                            : bl0->meta.q_count;
+                    if (use_basis_prefix_multiply)
                     {
-                        drop_modulus(
-                            *basis_left,
-                            workspace.scratch0,
-                            basis_right->meta.parms_id);
-                        basis_left = &workspace.scratch0;
+                        multiply_q_prefix_pair(
+                            *bl0, *br0, *bl1, *br1, basis_prefix_parms_id,
+                            *lanes[0].scratch[5], *lanes[1].scratch[5]);
                     }
-                    else if (!use_basis_prefix_multiply)
+                    else if (is_square_0)
                     {
-                        drop_modulus(
-                            *basis_right,
-                            workspace.scratch1,
-                            basis_left->meta.parms_id);
-                        basis_right = &workspace.scratch1;
+                        square_pair(
+                            *bl0, *bl1, *lanes[0].scratch[5], *lanes[1].scratch[5]);
+                    }
+                    else
+                    {
+                        multiply_pair(
+                            *bl0, *br0, *bl1, *br1,
+                            *lanes[0].scratch[5], *lanes[1].scratch[5]);
                     }
                 }
-
-                const bool is_square =
-                    !use_basis_prefix_multiply && basis_left == basis_right;
-                const std::size_t multiply_q_count =
-                    use_basis_prefix_multiply
-                        ? params_.get_level(basis_prefix_parms_id).q_count
-                        : basis_left->meta.q_count;
+                else
+                {
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        auto &L = lanes[lane];
+                        const GpuCiphertextData *bl = basis_left[lane];
+                        const GpuCiphertextData *br = basis_right[lane];
+                        bool use_basis_prefix_multiply = false;
+                        parms_id_type basis_prefix_parms_id = parms_id_zero;
+                        if (!(bl->meta.parms_id == br->meta.parms_id))
+                        {
+                            if (bl->meta.q_count == br->meta.q_count)
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: dynamic basis equal q_count has different parms_id");
+                            }
+                            basis_prefix_parms_id =
+                                bl->meta.q_count < br->meta.q_count
+                                    ? bl->meta.parms_id
+                                    : br->meta.parms_id;
+                            use_basis_prefix_multiply =
+                                supports_q_prefix_multiply(
+                                    *bl, *br, basis_prefix_parms_id);
+                            if (!use_basis_prefix_multiply &&
+                                bl->meta.q_count > br->meta.q_count)
+                            {
+                                drop_modulus(*bl, *L.scratch[0], br->meta.parms_id);
+                                bl = L.scratch[0];
+                            }
+                            else if (!use_basis_prefix_multiply)
+                            {
+                                drop_modulus(*br, *L.scratch[1], bl->meta.parms_id);
+                                br = L.scratch[1];
+                            }
+                        }
+                        const bool is_square =
+                            !use_basis_prefix_multiply && bl == br;
+                        const std::size_t multiply_q_count =
+                            use_basis_prefix_multiply
+                                ? params_.get_level(basis_prefix_parms_id).q_count
+                                : bl->meta.q_count;
+                        if (lane == 0)
+                        {
+                            multiply_q_count_0 = multiply_q_count;
+                            is_square_0 = is_square;
+                        }
+                        if (use_basis_prefix_multiply)
+                        {
+                            multiply_q_prefix(*bl, *br, basis_prefix_parms_id, *L.scratch[5]);
+                        }
+                        else if (is_square)
+                        {
+                            square(*bl, *L.scratch[5]);
+                        }
+                        else
+                        {
+                            multiply(*bl, *br, *L.scratch[5]);
+                        }
+                    }
+                }
                 if (workspace.capture_eval_mod_stage_timing)
                 {
                     multiply_recorder.begin(
                         "EvalMod.mul.basis.T" +
-                        std::to_string(step.output_degree) +
+                            std::to_string(step.output_degree) +
                             "=" + std::to_string(step.left_degree) +
                             "x" + std::to_string(step.right_degree) +
-                            ".q" + std::to_string(multiply_q_count),
-                        multiply_q_count,
+                            ".q" + std::to_string(multiply_q_count_0),
+                        multiply_q_count_0,
                         relin_keys.meta.p_count,
-                        is_square);
+                        is_square_0);
                 }
-                if (use_basis_prefix_multiply)
-                {
-                    multiply_q_prefix(
-                        *basis_left,
-                        *basis_right,
-                        basis_prefix_parms_id,
-                        workspace.scratch5);
-                }
-                else if (is_square)
-                {
-                    square(*basis_left, workspace.scratch5);
-                }
-                else
-                {
-                    multiply(*basis_left, *basis_right, workspace.scratch5);
-                }
-                relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
+                relinearize_lanes(5, 3);
                 multiply_recorder.end();
-                output = std::move(workspace.scratch3);
-                output.meta.scale = step.pre_rescale_scale;
 
-                if (bootstrap_data.eval_mod.polynomial_basis ==
-                    GpuEvalModPolynomialBasis::Chebyshev)
+                const bool paired_cheb_ok =
+                    bootstrap_data.eval_mod.polynomial_basis ==
+                        GpuEvalModPolynomialBasis::Chebyshev &&
+                    (lane_count == 1 ||
+                     (lanes[0].scratch[3]->meta.parms_id == lanes[1].scratch[3]->meta.parms_id &&
+                      (step.correction_degree == 0 ||
+                       (*lanes[0].basis)[step.correction_degree].meta.parms_id ==
+                           (*lanes[1].basis)[step.correction_degree].meta.parms_id)));
+
+                if (paired_cheb_ok)
                 {
-                    add(output, output, workspace.scratch3);
-                    output = std::move(workspace.scratch3);
-                    output.meta.scale = step.pre_rescale_scale;
-
                     if (step.correction_plaintext.empty())
                     {
                         throw std::invalid_argument(
                             "GpuEvaluator::eval_mod_high_precision: missing dynamic Chebyshev correction plaintext");
                     }
+                    const GpuCiphertextData *src_b =
+                        lane_count == 2 ? lanes[1].scratch[3] : nullptr;
+                    GpuCiphertextData *dst_b =
+                        lane_count == 2 ? out_ptrs[1] : nullptr;
                     if (step.correction_degree == 0)
                     {
-                        sub_plain_inplace(
-                            output,
+                        double_sub_or_add_plain_pair(
+                            kernel::DoublePlainPairOp::SubPlainC0,
+                            *lanes[0].scratch[3],
+                            src_b,
                             step.correction_plaintext,
+                            nullptr,
+                            nullptr,
+                            *out_ptrs[0],
+                            dst_b,
                             "GpuEvaluator::eval_mod_high_precision dynamic Chebyshev constant");
-                        output.meta.scale = step.pre_rescale_scale;
                     }
                     else
                     {
-                        const auto &correction_basis =
-                            workspace.eval_mod_basis[step.correction_degree];
-                        multiply_plain(
-                            correction_basis,
-                            step.correction_plaintext,
-                            workspace.scratch4);
-                        workspace.scratch4.meta.scale = step.pre_rescale_scale;
-
-                        const GpuCiphertextData *left = &output;
-                        const GpuCiphertextData *right = &workspace.scratch4;
-                        if (!(left->meta.parms_id == right->meta.parms_id))
+                        const GpuCiphertextData *src_a = lanes[0].scratch[3];
+                        const GpuCiphertextData *corr_a =
+                            &(*lanes[0].basis)[step.correction_degree];
+                        const GpuCiphertextData *corr_b =
+                            lane_count == 2 ? &(*lanes[1].basis)[step.correction_degree] : nullptr;
+                        if (src_a->meta.q_count > corr_a->meta.q_count)
                         {
-                            if (left->meta.q_count > right->meta.q_count)
+                            for (std::size_t lane = 0; lane < lane_count; ++lane)
                             {
                                 if (!q_prefix_views ||
                                     !drop_modulus_inplace(
-                                        output,
-                                        right->meta.parms_id))
+                                        *lanes[lane].scratch[3],
+                                        corr_a->meta.parms_id))
                                 {
                                     drop_modulus(
-                                        *left,
-                                        workspace.scratch0,
-                                        right->meta.parms_id);
-                                    left = &workspace.scratch0;
+                                        *lanes[lane].scratch[3],
+                                        *lanes[lane].scratch[0],
+                                        corr_a->meta.parms_id);
+                                    if (lane == 0)
+                                    {
+                                        src_a = lanes[0].scratch[0];
+                                    }
+                                    else
+                                    {
+                                        src_b = lanes[1].scratch[0];
+                                    }
                                 }
-                            }
-                            else if (right->meta.q_count > left->meta.q_count)
-                            {
-                                if (!q_prefix_views ||
-                                    !drop_modulus_inplace(
-                                        workspace.scratch4,
-                                        left->meta.parms_id))
-                                {
-                                    drop_modulus(
-                                        *right,
-                                        workspace.scratch1,
-                                        left->meta.parms_id);
-                                    right = &workspace.scratch1;
-                                }
-                            }
-                            else
-                            {
-                                throw std::invalid_argument(
-                                    "GpuEvaluator::eval_mod_high_precision: dynamic Chebyshev correction parms_id mismatch");
                             }
                         }
-                        sub(*left, *right, workspace.scratch5);
-                        output = std::move(workspace.scratch5);
-                        output.meta.scale = step.pre_rescale_scale;
+                        else if (src_a->meta.parms_id != corr_a->meta.parms_id &&
+                                 src_a->meta.q_count == corr_a->meta.q_count)
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: dynamic Chebyshev correction parms_id mismatch");
+                        }
+                        double_sub_or_add_plain_pair(
+                            kernel::DoublePlainPairOp::SubCorr,
+                            *src_a,
+                            src_b,
+                            step.correction_plaintext,
+                            corr_a,
+                            corr_b,
+                            *out_ptrs[0],
+                            dst_b,
+                            "GpuEvaluator::eval_mod_high_precision dynamic Chebyshev correction");
                     }
-                }
-
-                if (d2d_free_dataflow)
-                {
-                    rescale_dynamic(output, output, target_scale);
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        out_ptrs[lane]->meta.scale = step.pre_rescale_scale;
+                    }
                 }
                 else
                 {
-                    rescale_dynamic(output, workspace.scratch2, target_scale);
-                    output = std::move(workspace.scratch2);
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        auto &L = lanes[lane];
+                        auto &output = *out_ptrs[lane];
+                        output = std::move(*L.scratch[3]);
+                        output.meta.scale = step.pre_rescale_scale;
+
+                        if (bootstrap_data.eval_mod.polynomial_basis ==
+                            GpuEvalModPolynomialBasis::Chebyshev)
+                        {
+                            add(output, output, *L.scratch[3]);
+                            output = std::move(*L.scratch[3]);
+                            output.meta.scale = step.pre_rescale_scale;
+
+                            if (step.correction_plaintext.empty())
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: missing dynamic Chebyshev correction plaintext");
+                            }
+                            if (step.correction_degree == 0)
+                            {
+                                sub_plain_inplace(
+                                    output,
+                                    step.correction_plaintext,
+                                    "GpuEvaluator::eval_mod_high_precision dynamic Chebyshev constant");
+                                output.meta.scale = step.pre_rescale_scale;
+                            }
+                            else
+                            {
+                                const auto &correction_basis =
+                                    (*L.basis)[step.correction_degree];
+                                multiply_plain(
+                                    correction_basis,
+                                    step.correction_plaintext,
+                                    *L.scratch[4]);
+                                L.scratch[4]->meta.scale = step.pre_rescale_scale;
+
+                                const GpuCiphertextData *left = &output;
+                                const GpuCiphertextData *right = L.scratch[4];
+                                if (!(left->meta.parms_id == right->meta.parms_id))
+                                {
+                                    if (left->meta.q_count > right->meta.q_count)
+                                    {
+                                        if (!q_prefix_views ||
+                                            !drop_modulus_inplace(
+                                                output,
+                                                right->meta.parms_id))
+                                        {
+                                            drop_modulus(
+                                                *left,
+                                                *L.scratch[0],
+                                                right->meta.parms_id);
+                                            left = L.scratch[0];
+                                        }
+                                    }
+                                    else if (right->meta.q_count > left->meta.q_count)
+                                    {
+                                        if (!q_prefix_views ||
+                                            !drop_modulus_inplace(
+                                                *L.scratch[4],
+                                                left->meta.parms_id))
+                                        {
+                                            drop_modulus(
+                                                *right,
+                                                *L.scratch[1],
+                                                left->meta.parms_id);
+                                            right = L.scratch[1];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw std::invalid_argument(
+                                            "GpuEvaluator::eval_mod_high_precision: dynamic Chebyshev correction parms_id mismatch");
+                                    }
+                                }
+                                sub(*left, *right, *L.scratch[5]);
+                                output = std::move(*L.scratch[5]);
+                                output.meta.scale = step.pre_rescale_scale;
+                            }
+                        }
+                    }
                 }
-                output.meta.scale = step.output_scale;
+
+                if (lane_count == 2 &&
+                    out_ptrs[0]->meta.parms_id == out_ptrs[1]->meta.parms_id &&
+                    same_scale(out_ptrs[0]->meta.scale, out_ptrs[1]->meta.scale))
+                {
+                    if (d2d_free_dataflow)
+                    {
+                        rescale_dynamic_pair(
+                            *out_ptrs[0], *out_ptrs[1],
+                            *out_ptrs[0], *out_ptrs[1],
+                            target_scale);
+                    }
+                    else
+                    {
+                        rescale_dynamic_pair(
+                            *out_ptrs[0], *out_ptrs[1],
+                            *lanes[0].scratch[2], *lanes[1].scratch[2],
+                            target_scale);
+                        *out_ptrs[0] = std::move(*lanes[0].scratch[2]);
+                        *out_ptrs[1] = std::move(*lanes[1].scratch[2]);
+                    }
+                }
+                else
+                {
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        auto &L = lanes[lane];
+                        auto &output = *out_ptrs[lane];
+                        if (d2d_free_dataflow)
+                        {
+                            rescale_dynamic(output, output, target_scale);
+                        }
+                        else
+                        {
+                            rescale_dynamic(output, *L.scratch[2], target_scale);
+                            output = std::move(*L.scratch[2]);
+                        }
+                    }
+                }
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    out_ptrs[lane]->meta.scale = step.output_scale;
+                }
                 continue;
             }
 
@@ -7187,17 +11299,17 @@ void GpuEvaluator::eval_mod_high_precision(
                         std::to_string(step.output_degree) +
                         "=" + std::to_string(step.left_degree) +
                         "x" + std::to_string(step.right_degree) +
-                        ".q" + std::to_string(basis_left->meta.q_count),
-                    basis_left->meta.q_count,
+                        ".q" + std::to_string(basis_left[0]->meta.q_count),
+                    basis_left[0]->meta.q_count,
                     relin_keys.meta.p_count,
-                    basis_left == basis_right);
+                    basis_left[0] == basis_right[0]);
             }
-            multiply_relinearize_rescale(
-                *basis_left,
-                *basis_right,
+            multiply_relinearize_rescale_lanes(
+                basis_left,
+                basis_right,
                 step.output_scale,
                 step.rescale_count,
-                output);
+                out_ptrs);
             multiply_recorder.end();
 
             if (bootstrap_data.eval_mod.polynomial_basis !=
@@ -7206,89 +11318,95 @@ void GpuEvaluator::eval_mod_high_precision(
                 continue;
             }
 
-            add(output, output, workspace.scratch3);
-            output = std::move(workspace.scratch3);
-            output.meta.scale = step.output_scale;
-
-            if (step.correction_degree == 0)
+            for (std::size_t lane = 0; lane < lane_count; ++lane)
             {
-                if (step.correction_plaintext.empty())
+                auto &L = lanes[lane];
+                auto &output = *out_ptrs[lane];
+                add(output, output, *L.scratch[3]);
+                output = std::move(*L.scratch[3]);
+                output.meta.scale = step.output_scale;
+
+                if (step.correction_degree == 0)
+                {
+                    if (step.correction_plaintext.empty())
+                    {
+                        throw std::invalid_argument(
+                            "GpuEvaluator::eval_mod_high_precision: missing Chebyshev constant correction");
+                    }
+                    sub_plain_inplace(
+                        output,
+                        step.correction_plaintext,
+                        "GpuEvaluator::eval_mod_high_precision Chebyshev constant");
+                    output.meta.scale = step.output_scale;
+                    continue;
+                }
+
+                const GpuCiphertextData *correction =
+                    &(*L.basis)[step.correction_degree];
+                if (!step.correction_alignment_plaintext.empty())
+                {
+                    multiply_plain(
+                        *correction,
+                        step.correction_alignment_plaintext,
+                        *L.scratch[0]);
+                    L.scratch[0]->meta.scale =
+                        step.correction_alignment_pre_rescale_scale;
+                    rescale_many(
+                        *L.scratch[0],
+                        *L.scratch[1],
+                        step.correction_alignment_rescale_count);
+                    L.scratch[1]->meta.scale = step.output_scale;
+                    correction = L.scratch[1];
+                }
+                if (!(output.meta.parms_id == correction->meta.parms_id))
+                {
+                    if (output.meta.q_count > correction->meta.q_count)
+                    {
+                        drop_modulus(output, *L.scratch[4], correction->meta.parms_id);
+                        output = std::move(*L.scratch[4]);
+                    }
+                    else if (correction->meta.q_count > output.meta.q_count)
+                    {
+                        drop_modulus(
+                            *correction,
+                            *L.scratch[4],
+                            output.meta.parms_id);
+                        correction = L.scratch[4];
+                    }
+                    else
+                    {
+                        throw std::invalid_argument(
+                            "GpuEvaluator::eval_mod_high_precision: Chebyshev correction parms_id mismatch");
+                    }
+                }
+                if (!step.correction_alignment_plaintext.empty())
+                {
+                    sub(output, *correction, *L.scratch[5]);
+                    output = std::move(*L.scratch[5]);
+                    output.meta.scale = step.output_scale;
+                    continue;
+                }
+                if (step.correction_plaintext.empty() ||
+                    step.correction_plaintext.meta.parms_id != output.meta.parms_id)
                 {
                     throw std::invalid_argument(
-                        "GpuEvaluator::eval_mod_high_precision: missing Chebyshev constant correction");
+                        "GpuEvaluator::eval_mod_high_precision: invalid Chebyshev correction scale plaintext");
                 }
-                sub_plain_inplace(
-                    output,
-                    step.correction_plaintext,
-                    "GpuEvaluator::eval_mod_high_precision Chebyshev constant");
-                output.meta.scale = step.output_scale;
-                continue;
-            }
-
-            const GpuCiphertextData *correction =
-                &workspace.eval_mod_basis[step.correction_degree];
-            if (!step.correction_alignment_plaintext.empty())
-            {
                 multiply_plain(
                     *correction,
-                    step.correction_alignment_plaintext,
-                    workspace.scratch0);
-                workspace.scratch0.meta.scale =
-                    step.correction_alignment_pre_rescale_scale;
-                rescale_many(
-                    workspace.scratch0,
-                    workspace.scratch1,
-                    step.correction_alignment_rescale_count);
-                workspace.scratch1.meta.scale = step.output_scale;
-                correction = &workspace.scratch1;
-            }
-            if (!(output.meta.parms_id == correction->meta.parms_id))
-            {
-                if (output.meta.q_count > correction->meta.q_count)
-                {
-                    drop_modulus(output, workspace.scratch4, correction->meta.parms_id);
-                    output = std::move(workspace.scratch4);
-                }
-                else if (correction->meta.q_count > output.meta.q_count)
-                {
-                    drop_modulus(
-                        *correction,
-                        workspace.scratch4,
-                        output.meta.parms_id);
-                    correction = &workspace.scratch4;
-                }
-                else
-                {
-                    throw std::invalid_argument(
-                        "GpuEvaluator::eval_mod_high_precision: Chebyshev correction parms_id mismatch");
-                }
-            }
-            if (!step.correction_alignment_plaintext.empty())
-            {
-                sub(output, *correction, workspace.scratch5);
-                output = std::move(workspace.scratch5);
+                    step.correction_plaintext,
+                    *L.scratch[3]);
+                L.scratch[3]->meta.scale = step.output_scale;
+                sub(output, *L.scratch[3], *L.scratch[5]);
+                output = std::move(*L.scratch[5]);
                 output.meta.scale = step.output_scale;
-                continue;
             }
-            if (step.correction_plaintext.empty() ||
-                step.correction_plaintext.meta.parms_id != output.meta.parms_id)
-            {
-                throw std::invalid_argument(
-                    "GpuEvaluator::eval_mod_high_precision: invalid Chebyshev correction scale plaintext");
-            }
-            multiply_plain(
-                *correction,
-                step.correction_plaintext,
-                workspace.scratch3);
-            workspace.scratch3.meta.scale = step.output_scale;
-            sub(output, workspace.scratch3, workspace.scratch5);
-            output = std::move(workspace.scratch5);
-            output.meta.scale = step.output_scale;
         }
     }
     stage_recorder.record(2);
 
     std::function<bool(
+        EvalModLane &,
         const std::vector<GpuEvalModPolynomialTerm> &,
         std::uint32_t,
         double,
@@ -7296,13 +11414,15 @@ void GpuEvaluator::eval_mod_high_precision(
         GpuCiphertextData &)> evaluate_term_block_caccum;
 
     auto evaluate_term_block =
-        [&](const std::vector<GpuEvalModPolynomialTerm> &terms,
+        [&](EvalModLane &L,
+            const std::vector<GpuEvalModPolynomialTerm> &terms,
             std::uint32_t rescale_count,
             double expected_output_scale,
             std::size_t expected_output_q_count,
             GpuCiphertextData &block_output) {
             if (evaluate_term_block_caccum &&
                 evaluate_term_block_caccum(
+                    L,
                     terms,
                     rescale_count,
                     expected_output_scale,
@@ -7337,13 +11457,13 @@ void GpuEvaluator::eval_mod_high_precision(
                 {
                     if (left->meta.q_count > right->meta.q_count)
                     {
-                        drop_modulus(*left, workspace.scratch3, right->meta.parms_id);
-                        left = &workspace.scratch3;
+                        drop_modulus(*left, *L.scratch[3], right->meta.parms_id);
+                        left = L.scratch[3];
                     }
                     else if (right->meta.q_count > left->meta.q_count)
                     {
-                        drop_modulus(*right, workspace.scratch4, left->meta.parms_id);
-                        right = &workspace.scratch4;
+                        drop_modulus(*right, *L.scratch[4], left->meta.parms_id);
+                        right = L.scratch[4];
                     }
                     else
                     {
@@ -7351,8 +11471,8 @@ void GpuEvaluator::eval_mod_high_precision(
                             "GpuEvaluator::eval_mod_high_precision: term parms_id mismatch");
                     }
                 }
-                add(*left, *right, workspace.scratch5);
-                block_accumulator = std::move(workspace.scratch5);
+                add(*left, *right, *L.scratch[5]);
+                block_accumulator = std::move(*L.scratch[5]);
                 block_accumulator.meta.scale = block_scale;
             };
 
@@ -7373,7 +11493,7 @@ void GpuEvaluator::eval_mod_high_precision(
                 previous_term_q_count =
                     term.coefficient_plaintext.meta.q_count;
 
-                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const auto &basis = (*L.basis)[term.degree];
                 const GpuCiphertextData *basis_at_level = &basis;
                 if (!(basis.meta.parms_id ==
                       term.coefficient_plaintext.meta.parms_id))
@@ -7386,9 +11506,9 @@ void GpuEvaluator::eval_mod_high_precision(
                     }
                     drop_modulus(
                         basis,
-                        workspace.scratch3,
+                        *L.scratch[3],
                         term.coefficient_plaintext.meta.parms_id);
-                    basis_at_level = &workspace.scratch3;
+                    basis_at_level = L.scratch[3];
                 }
                 if (!bootstrap_data.eval_mod
                          .rescale_polynomial_terms_individually &&
@@ -7405,17 +11525,17 @@ void GpuEvaluator::eval_mod_high_precision(
                 multiply_plain(
                     *basis_at_level,
                     term.coefficient_plaintext,
-                    workspace.scratch2);
+                    *L.scratch[2]);
                 if (bootstrap_data.eval_mod.rescale_polynomial_terms_individually)
                 {
                     rescale_many(
-                        workspace.scratch2,
-                        workspace.scratch4,
+                        *L.scratch[2],
+                        *L.scratch[4],
                         rescale_count);
-                    workspace.scratch4.meta.scale = expected_output_scale;
-                    workspace.scratch2 = std::move(workspace.scratch4);
+                    L.scratch[4]->meta.scale = expected_output_scale;
+                    *L.scratch[2] = std::move(*L.scratch[4]);
                 }
-                accumulate_term(workspace.scratch2);
+                accumulate_term(*L.scratch[2]);
             }
 
             for (const auto &term : terms)
@@ -7427,7 +11547,7 @@ void GpuEvaluator::eval_mod_high_precision(
                 if (block_accumulator.empty())
                 {
                     multiply_scalar(
-                        workspace.eval_mod_basis[1],
+                        (*L.basis)[1],
                         0,
                         block_accumulator);
                     block_scale = term.coefficient_plaintext.meta.scale;
@@ -7444,9 +11564,9 @@ void GpuEvaluator::eval_mod_high_precision(
                     }
                     drop_modulus(
                         block_accumulator,
-                        workspace.scratch3,
+                        *L.scratch[3],
                         term.coefficient_plaintext.meta.parms_id);
-                    block_accumulator = std::move(workspace.scratch3);
+                    block_accumulator = std::move(*L.scratch[3]);
                 }
                 add_plain_inplace(
                     block_accumulator,
@@ -7466,9 +11586,9 @@ void GpuEvaluator::eval_mod_high_precision(
             {
                 rescale_many(
                     block_accumulator,
-                    workspace.scratch2,
+                    *L.scratch[2],
                     rescale_count);
-                block_accumulator = std::move(workspace.scratch2);
+                block_accumulator = std::move(*L.scratch[2]);
             }
             if (expected_output_scale > 0.0)
             {
@@ -7481,9 +11601,9 @@ void GpuEvaluator::eval_mod_high_precision(
                     params_.get_level_by_q_count(expected_output_q_count, 0);
                 drop_modulus(
                     block_accumulator,
-                    workspace.scratch2,
+                    *L.scratch[2],
                     target_level.parms_id);
-                block_accumulator = std::move(workspace.scratch2);
+                block_accumulator = std::move(*L.scratch[2]);
                 if (expected_output_scale > 0.0)
                 {
                     block_accumulator.meta.scale = expected_output_scale;
@@ -7493,7 +11613,8 @@ void GpuEvaluator::eval_mod_high_precision(
         };
 
     auto add_aligned =
-        [&](const GpuCiphertextData &left_input,
+        [&](EvalModLane &L,
+            const GpuCiphertextData &left_input,
             const GpuCiphertextData &right_input,
             double expected_output_scale,
             GpuCiphertextData &output) {
@@ -7503,13 +11624,13 @@ void GpuEvaluator::eval_mod_high_precision(
             {
                 if (left->meta.q_count > right->meta.q_count)
                 {
-                    drop_modulus(*left, workspace.scratch3, right->meta.parms_id);
-                    left = &workspace.scratch3;
+                    drop_modulus(*left, *L.scratch[3], right->meta.parms_id);
+                    left = L.scratch[3];
                 }
                 else if (right->meta.q_count > left->meta.q_count)
                 {
-                    drop_modulus(*right, workspace.scratch4, left->meta.parms_id);
-                    right = &workspace.scratch4;
+                    drop_modulus(*right, *L.scratch[4], left->meta.parms_id);
+                    right = L.scratch[4];
                 }
                 else
                 {
@@ -7517,16 +11638,17 @@ void GpuEvaluator::eval_mod_high_precision(
                         "GpuEvaluator::eval_mod_high_precision: combine parms_id mismatch");
                 }
             }
-            add(*left, *right, workspace.scratch5);
+            add(*left, *right, *L.scratch[5]);
             if (expected_output_scale > 0.0)
             {
-                workspace.scratch5.meta.scale = expected_output_scale;
+                L.scratch[5]->meta.scale = expected_output_scale;
             }
-            output = std::move(workspace.scratch5);
+            output = std::move(*L.scratch[5]);
         };
 
     evaluate_term_block_caccum =
-        [&](const std::vector<GpuEvalModPolynomialTerm> &terms,
+        [&](EvalModLane &L,
+            const std::vector<GpuEvalModPolynomialTerm> &terms,
             std::uint32_t rescale_count,
             double expected_output_scale,
             std::size_t expected_output_q_count,
@@ -7575,13 +11697,13 @@ void GpuEvaluator::eval_mod_high_precision(
             const auto &target_level =
                 params_.get_level_by_q_count(target_q_count, 0);
             const auto target_parms_id = target_level.parms_id;
-            if (first_nonconstant->degree >= workspace.eval_mod_basis.size() ||
-                workspace.eval_mod_basis[first_nonconstant->degree].empty())
+            if (first_nonconstant->degree >= L.basis->size() ||
+                (*L.basis)[first_nonconstant->degree].empty())
             {
                 return false;
             }
             const double pre_rescale_scale =
-                workspace.eval_mod_basis[first_nonconstant->degree].meta.scale *
+                (*L.basis)[first_nonconstant->degree].meta.scale *
                 reference_plaintext.meta.scale;
             if (!(pre_rescale_scale > 0.0) ||
                 !std::isfinite(pre_rescale_scale))
@@ -7611,11 +11733,11 @@ void GpuEvaluator::eval_mod_high_precision(
                     }
                     continue;
                 }
-                if (term.degree >= workspace.eval_mod_basis.size())
+                if (term.degree >= L.basis->size())
                 {
                     return false;
                 }
-                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const auto &basis = (*L.basis)[term.degree];
                 if (basis.empty() ||
                     basis.size() != 2 ||
                     !basis.meta.is_ntt_form ||
@@ -7751,7 +11873,7 @@ void GpuEvaluator::eval_mod_high_precision(
                 {
                     continue;
                 }
-                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const auto &basis = (*L.basis)[term.degree];
                 const auto basis_view = basis.make_const_view();
                 const auto plaintext_view =
                     term.coefficient_plaintext.make_const_view();
@@ -7804,16 +11926,17 @@ void GpuEvaluator::eval_mod_high_precision(
             {
                 rescale_many(
                     accumulator,
-                    workspace.scratch2,
+                    *L.scratch[2],
                     rescale_count);
-                workspace.scratch2.meta.scale = expected_output_scale;
-                block_output = std::move(workspace.scratch2);
+                L.scratch[2]->meta.scale = expected_output_scale;
+                block_output = std::move(*L.scratch[2]);
             }
             return true;
         };
 
     auto accumulate_leaf_pre_rescale =
-        [&](const GpuEvalModPolynomialBlock &block,
+        [&](EvalModLane &L,
+            const GpuEvalModPolynomialBlock &block,
             GpuCiphertextData &accumulator_pre_rescale) {
             if (bootstrap_data.eval_mod.rescale_polynomial_terms_individually ||
                 block.rescale_count != logical_rescale_count)
@@ -7842,12 +11965,12 @@ void GpuEvaluator::eval_mod_high_precision(
                 {
                     return false;
                 }
-                if (term.degree >= workspace.eval_mod_basis.size())
+                if (term.degree >= L.basis->size())
                 {
                     return false;
                 }
 
-                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const auto &basis = (*L.basis)[term.degree];
                 if (basis.empty())
                 {
                     return false;
@@ -7894,16 +12017,16 @@ void GpuEvaluator::eval_mod_high_precision(
                 {
                     continue;
                 }
-                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const auto &basis = (*L.basis)[term.degree];
                 const GpuCiphertextData *basis_at_level = &basis;
                 if (!(basis.meta.parms_id ==
                       term.coefficient_plaintext.meta.parms_id))
                 {
                     drop_modulus(
                         basis,
-                        workspace.scratch3,
+                        *L.scratch[3],
                         term.coefficient_plaintext.meta.parms_id);
-                    basis_at_level = &workspace.scratch3;
+                    basis_at_level = L.scratch[3];
                 }
                 multiply_plain_accumulate_first_two(
                     *basis_at_level,
@@ -7929,87 +12052,107 @@ void GpuEvaluator::eval_mod_high_precision(
             return accumulated_any;
         };
 
-    auto multiply_inline_leaf_relinearize_rescale =
-        [&](const GpuCiphertextData &left,
-            const GpuCiphertextData &right,
+    auto multiply_inline_leaf_relinearize_rescale_lanes =
+        [&](std::array<const GpuCiphertextData *, 2> left_in,
+            std::array<const GpuCiphertextData *, 2> right_in,
             const GpuEvalModPolynomialBlock &leaf_block,
             double expected_output_scale,
-            GpuCiphertextData &output) {
+            std::array<GpuCiphertextData *, 2> outputs) {
             if (!use_evalmod_inline_leaf())
             {
                 return false;
             }
 
-            const GpuCiphertextData *left_at_level = &left;
-            const GpuCiphertextData *right_at_level = &right;
-            if (!(left.meta.parms_id == right.meta.parms_id))
+            for (std::size_t lane = 0; lane < lane_count; ++lane)
             {
-                if (left.meta.q_count == right.meta.q_count)
+                auto &L = lanes[lane];
+                const GpuCiphertextData *left_at_level = left_in[lane];
+                const GpuCiphertextData *right_at_level = right_in[lane];
+                if (!(left_at_level->meta.parms_id == right_at_level->meta.parms_id))
                 {
-                    return false;
+                    if (left_at_level->meta.q_count == right_at_level->meta.q_count)
+                    {
+                        return false;
+                    }
+                    if (left_at_level->meta.q_count > right_at_level->meta.q_count)
+                    {
+                        drop_modulus(*left_at_level, *L.scratch[3], right_at_level->meta.parms_id);
+                        left_at_level = L.scratch[3];
+                    }
+                    else
+                    {
+                        drop_modulus(*right_at_level, *L.scratch[4], left_at_level->meta.parms_id);
+                        right_at_level = L.scratch[4];
+                    }
                 }
-                if (left.meta.q_count > right.meta.q_count)
+
+                if (left_at_level == right_at_level)
                 {
-                    drop_modulus(left, workspace.scratch3, right.meta.parms_id);
-                    left_at_level = &workspace.scratch3;
+                    square(*left_at_level, *L.scratch[5]);
                 }
                 else
                 {
-                    drop_modulus(right, workspace.scratch4, left.meta.parms_id);
-                    right_at_level = &workspace.scratch4;
+                    multiply(*left_at_level, *right_at_level, *L.scratch[5]);
                 }
-            }
 
-            if (left_at_level == right_at_level)
-            {
-                square(*left_at_level, workspace.scratch5);
-            }
-            else
-            {
-                multiply(*left_at_level, *right_at_level, workspace.scratch5);
-            }
-
-            if (!accumulate_leaf_pre_rescale(
-                    leaf_block,
-                    workspace.scratch5))
-            {
-                return false;
+                if (!accumulate_leaf_pre_rescale(L, leaf_block, *L.scratch[5]))
+                {
+                    return false;
+                }
             }
 
             if (logical_rescale_count == 2 &&
                 use_rescale_x2() &&
                 use_relinearize_rescale_x2())
             {
-                relinearize_rescale_x2_hybrid(
-                    workspace.scratch5,
-                    relin_keys,
-                    output);
+                if (lane_count == 2)
+                {
+                    relinearize_rescale_x2_hybrid_pair(
+                        *lanes[0].scratch[5],
+                        *lanes[1].scratch[5],
+                        relin_keys,
+                        *outputs[0],
+                        *outputs[1]);
+                }
+                else
+                {
+                    relinearize_rescale_x2_hybrid(
+                        *lanes[0].scratch[5],
+                        relin_keys,
+                        *outputs[0]);
+                }
             }
             else
             {
-                relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
-                rescale_many(
-                    workspace.scratch3,
-                    output,
-                    logical_rescale_count);
+                relinearize_lanes(5, 3);
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    rescale_many(
+                        *lanes[lane].scratch[3],
+                        *outputs[lane],
+                        logical_rescale_count);
+                }
             }
             if (expected_output_scale > 0.0)
             {
-                output.meta.scale = expected_output_scale;
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    outputs[lane]->meta.scale = expected_output_scale;
+                }
             }
             return true;
         };
 
-    GpuCiphertextData accumulator;
     if (polynomial_blocks.empty())
     {
         NvtxRange range("EvalMod fused leaf evaluation");
         evaluate_term_block(
+            lanes[0],
             polynomial_terms,
             bootstrap_data.eval_mod.polynomial_rescale_count,
             target_scale,
             0,
-            accumulator);
+            lanes[0].accumulator);
         stage_recorder.record(3);
     }
     else
@@ -8025,10 +12168,13 @@ void GpuEvaluator::eval_mod_high_precision(
             maximum_node = std::max(maximum_node, combine.quotient_node);
             maximum_node = std::max(maximum_node, combine.remainder_node);
         }
-        if (workspace.eval_mod_nodes.size() <= maximum_node)
+        for (std::size_t lane = 0; lane < lane_count; ++lane)
         {
-            workspace.eval_mod_nodes.resize(
-                static_cast<std::size_t>(maximum_node) + 1);
+            if (lanes[lane].nodes->size() <= maximum_node)
+            {
+                lanes[lane].nodes->resize(
+                    static_cast<std::size_t>(maximum_node) + 1);
+            }
         }
 
         std::vector<std::size_t> node_use_counts(
@@ -8131,22 +12277,26 @@ void GpuEvaluator::eval_mod_high_precision(
                 {
                     continue;
                 }
-                evaluate_term_block(
-                    polynomial_blocks[i].terms,
-                    polynomial_blocks[i].rescale_count,
-                    polynomial_blocks[i].output_scale,
-                    polynomial_blocks[i].output_q_count,
-                    workspace.eval_mod_nodes[i]);
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    evaluate_term_block(
+                        lanes[lane],
+                        polynomial_blocks[i].terms,
+                        polynomial_blocks[i].rescale_count,
+                        polynomial_blocks[i].output_scale,
+                        polynomial_blocks[i].output_q_count,
+                        (*lanes[lane].nodes)[i]);
+                }
                 node_available[i] = true;
                 if (workspace.capture_eval_mod_trace)
                 {
                     workspace.eval_mod_trace_polynomial_leaf_outputs.emplace_back();
                     copy_ciphertext_data(
-                        workspace.eval_mod_nodes[i],
+                        (*lanes[0].nodes)[i],
                         workspace.eval_mod_trace_polynomial_leaf_outputs.back(),
                         "GpuEvaluator::eval_mod_high_precision trace leaf copy");
                     workspace.eval_mod_trace_polynomial_leaf_outputs.back().meta.scale =
-                        workspace.eval_mod_nodes[i].meta.scale;
+                        (*lanes[0].nodes)[i].meta.scale;
                 }
             }
         }
@@ -8154,6 +12304,12 @@ void GpuEvaluator::eval_mod_high_precision(
 
         {
             NvtxRange range("EvalMod BSGS tree combine");
+            std::array<GpuCiphertextData, 2> comb_prod_scaled;
+            std::array<GpuCiphertextData, 2> comb_rem_rescaled;
+            std::array<GpuCiphertextData, 2> comb_rem_scaled;
+            std::array<GpuCiphertextData, 2> comb_prod_dropped;
+            std::array<GpuCiphertextData, 2> comb_rem_dropped;
+            std::array<GpuCiphertextData, 2> comb_raw_scratch;
             for (std::size_t combine_index = 0;
                  combine_index < polynomial_combine_steps.size();
                  ++combine_index)
@@ -8171,25 +12327,38 @@ void GpuEvaluator::eval_mod_high_precision(
                         "GpuEvaluator::eval_mod_high_precision: polynomial combine plan is not topologically valid");
                 }
                 if (remainder_is_inline_leaf &&
-                    !node_available[combine.remainder_node] &&
-                    multiply_inline_leaf_relinearize_rescale(
-                        workspace.eval_mod_nodes[combine.quotient_node],
-                        workspace.eval_mod_basis[combine.basis_degree],
-                        polynomial_blocks[combine.remainder_node],
-                        combine.output_scale,
-                        workspace.eval_mod_nodes[combine.output_node]))
+                    !node_available[combine.remainder_node])
                 {
-                    node_available[combine.output_node] = true;
-                    continue;
+                    std::array<const GpuCiphertextData *, 2> q_ptrs{};
+                    std::array<const GpuCiphertextData *, 2> b_ptrs{};
+                    std::array<GpuCiphertextData *, 2> out_ptrs{};
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        q_ptrs[lane] = &(*lanes[lane].nodes)[combine.quotient_node];
+                        b_ptrs[lane] = &(*lanes[lane].basis)[combine.basis_degree];
+                        out_ptrs[lane] = &(*lanes[lane].nodes)[combine.output_node];
+                    }
+                    if (multiply_inline_leaf_relinearize_rescale_lanes(
+                            q_ptrs, b_ptrs,
+                            polynomial_blocks[combine.remainder_node],
+                            combine.output_scale, out_ptrs))
+                    {
+                        node_available[combine.output_node] = true;
+                        continue;
+                    }
                 }
                 if (!node_available[combine.remainder_node])
                 {
-                    evaluate_term_block(
-                        polynomial_blocks[combine.remainder_node].terms,
-                        polynomial_blocks[combine.remainder_node].rescale_count,
-                        polynomial_blocks[combine.remainder_node].output_scale,
-                        polynomial_blocks[combine.remainder_node].output_q_count,
-                        workspace.eval_mod_nodes[combine.remainder_node]);
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        evaluate_term_block(
+                            lanes[lane],
+                            polynomial_blocks[combine.remainder_node].terms,
+                            polynomial_blocks[combine.remainder_node].rescale_count,
+                            polynomial_blocks[combine.remainder_node].output_scale,
+                            polynomial_blocks[combine.remainder_node].output_q_count,
+                            (*lanes[lane].nodes)[combine.remainder_node]);
+                    }
                     node_available[combine.remainder_node] = true;
                 }
                 if (bootstrap_data.eval_mod.dynamic_rescale)
@@ -8212,245 +12381,515 @@ void GpuEvaluator::eval_mod_high_precision(
                                 "GpuEvaluator::eval_mod_high_precision: unsupported lazy dynamic combine plan");
                         }
 
-                        const GpuCiphertextData *quotient =
-                            &workspace.eval_mod_nodes[combine.quotient_node];
-                        GpuCiphertextData *quotient_mutable =
-                            zero_copy_moddrop &&
-                                    combine.quotient_node < node_use_counts.size() &&
-                                    node_use_counts[combine.quotient_node] == 1
-                                ? &workspace.eval_mod_nodes[combine.quotient_node]
-                                : nullptr;
-                        if (quotient->size() != 2)
-                        {
-                            throw std::invalid_argument(
-                                "GpuEvaluator::eval_mod_high_precision: lazy quotient must be relinearized");
-                        }
-                        if (combine.quotient_rescale_count > 0)
-                        {
-                            rescale_many(
-                                *quotient,
-                                workspace.scratch2,
-                                combine.quotient_rescale_count);
-                            workspace.scratch2.meta.scale =
-                                combine.quotient_output_scale;
-                            quotient = &workspace.scratch2;
-                            quotient_mutable = &workspace.scratch2;
-                        }
+                        std::size_t multiply_q_count_0 = 0;
+                        bool is_square_0 = false;
+                        const bool defer_output =
+                            combine.output_node < lazy_raw_output.size() &&
+                            lazy_raw_output[combine.output_node];
+                        std::array<GpuCiphertextData *, 2> combined_raw_ptrs{
+                            defer_output
+                                ? &(*lanes[0].nodes)[combine.output_node]
+                                : &comb_raw_scratch[0],
+                            (lane_count == 2)
+                                ? (defer_output
+                                       ? &(*lanes[1].nodes)[combine.output_node]
+                                       : &comb_raw_scratch[1])
+                                : nullptr};
 
-                        const GpuCiphertextData *basis =
-                            &workspace.eval_mod_basis[combine.basis_degree];
-                        GpuCiphertextData *basis_mutable =
-                            zero_copy_moddrop &&
-                                    combine.basis_degree < basis_last_combine_use.size() &&
-                                    basis_last_combine_use[combine.basis_degree] == combine_index
-                                ? &workspace.eval_mod_basis[combine.basis_degree]
-                                : nullptr;
-                        bool use_combine_prefix_multiply = false;
-                        parms_id_type combine_prefix_parms_id = parms_id_zero;
-                        if (!(quotient->meta.parms_id == basis->meta.parms_id))
+                        const bool symmetric_pair =
+                            lane_count == 2 &&
+                            (*lanes[0].nodes)[combine.quotient_node].meta.parms_id ==
+                                (*lanes[1].nodes)[combine.quotient_node].meta.parms_id &&
+                            (*lanes[0].basis)[combine.basis_degree].meta.parms_id ==
+                                (*lanes[1].basis)[combine.basis_degree].meta.parms_id &&
+                            (*lanes[0].nodes)[combine.remainder_node].meta.parms_id ==
+                                (*lanes[1].nodes)[combine.remainder_node].meta.parms_id;
+
+                        if (symmetric_pair)
                         {
-                            if (quotient->meta.q_count == basis->meta.q_count)
+                            std::array<const GpuCiphertextData *, 2> q_ptrs{
+                                &(*lanes[0].nodes)[combine.quotient_node],
+                                &(*lanes[1].nodes)[combine.quotient_node]};
+                            std::array<GpuCiphertextData *, 2> q_mut{
+                                zero_copy_moddrop &&
+                                        combine.quotient_node < node_use_counts.size() &&
+                                        node_use_counts[combine.quotient_node] == 1
+                                    ? &(*lanes[0].nodes)[combine.quotient_node]
+                                    : nullptr,
+                                zero_copy_moddrop &&
+                                        combine.quotient_node < node_use_counts.size() &&
+                                        node_use_counts[combine.quotient_node] == 1
+                                    ? &(*lanes[1].nodes)[combine.quotient_node]
+                                    : nullptr};
+                            if (q_ptrs[0]->size() != 2 || q_ptrs[1]->size() != 2)
                             {
                                 throw std::invalid_argument(
-                                    "GpuEvaluator::eval_mod_high_precision: lazy combine equal q_count has different parms_id");
+                                    "GpuEvaluator::eval_mod_high_precision: lazy quotient must be relinearized");
                             }
-                            combine_prefix_parms_id =
-                                quotient->meta.q_count < basis->meta.q_count
-                                    ? quotient->meta.parms_id
-                                    : basis->meta.parms_id;
-                            use_combine_prefix_multiply =
-                                supports_q_prefix_multiply(
-                                    *quotient,
-                                    *basis,
-                                    combine_prefix_parms_id);
-                            if (!use_combine_prefix_multiply &&
-                                quotient->meta.q_count > basis->meta.q_count)
+                            if (combine.quotient_rescale_count > 0)
                             {
-                                if (quotient_mutable == nullptr ||
-                                    !drop_modulus_inplace(
-                                        *quotient_mutable,
-                                        basis->meta.parms_id))
+                                rescale_many_pair(
+                                    *q_ptrs[0], *q_ptrs[1],
+                                    *lanes[0].scratch[2], *lanes[1].scratch[2],
+                                    combine.quotient_rescale_count);
+                                lanes[0].scratch[2]->meta.scale = combine.quotient_output_scale;
+                                lanes[1].scratch[2]->meta.scale = combine.quotient_output_scale;
+                                q_ptrs = {lanes[0].scratch[2], lanes[1].scratch[2]};
+                                q_mut = {lanes[0].scratch[2], lanes[1].scratch[2]};
+                            }
+
+                            std::array<const GpuCiphertextData *, 2> b_ptrs{
+                                &(*lanes[0].basis)[combine.basis_degree],
+                                &(*lanes[1].basis)[combine.basis_degree]};
+                            std::array<GpuCiphertextData *, 2> b_mut{
+                                zero_copy_moddrop &&
+                                        combine.basis_degree < basis_last_combine_use.size() &&
+                                        basis_last_combine_use[combine.basis_degree] == combine_index
+                                    ? &(*lanes[0].basis)[combine.basis_degree]
+                                    : nullptr,
+                                zero_copy_moddrop &&
+                                        combine.basis_degree < basis_last_combine_use.size() &&
+                                        basis_last_combine_use[combine.basis_degree] == combine_index
+                                    ? &(*lanes[1].basis)[combine.basis_degree]
+                                    : nullptr};
+                            bool use_combine_prefix_multiply = false;
+                            parms_id_type combine_prefix_parms_id = parms_id_zero;
+                            if (!(q_ptrs[0]->meta.parms_id == b_ptrs[0]->meta.parms_id))
+                            {
+                                if (q_ptrs[0]->meta.q_count == b_ptrs[0]->meta.q_count)
                                 {
-                                    drop_modulus(
-                                        *quotient,
-                                        workspace.scratch3,
-                                        basis->meta.parms_id);
-                                    quotient = &workspace.scratch3;
-                                    quotient_mutable = &workspace.scratch3;
+                                    throw std::invalid_argument(
+                                        "GpuEvaluator::eval_mod_high_precision: lazy combine equal q_count has different parms_id");
+                                }
+                                combine_prefix_parms_id =
+                                    q_ptrs[0]->meta.q_count < b_ptrs[0]->meta.q_count
+                                        ? q_ptrs[0]->meta.parms_id
+                                        : b_ptrs[0]->meta.parms_id;
+                                use_combine_prefix_multiply =
+                                    supports_q_prefix_multiply(
+                                        *q_ptrs[0], *b_ptrs[0], combine_prefix_parms_id) &&
+                                    supports_q_prefix_multiply(
+                                        *q_ptrs[1], *b_ptrs[1], combine_prefix_parms_id);
+                                if (!use_combine_prefix_multiply &&
+                                    q_ptrs[0]->meta.q_count > b_ptrs[0]->meta.q_count)
+                                {
+                                    for (std::size_t lane = 0; lane < 2; ++lane)
+                                    {
+                                        if (q_mut[lane] == nullptr ||
+                                            !drop_modulus_inplace(*q_mut[lane], b_ptrs[lane]->meta.parms_id))
+                                        {
+                                            drop_modulus(*q_ptrs[lane], *lanes[lane].scratch[3], b_ptrs[lane]->meta.parms_id);
+                                            q_ptrs[lane] = lanes[lane].scratch[3];
+                                            q_mut[lane] = lanes[lane].scratch[3];
+                                        }
+                                    }
+                                }
+                                else if (!use_combine_prefix_multiply)
+                                {
+                                    for (std::size_t lane = 0; lane < 2; ++lane)
+                                    {
+                                        if (b_mut[lane] == nullptr ||
+                                            !drop_modulus_inplace(*b_mut[lane], q_ptrs[lane]->meta.parms_id))
+                                        {
+                                            drop_modulus(*b_ptrs[lane], *lanes[lane].scratch[4], q_ptrs[lane]->meta.parms_id);
+                                            b_ptrs[lane] = lanes[lane].scratch[4];
+                                            b_mut[lane] = lanes[lane].scratch[4];
+                                        }
+                                    }
                                 }
                             }
-                            else if (!use_combine_prefix_multiply)
+
+                            is_square_0 =
+                                !use_combine_prefix_multiply &&
+                                q_ptrs[0] == b_ptrs[0] &&
+                                q_ptrs[1] == b_ptrs[1];
+                            multiply_q_count_0 =
+                                use_combine_prefix_multiply
+                                    ? params_.get_level(combine_prefix_parms_id).q_count
+                                    : q_ptrs[0]->meta.q_count;
+                            if (use_combine_prefix_multiply)
                             {
-                                if (basis_mutable == nullptr ||
-                                    !drop_modulus_inplace(
-                                        *basis_mutable,
-                                        quotient->meta.parms_id))
+                                multiply_q_prefix_pair(
+                                    *q_ptrs[0], *b_ptrs[0], *q_ptrs[1], *b_ptrs[1],
+                                    combine_prefix_parms_id,
+                                    *lanes[0].scratch[5], *lanes[1].scratch[5]);
+                            }
+                            else if (is_square_0)
+                            {
+                                square_pair(
+                                    *q_ptrs[0], *q_ptrs[1],
+                                    *lanes[0].scratch[5], *lanes[1].scratch[5]);
+                            }
+                            else
+                            {
+                                multiply_pair(
+                                    *q_ptrs[0], *b_ptrs[0], *q_ptrs[1], *b_ptrs[1],
+                                    *lanes[0].scratch[5], *lanes[1].scratch[5]);
+                            }
+                            lanes[0].scratch[5]->meta.scale = combine.product_scale;
+                            lanes[1].scratch[5]->meta.scale = combine.product_scale;
+
+                            std::array<const GpuCiphertextData *, 2> p_ptrs{
+                                lanes[0].scratch[5], lanes[1].scratch[5]};
+                            std::array<GpuCiphertextData *, 2> p_mut{
+                                lanes[0].scratch[5], lanes[1].scratch[5]};
+                            if (!combine.product_scale_plaintext.empty())
+                            {
+                                multiply_plain_pair(
+                                    *p_ptrs[0], *p_ptrs[1],
+                                    combine.product_scale_plaintext,
+                                    comb_prod_scaled[0], comb_prod_scaled[1]);
+                                comb_prod_scaled[0].meta.scale = combine.product_aligned_scale;
+                                comb_prod_scaled[1].meta.scale = combine.product_aligned_scale;
+                                p_ptrs = {&comb_prod_scaled[0], &comb_prod_scaled[1]};
+                                p_mut = {&comb_prod_scaled[0], &comb_prod_scaled[1]};
+                            }
+
+                            std::array<const GpuCiphertextData *, 2> r_ptrs{
+                                &(*lanes[0].nodes)[combine.remainder_node],
+                                &(*lanes[1].nodes)[combine.remainder_node]};
+                            std::array<GpuCiphertextData *, 2> r_mut{
+                                zero_copy_moddrop &&
+                                        combine.remainder_node < node_use_counts.size() &&
+                                        node_use_counts[combine.remainder_node] == 1
+                                    ? &(*lanes[0].nodes)[combine.remainder_node]
+                                    : nullptr,
+                                zero_copy_moddrop &&
+                                        combine.remainder_node < node_use_counts.size() &&
+                                        node_use_counts[combine.remainder_node] == 1
+                                    ? &(*lanes[1].nodes)[combine.remainder_node]
+                                    : nullptr};
+                            if (combine.remainder_rescale_count > 0)
+                            {
+                                rescale_many_pair(
+                                    *r_ptrs[0], *r_ptrs[1],
+                                    comb_rem_rescaled[0], comb_rem_rescaled[1],
+                                    combine.remainder_rescale_count);
+                                if (combine.remainder_scale_plaintext.empty() &&
+                                    combine.remainder_aligned_scale > 0.0)
                                 {
-                                    drop_modulus(
+                                    comb_rem_rescaled[0].meta.scale = combine.remainder_aligned_scale;
+                                    comb_rem_rescaled[1].meta.scale = combine.remainder_aligned_scale;
+                                }
+                                r_ptrs = {&comb_rem_rescaled[0], &comb_rem_rescaled[1]};
+                                r_mut = {&comb_rem_rescaled[0], &comb_rem_rescaled[1]};
+                            }
+                            if (!combine.remainder_scale_plaintext.empty())
+                            {
+                                multiply_plain_pair(
+                                    *r_ptrs[0], *r_ptrs[1],
+                                    combine.remainder_scale_plaintext,
+                                    comb_rem_scaled[0], comb_rem_scaled[1]);
+                                comb_rem_scaled[0].meta.scale = combine.remainder_aligned_scale;
+                                comb_rem_scaled[1].meta.scale = combine.remainder_aligned_scale;
+                                r_ptrs = {&comb_rem_scaled[0], &comb_rem_scaled[1]};
+                                r_mut = {&comb_rem_scaled[0], &comb_rem_scaled[1]};
+                            }
+
+                            if (!(p_ptrs[0]->meta.parms_id == r_ptrs[0]->meta.parms_id))
+                            {
+                                if (p_ptrs[0]->meta.q_count == r_ptrs[0]->meta.q_count)
+                                {
+                                    throw std::invalid_argument(
+                                        "GpuEvaluator::eval_mod_high_precision: lazy remainder equal q_count has different parms_id");
+                                }
+                                if (p_ptrs[0]->meta.q_count > r_ptrs[0]->meta.q_count)
+                                {
+                                    for (std::size_t lane = 0; lane < 2; ++lane)
+                                    {
+                                        if (p_mut[lane] == nullptr ||
+                                            !drop_modulus_inplace(*p_mut[lane], r_ptrs[lane]->meta.parms_id))
+                                        {
+                                            drop_modulus(*p_ptrs[lane], comb_prod_dropped[lane], r_ptrs[lane]->meta.parms_id);
+                                            comb_prod_dropped[lane].meta.scale = p_ptrs[lane]->meta.scale;
+                                            p_ptrs[lane] = &comb_prod_dropped[lane];
+                                            p_mut[lane] = &comb_prod_dropped[lane];
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    for (std::size_t lane = 0; lane < 2; ++lane)
+                                    {
+                                        if (r_mut[lane] == nullptr ||
+                                            !drop_modulus_inplace(*r_mut[lane], p_ptrs[lane]->meta.parms_id))
+                                        {
+                                            drop_modulus(*r_ptrs[lane], comb_rem_dropped[lane], p_ptrs[lane]->meta.parms_id);
+                                            comb_rem_dropped[lane].meta.scale = r_ptrs[lane]->meta.scale;
+                                            r_ptrs[lane] = &comb_rem_dropped[lane];
+                                            r_mut[lane] = &comb_rem_dropped[lane];
+                                        }
+                                    }
+                                }
+                            }
+
+                            add_pair(
+                                *p_ptrs[0], *r_ptrs[0],
+                                *p_ptrs[1], *r_ptrs[1],
+                                *combined_raw_ptrs[0], *combined_raw_ptrs[1]);
+                            combined_raw_ptrs[0]->meta.scale = combine.output_scale;
+                            combined_raw_ptrs[1]->meta.scale = combine.output_scale;
+                            if (combined_raw_ptrs[0]->size() != 3 ||
+                                combined_raw_ptrs[1]->size() != 3)
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: lazy combine did not produce size-3 output");
+                            }
+                        }
+                        else
+                        {
+                            for (std::size_t lane = 0; lane < lane_count; ++lane)
+                            {
+                                auto &L = lanes[lane];
+                                const GpuCiphertextData *quotient =
+                                    &(*L.nodes)[combine.quotient_node];
+                                GpuCiphertextData *quotient_mutable =
+                                    zero_copy_moddrop &&
+                                            combine.quotient_node < node_use_counts.size() &&
+                                            node_use_counts[combine.quotient_node] == 1
+                                        ? &(*L.nodes)[combine.quotient_node]
+                                        : nullptr;
+                                if (quotient->size() != 2)
+                                {
+                                    throw std::invalid_argument(
+                                        "GpuEvaluator::eval_mod_high_precision: lazy quotient must be relinearized");
+                                }
+                                if (combine.quotient_rescale_count > 0)
+                                {
+                                    rescale_many(
+                                        *quotient,
+                                        *L.scratch[2],
+                                        combine.quotient_rescale_count);
+                                    L.scratch[2]->meta.scale =
+                                        combine.quotient_output_scale;
+                                    quotient = L.scratch[2];
+                                    quotient_mutable = L.scratch[2];
+                                }
+
+                                const GpuCiphertextData *basis =
+                                    &(*L.basis)[combine.basis_degree];
+                                GpuCiphertextData *basis_mutable =
+                                    zero_copy_moddrop &&
+                                            combine.basis_degree < basis_last_combine_use.size() &&
+                                            basis_last_combine_use[combine.basis_degree] == combine_index
+                                        ? &(*L.basis)[combine.basis_degree]
+                                        : nullptr;
+                                bool use_combine_prefix_multiply = false;
+                                parms_id_type combine_prefix_parms_id = parms_id_zero;
+                                if (!(quotient->meta.parms_id == basis->meta.parms_id))
+                                {
+                                    if (quotient->meta.q_count == basis->meta.q_count)
+                                    {
+                                        throw std::invalid_argument(
+                                            "GpuEvaluator::eval_mod_high_precision: lazy combine equal q_count has different parms_id");
+                                    }
+                                    combine_prefix_parms_id =
+                                        quotient->meta.q_count < basis->meta.q_count
+                                            ? quotient->meta.parms_id
+                                            : basis->meta.parms_id;
+                                    use_combine_prefix_multiply =
+                                        supports_q_prefix_multiply(
+                                            *quotient,
+                                            *basis,
+                                            combine_prefix_parms_id);
+                                    if (!use_combine_prefix_multiply &&
+                                        quotient->meta.q_count > basis->meta.q_count)
+                                    {
+                                        if (quotient_mutable == nullptr ||
+                                            !drop_modulus_inplace(
+                                                *quotient_mutable,
+                                                basis->meta.parms_id))
+                                        {
+                                            drop_modulus(
+                                                *quotient,
+                                                *L.scratch[3],
+                                                basis->meta.parms_id);
+                                            quotient = L.scratch[3];
+                                            quotient_mutable = L.scratch[3];
+                                        }
+                                    }
+                                    else if (!use_combine_prefix_multiply)
+                                    {
+                                        if (basis_mutable == nullptr ||
+                                            !drop_modulus_inplace(
+                                                *basis_mutable,
+                                                quotient->meta.parms_id))
+                                        {
+                                            drop_modulus(
+                                                *basis,
+                                                *L.scratch[4],
+                                                quotient->meta.parms_id);
+                                            basis = L.scratch[4];
+                                            basis_mutable = L.scratch[4];
+                                        }
+                                    }
+                                }
+
+                                const bool is_square =
+                                    !use_combine_prefix_multiply && quotient == basis;
+                                const std::size_t multiply_q_count =
+                                    use_combine_prefix_multiply
+                                        ? params_.get_level(combine_prefix_parms_id).q_count
+                                        : quotient->meta.q_count;
+                                if (lane == 0)
+                                {
+                                    multiply_q_count_0 = multiply_q_count;
+                                    is_square_0 = is_square;
+                                }
+                                if (use_combine_prefix_multiply)
+                                {
+                                    multiply_q_prefix(
+                                        *quotient,
                                         *basis,
-                                        workspace.scratch4,
-                                        quotient->meta.parms_id);
-                                    basis = &workspace.scratch4;
-                                    basis_mutable = &workspace.scratch4;
+                                        combine_prefix_parms_id,
+                                        *L.scratch[5]);
+                                }
+                                else if (is_square)
+                                {
+                                    square(*quotient, *L.scratch[5]);
+                                }
+                                else
+                                {
+                                    multiply(*quotient, *basis, *L.scratch[5]);
+                                }
+                                L.scratch[5]->meta.scale = combine.product_scale;
+
+                                const GpuCiphertextData *product = L.scratch[5];
+                                GpuCiphertextData *product_mutable = L.scratch[5];
+                                if (!combine.product_scale_plaintext.empty())
+                                {
+                                    multiply_plain(
+                                        *product,
+                                        combine.product_scale_plaintext,
+                                        comb_prod_scaled[lane]);
+                                    comb_prod_scaled[lane].meta.scale =
+                                        combine.product_aligned_scale;
+                                    product = &comb_prod_scaled[lane];
+                                    product_mutable = &comb_prod_scaled[lane];
+                                }
+
+                                const GpuCiphertextData *remainder =
+                                    &(*L.nodes)[combine.remainder_node];
+                                GpuCiphertextData *remainder_mutable =
+                                    zero_copy_moddrop &&
+                                            combine.remainder_node < node_use_counts.size() &&
+                                            node_use_counts[combine.remainder_node] == 1
+                                        ? &(*L.nodes)[combine.remainder_node]
+                                        : nullptr;
+
+                                if (combine.remainder_rescale_count > 0)
+                                {
+                                    rescale_many(
+                                        *remainder,
+                                        comb_rem_rescaled[lane],
+                                        combine.remainder_rescale_count);
+                                    if (combine.remainder_scale_plaintext.empty() &&
+                                        combine.remainder_aligned_scale > 0.0)
+                                    {
+                                        comb_rem_rescaled[lane].meta.scale =
+                                            combine.remainder_aligned_scale;
+                                    }
+                                    remainder = &comb_rem_rescaled[lane];
+                                    remainder_mutable = &comb_rem_rescaled[lane];
+                                }
+                                if (!combine.remainder_scale_plaintext.empty())
+                                {
+                                    multiply_plain(
+                                        *remainder,
+                                        combine.remainder_scale_plaintext,
+                                        comb_rem_scaled[lane]);
+                                    comb_rem_scaled[lane].meta.scale =
+                                        combine.remainder_aligned_scale;
+                                    remainder = &comb_rem_scaled[lane];
+                                    remainder_mutable = &comb_rem_scaled[lane];
+                                }
+
+                                if (!(product->meta.parms_id == remainder->meta.parms_id))
+                                {
+                                    if (product->meta.q_count == remainder->meta.q_count)
+                                    {
+                                        throw std::invalid_argument(
+                                            "GpuEvaluator::eval_mod_high_precision: lazy remainder equal q_count has different parms_id");
+                                    }
+                                    if (product->meta.q_count > remainder->meta.q_count)
+                                    {
+                                        if (product_mutable == nullptr ||
+                                            !drop_modulus_inplace(
+                                                *product_mutable,
+                                                remainder->meta.parms_id))
+                                        {
+                                            drop_modulus(
+                                                *product,
+                                                comb_prod_dropped[lane],
+                                                remainder->meta.parms_id);
+                                            comb_prod_dropped[lane].meta.scale = product->meta.scale;
+                                            product = &comb_prod_dropped[lane];
+                                            product_mutable = &comb_prod_dropped[lane];
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (remainder_mutable == nullptr ||
+                                            !drop_modulus_inplace(
+                                                *remainder_mutable,
+                                                product->meta.parms_id))
+                                        {
+                                            drop_modulus(
+                                                *remainder,
+                                                comb_rem_dropped[lane],
+                                                product->meta.parms_id);
+                                            comb_rem_dropped[lane].meta.scale = remainder->meta.scale;
+                                            remainder = &comb_rem_dropped[lane];
+                                            remainder_mutable = &comb_rem_dropped[lane];
+                                        }
+                                    }
+                                }
+
+                                add(*product, *remainder, *combined_raw_ptrs[lane]);
+                                combined_raw_ptrs[lane]->meta.scale = combine.output_scale;
+                                if (combined_raw_ptrs[lane]->size() != 3)
+                                {
+                                    throw std::invalid_argument(
+                                        "GpuEvaluator::eval_mod_high_precision: lazy combine did not produce size-3 output");
                                 }
                             }
                         }
 
-                        const bool is_square =
-                            !use_combine_prefix_multiply && quotient == basis;
-                        const std::size_t multiply_q_count =
-                            use_combine_prefix_multiply
-                                ? params_.get_level(combine_prefix_parms_id).q_count
-                                : quotient->meta.q_count;
                         if (workspace.capture_eval_mod_stage_timing)
                         {
                             multiply_recorder.begin(
                                 "EvalMod.mul.combine.lazy." +
                                     std::to_string(combine_index) +
                                     ".T" + std::to_string(combine.basis_degree) +
-                                    ".q" + std::to_string(multiply_q_count),
-                                multiply_q_count,
+                                    ".q" + std::to_string(multiply_q_count_0),
+                                multiply_q_count_0,
                                 relin_keys.meta.p_count,
-                                is_square);
+                                is_square_0);
                         }
-                        if (use_combine_prefix_multiply)
-                        {
-                            multiply_q_prefix(
-                                *quotient,
-                                *basis,
-                                combine_prefix_parms_id,
-                                workspace.scratch5);
-                        }
-                        else if (is_square)
-                        {
-                            square(*quotient, workspace.scratch5);
-                        }
-                        else
-                        {
-                            multiply(*quotient, *basis, workspace.scratch5);
-                        }
-                        workspace.scratch5.meta.scale = combine.product_scale;
-
-                        GpuCiphertextData product_scaled;
-                        const GpuCiphertextData *product = &workspace.scratch5;
-                        GpuCiphertextData *product_mutable = &workspace.scratch5;
-                        if (!combine.product_scale_plaintext.empty())
-                        {
-                            multiply_plain(
-                                *product,
-                                combine.product_scale_plaintext,
-                                product_scaled);
-                            product_scaled.meta.scale =
-                                combine.product_aligned_scale;
-                            product = &product_scaled;
-                            product_mutable = &product_scaled;
-                        }
-
-                        const GpuCiphertextData *remainder =
-                            &workspace.eval_mod_nodes[combine.remainder_node];
-                        GpuCiphertextData *remainder_mutable =
-                            zero_copy_moddrop &&
-                                    combine.remainder_node < node_use_counts.size() &&
-                                    node_use_counts[combine.remainder_node] == 1
-                                ? &workspace.eval_mod_nodes[combine.remainder_node]
-                                : nullptr;
-                        GpuCiphertextData remainder_rescaled;
-                        GpuCiphertextData remainder_scaled;
-                        GpuCiphertextData product_dropped;
-                        GpuCiphertextData remainder_dropped;
-
-                        if (combine.remainder_rescale_count > 0)
-                        {
-                            rescale_many(
-                                *remainder,
-                                remainder_rescaled,
-                                combine.remainder_rescale_count);
-                            if (combine.remainder_scale_plaintext.empty() &&
-                                combine.remainder_aligned_scale > 0.0)
-                            {
-                                remainder_rescaled.meta.scale =
-                                    combine.remainder_aligned_scale;
-                            }
-                            remainder = &remainder_rescaled;
-                            remainder_mutable = &remainder_rescaled;
-                        }
-                        if (!combine.remainder_scale_plaintext.empty())
-                        {
-                            multiply_plain(
-                                *remainder,
-                                combine.remainder_scale_plaintext,
-                                remainder_scaled);
-                            remainder_scaled.meta.scale =
-                                combine.remainder_aligned_scale;
-                            remainder = &remainder_scaled;
-                            remainder_mutable = &remainder_scaled;
-                        }
-
-                        if (!(product->meta.parms_id == remainder->meta.parms_id))
-                        {
-                            if (product->meta.q_count == remainder->meta.q_count)
-                            {
-                                throw std::invalid_argument(
-                                    "GpuEvaluator::eval_mod_high_precision: lazy remainder equal q_count has different parms_id");
-                            }
-                            if (product->meta.q_count > remainder->meta.q_count)
-                            {
-                                if (product_mutable == nullptr ||
-                                    !drop_modulus_inplace(
-                                        *product_mutable,
-                                        remainder->meta.parms_id))
-                                {
-                                    drop_modulus(
-                                        *product,
-                                        product_dropped,
-                                        remainder->meta.parms_id);
-                                    product_dropped.meta.scale = product->meta.scale;
-                                    product = &product_dropped;
-                                    product_mutable = &product_dropped;
-                                }
-                            }
-                            else
-                            {
-                                if (remainder_mutable == nullptr ||
-                                    !drop_modulus_inplace(
-                                        *remainder_mutable,
-                                        product->meta.parms_id))
-                                {
-                                    drop_modulus(
-                                        *remainder,
-                                        remainder_dropped,
-                                        product->meta.parms_id);
-                                    remainder_dropped.meta.scale = remainder->meta.scale;
-                                    remainder = &remainder_dropped;
-                                    remainder_mutable = &remainder_dropped;
-                                }
-                            }
-                        }
-
-                        GpuCiphertextData combined_raw;
-                        add(*product, *remainder, combined_raw);
-                        combined_raw.meta.scale = combine.output_scale;
-                        if (combined_raw.size() != 3)
-                        {
-                            throw std::invalid_argument(
-                                "GpuEvaluator::eval_mod_high_precision: lazy combine did not produce size-3 output");
-                        }
-
-                        const bool defer_output =
-                            combine.output_node < lazy_raw_output.size() &&
-                            lazy_raw_output[combine.output_node];
                         if (defer_output)
                         {
-                            workspace.eval_mod_nodes[combine.output_node] =
-                                std::move(combined_raw);
+                        }
+                        else if (lane_count == 2)
+                        {
+                            relinearize_pair(
+                                *combined_raw_ptrs[0],
+                                *combined_raw_ptrs[1],
+                                relin_keys,
+                                (*lanes[0].nodes)[combine.output_node],
+                                (*lanes[1].nodes)[combine.output_node]);
+                            for (std::size_t lane = 0; lane < lane_count; ++lane)
+                            {
+                                (*lanes[lane].nodes)[combine.output_node].meta.scale =
+                                    combine.output_scale;
+                            }
                         }
                         else
                         {
                             relinearize(
-                                combined_raw,
+                                *combined_raw_ptrs[0],
                                 relin_keys,
-                                workspace.eval_mod_nodes[combine.output_node]);
-                            workspace.eval_mod_nodes[combine.output_node].meta.scale =
+                                (*lanes[0].nodes)[combine.output_node]);
+                            (*lanes[0].nodes)[combine.output_node].meta.scale =
                                 combine.output_scale;
                         }
                         multiply_recorder.end();
@@ -8458,7 +12897,7 @@ void GpuEvaluator::eval_mod_high_precision(
                         if (workspace.capture_eval_mod_trace)
                         {
                             const GpuCiphertextData *trace_source =
-                                &workspace.eval_mod_nodes[combine.output_node];
+                                &(*lanes[0].nodes)[combine.output_node];
                             GpuCiphertextData trace_relinearized;
                             if (trace_source->size() == 3)
                             {
@@ -8494,186 +12933,183 @@ void GpuEvaluator::eval_mod_high_precision(
                             "GpuEvaluator::eval_mod_high_precision: incomplete dynamic combine plan");
                     }
 
-                    const GpuCiphertextData *quotient =
-                        &workspace.eval_mod_nodes[combine.quotient_node];
-                    if (combine.quotient_rescale_count > 0)
+                    std::size_t q_count_0 = 0;
+                    bool is_square_0 = false;
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
                     {
-                        rescale_many(
-                            *quotient,
-                            workspace.scratch2,
-                            combine.quotient_rescale_count);
-                        workspace.scratch2.meta.scale =
-                            combine.quotient_output_scale;
-                        quotient = &workspace.scratch2;
-                    }
-
-                    const GpuCiphertextData *basis =
-                        &workspace.eval_mod_basis[combine.basis_degree];
-                    if (!(quotient->meta.parms_id == basis->meta.parms_id))
-                    {
-                        if (quotient->meta.q_count == basis->meta.q_count)
+                        auto &L = lanes[lane];
+                        const GpuCiphertextData *quotient =
+                            &(*L.nodes)[combine.quotient_node];
+                        if (combine.quotient_rescale_count > 0)
                         {
-                            throw std::invalid_argument(
-                                "GpuEvaluator::eval_mod_high_precision: dynamic combine equal q_count has different parms_id");
-                        }
-                        if (quotient->meta.q_count > basis->meta.q_count)
-                        {
-                            drop_modulus(
+                            rescale_many(
                                 *quotient,
-                                workspace.scratch3,
-                                basis->meta.parms_id);
-                            quotient = &workspace.scratch3;
+                                *L.scratch[2],
+                                combine.quotient_rescale_count);
+                            L.scratch[2]->meta.scale =
+                                combine.quotient_output_scale;
+                            quotient = L.scratch[2];
+                        }
+
+                        const GpuCiphertextData *basis =
+                            &(*L.basis)[combine.basis_degree];
+                        if (!(quotient->meta.parms_id == basis->meta.parms_id))
+                        {
+                            if (quotient->meta.q_count == basis->meta.q_count)
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: dynamic combine equal q_count has different parms_id");
+                            }
+                            if (quotient->meta.q_count > basis->meta.q_count)
+                            {
+                                drop_modulus(*quotient, *L.scratch[3], basis->meta.parms_id);
+                                quotient = L.scratch[3];
+                            }
+                            else
+                            {
+                                drop_modulus(*basis, *L.scratch[4], quotient->meta.parms_id);
+                                basis = L.scratch[4];
+                            }
+                        }
+
+                        const bool is_square = quotient == basis;
+                        if (lane == 0)
+                        {
+                            q_count_0 = quotient->meta.q_count;
+                            is_square_0 = is_square;
+                        }
+                        if (is_square)
+                        {
+                            square(*quotient, *L.scratch[5]);
                         }
                         else
                         {
-                            drop_modulus(
-                                *basis,
-                                workspace.scratch4,
-                                quotient->meta.parms_id);
-                            basis = &workspace.scratch4;
+                            multiply(*quotient, *basis, *L.scratch[5]);
                         }
                     }
-
-                    const bool is_square = quotient == basis;
                     if (workspace.capture_eval_mod_stage_timing)
                     {
                         multiply_recorder.begin(
                             "EvalMod.mul.combine." +
                                 std::to_string(combine_index) +
                                 ".T" + std::to_string(combine.basis_degree) +
-                                ".q" + std::to_string(quotient->meta.q_count),
-                            quotient->meta.q_count,
+                                ".q" + std::to_string(q_count_0),
+                            q_count_0,
                             relin_keys.meta.p_count,
-                            is_square);
+                            is_square_0);
                     }
-                    if (is_square)
-                    {
-                        square(*quotient, workspace.scratch5);
-                    }
-                    else
-                    {
-                        multiply(*quotient, *basis, workspace.scratch5);
-                    }
-                    relinearize(workspace.scratch5, relin_keys, workspace.scratch1);
+                    relinearize_lanes(5, 1);
                     multiply_recorder.end();
-                    workspace.scratch1.meta.scale = combine.product_scale;
 
-                    GpuCiphertextData product_scaled;
-                    const GpuCiphertextData *product_base = &workspace.scratch1;
-                    if (!combine.product_scale_plaintext.empty())
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
                     {
-                        multiply_plain(
-                            *product_base,
-                            combine.product_scale_plaintext,
-                            product_scaled);
-                        product_scaled.meta.scale =
-                            combine.product_aligned_scale;
-                        product_base = &product_scaled;
-                    }
+                        auto &L = lanes[lane];
+                        L.scratch[1]->meta.scale = combine.product_scale;
 
-                    if (node_available[combine.remainder_node])
-                    {
-                        const GpuCiphertextData *product = product_base;
-                        const GpuCiphertextData *remainder =
-                            &workspace.eval_mod_nodes[combine.remainder_node];
-                        GpuCiphertextData remainder_rescaled;
-                        GpuCiphertextData remainder_scaled;
-                        GpuCiphertextData product_dropped;
-                        GpuCiphertextData remainder_dropped;
-
-                        if (combine.remainder_rescale_count > 0)
-                        {
-                            rescale_many(
-                                *remainder,
-                                remainder_rescaled,
-                                combine.remainder_rescale_count);
-                            if (combine.remainder_scale_plaintext.empty() &&
-                                combine.remainder_aligned_scale > 0.0)
-                            {
-                                // The setup planner treats nearby CKKS scales as
-                                // add-compatible, matching the CPU evaluator.  GPU
-                                // add is intentionally strict, so preserve the
-                                // same represented value while canonicalizing the
-                                // metadata to the planner's common add scale.
-                                remainder_rescaled.meta.scale =
-                                    combine.remainder_aligned_scale;
-                            }
-                            remainder = &remainder_rescaled;
-                        }
-                        if (!combine.remainder_scale_plaintext.empty())
+                        GpuCiphertextData product_scaled;
+                        const GpuCiphertextData *product_base = L.scratch[1];
+                        if (!combine.product_scale_plaintext.empty())
                         {
                             multiply_plain(
-                                *remainder,
-                                combine.remainder_scale_plaintext,
-                                remainder_scaled);
-                            remainder_scaled.meta.scale =
-                                combine.remainder_aligned_scale;
-                            remainder = &remainder_scaled;
+                                *product_base,
+                                combine.product_scale_plaintext,
+                                product_scaled);
+                            product_scaled.meta.scale =
+                                combine.product_aligned_scale;
+                            product_base = &product_scaled;
                         }
 
-                        if (!(product->meta.parms_id == remainder->meta.parms_id))
+                        if (node_available[combine.remainder_node])
                         {
-                            if (product->meta.q_count == remainder->meta.q_count)
+                            const GpuCiphertextData *product = product_base;
+                            const GpuCiphertextData *remainder =
+                                &(*L.nodes)[combine.remainder_node];
+                            GpuCiphertextData remainder_rescaled;
+                            GpuCiphertextData remainder_scaled;
+                            GpuCiphertextData product_dropped;
+                            GpuCiphertextData remainder_dropped;
+
+                            if (combine.remainder_rescale_count > 0)
                             {
-                                throw std::invalid_argument(
-                                    "GpuEvaluator::eval_mod_high_precision: dynamic remainder equal q_count has different parms_id");
-                            }
-                            if (product->meta.q_count > remainder->meta.q_count)
-                            {
-                                drop_modulus(
-                                    *product,
-                                    product_dropped,
-                                    remainder->meta.parms_id);
-                                product_dropped.meta.scale =
-                                    product->meta.scale;
-                                product = &product_dropped;
-                            }
-                            else
-                            {
-                                drop_modulus(
+                                rescale_many(
                                     *remainder,
-                                    remainder_dropped,
-                                    product->meta.parms_id);
-                                remainder_dropped.meta.scale =
-                                    remainder->meta.scale;
-                                remainder = &remainder_dropped;
+                                    remainder_rescaled,
+                                    combine.remainder_rescale_count);
+                                if (combine.remainder_scale_plaintext.empty() &&
+                                    combine.remainder_aligned_scale > 0.0)
+                                {
+                                    remainder_rescaled.meta.scale =
+                                        combine.remainder_aligned_scale;
+                                }
+                                remainder = &remainder_rescaled;
                             }
-                        }
+                            if (!combine.remainder_scale_plaintext.empty())
+                            {
+                                multiply_plain(
+                                    *remainder,
+                                    combine.remainder_scale_plaintext,
+                                    remainder_scaled);
+                                remainder_scaled.meta.scale =
+                                    combine.remainder_aligned_scale;
+                                remainder = &remainder_scaled;
+                            }
 
-                        add(*product, *remainder, workspace.scratch0);
-                        workspace.scratch0.meta.scale = combine.output_scale;
-                        workspace.eval_mod_nodes[combine.output_node] =
-                            std::move(workspace.scratch0);
-                    }
-                    else
-                    {
-                        if (product_base == &product_scaled)
-                        {
-                            workspace.eval_mod_nodes[combine.output_node] =
-                                std::move(product_scaled);
+                            if (!(product->meta.parms_id == remainder->meta.parms_id))
+                            {
+                                if (product->meta.q_count == remainder->meta.q_count)
+                                {
+                                    throw std::invalid_argument(
+                                        "GpuEvaluator::eval_mod_high_precision: dynamic remainder equal q_count has different parms_id");
+                                }
+                                if (product->meta.q_count > remainder->meta.q_count)
+                                {
+                                    drop_modulus(*product, product_dropped, remainder->meta.parms_id);
+                                    product_dropped.meta.scale = product->meta.scale;
+                                    product = &product_dropped;
+                                }
+                                else
+                                {
+                                    drop_modulus(*remainder, remainder_dropped, product->meta.parms_id);
+                                    remainder_dropped.meta.scale = remainder->meta.scale;
+                                    remainder = &remainder_dropped;
+                                }
+                            }
+
+                            add(*product, *remainder, *L.scratch[0]);
+                            L.scratch[0]->meta.scale = combine.output_scale;
+                            (*L.nodes)[combine.output_node] =
+                                std::move(*L.scratch[0]);
                         }
                         else
                         {
-                            workspace.eval_mod_nodes[combine.output_node] =
-                                std::move(workspace.scratch1);
+                            if (product_base == &product_scaled)
+                            {
+                                (*L.nodes)[combine.output_node] =
+                                    std::move(product_scaled);
+                            }
+                            else
+                            {
+                                (*L.nodes)[combine.output_node] =
+                                    std::move(*L.scratch[1]);
+                            }
+                            (*L.nodes)[combine.output_node].meta.scale =
+                                combine.output_scale;
                         }
-                        workspace.eval_mod_nodes[combine.output_node].meta.scale =
-                            combine.output_scale;
-                    }
 
-                    if (workspace.eval_mod_nodes[combine.output_node].meta.q_count >
-                        combine.output_q_count)
-                    {
-                        const auto &target_level =
-                            params_.get_level_by_q_count(combine.output_q_count, 0);
-                        drop_modulus(
-                            workspace.eval_mod_nodes[combine.output_node],
-                            workspace.scratch2,
-                            target_level.parms_id);
-                        workspace.eval_mod_nodes[combine.output_node] =
-                            std::move(workspace.scratch2);
-                        workspace.eval_mod_nodes[combine.output_node].meta.scale =
-                            combine.output_scale;
+                        if ((*L.nodes)[combine.output_node].meta.q_count >
+                            combine.output_q_count)
+                        {
+                            const auto &target_level =
+                                params_.get_level_by_q_count(combine.output_q_count, 0);
+                            drop_modulus(
+                                (*L.nodes)[combine.output_node],
+                                *L.scratch[2],
+                                target_level.parms_id);
+                            (*L.nodes)[combine.output_node] =
+                                std::move(*L.scratch[2]);
+                            (*L.nodes)[combine.output_node].meta.scale =
+                                combine.output_scale;
+                        }
                     }
                 }
                 else
@@ -8681,46 +13117,51 @@ void GpuEvaluator::eval_mod_high_precision(
                     if (workspace.capture_eval_mod_stage_timing)
                     {
                         const auto &quotient =
-                            workspace.eval_mod_nodes[combine.quotient_node];
+                            (*lanes[0].nodes)[combine.quotient_node];
                         const auto &basis =
-                            workspace.eval_mod_basis[combine.basis_degree];
+                            (*lanes[0].basis)[combine.basis_degree];
                         multiply_recorder.begin(
                             "EvalMod.mul.combine." +
                                 std::to_string(combine_index) +
                                 ".T" + std::to_string(combine.basis_degree) +
                                 ".q" + std::to_string(
-                                    std::min(
-                                        quotient.meta.q_count,
-                                        basis.meta.q_count)),
-                            std::min(
-                                quotient.meta.q_count,
-                                basis.meta.q_count),
+                                    std::min(quotient.meta.q_count, basis.meta.q_count)),
+                            std::min(quotient.meta.q_count, basis.meta.q_count),
                             relin_keys.meta.p_count,
                             &quotient == &basis);
                     }
-                    multiply_relinearize_rescale(
-                        workspace.eval_mod_nodes[combine.quotient_node],
-                        workspace.eval_mod_basis[combine.basis_degree],
-                        combine.output_scale,
-                        logical_rescale_count,
-                        workspace.scratch2);
+                    std::array<const GpuCiphertextData *, 2> q_ptrs{};
+                    std::array<const GpuCiphertextData *, 2> b_ptrs{};
+                    std::array<GpuCiphertextData *, 2> out_ptrs{};
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        q_ptrs[lane] = &(*lanes[lane].nodes)[combine.quotient_node];
+                        b_ptrs[lane] = &(*lanes[lane].basis)[combine.basis_degree];
+                        out_ptrs[lane] = lanes[lane].scratch[2];
+                    }
+                    multiply_relinearize_rescale_lanes(
+                        q_ptrs, b_ptrs, combine.output_scale, logical_rescale_count, out_ptrs);
                     multiply_recorder.end();
-                    add_aligned(
-                        workspace.scratch2,
-                        workspace.eval_mod_nodes[combine.remainder_node],
-                        combine.output_scale,
-                        workspace.eval_mod_nodes[combine.output_node]);
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        add_aligned(
+                            lanes[lane],
+                            *lanes[lane].scratch[2],
+                            (*lanes[lane].nodes)[combine.remainder_node],
+                            combine.output_scale,
+                            (*lanes[lane].nodes)[combine.output_node]);
+                    }
                 }
                 node_available[combine.output_node] = true;
                 if (workspace.capture_eval_mod_trace)
                 {
                     workspace.eval_mod_trace_polynomial_combine_outputs.emplace_back();
                     copy_ciphertext_data(
-                        workspace.eval_mod_nodes[combine.output_node],
+                        (*lanes[0].nodes)[combine.output_node],
                         workspace.eval_mod_trace_polynomial_combine_outputs.back(),
                         "GpuEvaluator::eval_mod_high_precision trace combine copy");
                     workspace.eval_mod_trace_polynomial_combine_outputs.back().meta.scale =
-                        workspace.eval_mod_nodes[combine.output_node].meta.scale;
+                        (*lanes[0].nodes)[combine.output_node].meta.scale;
                 }
             }
 
@@ -8731,42 +13172,72 @@ void GpuEvaluator::eval_mod_high_precision(
                 throw std::invalid_argument(
                     "GpuEvaluator::eval_mod_high_precision: polynomial result node is unavailable");
             }
-            if (workspace.capture_eval_mod_trace)
+            for (std::size_t lane = 0; lane < lane_count; ++lane)
             {
-                copy_ciphertext_data(
-                    workspace.eval_mod_nodes[result_node],
-                    accumulator,
-                    "GpuEvaluator::eval_mod_high_precision trace accumulator copy");
-                accumulator.meta.scale =
-                    workspace.eval_mod_nodes[result_node].meta.scale;
-            }
-            else
-            {
-                accumulator = std::move(workspace.eval_mod_nodes[result_node]);
+                auto &L = lanes[lane];
+                if (workspace.capture_eval_mod_trace)
+                {
+                    copy_ciphertext_data(
+                        (*L.nodes)[result_node],
+                        L.accumulator,
+                        "GpuEvaluator::eval_mod_high_precision trace accumulator copy");
+                    L.accumulator.meta.scale = (*L.nodes)[result_node].meta.scale;
+                }
+                else
+                {
+                    L.accumulator = std::move((*L.nodes)[result_node]);
+                }
             }
             if (bootstrap_data.eval_mod.dynamic_rescale)
             {
                 const auto final_rescale_count =
                     bootstrap_data.eval_mod.polynomial_final_rescale_count;
-                if (final_rescale_count > 0 && d2d_free_dataflow)
+                if (final_rescale_count > 0)
                 {
-                    rescale_many(
-                        accumulator,
-                        accumulator,
-                        final_rescale_count);
-                }
-                else if (final_rescale_count > 0)
-                {
-                    rescale_many(
-                        accumulator,
-                        workspace.scratch2,
-                        final_rescale_count);
-                    accumulator = std::move(workspace.scratch2);
+                    if (lane_count == 2 &&
+                        lanes[0].accumulator.meta.parms_id == lanes[1].accumulator.meta.parms_id)
+                    {
+                        if (d2d_free_dataflow)
+                        {
+                            rescale_many_pair(
+                                lanes[0].accumulator, lanes[1].accumulator,
+                                lanes[0].accumulator, lanes[1].accumulator,
+                                final_rescale_count);
+                        }
+                        else
+                        {
+                            rescale_many_pair(
+                                lanes[0].accumulator, lanes[1].accumulator,
+                                *lanes[0].scratch[2], *lanes[1].scratch[2],
+                                final_rescale_count);
+                            lanes[0].accumulator = std::move(*lanes[0].scratch[2]);
+                            lanes[1].accumulator = std::move(*lanes[1].scratch[2]);
+                        }
+                    }
+                    else
+                    {
+                        for (std::size_t lane = 0; lane < lane_count; ++lane)
+                        {
+                            auto &L = lanes[lane];
+                            if (d2d_free_dataflow)
+                            {
+                                rescale_many(L.accumulator, L.accumulator, final_rescale_count);
+                            }
+                            else
+                            {
+                                rescale_many(L.accumulator, *L.scratch[2], final_rescale_count);
+                                L.accumulator = std::move(*L.scratch[2]);
+                            }
+                        }
+                    }
                 }
                 if (bootstrap_data.eval_mod.polynomial_output_scale > 0.0)
                 {
-                    accumulator.meta.scale =
-                        bootstrap_data.eval_mod.polynomial_output_scale;
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        lanes[lane].accumulator.meta.scale =
+                            bootstrap_data.eval_mod.polynomial_output_scale;
+                    }
                 }
             }
         }
@@ -8776,11 +13247,11 @@ void GpuEvaluator::eval_mod_high_precision(
     if (workspace.capture_eval_mod_trace)
     {
         copy_ciphertext_data(
-            accumulator,
+            lanes[0].accumulator,
             workspace.eval_mod_trace_polynomial_output,
             "GpuEvaluator::eval_mod_high_precision trace polynomial copy");
         workspace.eval_mod_trace_polynomial_output.meta.scale =
-            accumulator.meta.scale;
+            lanes[0].accumulator.meta.scale;
     }
 
     {
@@ -8802,207 +13273,312 @@ void GpuEvaluator::eval_mod_high_precision(
                 multiply_recorder.begin(
                     "EvalMod.mul.double_angle." +
                         std::to_string(double_angle_index) +
-                        ".q" + std::to_string(accumulator.meta.q_count),
-                    accumulator.meta.q_count,
+                        ".q" + std::to_string(lanes[0].accumulator.meta.q_count),
+                    lanes[0].accumulator.meta.q_count,
                     relin_keys.meta.p_count,
                     true);
             }
-            square(accumulator, workspace.scratch5);
+            if (lane_count == 2 &&
+                lanes[0].accumulator.meta.parms_id == lanes[1].accumulator.meta.parms_id)
+            {
+                square_pair(
+                    lanes[0].accumulator, lanes[1].accumulator,
+                    *lanes[0].scratch[5], *lanes[1].scratch[5]);
+            }
+            else
+            {
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    square(lanes[lane].accumulator, *lanes[lane].scratch[5]);
+                }
+            }
             if (workspace.capture_eval_mod_trace)
             {
                 workspace.eval_mod_trace_double_angle_square_outputs.emplace_back();
                 copy_ciphertext_data(
-                    workspace.scratch5,
+                    *lanes[0].scratch[5],
                     workspace.eval_mod_trace_double_angle_square_outputs.back(),
                     "GpuEvaluator::eval_mod_high_precision trace square copy");
                 workspace.eval_mod_trace_double_angle_square_outputs.back().meta.scale =
-                    workspace.scratch5.meta.scale;
+                    lanes[0].scratch[5]->meta.scale;
             }
-            if (bootstrap_data.eval_mod.dynamic_rescale)
+            const bool use_fused_da_x2 =
+                double_angle_rescale_count == 2 &&
+                !workspace.capture_eval_mod_trace &&
+                use_rescale_x2() &&
+                use_relinearize_rescale_x2();
+            if (use_fused_da_x2)
             {
-                relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+                if (lane_count == 2 &&
+                    lanes[0].scratch[5]->meta.parms_id == lanes[1].scratch[5]->meta.parms_id)
+                {
+                    add_pair(
+                        *lanes[0].scratch[5], *lanes[0].scratch[5],
+                        *lanes[1].scratch[5], *lanes[1].scratch[5],
+                        *lanes[0].scratch[3], *lanes[1].scratch[3]);
+                }
+                else
+                {
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        add(*lanes[lane].scratch[5], *lanes[lane].scratch[5], *lanes[lane].scratch[3]);
+                    }
+                }
+                if (!double_angle_plaintext.empty())
+                {
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        auto &L = lanes[lane];
+                        if (!(L.scratch[3]->meta.parms_id ==
+                              double_angle_plaintext.meta.parms_id))
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
+                        }
+                        add_plain_inplace(
+                            *L.scratch[3],
+                            double_angle_plaintext,
+                            "GpuEvaluator::eval_mod_high_precision double-angle constant");
+                    }
+                }
+                if (lane_count == 2)
+                {
+                    relinearize_rescale_x2_hybrid_pair(
+                        *lanes[0].scratch[3],
+                        *lanes[1].scratch[3],
+                        relin_keys,
+                        *lanes[0].scratch[5],
+                        *lanes[1].scratch[5]);
+                }
+                else
+                {
+                    relinearize_rescale_x2_hybrid(
+                        *lanes[0].scratch[3],
+                        relin_keys,
+                        *lanes[0].scratch[5]);
+                }
+                multiply_recorder.end();
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
+                {
+                    lanes[lane].accumulator = std::move(*lanes[lane].scratch[5]);
+                }
+            }
+            else if (bootstrap_data.eval_mod.dynamic_rescale)
+            {
+                relinearize_lanes(5, 2);
                 multiply_recorder.end();
                 if (workspace.capture_eval_mod_trace)
                 {
                     workspace.eval_mod_trace_double_angle_relin_outputs.emplace_back();
                     copy_ciphertext_data(
-                        workspace.scratch2,
+                        *lanes[0].scratch[2],
                         workspace.eval_mod_trace_double_angle_relin_outputs.back(),
                         "GpuEvaluator::eval_mod_high_precision trace relin copy");
                     workspace.eval_mod_trace_double_angle_relin_outputs.back().meta.scale =
-                        workspace.scratch2.meta.scale;
+                        lanes[0].scratch[2]->meta.scale;
                 }
-                add(workspace.scratch2, workspace.scratch2, workspace.scratch3);
-                const GpuCiphertextData *pre_rescale_double_angle =
-                    &workspace.scratch3;
-                if (!double_angle_plaintext.empty())
+                if (lane_count == 2 &&
+                    lanes[0].scratch[2]->meta.parms_id == lanes[1].scratch[2]->meta.parms_id)
                 {
-                    if (!(workspace.scratch3.meta.parms_id ==
-                          double_angle_plaintext.meta.parms_id))
+                    if (!double_angle_plaintext.empty())
                     {
-                        throw std::invalid_argument(
-                            "GpuEvaluator::eval_mod_high_precision: dynamic "
-                            "double-angle plaintext level mismatch at step " +
-                            std::to_string(double_angle_index) +
-                            " (cipher q=" +
-                            std::to_string(workspace.scratch3.meta.q_count) +
-                            ", plaintext q=" +
-                            std::to_string(double_angle_plaintext.meta.q_count) +
-                            ")");
+                        if (!(lanes[0].scratch[2]->meta.parms_id ==
+                              double_angle_plaintext.meta.parms_id))
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: dynamic "
+                                "double-angle plaintext level mismatch at step " +
+                                std::to_string(double_angle_index) +
+                                " (cipher q=" +
+                                std::to_string(lanes[0].scratch[2]->meta.q_count) +
+                                ", plaintext q=" +
+                                std::to_string(double_angle_plaintext.meta.q_count) +
+                                ")");
+                        }
+                        double_sub_or_add_plain_pair(
+                            kernel::DoublePlainPairOp::AddPlainC0,
+                            *lanes[0].scratch[2],
+                            lanes[1].scratch[2],
+                            double_angle_plaintext,
+                            nullptr,
+                            nullptr,
+                            *lanes[0].scratch[3],
+                            lanes[1].scratch[3],
+                            "GpuEvaluator::eval_mod_high_precision dynamic double-angle constant");
                     }
-                    add_plain_inplace(
-                        workspace.scratch3,
-                        double_angle_plaintext,
-                        "GpuEvaluator::eval_mod_high_precision dynamic double-angle constant");
-                }
-                if (double_angle_rescale_count > 0)
-                {
-                    rescale_many(
-                        *pre_rescale_double_angle,
-                        workspace.scratch5,
-                        double_angle_rescale_count);
-                    accumulator = std::move(workspace.scratch5);
-                }
-                else
-                {
-                    if (d2d_free_dataflow)
+                    else
                     {
-                        accumulator = std::move(workspace.scratch3);
+                        add_pair(
+                            *lanes[0].scratch[2], *lanes[0].scratch[2],
+                            *lanes[1].scratch[2], *lanes[1].scratch[2],
+                            *lanes[0].scratch[3], *lanes[1].scratch[3]);
+                    }
+                    if (double_angle_rescale_count > 0)
+                    {
+                        rescale_many_pair(
+                            *lanes[0].scratch[3], *lanes[1].scratch[3],
+                            *lanes[0].scratch[5], *lanes[1].scratch[5],
+                            double_angle_rescale_count);
+                        lanes[0].accumulator = std::move(*lanes[0].scratch[5]);
+                        lanes[1].accumulator = std::move(*lanes[1].scratch[5]);
+                    }
+                    else if (d2d_free_dataflow)
+                    {
+                        lanes[0].accumulator = std::move(*lanes[0].scratch[3]);
+                        lanes[1].accumulator = std::move(*lanes[1].scratch[3]);
                     }
                     else
                     {
                         copy_ciphertext_data(
-                            *pre_rescale_double_angle,
-                            accumulator,
+                            *lanes[0].scratch[3],
+                            lanes[0].accumulator,
                             "GpuEvaluator::eval_mod_high_precision double-angle no-rescale copy");
+                        copy_ciphertext_data(
+                            *lanes[1].scratch[3],
+                            lanes[1].accumulator,
+                            "GpuEvaluator::eval_mod_high_precision double-angle no-rescale copy");
+                    }
+                }
+                else
+                {
+                    for (std::size_t lane = 0; lane < lane_count; ++lane)
+                    {
+                        auto &L = lanes[lane];
+                        add(*L.scratch[2], *L.scratch[2], *L.scratch[3]);
+                        const GpuCiphertextData *pre_rescale_double_angle =
+                            L.scratch[3];
+                        if (!double_angle_plaintext.empty())
+                        {
+                            if (!(L.scratch[3]->meta.parms_id ==
+                                  double_angle_plaintext.meta.parms_id))
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: dynamic "
+                                    "double-angle plaintext level mismatch at step " +
+                                    std::to_string(double_angle_index) +
+                                    " (cipher q=" +
+                                    std::to_string(L.scratch[3]->meta.q_count) +
+                                    ", plaintext q=" +
+                                    std::to_string(double_angle_plaintext.meta.q_count) +
+                                    ")");
+                            }
+                            add_plain_inplace(
+                                *L.scratch[3],
+                                double_angle_plaintext,
+                                "GpuEvaluator::eval_mod_high_precision dynamic double-angle constant");
+                        }
+                        if (double_angle_rescale_count > 0)
+                        {
+                            rescale_many(
+                                *pre_rescale_double_angle,
+                                *L.scratch[5],
+                                double_angle_rescale_count);
+                            L.accumulator = std::move(*L.scratch[5]);
+                        }
+                        else
+                        {
+                            if (d2d_free_dataflow)
+                            {
+                                L.accumulator = std::move(*L.scratch[3]);
+                            }
+                            else
+                            {
+                                copy_ciphertext_data(
+                                    *pre_rescale_double_angle,
+                                    L.accumulator,
+                                    "GpuEvaluator::eval_mod_high_precision double-angle no-rescale copy");
+                            }
+                        }
                     }
                 }
                 if (workspace.capture_eval_mod_trace)
                 {
                     workspace.eval_mod_trace_double_angle_rescaled_square_outputs.emplace_back();
                     copy_ciphertext_data(
-                        accumulator,
+                        lanes[0].accumulator,
                         workspace.eval_mod_trace_double_angle_rescaled_square_outputs.back(),
                         "GpuEvaluator::eval_mod_high_precision trace rescaled double-angle copy");
                     workspace.eval_mod_trace_double_angle_rescaled_square_outputs.back().meta.scale =
-                        accumulator.meta.scale;
+                        lanes[0].accumulator.meta.scale;
                 }
-            }
-            else if (double_angle_rescale_count == 2 &&
-                     use_rescale_x2() &&
-                     use_relinearize_rescale_x2())
-            {
-                add(workspace.scratch5, workspace.scratch5, workspace.scratch3);
-                if (!double_angle_plaintext.empty())
-                {
-                    if (!(workspace.scratch3.meta.parms_id ==
-                          double_angle_plaintext.meta.parms_id))
-                    {
-                        throw std::invalid_argument(
-                            "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
-                    }
-                    add_plain_inplace(
-                        workspace.scratch3,
-                        double_angle_plaintext,
-                        "GpuEvaluator::eval_mod_high_precision double-angle constant");
-                    relinearize_rescale_x2_hybrid(
-                        workspace.scratch3,
-                        relin_keys,
-                        workspace.scratch5);
-                }
-                else
-                {
-                    relinearize_rescale_x2_hybrid(
-                        workspace.scratch3,
-                        relin_keys,
-                        workspace.scratch5);
-                }
-                multiply_recorder.end();
             }
             else
             {
-                relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+                relinearize_lanes(5, 2);
                 multiply_recorder.end();
-                add(workspace.scratch2, workspace.scratch2, workspace.scratch3);
-
-                if (!double_angle_plaintext.empty())
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
                 {
-                    if (!(workspace.scratch3.meta.parms_id ==
-                          double_angle_plaintext.meta.parms_id))
+                    auto &L = lanes[lane];
+                    add(*L.scratch[2], *L.scratch[2], *L.scratch[3]);
+                    if (!double_angle_plaintext.empty())
                     {
-                        throw std::invalid_argument(
-                            "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
+                        if (!(L.scratch[3]->meta.parms_id ==
+                              double_angle_plaintext.meta.parms_id))
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
+                        }
+                        add_plain_inplace(
+                            *L.scratch[3],
+                            double_angle_plaintext,
+                            "GpuEvaluator::eval_mod_high_precision fallback double-angle constant");
                     }
-                    add_plain_inplace(
-                        workspace.scratch3,
-                        double_angle_plaintext,
-                        "GpuEvaluator::eval_mod_high_precision fallback double-angle constant");
                     rescale_many(
-                        workspace.scratch3,
-                        workspace.scratch5,
+                        *L.scratch[3],
+                        *L.scratch[5],
                         double_angle_rescale_count);
                 }
-                else
+                for (std::size_t lane = 0; lane < lane_count; ++lane)
                 {
-                    rescale_many(
-                        workspace.scratch3,
-                        workspace.scratch5,
-                        double_angle_rescale_count);
+                    lanes[lane].accumulator = std::move(*lanes[lane].scratch[5]);
                 }
-            }
-            if (!bootstrap_data.eval_mod.dynamic_rescale)
-            {
-                accumulator = std::move(workspace.scratch5);
             }
             if (workspace.capture_eval_mod_trace)
             {
                 workspace.eval_mod_trace_double_angle_outputs.emplace_back();
                 copy_ciphertext_data(
-                    accumulator,
+                    lanes[0].accumulator,
                     workspace.eval_mod_trace_double_angle_outputs.back(),
                     "GpuEvaluator::eval_mod_high_precision trace double-angle copy");
                 workspace.eval_mod_trace_double_angle_outputs.back().meta.scale =
-                    accumulator.meta.scale;
+                    lanes[0].accumulator.meta.scale;
             }
         }
     }
     stage_recorder.record(5);
 
-    /*
-     * The CPU high-precision evaluator may finish at a lower Q prefix because
-     * its recursive evaluator performs additional level alignment. Setup can
-     * record that observable output parms_id without moving the recursive
-     * control flow into the GPU hot path. Dropping a Q suffix is a contiguous,
-     * coefficient-parallel operation and preserves the evaluated CKKS value.
-     */
     {
         NvtxRange range("EvalMod output level alignment");
-        if (bootstrap_data.eval_mod.output_parms_id != parms_id_zero &&
-            accumulator.meta.parms_id != bootstrap_data.eval_mod.output_parms_id)
+        for (std::size_t lane = 0; lane < lane_count; ++lane)
         {
-            if (accumulator.meta.q_count < bootstrap_data.eval_mod.output_q_count)
+            auto &L = lanes[lane];
+            if (bootstrap_data.eval_mod.output_parms_id != parms_id_zero &&
+                L.accumulator.meta.parms_id != bootstrap_data.eval_mod.output_parms_id)
             {
-                throw std::invalid_argument(
-                    "GpuEvaluator::eval_mod_high_precision: GPU polynomial schedule ended below the configured CPU output level");
+                if (L.accumulator.meta.q_count < bootstrap_data.eval_mod.output_q_count)
+                {
+                    throw std::invalid_argument(
+                        "GpuEvaluator::eval_mod_high_precision: GPU polynomial schedule ended below the configured CPU output level");
+                }
+                if (!q_prefix_views ||
+                    !drop_modulus_inplace(
+                        L.accumulator,
+                        bootstrap_data.eval_mod.output_parms_id))
+                {
+                    drop_modulus(
+                        L.accumulator,
+                        *L.scratch[2],
+                        bootstrap_data.eval_mod.output_parms_id);
+                    L.accumulator = std::move(*L.scratch[2]);
+                }
             }
-            if (!q_prefix_views ||
-                !drop_modulus_inplace(
-                    accumulator,
-                    bootstrap_data.eval_mod.output_parms_id))
+            if (bootstrap_data.eval_mod.output_scale > 0.0)
             {
-                drop_modulus(
-                    accumulator,
-                    workspace.scratch2,
-                    bootstrap_data.eval_mod.output_parms_id);
-                accumulator = std::move(workspace.scratch2);
+                L.accumulator.meta.scale = bootstrap_data.eval_mod.output_scale;
             }
-        }
-        if (bootstrap_data.eval_mod.output_scale > 0.0)
-        {
-            accumulator.meta.scale = bootstrap_data.eval_mod.output_scale;
-        }
 
-        destination_ciphertext = std::move(accumulator);
+            *destinations[lane] = std::move(L.accumulator);
+        }
     }
     stage_recorder.finish(workspace.eval_mod_stage_timing);
     multiply_recorder.finish(workspace.eval_mod_multiply_timings);

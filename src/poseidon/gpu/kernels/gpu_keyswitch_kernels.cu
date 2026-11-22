@@ -735,8 +735,24 @@ __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel(
     std::size_t base_p_size,
     std::size_t degree,
     unsigned int degree_power,
-    bool source_preweighted)
+    bool source_preweighted,
+    std::size_t q_batch_stride = 0,
+    std::size_t p_batch_stride = 0)
 {
+    if (q_batch_stride != 0)
+    {
+        const std::size_t q_offset =
+            static_cast<std::size_t>(blockIdx.z) * q_batch_stride;
+        converted_q0 += q_offset;
+        converted_q1 += q_offset;
+    }
+    if (p_batch_stride != 0)
+    {
+        const std::size_t p_offset =
+            static_cast<std::size_t>(blockIdx.z) * p_batch_stride;
+        accum_p0 += p_offset;
+        accum_p1 += p_offset;
+    }
     const std::size_t half = degree >> 1;
     const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
     const std::size_t tile_count = (base_q_size + QTile - 1) / QTile;
@@ -3787,6 +3803,290 @@ void launch_hybrid_forward_ntt_q_two_components_stages(
     }
 }
 
+template <int TargetTile>
+__global__ void hybrid_modup_qp_lazy_pair_kernel(
+    GpuWord *modup_q0,
+    GpuWord *modup_p0,
+    const GpuWord *c2_coeff0,
+    GpuWord *modup_q1,
+    GpuWord *modup_p1,
+    const GpuWord *c2_coeff1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *q_matrix_offsets,
+    const GpuWord *q_matrices,
+    const GpuWord *p_matrix_offsets,
+    const GpuWord *p_matrices,
+    const GpuWord *qi_inv_punctured,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t active_q_count = base_q_size - decomp_limb_count;
+    const std::size_t active_total = active_q_count + base_p_size;
+    const std::size_t tile_count =
+        (active_total + TargetTile - 1) / TargetTile;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t tile_index = tid >> degree_power;
+    if (tile_index >= tile_count)
+    {
+        return;
+    }
+
+    const std::size_t coeff = tid & (degree - 1);
+    const std::size_t inv_offset = decomp_index * base_p_size;
+    const std::size_t q_matrix_base = q_matrix_offsets[decomp_index];
+    const std::size_t p_matrix_base = p_matrix_offsets[decomp_index];
+
+    bool valid[TargetTile];
+    GpuWord target_mod[TargetTile];
+    GpuWide target_barrett[TargetTile];
+    const GpuWord *matrix_rows[TargetTile];
+    GpuWord *dst0[TargetTile];
+    GpuWord *dst1[TargetTile];
+    LazyAccumulator acc0[TargetTile];
+    LazyAccumulator acc1[TargetTile];
+
+#pragma unroll
+    for (int t = 0; t < TargetTile; ++t)
+    {
+        const std::size_t active_idx = tile_index * TargetTile + t;
+        valid[t] = active_idx < active_total;
+        if (!valid[t])
+        {
+            continue;
+        }
+        if (active_idx < active_q_count)
+        {
+            const std::size_t q_limb = active_idx +
+                (active_idx >= decomp_limb_begin ? decomp_limb_count : 0);
+            target_mod[t] = rns_primes[q_limb];
+            target_barrett[t] = rns_modulus_constants[q_limb];
+            matrix_rows[t] = q_matrices + q_matrix_base + q_limb * base_p_size;
+            const std::size_t off = q_limb * degree + coeff;
+            dst0[t] = modup_q0 + off;
+            dst1[t] = modup_q1 + off;
+        }
+        else
+        {
+            const std::size_t p_limb = active_idx - active_q_count;
+            const std::size_t table_limb = base_q_size + p_limb;
+            target_mod[t] = rns_primes[table_limb];
+            target_barrett[t] = rns_modulus_constants[table_limb];
+            matrix_rows[t] = p_matrices + p_matrix_base + p_limb * base_p_size;
+            const std::size_t off = p_limb * degree + coeff;
+            dst0[t] = modup_p0 + off;
+            dst1[t] = modup_p1 + off;
+        }
+    }
+
+    for (std::size_t col = 0; col < decomp_limb_count; ++col)
+    {
+        const std::size_t src_limb = decomp_limb_begin + col;
+        const std::size_t src_off = src_limb * degree + coeff;
+        const GpuWord inv_punctured = qi_inv_punctured[inv_offset + col];
+        const GpuWord src_mod = rns_primes[src_limb];
+        const GpuWide src_barrett = rns_modulus_constants[src_limb];
+        const GpuWord v0 = c2_coeff0[src_off];
+        const GpuWord v1 = c2_coeff1[src_off];
+        const GpuWord w0 = inv_punctured == 1
+            ? v0
+            : mul_mod(v0, inv_punctured, src_mod, src_barrett);
+        const GpuWord w1 = inv_punctured == 1
+            ? v1
+            : mul_mod(v1, inv_punctured, src_mod, src_barrett);
+#pragma unroll
+        for (int t = 0; t < TargetTile; ++t)
+        {
+            if (valid[t])
+            {
+                const GpuWord m = matrix_rows[t][col];
+                lazy_mac(acc0[t], w0, m);
+                lazy_mac(acc1[t], w1, m);
+            }
+        }
+    }
+
+#pragma unroll
+    for (int t = 0; t < TargetTile; ++t)
+    {
+        if (valid[t])
+        {
+            *dst0[t] = lazy_reduce(acc0[t], target_mod[t], target_barrett[t]);
+            *dst1[t] = lazy_reduce(acc1[t], target_mod[t], target_barrett[t]);
+        }
+    }
+}
+
+__global__ void copy_decomp_q_limbs_batch_kernel(
+    CopyDecompQBatchArgs args,
+    std::size_t batch_count,
+    std::size_t q_count,
+    std::size_t p_count,
+    std::size_t degree)
+{
+    const std::size_t coeff = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t limb = blockIdx.y;
+    const std::size_t batch = blockIdx.z;
+    if (coeff >= degree || limb >= q_count || batch >= batch_count)
+    {
+        return;
+    }
+    const std::size_t digit = limb / p_count;
+    const std::size_t limb_offset = limb * degree + coeff;
+    args.digit0_q[batch][digit * q_count * degree + limb_offset] =
+        args.source_q[batch][limb_offset];
+}
+
+template <int TargetTile>
+__global__ void hybrid_modup_qp_lazy_batch_kernel(
+    HybridModUpBatchArgs args,
+    std::size_t batch_count,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *q_matrix_offsets,
+    const GpuWord *q_matrices,
+    const GpuWord *p_matrix_offsets,
+    const GpuWord *p_matrices,
+    const GpuWord *qi_inv_punctured,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree)
+{
+    const std::size_t tile_index = blockIdx.x;
+    const std::size_t coeff = blockIdx.y * blockDim.x + threadIdx.x;
+    const std::size_t batch = blockIdx.z;
+    if (coeff >= degree || batch >= batch_count)
+    {
+        return;
+    }
+
+    const std::size_t active_q_count = base_q_size - decomp_limb_count;
+    const std::size_t active_total = active_q_count + base_p_size;
+    const std::size_t active_base = tile_index * TargetTile;
+    if (active_base >= active_total)
+    {
+        return;
+    }
+
+    const int active_rem = static_cast<int>(
+        active_total - active_base < static_cast<std::size_t>(TargetTile)
+            ? active_total - active_base
+            : static_cast<std::size_t>(TargetTile));
+    const std::size_t inv_offset = decomp_index * base_p_size;
+    const std::size_t q_matrix_base = q_matrix_offsets[decomp_index];
+    const std::size_t p_matrix_base = p_matrix_offsets[decomp_index];
+
+    const GpuWord *matrix_rows[TargetTile];
+#pragma unroll
+    for (int t = 0; t < TargetTile; ++t)
+    {
+        if (t < active_rem)
+        {
+            const std::size_t active_idx = active_base + t;
+            if (active_idx < active_q_count)
+            {
+                const std::size_t q_limb = active_idx +
+                    (active_idx >= decomp_limb_begin ? decomp_limb_count : 0);
+                matrix_rows[t] =
+                    q_matrices + q_matrix_base + q_limb * base_p_size;
+            }
+            else
+            {
+                const std::size_t p_limb = active_idx - active_q_count;
+                matrix_rows[t] =
+                    p_matrices + p_matrix_base + p_limb * base_p_size;
+            }
+        }
+        else
+        {
+            matrix_rows[t] = nullptr;
+        }
+    }
+
+    LazyAccumulator acc[TargetTile]{};
+    const GpuWord *__restrict__ c2_coeff = args.c2_coeff[batch];
+    for (std::size_t col = 0; col < decomp_limb_count; ++col)
+    {
+        const std::size_t src_limb = decomp_limb_begin + col;
+        const GpuWord inv_punctured = qi_inv_punctured[inv_offset + col];
+        const GpuWord v = c2_coeff[src_limb * degree + coeff];
+        const GpuWord w = inv_punctured == 1
+            ? v
+            : mul_mod(
+                v,
+                inv_punctured,
+                rns_primes[src_limb],
+                rns_modulus_constants[src_limb]);
+#pragma unroll
+        for (int t = 0; t < TargetTile; ++t)
+        {
+            if (t < active_rem)
+            {
+                lazy_mac(acc[t], w, matrix_rows[t][col]);
+            }
+        }
+    }
+
+    GpuWord *__restrict__ modup_q = args.modup_q[batch];
+    GpuWord *__restrict__ modup_p = args.modup_p[batch];
+#pragma unroll
+    for (int t = 0; t < TargetTile; ++t)
+    {
+        if (t < active_rem)
+        {
+            const std::size_t active_idx = active_base + t;
+            if (active_idx < active_q_count)
+            {
+                const std::size_t q_limb = active_idx +
+                    (active_idx >= decomp_limb_begin ? decomp_limb_count : 0);
+                modup_q[q_limb * degree + coeff] = lazy_reduce(
+                    acc[t],
+                    rns_primes[q_limb],
+                    rns_modulus_constants[q_limb]);
+            }
+            else
+            {
+                const std::size_t p_limb = active_idx - active_q_count;
+                const std::size_t table_limb = base_q_size + p_limb;
+                modup_p[p_limb * degree + coeff] = lazy_reduce(
+                    acc[t],
+                    rns_primes[table_limb],
+                    rns_modulus_constants[table_limb]);
+            }
+        }
+    }
+}
+
+void validate_hybrid_modup_range(
+    const char *name,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(name, parameter_shard, degree);
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    if (decomp_index >= parameter_shard.hybrid_decomp_count ||
+        decomp_limb_count == 0 ||
+        decomp_limb_count > base_p_size ||
+        decomp_limb_begin > base_q_size ||
+        decomp_limb_count > base_q_size - decomp_limb_begin)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": invalid decomposition range");
+    }
+}
+
 }  // namespace
 
 void launch_hybrid_modup_decomposition(
@@ -3882,6 +4182,263 @@ void launch_hybrid_modup_decomposition(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_modup_decomposition kernel launch");
+}
+
+void launch_hybrid_modup_decomposition_pair(
+    GpuWord *modup_q0,
+    GpuWord *modup_p0,
+    const GpuWord *c2_coeff0,
+    const GpuWord *c2_ntt0,
+    GpuWord *modup_q1,
+    GpuWord *modup_p1,
+    const GpuWord *c2_coeff1,
+    const GpuWord *c2_ntt1,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (!lazy_base_conversion_enabled(decomp_limb_count) ||
+        decomp_limb_count <= 1)
+    {
+        launch_hybrid_modup_decomposition(
+            modup_q0,
+            modup_p0,
+            c2_coeff0,
+            c2_ntt0,
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            parameter_shard,
+            degree);
+        launch_hybrid_modup_decomposition(
+            modup_q1,
+            modup_p1,
+            c2_coeff1,
+            c2_ntt1,
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            parameter_shard,
+            degree);
+        return;
+    }
+
+    const char *name = "launch_hybrid_modup_decomposition_pair";
+    validate_hybrid_tables(name, parameter_shard, degree);
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    if (modup_q0 == nullptr || modup_p0 == nullptr || c2_coeff0 == nullptr ||
+        modup_q1 == nullptr || modup_p1 == nullptr || c2_coeff1 == nullptr)
+    {
+        throw std::invalid_argument(std::string(name) + ": null data pointer");
+    }
+    if (decomp_index >= parameter_shard.hybrid_decomp_count ||
+        decomp_limb_count == 0 ||
+        decomp_limb_count > base_p_size ||
+        decomp_limb_begin > base_q_size ||
+        decomp_limb_count > base_q_size - decomp_limb_begin)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": invalid decomposition range");
+    }
+
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    constexpr int block_size = 256;
+    constexpr int target_tile = 4;
+    const std::size_t tiles =
+        (base_q_size - decomp_limb_count + base_p_size + target_tile - 1) /
+        target_tile;
+    const int lazy_grid = static_cast<int>((tiles * degree + block_size - 1) / block_size);
+    const unsigned int degree_power = checked_log2_degree(degree, name);
+    hybrid_modup_qp_lazy_pair_kernel<target_tile>
+        <<<lazy_grid, block_size, 0, gpu_execution_stream()>>>(
+            modup_q0,
+            modup_p0,
+            c2_coeff0,
+            modup_q1,
+            modup_p1,
+            c2_coeff1,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_q_conv_matrix_offsets.data(),
+            parameter_shard.hybrid_q_conv_matrices.data(),
+            parameter_shard.hybrid_p_conv_matrix_offsets.data(),
+            parameter_shard.hybrid_p_conv_matrices.data(),
+            parameter_shard.hybrid_qi_inv_punctured.data(),
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            base_q_size,
+            base_p_size,
+            degree,
+            degree_power);
+    gpu_check_cuda(cudaGetLastError(), "launch_hybrid_modup_decomposition_pair kernel launch");
+}
+
+void launch_copy_decomp_q_limbs_batch(
+    const CopyDecompQBatchArgs &args,
+    std::size_t batch_count,
+    std::size_t q_count,
+    std::size_t p_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (batch_count == 0 || q_count == 0)
+    {
+        return;
+    }
+    const char *name = "launch_copy_decomp_q_limbs_batch";
+    if (batch_count > kMaxHybridModUpBatch)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": batch_count exceeds kMaxHybridModUpBatch");
+    }
+    if (degree == 0 || p_count == 0)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shape");
+    }
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        if (args.digit0_q[b] == nullptr || args.source_q[b] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null data pointer");
+        }
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    constexpr int block_size = 256;
+    const dim3 grid(
+        static_cast<unsigned int>((degree + block_size - 1) / block_size),
+        static_cast<unsigned int>(q_count),
+        static_cast<unsigned int>(batch_count));
+    copy_decomp_q_limbs_batch_kernel<<<grid, block_size, 0, gpu_execution_stream()>>>(
+        args, batch_count, q_count, p_count, degree);
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_hybrid_modup_decomposition_batch(
+    const HybridModUpBatchArgs &batch_args,
+    std::size_t batch_count,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (batch_count == 0)
+    {
+        return;
+    }
+    if (batch_count == 1)
+    {
+        launch_hybrid_modup_decomposition(
+            batch_args.modup_q[0],
+            batch_args.modup_p[0],
+            batch_args.c2_coeff[0],
+            batch_args.c2_ntt[0],
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            parameter_shard,
+            degree);
+        return;
+    }
+    const char *name = "launch_hybrid_modup_decomposition_batch";
+    if (batch_count > kMaxHybridModUpBatch)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": batch_count exceeds kMaxHybridModUpBatch");
+    }
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        if (batch_args.modup_q[b] == nullptr ||
+            batch_args.modup_p[b] == nullptr ||
+            batch_args.c2_coeff[b] == nullptr ||
+            batch_args.c2_ntt[b] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null data pointer");
+        }
+    }
+    validate_hybrid_modup_range(
+        name,
+        decomp_index,
+        decomp_limb_begin,
+        decomp_limb_count,
+        parameter_shard,
+        degree);
+
+    if (!lazy_base_conversion_enabled(decomp_limb_count) ||
+        decomp_limb_count <= 1)
+    {
+        for (std::size_t b = 0; b < batch_count; ++b)
+        {
+            launch_hybrid_modup_decomposition(
+                batch_args.modup_q[b],
+                batch_args.modup_p[b],
+                batch_args.c2_coeff[b],
+                batch_args.c2_ntt[b],
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                parameter_shard,
+                degree);
+        }
+        return;
+    }
+
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    const std::size_t active_total =
+        base_q_size - decomp_limb_count + base_p_size;
+    constexpr int block_size = 256;
+    const int coeff_blocks =
+        static_cast<int>((degree + block_size - 1) / block_size);
+    const int target_tile = []() {
+        if (const char *raw = std::getenv("POSEIDON_GPU_MODUP_BATCH_TILE"))
+        {
+            if (std::string(raw) == "4")
+            {
+                return 4;
+            }
+        }
+        return 8;
+    }();
+    auto launch_tile = [&](auto tile_tag) {
+        constexpr int kTile = decltype(tile_tag)::value;
+        const std::size_t tiles = (active_total + kTile - 1) / kTile;
+        const dim3 grid(
+            static_cast<unsigned int>(tiles),
+            static_cast<unsigned int>(coeff_blocks),
+            static_cast<unsigned int>(batch_count));
+        hybrid_modup_qp_lazy_batch_kernel<kTile>
+            <<<grid, block_size, 0, gpu_execution_stream()>>>(
+                batch_args,
+                batch_count,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.hybrid_q_conv_matrix_offsets.data(),
+                parameter_shard.hybrid_q_conv_matrices.data(),
+                parameter_shard.hybrid_p_conv_matrix_offsets.data(),
+                parameter_shard.hybrid_p_conv_matrices.data(),
+                parameter_shard.hybrid_qi_inv_punctured.data(),
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                base_q_size,
+                base_p_size,
+                degree);
+    };
+    if (target_tile == 4)
+    {
+        launch_tile(std::integral_constant<int, 4>{});
+    }
+    else
+    {
+        launch_tile(std::integral_constant<int, 8>{});
+    }
+    gpu_check_cuda(cudaGetLastError(), name);
 }
 
 void launch_hybrid_modup_decomposition_forward_ntt_first_stage(
@@ -5537,19 +6094,30 @@ void launch_hybrid_convert_p_to_q(
         "launch_hybrid_convert_p_to_q kernel launch");
 }
 
-void launch_hybrid_convert_p_to_q_coeff_lazy(
+namespace
+{
+void launch_hybrid_convert_p_to_q_coeff_lazy_impl(
+    const char *name,
     GpuWord *converted_q0,
     GpuWord *converted_q1,
     const GpuWord *p_coeff0,
     const GpuWord *p_coeff1,
+    std::size_t batch_count,
+    std::size_t q_batch_stride,
+    std::size_t p_batch_stride,
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
 {
-    const char *name = "launch_hybrid_convert_p_to_q_coeff_lazy";
     validate_hybrid_tables(name, parameter_shard, degree);
+    if (batch_count == 0)
+    {
+        return;
+    }
     if (converted_q0 == nullptr || converted_q1 == nullptr ||
         p_coeff0 == nullptr || p_coeff1 == nullptr)
+    {
         throw std::invalid_argument(std::string(name) + ": null data pointer");
+    }
     gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
     const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
     const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
@@ -5562,7 +6130,10 @@ void launch_hybrid_convert_p_to_q_coeff_lazy(
     const std::size_t tiles = (base_q_size + q_tile - 1) / q_tile;
     const int grid = static_cast<int>((tiles * (degree >> 1) + block_size - 1) / block_size);
     hybrid_convert_p_to_q_forward_ntt_first_stage_lazy_kernel<q_tile, false>
-        <<<grid, block_size, 0, gpu_execution_stream()>>>(
+        <<<dim3(grid, 1, static_cast<unsigned int>(batch_count)),
+           block_size,
+           0,
+           gpu_execution_stream()>>>(
             converted_q0,
             converted_q1,
             p_coeff0,
@@ -5576,8 +6147,63 @@ void launch_hybrid_convert_p_to_q_coeff_lazy(
             base_p_size,
             degree,
             checked_log2_degree(degree, name),
-            false);
+            false,
+            q_batch_stride,
+            p_batch_stride);
     gpu_check_cuda(cudaGetLastError(), name);
+}
+}  // namespace
+
+void launch_hybrid_convert_p_to_q_coeff_lazy(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *p_coeff0,
+    const GpuWord *p_coeff1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    launch_hybrid_convert_p_to_q_coeff_lazy_impl(
+        "launch_hybrid_convert_p_to_q_coeff_lazy",
+        converted_q0,
+        converted_q1,
+        p_coeff0,
+        p_coeff1,
+        1,
+        0,
+        0,
+        parameter_shard,
+        degree);
+}
+
+void launch_hybrid_convert_p_to_q_coeff_lazy_batch(
+    GpuWord *converted_q,
+    const GpuWord *p_coeff,
+    std::size_t batch_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_hybrid_convert_p_to_q_coeff_lazy_batch";
+    if (batch_count == 0)
+    {
+        return;
+    }
+    if (converted_q == nullptr || p_coeff == nullptr)
+    {
+        throw std::invalid_argument(std::string(name) + ": null data pointer");
+    }
+    const std::size_t q_words = parameter_shard.hybrid_base_q_count * degree;
+    const std::size_t p_words = parameter_shard.hybrid_base_p_count * degree;
+    launch_hybrid_convert_p_to_q_coeff_lazy_impl(
+        name,
+        converted_q,
+        converted_q + q_words,
+        p_coeff,
+        p_coeff + p_words,
+        batch_count,
+        2 * q_words,
+        2 * p_words,
+        parameter_shard,
+        degree);
 }
 
 void launch_hybrid_convert_p_to_q_forward_ntt(
@@ -6584,6 +7210,216 @@ void launch_apply_galois_ntt_poly_shard(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_apply_galois_ntt_poly_shard kernel launch");
+}
+
+namespace
+{
+
+template <bool IsQ, int SourceCount, bool Dnum1>
+__global__ void relin_keymul_batch_kernel(
+    GpuWord *destination,
+    RelinKeymulBatchArgs args,
+    const GpuWord *__restrict__ p_mod_q,
+    const GpuWord *__restrict__ moduli,
+    const GpuWide *__restrict__ barrett,
+    std::size_t dnum,
+    std::size_t limb_count,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t tid =
+        static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+    const std::size_t words_per_digit = limb_count * degree;
+    if (tid >= words_per_digit)
+    {
+        return;
+    }
+
+    const std::size_t limb = tid >> degree_power;
+    const GpuWord modulus = moduli[limb];
+    const GpuWide ratio = barrett[limb];
+
+    GpuWord acc0[SourceCount]{};
+    GpuWord acc1[SourceCount]{};
+    const GpuWord *const *digits_ptrs = IsQ ? args.digits_q : args.digits_p;
+    const GpuWord *const *key0_ptrs = IsQ ? args.key_q0 : args.key_p0;
+    const GpuWord *const *key1_ptrs = IsQ ? args.key_q1 : args.key_p1;
+    if constexpr (Dnum1)
+    {
+        const GpuWord k0 = __ldg(&key0_ptrs[0][tid]);
+        const GpuWord k1 = __ldg(&key1_ptrs[0][tid]);
+#pragma unroll
+        for (int s = 0; s < SourceCount; ++s)
+        {
+            const GpuWord val = digits_ptrs[s][tid];
+            acc0[s] = mul_mod(val, k0, modulus, ratio);
+            acc1[s] = mul_mod(val, k1, modulus, ratio);
+        }
+    }
+    else
+    {
+        for (std::size_t digit = 0; digit < dnum; ++digit)
+        {
+            const GpuWord k0 = __ldg(&key0_ptrs[digit][tid]);
+            const GpuWord k1 = __ldg(&key1_ptrs[digit][tid]);
+            const std::size_t digit_offset = digit * words_per_digit + tid;
+#pragma unroll
+            for (int s = 0; s < SourceCount; ++s)
+            {
+                const GpuWord val = digits_ptrs[s][digit_offset];
+                acc0[s] = add_mod(acc0[s], mul_mod(val, k0, modulus, ratio), modulus);
+                acc1[s] = add_mod(acc1[s], mul_mod(val, k1, modulus, ratio), modulus);
+            }
+        }
+    }
+
+    if constexpr (IsQ)
+    {
+        const GpuWord pmq = p_mod_q[limb];
+#pragma unroll
+        for (int s = 0; s < SourceCount; ++s)
+        {
+            acc0[s] = add_mod(
+                acc0[s], mul_mod(args.c0_q[s][tid], pmq, modulus, ratio), modulus);
+            acc1[s] = add_mod(
+                acc1[s], mul_mod(args.c1_q[s][tid], pmq, modulus, ratio), modulus);
+        }
+    }
+
+#pragma unroll
+    for (int s = 0; s < SourceCount; ++s)
+    {
+        GpuWord *__restrict__ dst0 = destination + (s * 2) * words_per_digit;
+        GpuWord *__restrict__ dst1 = dst0 + words_per_digit;
+        dst0[tid] = acc0[s];
+        dst1[tid] = acc1[s];
+    }
+}
+
+template <int SourceCount>
+void launch_relin_keymul_batch_sources(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const RelinKeymulBatchArgs &args,
+    std::size_t dnum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    constexpr int block_size = 256;
+    const std::size_t q_count = parameter_shard.hybrid_base_q_count;
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const int q_grid = static_cast<int>((q_count * degree + block_size - 1) / block_size);
+    const int p_grid = static_cast<int>((p_count * degree + block_size - 1) / block_size);
+
+    auto run = [&](auto dnum1_tag) {
+        constexpr bool kDnum1 = decltype(dnum1_tag)::value;
+        relin_keymul_batch_kernel<true, SourceCount, kDnum1>
+            <<<q_grid, block_size, 0, gpu_execution_stream()>>>(
+                destination_q,
+                args,
+                parameter_shard.hybrid_p_mod_q.data(),
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                dnum,
+                q_count,
+                degree,
+                degree_power);
+        relin_keymul_batch_kernel<false, SourceCount, kDnum1>
+            <<<p_grid, block_size, 0, gpu_execution_stream()>>>(
+                destination_p,
+                args,
+                nullptr,
+                parameter_shard.rns_primes.data() + q_count,
+                parameter_shard.rns_modulus_constants.data() + q_count,
+                dnum,
+                p_count,
+                degree,
+                degree_power);
+    };
+    if (dnum == 1)
+    {
+        run(std::true_type{});
+    }
+    else
+    {
+        run(std::false_type{});
+    }
+}
+
+}  // namespace
+
+void launch_relin_keymul_batch(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const RelinKeymulBatchArgs &args,
+    std::size_t source_count,
+    std::size_t dnum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_relin_keymul_batch";
+    validate_hybrid_tables(name, parameter_shard, degree);
+    if (destination_q == nullptr || destination_p == nullptr ||
+        source_count == 0 || source_count > kMaxRelinBatchSources ||
+        dnum == 0 || dnum > kMaxRelinDnum)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid argument");
+    }
+    for (std::size_t d = 0; d < dnum; ++d)
+    {
+        if (args.key_q0[d] == nullptr || args.key_p0[d] == nullptr ||
+            args.key_q1[d] == nullptr || args.key_p1[d] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null key pointer");
+        }
+    }
+    for (std::size_t s = 0; s < source_count; ++s)
+    {
+        if (args.digits_q[s] == nullptr || args.digits_p[s] == nullptr ||
+            args.c0_q[s] == nullptr || args.c1_q[s] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null batch pointer");
+        }
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    const unsigned int degree_power = checked_log2_degree(degree, name);
+    switch (source_count)
+    {
+        case 1:
+            launch_relin_keymul_batch_sources<1>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        case 2:
+            launch_relin_keymul_batch_sources<2>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        case 3:
+            launch_relin_keymul_batch_sources<3>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        case 4:
+            launch_relin_keymul_batch_sources<4>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        case 5:
+            launch_relin_keymul_batch_sources<5>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        case 6:
+            launch_relin_keymul_batch_sources<6>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        case 7:
+            launch_relin_keymul_batch_sources<7>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+        default:
+            launch_relin_keymul_batch_sources<8>(
+                destination_q, destination_p, args, dnum, parameter_shard, degree, degree_power);
+            break;
+    }
+    gpu_check_cuda(cudaGetLastError(), name);
 }
 
 }  // namespace kernel

@@ -342,6 +342,7 @@ option(POSEIDON_BUILD_CKKS_RUNTIME_API
     "Build the optional CKKS Runtime CPU/GPU Api integration" OFF)
 message(STATUS "POSEIDON_BUILD_CKKS_RUNTIME_API: ${POSEIDON_BUILD_CKKS_RUNTIME_API}")
 option(POSEIDON_BUILD_GPU "Build the standalone Poseidon GPU library" OFF)
+option(POSEIDON_BUILD_LLAMA_MANUAL "Build the handwritten Llama accuracy experiment" OFF)
 option(POSEIDON_BUILD_RESNET20_S2C_FIRST
     "Build the self-contained S2C-first ResNet20 application" OFF)
 
@@ -387,7 +388,7 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_API)
 endif()
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_API OR POSEIDON_BUILD_GPU OR
-   POSEIDON_BUILD_RESNET20_S2C_FIRST)
+   POSEIDON_BUILD_RESNET20_S2C_FIRST OR POSEIDON_BUILD_LLAMA_MANUAL)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
@@ -406,6 +407,10 @@ endif()
 if(POSEIDON_BUILD_RESNET20_S2C_FIRST)
     enable_testing()
     add_subdirectory(bench/resnet20_s2c_first)
+endif()
+
+if(POSEIDON_BUILD_LLAMA_MANUAL)
+    add_subdirectory(bench/llama_manual)
 endif()
 
 install(
