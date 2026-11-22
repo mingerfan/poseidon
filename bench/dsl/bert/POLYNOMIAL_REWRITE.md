@@ -42,7 +42,7 @@ Opaque内部算术仍须另加，不能把这张普通算子表当全部HE工作
 生成示例：
 
 ```bash
-python3 bench/bert_dsl/generate_aligned.py --output-dir NEW_V5 \
+python3 bench/dsl/bert/generate_aligned.py --output-dir NEW_V5 \
   --data-from-plan GOLD_V3 --periodic-encoding --algebra-rewrite \
   --shared-rotation-rescale --prepared-qk --polynomial-reassociation \
   --profile-report PROFILE_R256.json

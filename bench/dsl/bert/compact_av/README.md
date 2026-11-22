@@ -16,7 +16,7 @@ also synchronize). Not concurrently callable.
 **Evidence update:** standalone real GPU probe now passes: pair median0.146162465s,
 all32768-slot max abs error6.24e-9, four-run actual counters checked. Preparing72 IDs
 shares exactly one1,037,303,808B mask bundle. See
-`../../../test-results/bert-a800-20261115/v4-a800/20261115T140945Z/FINAL-REPORT.md`.
+`../../../../test-results/bert-a800-20261115/v4-a800/20261115T140945Z/FINAL-REPORT.md`.
 This is not full encoder/72-pair latency. Parent has separately integrated the
 backend (`../PREPARED_AV.md`), whose full-model GPU validation is still pending.
 The standalone still requires explicit `--run-gpu` and bounded resource admission.
@@ -106,7 +106,7 @@ by default and verifies persistent bytes/bundle counts do not grow.
 Local example from repository root:
 
 ```sh
-cmake -S bench/bert_dsl/compact_av \
+cmake -S bench/dsl/bert/compact_av \
   -B test-results/bert-a800-20261115/compact-av-build/local \
   -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++-15 \
   -DCOMPACT_AV_PREBUILT_BUILD="$PWD/build-runtime-gpu-api-release" \

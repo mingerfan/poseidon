@@ -9,7 +9,7 @@ selected automatically. Builds never execute a benchmark or a GPU probe.
 - GPU runners: Linux, C++20 compiler, CMake >=3.26.4, a compatible NVIDIA CUDA
   toolkit, GMP C/C++ development files and spdlog/fmt development packages.
 - Keep the bundled `third_party/{ckks-runtime,rmm,cccl,nvtx,rapids-cmake,cpm}`
-  dependencies available; see `../../third_party/README.md`. SOURCE builds do
+  dependencies available; see `../../../third_party/README.md`. SOURCE builds do
   not require any prior `.so` or `.a` files.
 - Python plan generation/tests additionally require Python 3 and NumPy. Hecate
   is optional and only needed for the separate compiler-export path.
@@ -21,7 +21,7 @@ selected automatically. Builds never execute a benchmark or a GPU probe.
 From the repository root, for an SM80 target:
 
 ```sh
-cmake -S bench/bert_dsl -B build-bert \
+cmake -S bench/dsl/bert -B build-bert \
   -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=80
 cmake --build build-bert --parallel 2
 ```
@@ -33,7 +33,7 @@ Set `-DBERT_BUILD_PREPARED=OFF` for the ordinary RuntimePlan-only runner, or
 The equivalent convenience entry is:
 
 ```sh
-bash bench/bert_dsl/build.sh build -B build-bert -- \
+bash bench/dsl/bert/build.sh build -B build-bert -- \
   -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=80
 ```
 
@@ -55,7 +55,7 @@ is a compatibility entry for the unified prepared-runner build.
 ## CPU-only checks (no CUDA or Poseidon libraries)
 
 ```sh
-cmake -S bench/bert_dsl -B build-bert-cpu -DBERT_BUILD_GPU=OFF
+cmake -S bench/dsl/bert -B build-bert-cpu -DBERT_BUILD_GPU=OFF
 cmake --build build-bert-cpu --parallel 2
 # Optional, explicit test invocation:
 ctest --test-dir build-bert-cpu --output-on-failure
@@ -71,7 +71,7 @@ Use a fresh build directory when switching GPU/dependency configurations.
 For an ABI-compatible build on the target machine:
 
 ```sh
-cmake -S bench/bert_dsl -B build-bert-prebuilt \
+cmake -S bench/dsl/bert -B build-bert-prebuilt \
   -DBERT_DEPENDENCY_MODE=PREBUILT \
   -DBERT_PREBUILT_BUILD=/path/to/compatible/build \
   -DCMAKE_CUDA_ARCHITECTURES=80

@@ -6,7 +6,7 @@ needed. Add `--boot-precision` to `generate_aligned.py` to regenerate a cyclic,
 selective q52-p11/r256 encoder plan at input L12. For example:
 
 ```sh
-python3 bench/bert_dsl/generate_aligned.py --output-dir bert-precise --layers 12 \
+python3 bench/dsl/bert/generate_aligned.py --output-dir bert-precise --layers 12 \
   --boot-precision --prepared-qk --qk-pack-inputs --prepared-av --av-pack-inputs \
   --algebra-rewrite --shared-rotation-rescale
 ```

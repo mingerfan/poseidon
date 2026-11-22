@@ -445,7 +445,7 @@ def make_spec(context, profile, primes):
     return dict(spec_format_version=2, spec_id='bert-a800-research-v1', version=1,
         status='validated', target_id='poseidon-ckks-gpu', rescale_mode='native', noise_unit=None,
         provenance=dict(kind='research-manual-schedule', repository='poseidon', revision='uncommitted',
-                        path='bench/bert_dsl/backend.py', source_sha256=digest(Path(__file__).read_bytes())),
+                        path='bench/dsl/bert/backend.py', source_sha256=digest(Path(__file__).read_bytes())),
         context=dict(context_id='bert-research', poly_degree=context['poly_degree'],
             rns_moduli_log2=context['q_moduli_bits'], rns_moduli=primes,
             max_modulus_log2=max(context['q_moduli_bits']), default_scale_log2=context['default_scale_log2']),

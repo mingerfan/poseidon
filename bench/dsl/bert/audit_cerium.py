@@ -80,8 +80,8 @@ REFERENCES = [
     ('third_party/ckks-runtime/runtime/plan.hpp', [30,69], 'standard op/payload boundary'),
     ('src/poseidon/runtime_api/poseidon_gpu_api.cpp', [2161,2229], 'one-CT native Boot contract'),
     ('src/poseidon/gpu/gpu_evaluator.h', [753,761], 'GPU conjugate exists below RuntimePlan'),
-    ('bench/bert_dsl/cerium_packing.py', [1,28], 'new compact scheme keeps our different polynomial workload'),
-    ('bench/bert_dsl/cerium_lowering.py', [1,7], 'new two-prime lowerer explicitly is not the Cerium compiler'),
+    ('bench/dsl/bert/cerium_packing.py', [1,28], 'new compact scheme keeps our different polynomial workload'),
+    ('bench/dsl/bert/cerium_lowering.py', [1,7], 'new two-prime lowerer explicitly is not the Cerium compiler'),
 ]
 
 
@@ -243,7 +243,7 @@ def audit(root):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--repo', type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument('--repo', type=Path, default=Path(__file__).resolve().parents[3])
     parser.add_argument('--check', type=Path, help='compare against a previously saved audit JSON, without writing')
     args = parser.parse_args()
     root = args.repo.resolve()

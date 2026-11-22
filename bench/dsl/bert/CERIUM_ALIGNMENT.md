@@ -54,7 +54,7 @@ Newton刷新3次。**GELU 的6次 vec2函数调用只是算术batch，内部没�
 ### 可复核证据，不是手填调用统计
 
 ```bash
-python3 -B bench/bert_dsl/audit_cerium.py --check \
+python3 -B bench/dsl/bert/audit_cerium.py --check \
   test-results/bert-a800-20261115/cerium-audit.json
 # 不写文件；不导入 Cerium/Torch/CUDA。省略 --check 则将重新生成的 JSON 打到 stdout。
 ```
@@ -165,10 +165,10 @@ Boot后的scalar编码scale1024才恢复B。上述表格使用推导值，不机
 **native56 / d30DA3K16候选**对齐部分scale调度/参数选择，**不是原样Cerium profile**。
 这不是这些候选已GPU验证、数值等价或性能更优的声明。
 
-`bench/bert_dsl/cerium_packing.py:1–28` 明确保留当前模型自己的 encrypted mean
+`bench/dsl/bert/cerium_packing.py:1–28` 明确保留当前模型自己的 encrypted mean
 subtraction、exp4、3步reciprocal、GELU4、rsqrt3；Cerium却是sign/max reduction、
 6步exp、6步inverse-sqrt及分段GELU。不能仅凭packing或Boot次数宣称非线性已对齐。
-`bench/bert_dsl/cerium_lowering.py:1–7` 也明确它不是Cerium compiler。
+`bench/dsl/bert/cerium_lowering.py:1–7` 也明确它不是Cerium compiler。
 候选degree/DA/K相同仍不保证Hanki系数/ε、ground双prime、DFT分组、P/key策略、
 real/imag配对、实际scale或输出activeQ相同。
 

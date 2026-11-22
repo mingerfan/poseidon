@@ -157,7 +157,7 @@ From the repository root (CPU compilation/linking only):
 
 ```sh
 out="$PWD/test-results/bert-a800-20261115/compact-av-build/packed-input2/local"
-cmake -S bench/bert_dsl/compact_av -B "$out" \
+cmake -S bench/dsl/bert/compact_av -B "$out" \
   -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++-15 \
   -DCOMPACT_AV_PREBUILT_BUILD="$PWD/build-runtime-gpu-api-release" \
   -DCOMPACT_AV_CPU_LIBRARY="$PWD/build-runtime-gpu-api-release/libposeidon_shared.so" \

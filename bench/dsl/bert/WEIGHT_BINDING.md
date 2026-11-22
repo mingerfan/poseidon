@@ -41,7 +41,7 @@ T128两/四层CPU计划已验证54/108 Linear、12/24 QK及12/24 AV、46/92**计
 正式归档全部raw参数，不能跳过hash检查。
 
 ```bash
-python3 bench/bert_dsl/generate_aligned.py --output-dir NEW_BOUND_PLAN \
+python3 bench/dsl/bert/generate_aligned.py --output-dir NEW_BOUND_PLAN \
   --data-from-plan GOLD_PLAN_DIR --layers 12 --scope encoder \
   --periodic-encoding --algebra-rewrite --shared-rotation-rescale --prepared-qk \
   --profile-report PROFILE.json

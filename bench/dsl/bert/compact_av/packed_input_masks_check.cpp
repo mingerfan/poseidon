@@ -354,7 +354,7 @@ int main() {
         const std::uint64_t value_pt_bytes = std::uint64_t(degree) * 9 * sizeof(std::uint64_t);
         const std::uint64_t score_pt_bytes = std::uint64_t(degree) * 11 * sizeof(std::uint64_t);
         std::cout << std::setprecision(17)
-                  << "{\"passed\":true,\"source\":\"bench/bert_dsl/compact_av/packed_input_masks_check.cpp\","
+                  << "{\"passed\":true,\"source\":\"bench/dsl/bert/compact_av/packed_input_masks_check.cpp\","
                   << "\"cpu_only\":true,\"no_gpu\":true,\"no_full_encrypted_t128\":true,"
                   << "\"scope\":\"production_ring_plaintext_masks_only\",\"keys_generated\":0,\"encryption_calls\":0,"
                   << "\"ciphertexts_allocated\":0,\"evaluator_calls\":0,\"metadata_overrides\":false,"

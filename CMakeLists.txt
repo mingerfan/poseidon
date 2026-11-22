@@ -410,7 +410,7 @@ if(POSEIDON_BUILD_RESNET20_S2C_FIRST)
 endif()
 
 if(POSEIDON_BUILD_LLAMA_MANUAL)
-    add_subdirectory(bench/llama_manual)
+    add_subdirectory(bench/manual/llama)
 endif()
 
 install(

@@ -207,11 +207,11 @@ Cerium有常驻PT和remappable绑定机制。当前显存余量已增加，可�
 
 ## 原始证据
 
-- [本轮汇总报告](../../test-results/bert-a800-20261115/README.md)
-- [当前encoder完整报告](../../test-results/bert-a800-20261115/aligned-encoder/report.json)
-- [当前物理计划统计](../../test-results/bert-a800-20261115/compact-cyclic-q52-r256-selected-v3/schedule.json)
-- [当前Linear物理合同](../../test-results/bert-a800-20261115/compact-cyclic-q52-r256-selected-v3/compact-linear.json)
-- [Cerium原生结果](../../test-results/bert-a800-20261114/cerium/RESULTS.json)
-- [Cerium编译DAG审计](../../test-results/bert-a800-20261115/cerium-audit.json)
+- [本轮汇总报告](../../../test-results/bert-a800-20261115/README.md)
+- [当前encoder完整报告](../../../test-results/bert-a800-20261115/aligned-encoder/report.json)
+- [当前物理计划统计](../../../test-results/bert-a800-20261115/compact-cyclic-q52-r256-selected-v3/schedule.json)
+- [当前Linear物理合同](../../../test-results/bert-a800-20261115/compact-cyclic-q52-r256-selected-v3/compact-linear.json)
+- [Cerium原生结果](../../../test-results/bert-a800-20261114/cerium/RESULTS.json)
+- [Cerium编译DAG审计](../../../test-results/bert-a800-20261115/cerium-audit.json)
 
 `test-results/`是被Git忽略的本地产物，新clone不自带这些报告。本文仅保存分析，没有启动GPU实验或修改实现。

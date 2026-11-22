@@ -3,7 +3,7 @@
 **Status update: the standalone GPU pair and integrated one-block v4 have now
 been measured.** Pair median0.296522763s, all32768-score max error1.57e-10;
 integrated full block8.222786937s/23 native Boots (1warmup+3samples), without AV.
-See `../../../test-results/bert-a800-20261115/v4-a800/20261115T140945Z/FINAL-REPORT.md`
+See `../../../../test-results/bert-a800-20261115/v4-a800/20261115T140945Z/FINAL-REPORT.md`
 and `../PREPARED_QK.md`. Full-model accuracy is not passed. This helper remains
 QK only, not AV or an automatic compiler result; backend integration is separate.
 
@@ -190,7 +190,7 @@ existing GPU archive. The default paths match the frozen 20261114 toolchain;
 override all matching paths together when building locally:
 
 ```sh
-cmake -S bench/bert_dsl/compact_attention \
+cmake -S bench/dsl/bert/compact_attention \
   -B test-results/bert-a800-20261115/compact-attention-build/packed-input2/local \
   -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=/usr/bin/g++-15 \
   -DATTENTION_PREBUILT_BUILD="$PWD/build-runtime-gpu-api-release" \

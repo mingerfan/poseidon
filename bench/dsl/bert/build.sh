@@ -2,7 +2,7 @@
 # Configure/build only. Never run CTest, a runner, or a device probe.
 set -euo pipefail
 source_dir=${BERT_SOURCE_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)}
-root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)
 build_dir=${BERT_BUILD_DIR:-$root/build-bert}
 mode=build
 usage() {

@@ -1,6 +1,6 @@
 """CPU-only layout and dense-polynomial oracles; no Hecate/GPU dependency.
 
-Run: python -m unittest bench.bert_dsl.test_packed_model -v
+Run: python -m unittest bench.dsl.bert.test_packed_model -v
 These tests validate the selected polynomial workload, not CKKS error or the
 accuracy of the polynomials against pretrained BERT's transcendental functions.
 """

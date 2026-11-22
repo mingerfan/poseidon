@@ -42,27 +42,27 @@ N4未启动即停止。最新packed12已完成如上，不回溯改旧失败或�
 此前真实v3 12层119.297476332s是另一窗口，v6耗时为其64.06%，仅描述对照。
 Cerium12尚无实测，不给其百分比。17:42:17UTC退出，17:44:22和主线18:05独立确认释放。
 [12层v6结果/可迁移metadata证据](full_inference_v6/GPU_RESULTS.md)；
-[历史v3证据](../../test-results/bert-a800-20261115/full12-v3/README.md)。
+[历史v3证据](../../../test-results/bert-a800-20261115/full12-v3/README.md)。
 
 **最新v6完整单层A/B**（T128，1warmup＋3测，同新runner/同窗）：control-B
 8.236990537s → **6.303876115s（Cerium的104.04%）**，耗时降低23.47%。
 v6组合polynomial＋prepared AV，每run实际23Boot/27Linear/6QK/6AV，内部计数和单份共享
 MaskBundle均吻合；wall中位6.490315884s，另有main565.975s/整native进程569.425s。输出全部有限但
 max参考误差37.94，**精度未通过**。独立报告：
-[`v6-a800/20261115T144308Z/FINAL-REPORT.md`](../../test-results/bert-a800-20261115/v6-a800/20261115T144308Z/FINAL-REPORT.md)。
+[`v6-a800/20261115T144308Z/FINAL-REPORT.md`](../../../test-results/bert-a800-20261115/v6-a800/20261115T144308Z/FINAL-REPORT.md)。
 原12层data的2→4→12实测亦已完成如上，不能由本单层时间推算。
 
 此前v4单层A/B（同runner同窗）：等价改写＋共享Rescale
 为 **9.107563s（Cerium的150.31%）**；再加prepared QK为
 **8.222787s（135.71%）**，后者耗时降低9.71%。每轮实际23Boot/27Linear，QK版另6pairs、
 全部内部实际计数吻合。输出有限但整层精度未通过。AV独立GPU probe亦已通过（不是整层成绩）。
-详见[冻结v4正式报告](../../test-results/bert-a800-20261115/v4-a800/20261115T140945Z/FINAL-REPORT.md)。
+详见[冻结v4正式报告](../../../test-results/bert-a800-20261115/v4-a800/20261115T140945Z/FINAL-REPORT.md)。
 
 此前v3：128 tokens、完整1个encoder block、1 warmup＋3测，在线中位 **9.8395s**，相对上一版52.1698s为 **5.30×**；Cerium为6.059s，新版仍慢 **1.624×**。每轮真实 **29次native Boot**，没有删除非线性或用私钥refresh。HE参数/近似不同，不能称等参数消融；整层精度未通过。
 
 独立完整FFN-up新版 **140.879ms**，相对上一版4.617s约 **32.77×**；不能用该子层倍数代替整层5.30×。原始未优化prefix128现已完成单次cold：在线 **3087.961s**、实际1920次Boot；与新版warm中位的数值比约313.83×，但不是同采样/等参数的严格加速比。
 
-详细样本和复现：[本轮报告](../../test-results/bert-a800-20261115/README.md)、[新路径](ALIGNED.md)。
+详细样本和复现：[本轮报告](../../../test-results/bert-a800-20261115/README.md)、[新路径](ALIGNED.md)。
 后续优先级、真实12层串接与完整计时口径见 [优化/完整实测计划](OPTIMIZATION_PLAN.md)。
 
 [等价算术/共享Rescale](EQUIVALENT_REWRITE.md)显式opt-in，单层实测23Boot；
@@ -87,7 +87,7 @@ CPU未找到namespace桥接；后来独立资源诊断窗完成七stage如上。
 
 同参数 FFN-up Rescale消融：独立Rescale **9.274s** → 积和共享Rescale **4.617s（2.01×）**；Cerium对应子层约0.281s。完整runtime wall还需计入重复权重初始化，不能只用online替代请求总耗时。
 
-详细样本、内存边界与复现：[本地实验报告](../../test-results/bert-a800-20261114/README.md)。该目录是忽略的本地产物，不是新clone自带输入。
+详细样本、内存边界与复现：[本地实验报告](../../../test-results/bert-a800-20261114/README.md)。该目录是忽略的本地产物，不是新clone自带输入。
 
 ## 后续紧凑 packing / 模数链对齐
 
@@ -122,7 +122,7 @@ CPU未找到namespace桥接；后来独立资源诊断窗完成七stage如上。
 原生 Hecate 入口为 `trace_hecate.py`（真正的 `hc.func` / `hc.save`），配置好已有的 `HECATE`、`HECATE_BUILD`、`PYTHONPATH` 后可执行：
 
 ```bash
-python3 bench/bert_dsl/trace_hecate.py --layout packed --tokens 128 --layers 1 \
+python3 bench/dsl/bert/trace_hecate.py --layout packed --tokens 128 --layers 1 \
   --boot-policy none --output-dir NEW_NATIVE_TRACE
 ```
 
@@ -131,7 +131,7 @@ Adapter 在客户端取负公开系数，绕开当前前端将 `x-Plain` 错降�
 CPU 检查不需要 Hecate、Torch 或 GPU：
 
 ```bash
-python3 -m unittest discover -s bench/bert_dsl -p 'test_*.py' -v
+python3 -m unittest discover -s bench/dsl/bert -p 'test_*.py' -v
 ```
 
 统一构建入口为 `CMakeLists.txt` / `build.sh`，默认从源码构建 GPU/API/Runtime 和 prepared Linear/QK/AV；`build_a800.sh` 仅作为本地兼容包装，不再自动 SSH 部署。工具链和 GPU 架构由标准 CMake 参数选择，显式预编译库模式仍可用。详见 [构建说明](BUILDING.md)；构建不会启动 GPU 测试。
@@ -140,7 +140,7 @@ python3 -m unittest discover -s bench/bert_dsl -p 'test_*.py' -v
 
 ```bash
 bert_native_runner --probe-profile PROBE_FIXTURE profile.json
-python3 bench/bert_dsl/generate.py --layout packed --tokens 128 --layers 1 \
+python3 bench/dsl/bert/generate.py --layout packed --tokens 128 --layers 1 \
   --strategy selective --resident --profile-report profile.json --output-dir NEW_PLAN
 
 POSEIDON_RUNTIME_ROTATION_KEY_POLICY=binary CUDA_VISIBLE_DEVICES=0 \
@@ -160,7 +160,7 @@ bert_native_runner NEW_PLAN/model.runtime-plan.json NEW_PLAN/operator-spec.json 
 checkpoint 后端验证：
 
 ```bash
-python3 bench/bert_dsl/compile.py --hecate-opt HECATE_OPT --ckks-config CONFIG \
+python3 bench/dsl/bert/compile.py --hecate-opt HECATE_OPT --ckks-config CONFIG \
   --input-dir PLAN_WITH_MANUAL_CKKS --output-dir NEW_COMPILED
 ```
 

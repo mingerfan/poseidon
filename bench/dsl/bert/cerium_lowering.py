@@ -562,7 +562,7 @@ class MultiPrimeLowering(ManualLowering):
             prepared_linear_calls=len(self.prepared_calls),
             prepared_linear_arithmetic=dict(self.linear_stats), dense_weight_bytes=offset,
             boot_input_scale_lift_plaintext_log2=16 if self.scales[0] < 40 else 0,
-            prepared_backend='bench/bert_dsl/compact_native; true GPU tiled dense BSGS')
+            prepared_backend='bench/dsl/bert/compact_native; true GPU tiled dense BSGS')
         if self.normalize_shared_rotations:
             stats['shared_rotation_rescale'] = dict(enabled=True,
                 frontiers=self.shared_rotation_frontiers,

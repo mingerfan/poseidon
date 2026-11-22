@@ -1,7 +1,7 @@
 include_guard(GLOBAL)
 include(CMakeParseArguments)
 
-get_filename_component(_bert_default_poseidon_root "${CMAKE_CURRENT_LIST_DIR}/../../.." ABSOLUTE)
+get_filename_component(_bert_default_poseidon_root "${CMAKE_CURRENT_LIST_DIR}/../../../.." ABSOLUTE)
 set(POSEIDON_ROOT "${_bert_default_poseidon_root}" CACHE PATH "Poseidon source tree")
 set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR "${POSEIDON_ROOT}/third_party/ckks-runtime" CACHE PATH "CKKS Runtime source tree")
 set(BERT_DEPENDENCY_MODE AUTO CACHE STRING "Dependency mode: AUTO, SOURCE, or PREBUILT")

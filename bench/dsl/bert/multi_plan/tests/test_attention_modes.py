@@ -30,7 +30,7 @@ import unittest
 # In particular, importing the existing test helper must not create __pycache__.
 sys.dont_write_bytecode = True
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(__file__).resolve().parents[5]
 OUTPUT_ROOT = REPO_ROOT / 'test-results/bert-a800-20261115/multi-plan-build/attention-modes'
 ARGS = None
 RESULTS = []

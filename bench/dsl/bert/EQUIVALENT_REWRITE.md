@@ -54,8 +54,8 @@ LN默认center=1的identity乘法2个。两层tiny polynomial oracle在容差内
 ## 复现
 
 ```bash
-python3 -m unittest discover -s bench/bert_dsl -p 'test_*.py'
-python3 bench/bert_dsl/generate_aligned.py --output-dir NEW_CANDIDATE \
+python3 -m unittest discover -s bench/dsl/bert -p 'test_*.py'
+python3 bench/dsl/bert/generate_aligned.py --output-dir NEW_CANDIDATE \
   --scope encoder --periodic-encoding --algebra-rewrite --shared-rotation-rescale \
   --profile-report test-results/bert-a800-20261115/compact-native-build/fast-validation/profile-q52-r256.json
 ```

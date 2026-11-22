@@ -1,7 +1,7 @@
 """CPU-only slot simulation against independent dense polynomial BERT math.
 
 Run from the repository root with:
-    python -B -m unittest discover -s bench/bert_dsl -p test_model.py -v
+    python -B -m unittest discover -s bench/dsl/bert -p test_model.py -v
 
 The simulator intentionally has no scalar or Plain-left arithmetic overloads,
 so it checks the minimal backend interface rather than NumPy broadcasting.

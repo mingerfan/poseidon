@@ -26,9 +26,9 @@ acceptance is not enforced; nonfinite values and reference errors are reported.
 See [the portable build guide](../BUILDING.md). From the repository root:
 
 ```sh
-bash bench/bert_dsl/multi_plan/build-local.sh build -- -DCMAKE_CUDA_ARCHITECTURES=80
+bash bench/dsl/bert/multi_plan/build-local.sh build -- -DCMAKE_CUDA_ARCHITECTURES=80
 # Or build both runners together:
-cmake -S bench/bert_dsl -B build-bert -DBERT_BUILD_MULTI_PLAN=ON -DCMAKE_CUDA_ARCHITECTURES=80
+cmake -S bench/dsl/bert -B build-bert -DBERT_BUILD_MULTI_PLAN=ON -DCMAKE_CUDA_ARCHITECTURES=80
 cmake --build build-bert --parallel 2
 ```
 
@@ -157,10 +157,10 @@ GPU validation; no GPU replay or performance/accuracy result is established.
 ## CPU validation
 
 ```sh
-python3 bench/bert_dsl/multi_plan/tests/test_check_only.py \
+python3 bench/dsl/bert/multi_plan/tests/test_check_only.py \
   --runner test-results/bert-a800-20261115/multi-plan-build/attention-modes/build/bin/bert_multi_plan_runner \
   --guard test-results/bert-a800-20261115/multi-plan-build/attention-modes/build/tests/no_device_guard.so
-python3 bench/bert_dsl/multi_plan/tests/test_attention_modes.py \
+python3 bench/dsl/bert/multi_plan/tests/test_attention_modes.py \
   --runner test-results/bert-a800-20261115/multi-plan-build/attention-modes/build/bin/bert_multi_plan_runner \
   --guard test-results/bert-a800-20261115/multi-plan-build/attention-modes/build/tests/no_device_guard.so \
   --output-dir test-results/bert-a800-20261115/multi-plan-build/attention-modes/tests-modes/recheck

@@ -107,18 +107,18 @@ independently verified at06:50:20 UTC; no further GPU work is queued.
 ## Reproduction skeleton
 
 ```bash
-python3 -m unittest discover -s bench/bert_dsl -p 'test_*.py'
-python3 bench/bert_dsl/audit_cerium.py \
+python3 -m unittest discover -s bench/dsl/bert -p 'test_*.py'
+python3 bench/dsl/bert/audit_cerium.py \
   --check test-results/bert-a800-20261115/cerium-audit.json
 
 # CPU graph/schedule only, not a GPU measurement:
-python3 bench/bert_dsl/generate_aligned.py --output-dir NEW_PLAN \
+python3 bench/dsl/bert/generate_aligned.py --output-dir NEW_PLAN \
   --candidate q52-p11 --scope encoder --bootstrap-ratio 32 \
   --profile-report test-results/bert-a800-20261115/profile-q52/report.json \
   --profile-fixture test-results/bert-a800-20261115/profile-q52/fixture.json
 
 # New, complete-field ratio256 probe:
-python3 bench/bert_dsl/generate_aligned.py --output-dir NEW_FAST_PLAN \
+python3 bench/dsl/bert/generate_aligned.py --output-dir NEW_FAST_PLAN \
   --candidate q52-p11 --scope encoder --periodic-encoding \
   --profile-report test-results/bert-a800-20261115/compact-native-build/fast-validation/profile-q52-r256.json
 ```
