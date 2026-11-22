@@ -1,0 +1,11 @@
+{
+  "experiment": "016",
+  "commit": "cb834348cfd18c212e9bce003efb4569fe472bff",
+  "a800_wall_median_ms": 3071.21267,
+  "flags": [
+    "POSEIDON_WIDE_NTT_TRIPLE",
+    "POSEIDON_WIDE_INTT_TRIPLE",
+    "POSEIDON_WIDE_NTT_KEYACC"
+  ],
+  "h100_hardware_tested": false
+}
