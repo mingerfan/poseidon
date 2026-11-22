@@ -1,0 +1,49 @@
+-- CROSS_COMPILE_ARRCH64: OFF
+-- The CXX compiler identification is GNU 11.4.0
+-- The C compiler identification is GNU 11.4.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found GMP: /root/private_data/FHE_manual_20261114/deps/prefix/include
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_OPENMP: OFF
+-- POSEIDON_USE_SPDLOG: ON
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- The CUDA compiler identification is NVIDIA 11.8.89 with host compiler GNU 11.4.0
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - done
+-- Check for working CUDA compiler: /usr/local/cuda/bin/nvcc - skipped
+-- Detecting CUDA compile features
+-- Detecting CUDA compile features - done
+-- Found CUDAToolkit: /usr/local/cuda/targets/x86_64-linux/include (found version "11.8.89")
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- Found Git: /usr/bin/git (found version "2.34.1")
+-- CPM: Adding package CCCL@ (/root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/rmm/../cccl)
+-- Found libcudacxx: /root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/cccl/libcudacxx/lib/cmake/libcudacxx/libcudacxx-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0")
+-- Found Thrust: /root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/cccl/thrust/thrust/cmake/thrust-config.cmake (found suitable exact version "2.5.0.0")
+-- Found CUB: /root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/cccl/cub/cub/cmake/cub-config.cmake (found suitable version "2.5.0.0", minimum required is "2.5.0.0")
+-- Found CCCL: /root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/cccl/lib/cmake/cccl/cccl-config.cmake (found version "2.5.0.0")
+-- CPM: Adding package nvtx3@ (/root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/rmm/../nvtx)
+-- Configuring done (15.3s)
+-- Generating done (0.6s)
+-- Build files have been written to: /root/private_data/llama-manual-framework-node2-20261116-v1/build

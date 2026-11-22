@@ -3,6 +3,7 @@
 #include "poseidon/gpu/gpu_ciphertext.h"
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/gpu/gpu_parameter.h"
+#include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 
 namespace poseidon
 {
@@ -186,6 +187,79 @@ public:
     void square_ciphertext(
         GpuCiphertextView &destination_view,
         const GpuConstCiphertextView &source_view,
+        const GpuLevelInfo &level_info) const;
+
+    /** Multiply two ciphertexts by one shared plaintext in a single launch per shard. */
+    void multiply_plain_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &ciphertext_a_view,
+        const GpuConstCiphertextView &ciphertext_b_view,
+        const GpuConstRNSPolyView &plaintext_poly,
+        const GpuLevelInfo &level_info) const;
+
+    /** Add or subtract two ciphertext pairs in a single launch per shard. */
+    void add_or_sub_ciphertext_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &left_a_view,
+        const GpuConstCiphertextView &right_a_view,
+        const GpuConstCiphertextView &left_b_view,
+        const GpuConstCiphertextView &right_b_view,
+        bool subtract,
+        const GpuLevelInfo &level_info) const;
+
+    /** Fused multiply for two ciphertexts across two lanes (or single lane when b views omitted). */
+    void multiply_ciphertext_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &left_a_view,
+        const GpuConstCiphertextView &right_a_view,
+        const GpuConstCiphertextView &left_b_view,
+        const GpuConstCiphertextView &right_b_view,
+        const GpuLevelInfo &level_info) const;
+
+    /** Multiply up to kMaxElementwiseCiphertextBatch ciphertext pairs at the same level. */
+    void multiply_ciphertext_batch(
+        std::vector<GpuCiphertextView> &destination_views,
+        const std::vector<GpuConstCiphertextView> &left_views,
+        const std::vector<GpuConstCiphertextView> &right_views,
+        bool is_square,
+        const GpuLevelInfo &level_info) const;
+
+    /** Multiply up to 8 size-2 ciphertexts by one shared plaintext at the same level. */
+    void multiply_plain_batch(
+        std::vector<GpuCiphertextView> &destination_views,
+        const std::vector<GpuConstCiphertextView> &ciphertext_views,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    /** Add or subtract up to 8 size-2 ciphertext pairs at the same level. */
+    void add_or_sub_ciphertext_batch(
+        std::vector<GpuCiphertextView> &destination_views,
+        const std::vector<GpuConstCiphertextView> &left_views,
+        const std::vector<GpuConstCiphertextView> &right_views,
+        bool subtract,
+        const GpuLevelInfo &level_info) const;
+
+    /** Fused square for two ciphertexts across two lanes. */
+    void square_ciphertext_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView &source_b_view,
+        const GpuLevelInfo &level_info) const;
+
+    /** Fused 2*src +/- plain (or plain * corr) across one or two lanes. */
+    void double_sub_or_add_plain_pair(
+        kernel::DoublePlainPairOp op,
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView *destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView *source_b_view,
+        const GpuConstRNSPolyView &plaintext_poly,
+        const GpuConstCiphertextView *correction_a_view,
+        const GpuConstCiphertextView *correction_b_view,
         const GpuLevelInfo &level_info) const;
 
 private:

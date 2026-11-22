@@ -6,6 +6,7 @@
 
 #include <nvtx3/nvToolsExt.h>
 
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -346,6 +347,169 @@ GpuConstPolyShardView make_const_shard_view(
     return result;
 }
 
+bool is_fourstep_ntt_algo_for_rescale()
+{
+    const char *raw = std::getenv("POSEIDON_NTT_ALGO");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string algo(raw);
+    return algo == "fourstep" || algo == "four_step" || algo == "cheddar";
+}
+
+bool can_batch_rescale_fourstep(
+    std::size_t degree,
+    const GpuParameterShard &parameter_shard)
+{
+    return degree == 65536 &&
+           parameter_shard.limb_begin == 0 &&
+           !parameter_shard.fourstep_intt_tables.empty() &&
+           is_fourstep_ntt_algo_for_rescale();
+}
+
+void launch_correction_forward_ntt_components(
+    int device_id,
+    GpuWord *correction_ntt_data,
+    const GpuWord *correction_data,
+    std::size_t destination_q_count,
+    std::size_t degree,
+    std::size_t component_count,
+    const GpuParameterShard &parameter_shard)
+{
+    const std::size_t component_words = destination_q_count * degree;
+    if (component_count >= 2 &&
+        can_batch_rescale_fourstep(degree, parameter_shard))
+    {
+        const GpuPolyShardView first_ntt{
+            device_id, correction_ntt_data, 0, destination_q_count, 0, degree};
+        const GpuConstPolyShardView first_coeff{
+            device_id, correction_data, 0, destination_q_count, 0, degree};
+        kernel::launch_forward_ntt_poly_shard_batch_fourstep_65536(
+            first_ntt, first_coeff, parameter_shard, degree, component_count);
+        return;
+    }
+    for (std::size_t component = 0; component < component_count; ++component)
+    {
+        const std::size_t offset = component * component_words;
+        const GpuPolyShardView correction_ntt{
+            device_id, correction_ntt_data + offset, 0, destination_q_count, 0, degree};
+        const GpuConstPolyShardView correction_coeff{
+            device_id, correction_data + offset, 0, destination_q_count, 0, degree};
+        kernel::launch_forward_ntt_poly_shard(
+            correction_ntt, correction_coeff, parameter_shard, degree);
+    }
+}
+
+void launch_dropped_intt_ptrs_list(
+    int device_id,
+    GpuWord *dropped_coeff_data,
+    const kernel::InntPtrsArgs &src_args,
+    std::size_t dropped_begin,
+    std::size_t dropped_count,
+    std::size_t component_count,
+    std::size_t degree,
+    const GpuParameterShard &parameter_shard)
+{
+    if (component_count == 2 &&
+        can_batch_rescale_fourstep(degree, parameter_shard))
+    {
+        kernel::launch_inverse_ntt_two_components_fourstep_65536(
+            dropped_coeff_data,
+            dropped_coeff_data + dropped_count * degree,
+            src_args.sources[0],
+            src_args.sources[1],
+            dropped_begin,
+            dropped_count,
+            parameter_shard);
+        return;
+    }
+    if (component_count >= 3 &&
+        component_count <= kernel::kMaxInntPtrsBatch &&
+        can_batch_rescale_fourstep(degree, parameter_shard))
+    {
+        kernel::launch_inverse_ntt_ptrs_fourstep_65536(
+            dropped_coeff_data,
+            src_args,
+            dropped_begin - parameter_shard.limb_begin,
+            dropped_count,
+            component_count,
+            parameter_shard);
+        return;
+    }
+    for (std::size_t component = 0; component < component_count; ++component)
+    {
+        GpuPolyShardView dropped_coefficients;
+        dropped_coefficients.device_id = device_id;
+        dropped_coefficients.ptr =
+            dropped_coeff_data + component * dropped_count * degree;
+        dropped_coefficients.limb_begin = dropped_begin;
+        dropped_coefficients.limb_count = dropped_count;
+        dropped_coefficients.coeff_begin = 0;
+        dropped_coefficients.coeff_count = degree;
+        GpuConstPolyShardView dropped_ntt;
+        dropped_ntt.device_id = device_id;
+        dropped_ntt.ptr = src_args.sources[component];
+        dropped_ntt.limb_begin = dropped_begin;
+        dropped_ntt.limb_count = dropped_count;
+        dropped_ntt.coeff_begin = 0;
+        dropped_ntt.coeff_count = degree;
+        kernel::launch_inverse_ntt_poly_shard(
+            dropped_coefficients, dropped_ntt, parameter_shard, degree);
+    }
+}
+
+void launch_dropped_intt_components(
+    int device_id,
+    GpuWord *dropped_coeff_data,
+    const GpuConstCiphertextView &source_view,
+    std::size_t dropped_begin,
+    std::size_t dropped_count,
+    std::size_t component_count,
+    std::size_t degree,
+    const GpuParameterShard &parameter_shard)
+{
+    if (component_count <= kernel::kMaxInntPtrsBatch)
+    {
+        bool covered = true;
+        kernel::InntPtrsArgs src_args{};
+        for (std::size_t c = 0; c < component_count; ++c)
+        {
+            const auto &src = source_view.polys[c].shards.front();
+            if (src.limb_begin > dropped_begin ||
+                src.limb_begin + src.limb_count < dropped_begin + dropped_count)
+            {
+                covered = false;
+                break;
+            }
+            src_args.sources[c] = src.ptr + (dropped_begin - src.limb_begin) * degree;
+        }
+        if (covered)
+        {
+            launch_dropped_intt_ptrs_list(
+                device_id, dropped_coeff_data, src_args,
+                dropped_begin, dropped_count, component_count, degree, parameter_shard);
+            return;
+        }
+    }
+    for (std::size_t component = 0; component < component_count; ++component)
+    {
+        const auto &source_shard = source_view.polys[component].shards.front();
+        GpuPolyShardView dropped_coefficients;
+        dropped_coefficients.device_id = device_id;
+        dropped_coefficients.ptr =
+            dropped_coeff_data + component * dropped_count * degree;
+        dropped_coefficients.limb_begin = dropped_begin;
+        dropped_coefficients.limb_count = dropped_count;
+        dropped_coefficients.coeff_begin = 0;
+        dropped_coefficients.coeff_count = degree;
+        const auto dropped_ntt = make_source_limb_range(
+            source_shard, dropped_begin, dropped_count, degree);
+        kernel::launch_inverse_ntt_poly_shard(
+            dropped_coefficients, dropped_ntt, parameter_shard, degree);
+    }
+}
+
 /* 对component的rescale，主要包含INTT+BConv+NTT+Submult*/
 void rescale_poly(
     const GpuPolyShardView &destination_shard,
@@ -616,12 +780,8 @@ void GpuModSwitchHandler::rescale_ciphertext(
     const std::size_t destination_q_count = destination_view.meta.q_count;
     const int device_id = destination_view.polys.front().shards.front().device_id;
 
-    ensure_rescale_scratch(
-        degree,
-        destination_q_count,
-        device_id);
-
-    for (std::size_t i = 0; i < source_view.polys.size(); ++i)
+    const std::size_t component_count = source_view.polys.size();
+    for (std::size_t i = 0; i < component_count; ++i)
     {
         validate_single_shard_poly(
             "GpuModSwitchHandler::rescale_ciphertext source",
@@ -633,7 +793,6 @@ void GpuModSwitchHandler::rescale_ciphertext(
             destination_view.polys[i],
             destination_q_count,
             degree);
-
         const auto &destination_shard = destination_view.polys[i].shards.front();
         const auto &source_shard = source_view.polys[i].shards.front();
         if (destination_shard.device_id != source_shard.device_id)
@@ -641,6 +800,76 @@ void GpuModSwitchHandler::rescale_ciphertext(
             throw std::invalid_argument(
                 "GpuModSwitchHandler::rescale_ciphertext: source/destination device mismatch");
         }
+    }
+
+    if (component_count == 2)
+    {
+        const auto &dst0 = destination_view.polys[0].shards.front();
+        const auto &dst1 = destination_view.polys[1].shards.front();
+        const auto &src0 = source_view.polys[0].shards.front();
+        const auto &src1 = source_view.polys[1].shards.front();
+        const auto *parameter_shard =
+            find_parameter_shard(source_level_info, dst0);
+        if (parameter_shard != nullptr &&
+            dst0.device_id == device_id &&
+            dst1.device_id == device_id &&
+            dst0.limb_begin == 0 && dst1.limb_begin == 0 &&
+            src0.limb_begin == 0 && src1.limb_begin == 0 &&
+            can_batch_rescale_fourstep(degree, *parameter_shard))
+        {
+            ensure_rescale_x2_scratch(
+                degree,
+                destination_q_count,
+                2,
+                device_id);
+            launch_dropped_intt_components(
+                device_id,
+                rescale_scratch_.dropped_two.data(),
+                source_view,
+                source_q_count - 1,
+                1,
+                2,
+                degree,
+                *parameter_shard);
+            kernel::launch_build_q_last_rescale_correction_batch2(
+                rescale_scratch_.correction.data(),
+                rescale_scratch_.dropped_two.data(),
+                destination_q_count,
+                *parameter_shard,
+                degree);
+            launch_correction_forward_ntt_components(
+                device_id,
+                rescale_scratch_.correction_ntt.data(),
+                rescale_scratch_.correction.data(),
+                destination_q_count,
+                degree,
+                2,
+                *parameter_shard);
+            const auto src0_prefix = make_source_limb_range(
+                src0, 0, destination_q_count, degree);
+            const auto src1_prefix = make_source_limb_range(
+                src1, 0, destination_q_count, degree);
+            kernel::launch_apply_q_last_rescale_correction_batch2(
+                dst0,
+                dst1,
+                src0_prefix,
+                src1_prefix,
+                rescale_scratch_.correction_ntt.data(),
+                *parameter_shard,
+                degree);
+            return;
+        }
+    }
+
+    ensure_rescale_scratch(
+        degree,
+        destination_q_count,
+        device_id);
+
+    for (std::size_t i = 0; i < component_count; ++i)
+    {
+        const auto &destination_shard = destination_view.polys[i].shards.front();
+        const auto &source_shard = source_view.polys[i].shards.front();
 
         const auto *parameter_shard = find_parameter_shard(
             source_level_info,
@@ -665,6 +894,123 @@ void GpuModSwitchHandler::rescale_ciphertext(
                 rescale_scratch_.correction_ntt.data());
         }
     }
+}
+
+bool GpuModSwitchHandler::rescale_q_batch_to_outputs(
+    const GpuWord *source_batch_q,
+    std::size_t batch_count,
+    std::size_t source_q_count,
+    const std::vector<GpuCiphertextView> &destination_views,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    if (batch_count == 0)
+    {
+        return true;
+    }
+    const std::size_t component_count = batch_count * 2;
+    if (source_batch_q == nullptr ||
+        destination_views.size() != batch_count ||
+        component_count > kernel::kMaxRescaleBatchComponents ||
+        source_q_count < 2 ||
+        destination_level_info.q_count + 1 != source_q_count ||
+        source_level_info.q_count != source_q_count)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::rescale_q_batch_to_outputs: invalid batch shape");
+    }
+
+    const std::size_t degree = source_level_info.degree;
+    const std::size_t destination_q_count = destination_level_info.q_count;
+    const auto &first_dst_shard =
+        destination_views[0].polys.at(0).shards.front();
+    const int device_id = first_dst_shard.device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(source_level_info, first_dst_shard);
+    if (parameter_shard == nullptr ||
+        !can_batch_rescale_fourstep(degree, *parameter_shard))
+    {
+        return false;
+    }
+
+    kernel::ApplyQlastRescaleBatchArgs dst_args{};
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        const auto &view = destination_views[b];
+        if (view.polys.size() != 2 || !view.meta.is_ntt_form ||
+            view.meta.p_count != 0 || view.meta.q_count != destination_q_count ||
+            view.meta.degree != degree)
+        {
+            throw std::invalid_argument(
+                "GpuModSwitchHandler::rescale_q_batch_to_outputs: destination metadata mismatch");
+        }
+        for (std::size_t c = 0; c < 2; ++c)
+        {
+            validate_single_shard_poly(
+                "GpuModSwitchHandler::rescale_q_batch_to_outputs",
+                view.polys[c],
+                destination_q_count,
+                degree);
+            const auto &shard = view.polys[c].shards.front();
+            if (shard.device_id != device_id || shard.limb_begin != 0)
+            {
+                throw std::invalid_argument(
+                    "GpuModSwitchHandler::rescale_q_batch_to_outputs: shard device/offset mismatch");
+            }
+            dst_args.destinations[b * 2 + c] = shard.ptr;
+        }
+    }
+
+    ensure_rescale_x2_scratch(degree, destination_q_count, component_count, device_id);
+    const std::size_t dropped_limb = source_q_count - 1;
+    const std::size_t source_component_stride = source_q_count * degree;
+
+    const GpuPolyShardView first_dropped_coeff{
+        device_id, rescale_scratch_.dropped_two.data(),
+        dropped_limb, 1, 0, degree};
+    const GpuConstPolyShardView first_dropped_ntt{
+        device_id, source_batch_q + dropped_limb * degree,
+        dropped_limb, 1, 0, degree};
+    kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+        first_dropped_coeff,
+        first_dropped_ntt,
+        *parameter_shard,
+        degree,
+        component_count,
+        degree,
+        source_component_stride);
+
+    kernel::launch_build_q_last_rescale_correction_batch(
+        rescale_scratch_.correction.data(),
+        rescale_scratch_.dropped_two.data(),
+        component_count,
+        destination_q_count,
+        *parameter_shard,
+        degree);
+
+    const GpuPolyShardView corr_ntt{
+        device_id, rescale_scratch_.correction_ntt.data(),
+        0, destination_q_count, 0, degree};
+    const GpuConstPolyShardView corr_coeff{
+        device_id, rescale_scratch_.correction.data(),
+        0, destination_q_count, 0, degree};
+    kernel::launch_forward_ntt_poly_shard_batch_fourstep_65536(
+        corr_ntt,
+        corr_coeff,
+        *parameter_shard,
+        degree,
+        component_count);
+
+    kernel::launch_apply_q_last_rescale_correction_batch_ptrs(
+        dst_args,
+        source_batch_q,
+        source_component_stride,
+        rescale_scratch_.correction_ntt.data(),
+        component_count,
+        destination_q_count,
+        *parameter_shard,
+        degree);
+    return true;
 }
 
 void GpuModSwitchHandler::rescale_ciphertext_x2(
@@ -727,32 +1073,22 @@ void GpuModSwitchHandler::rescale_ciphertext_x2(
                     "GpuModSwitchHandler::rescale_ciphertext_x2: no matching parameter shard");
             }
         }
-
-        GpuPolyShardView dropped_coefficients;
-        dropped_coefficients.device_id = device_id;
-        dropped_coefficients.ptr =
-            rescale_scratch_.dropped_two.data() +
-            component * 2 * degree;
-        dropped_coefficients.limb_begin = source_q_count - 2;
-        dropped_coefficients.limb_count = 2;
-        dropped_coefficients.coeff_begin = 0;
-        dropped_coefficients.coeff_count = degree;
-        const auto dropped_ntt = make_source_limb_range(
-            source_shard,
-            source_q_count - 2,
-            2,
-            degree);
-        kernel::launch_inverse_ntt_poly_shard(
-            dropped_coefficients,
-            dropped_ntt,
-            *parameter_shard,
-            degree);
     }
     if (parameter_shard == nullptr)
     {
         throw std::invalid_argument(
             "GpuModSwitchHandler::rescale_ciphertext_x2: no parameter shard");
     }
+
+    launch_dropped_intt_components(
+        device_id,
+        rescale_scratch_.dropped_two.data(),
+        source_view,
+        source_q_count - 2,
+        2,
+        component_count,
+        degree,
+        *parameter_shard);
 
     kernel::launch_build_q_last_two_rescale_correction_batch_fused(
         rescale_scratch_.correction.data(),
@@ -762,35 +1098,14 @@ void GpuModSwitchHandler::rescale_ciphertext_x2(
         *parameter_shard,
         degree);
 
-    for (std::size_t component = 0;
-         component < component_count;
-         ++component)
-    {
-        GpuPolyShardView correction_ntt;
-        correction_ntt.device_id = device_id;
-        correction_ntt.ptr =
-            rescale_scratch_.correction_ntt.data() +
-            component * destination_q_count * degree;
-        correction_ntt.limb_begin = 0;
-        correction_ntt.limb_count = destination_q_count;
-        correction_ntt.coeff_begin = 0;
-        correction_ntt.coeff_count = degree;
-
-        GpuConstPolyShardView correction_coeff;
-        correction_coeff.device_id = device_id;
-        correction_coeff.ptr =
-            rescale_scratch_.correction.data() +
-            component * destination_q_count * degree;
-        correction_coeff.limb_begin = 0;
-        correction_coeff.limb_count = destination_q_count;
-        correction_coeff.coeff_begin = 0;
-        correction_coeff.coeff_count = degree;
-        kernel::launch_forward_ntt_poly_shard(
-            correction_ntt,
-            correction_coeff,
-            *parameter_shard,
-            degree);
-    }
+    launch_correction_forward_ntt_components(
+        device_id,
+        rescale_scratch_.correction_ntt.data(),
+        rescale_scratch_.correction.data(),
+        destination_q_count,
+        degree,
+        component_count,
+        *parameter_shard);
 
     const auto source0 = make_source_limb_range(
         source_view.polys[0].shards.front(),
@@ -875,32 +1190,22 @@ void GpuModSwitchHandler::rescale_ciphertext_many(
                     "GpuModSwitchHandler::rescale_ciphertext_many: no matching parameter shard");
             }
         }
-
-        GpuPolyShardView dropped_coefficients;
-        dropped_coefficients.device_id = device_id;
-        dropped_coefficients.ptr =
-            rescale_scratch_.dropped_many.data() +
-            component * rescale_count * degree;
-        dropped_coefficients.limb_begin = destination_q_count;
-        dropped_coefficients.limb_count = rescale_count;
-        dropped_coefficients.coeff_begin = 0;
-        dropped_coefficients.coeff_count = degree;
-        const auto dropped_ntt = make_source_limb_range(
-            source_shard,
-            destination_q_count,
-            rescale_count,
-            degree);
-        kernel::launch_inverse_ntt_poly_shard(
-            dropped_coefficients,
-            dropped_ntt,
-            *parameter_shard,
-            degree);
     }
     if (parameter_shard == nullptr)
     {
         throw std::invalid_argument(
             "GpuModSwitchHandler::rescale_ciphertext_many: no parameter shard");
     }
+
+    launch_dropped_intt_components(
+        device_id,
+        rescale_scratch_.dropped_many.data(),
+        source_view,
+        destination_q_count,
+        rescale_count,
+        component_count,
+        degree,
+        *parameter_shard);
 
     kernel::launch_convert_rescale_dropped_to_mixed_radix(
         rescale_scratch_.dropped_many.data(),
@@ -918,6 +1223,47 @@ void GpuModSwitchHandler::rescale_ciphertext_many(
         *parameter_shard,
         degree);
 
+    launch_correction_forward_ntt_components(
+        device_id,
+        rescale_scratch_.correction_ntt.data(),
+        rescale_scratch_.correction.data(),
+        destination_q_count,
+        degree,
+        component_count,
+        *parameter_shard);
+
+    if (component_count >= 2 &&
+        component_count <= kernel::kMaxRescaleBatchComponents &&
+        can_batch_rescale_fourstep(degree, *parameter_shard))
+    {
+        bool same_limb_begin = true;
+        kernel::ApplyRescalePtrsArgs apply_args{};
+        for (std::size_t c = 0; c < component_count; ++c)
+        {
+            const auto &src = source_view.polys[c].shards.front();
+            const auto &dst = destination_view.polys[c].shards.front();
+            if (src.limb_begin != 0 || dst.limb_begin != 0)
+            {
+                same_limb_begin = false;
+                break;
+            }
+            apply_args.sources[c] = src.ptr;
+            apply_args.destinations[c] = dst.ptr;
+        }
+        if (same_limb_begin)
+        {
+            kernel::launch_apply_rescale_many_correction_ptrs(
+                apply_args,
+                rescale_scratch_.correction_ntt.data(),
+                component_count,
+                source_q_count,
+                rescale_count,
+                *parameter_shard,
+                degree);
+            return;
+        }
+    }
+
     for (std::size_t component = 0;
          component < component_count;
          ++component)
@@ -933,20 +1279,6 @@ void GpuModSwitchHandler::rescale_ciphertext_many(
         correction_ntt.coeff_begin = 0;
         correction_ntt.coeff_count = degree;
 
-        GpuConstPolyShardView correction_coeff;
-        correction_coeff.device_id = device_id;
-        correction_coeff.ptr =
-            rescale_scratch_.correction.data() + correction_offset;
-        correction_coeff.limb_begin = 0;
-        correction_coeff.limb_count = destination_q_count;
-        correction_coeff.coeff_begin = 0;
-        correction_coeff.coeff_count = degree;
-        kernel::launch_forward_ntt_poly_shard(
-            correction_ntt,
-            correction_coeff,
-            *parameter_shard,
-            degree);
-
         const auto retained_source = make_source_limb_range(
             source_view.polys[component].shards.front(),
             0,
@@ -961,6 +1293,378 @@ void GpuModSwitchHandler::rescale_ciphertext_many(
             *parameter_shard,
             degree);
     }
+}
+
+bool GpuModSwitchHandler::rescale_ciphertext_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView &source_b_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    validate_rescale_ciphertext_shape(
+        destination_a_view, source_a_view, source_level_info, destination_level_info);
+    validate_rescale_ciphertext_shape(
+        destination_b_view, source_b_view, source_level_info, destination_level_info);
+    const std::size_t per_ct = source_a_view.polys.size();
+    const std::size_t total_comp = per_ct * 2;
+    if (per_ct != source_b_view.polys.size() ||
+        total_comp > kernel::kMaxInntPtrsBatch ||
+        total_comp > kernel::kMaxRescaleBatchComponents)
+    {
+        return false;
+    }
+    const std::size_t degree = source_a_view.meta.degree;
+    const std::size_t source_q_count = source_a_view.meta.q_count;
+    const std::size_t destination_q_count = destination_a_view.meta.q_count;
+    const int device_id = destination_a_view.polys[0].shards.front().device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(source_level_info, destination_a_view.polys[0].shards.front());
+    if (parameter_shard == nullptr || !can_batch_rescale_fourstep(degree, *parameter_shard))
+    {
+        return false;
+    }
+
+    kernel::InntPtrsArgs intt_args{};
+    kernel::ApplyRescalePtrsArgs apply_args{};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src_v = lane == 0 ? source_a_view : source_b_view;
+        const auto &dst_v = lane == 0 ? destination_a_view : destination_b_view;
+        for (std::size_t c = 0; c < per_ct; ++c)
+        {
+            validate_single_shard_poly("rescale_ciphertext_pair src", src_v.polys[c], source_q_count, degree);
+            validate_single_shard_poly("rescale_ciphertext_pair dst", dst_v.polys[c], destination_q_count, degree);
+            const auto &s = src_v.polys[c].shards.front();
+            const auto &d = dst_v.polys[c].shards.front();
+            if (s.device_id != device_id || d.device_id != device_id ||
+                s.limb_begin != 0 || d.limb_begin != 0)
+            {
+                return false;
+            }
+            const std::size_t idx = static_cast<std::size_t>(lane) * per_ct + c;
+            intt_args.sources[idx] = s.ptr + (source_q_count - 1) * degree;
+            apply_args.sources[idx] = s.ptr;
+            apply_args.destinations[idx] = d.ptr;
+        }
+    }
+
+    ensure_rescale_x2_scratch(degree, destination_q_count, total_comp, device_id);
+    launch_dropped_intt_ptrs_list(
+        device_id, rescale_scratch_.dropped_two.data(), intt_args,
+        source_q_count - 1, 1, total_comp, degree, *parameter_shard);
+    kernel::launch_build_q_last_rescale_correction_batch(
+        rescale_scratch_.correction.data(),
+        rescale_scratch_.dropped_two.data(),
+        total_comp, destination_q_count, *parameter_shard, degree);
+    launch_correction_forward_ntt_components(
+        device_id,
+        rescale_scratch_.correction_ntt.data(),
+        rescale_scratch_.correction.data(),
+        destination_q_count, degree, total_comp, *parameter_shard);
+    kernel::launch_apply_q_last_rescale_correction_ptrs(
+        apply_args, rescale_scratch_.correction_ntt.data(),
+        total_comp, destination_q_count, *parameter_shard, degree);
+    return true;
+}
+
+bool GpuModSwitchHandler::rescale_ciphertext_x2_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView &source_b_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    validate_rescale_x2_ciphertext_shape(
+        destination_a_view, source_a_view, source_level_info, destination_level_info);
+    validate_rescale_x2_ciphertext_shape(
+        destination_b_view, source_b_view, source_level_info, destination_level_info);
+    const std::size_t degree = source_a_view.meta.degree;
+    const std::size_t source_q_count = source_a_view.meta.q_count;
+    const std::size_t destination_q_count = destination_a_view.meta.q_count;
+    const int device_id = destination_a_view.polys[0].shards.front().device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(source_level_info, destination_a_view.polys[0].shards.front());
+    if (parameter_shard == nullptr || !can_batch_rescale_fourstep(degree, *parameter_shard))
+    {
+        return false;
+    }
+
+    kernel::InntPtrsArgs intt_args{};
+    kernel::ApplyRescalePtrsArgs apply_args{};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src_v = lane == 0 ? source_a_view : source_b_view;
+        const auto &dst_v = lane == 0 ? destination_a_view : destination_b_view;
+        for (std::size_t c = 0; c < 2; ++c)
+        {
+            validate_single_shard_poly("rescale_ciphertext_x2_pair src", src_v.polys[c], source_q_count, degree);
+            validate_single_shard_poly("rescale_ciphertext_x2_pair dst", dst_v.polys[c], destination_q_count, degree);
+            const auto &s = src_v.polys[c].shards.front();
+            const auto &d = dst_v.polys[c].shards.front();
+            if (s.device_id != device_id || d.device_id != device_id ||
+                s.limb_begin != 0 || d.limb_begin != 0)
+            {
+                return false;
+            }
+            const std::size_t idx = static_cast<std::size_t>(lane) * 2 + c;
+            intt_args.sources[idx] = s.ptr + (source_q_count - 2) * degree;
+            apply_args.sources[idx] = s.ptr;
+            apply_args.destinations[idx] = d.ptr;
+        }
+    }
+
+    constexpr std::size_t total_comp = 4;
+    ensure_rescale_x2_scratch(degree, destination_q_count, total_comp, device_id);
+    launch_dropped_intt_ptrs_list(
+        device_id, rescale_scratch_.dropped_two.data(), intt_args,
+        source_q_count - 2, 2, total_comp, degree, *parameter_shard);
+    kernel::launch_build_q_last_two_rescale_correction_batch_fused(
+        rescale_scratch_.correction.data(),
+        rescale_scratch_.dropped_two.data(),
+        total_comp, destination_q_count, *parameter_shard, degree);
+    launch_correction_forward_ntt_components(
+        device_id,
+        rescale_scratch_.correction_ntt.data(),
+        rescale_scratch_.correction.data(),
+        destination_q_count, degree, total_comp, *parameter_shard);
+    kernel::launch_apply_q_last_two_rescale_correction_ptrs(
+        apply_args, rescale_scratch_.correction_ntt.data(),
+        total_comp, destination_q_count, *parameter_shard, degree);
+    return true;
+}
+
+bool GpuModSwitchHandler::rescale_ciphertext_many_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView &source_b_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info,
+    std::size_t rescale_count) const
+{
+    if (rescale_count == 1)
+    {
+        return rescale_ciphertext_pair(
+            destination_a_view, destination_b_view,
+            source_a_view, source_b_view,
+            source_level_info, destination_level_info);
+    }
+    if (rescale_count == 2 &&
+        source_a_view.polys.size() == 2 &&
+        source_b_view.polys.size() == 2 &&
+        source_a_view.meta.component_count == 2 &&
+        source_b_view.meta.component_count == 2)
+    {
+        return rescale_ciphertext_x2_pair(
+            destination_a_view, destination_b_view,
+            source_a_view, source_b_view,
+            source_level_info, destination_level_info);
+    }
+    validate_rescale_many_ciphertext_shape(
+        destination_a_view, source_a_view, source_level_info, destination_level_info, rescale_count);
+    validate_rescale_many_ciphertext_shape(
+        destination_b_view, source_b_view, source_level_info, destination_level_info, rescale_count);
+    const std::size_t per_ct = source_a_view.polys.size();
+    const std::size_t total_comp = per_ct * 2;
+    if (per_ct != source_b_view.polys.size() ||
+        total_comp > kernel::kMaxInntPtrsBatch ||
+        total_comp > kernel::kMaxRescaleBatchComponents)
+    {
+        return false;
+    }
+    const std::size_t degree = source_a_view.meta.degree;
+    const std::size_t source_q_count = source_a_view.meta.q_count;
+    const std::size_t destination_q_count = destination_a_view.meta.q_count;
+    const int device_id = destination_a_view.polys[0].shards.front().device_id;
+    const auto *parameter_shard =
+        find_parameter_shard(source_level_info, destination_a_view.polys[0].shards.front());
+    if (parameter_shard == nullptr || !can_batch_rescale_fourstep(degree, *parameter_shard))
+    {
+        return false;
+    }
+
+    kernel::InntPtrsArgs intt_args{};
+    kernel::ApplyRescalePtrsArgs apply_args{};
+    for (int lane = 0; lane < 2; ++lane)
+    {
+        const auto &src_v = lane == 0 ? source_a_view : source_b_view;
+        const auto &dst_v = lane == 0 ? destination_a_view : destination_b_view;
+        for (std::size_t c = 0; c < per_ct; ++c)
+        {
+            validate_single_shard_poly("rescale_ciphertext_many_pair src", src_v.polys[c], source_q_count, degree);
+            validate_single_shard_poly("rescale_ciphertext_many_pair dst", dst_v.polys[c], destination_q_count, degree);
+            const auto &s = src_v.polys[c].shards.front();
+            const auto &d = dst_v.polys[c].shards.front();
+            if (s.device_id != device_id || d.device_id != device_id ||
+                s.limb_begin != 0 || d.limb_begin != 0)
+            {
+                return false;
+            }
+            const std::size_t idx = static_cast<std::size_t>(lane) * per_ct + c;
+            intt_args.sources[idx] = s.ptr + destination_q_count * degree;
+            apply_args.sources[idx] = s.ptr;
+            apply_args.destinations[idx] = d.ptr;
+        }
+    }
+
+    ensure_rescale_many_scratch(
+        degree, destination_q_count, total_comp, rescale_count, device_id);
+    launch_dropped_intt_ptrs_list(
+        device_id, rescale_scratch_.dropped_many.data(), intt_args,
+        destination_q_count, rescale_count, total_comp, degree, *parameter_shard);
+    kernel::launch_convert_rescale_dropped_to_mixed_radix(
+        rescale_scratch_.dropped_many.data(),
+        total_comp, source_q_count, rescale_count, *parameter_shard, degree);
+    kernel::launch_build_rescale_many_correction_batch(
+        rescale_scratch_.correction.data(),
+        rescale_scratch_.dropped_many.data(),
+        total_comp, source_q_count, rescale_count, *parameter_shard, degree);
+    launch_correction_forward_ntt_components(
+        device_id,
+        rescale_scratch_.correction_ntt.data(),
+        rescale_scratch_.correction.data(),
+        destination_q_count, degree, total_comp, *parameter_shard);
+    kernel::launch_apply_rescale_many_correction_ptrs(
+        apply_args, rescale_scratch_.correction_ntt.data(),
+        total_comp, source_q_count, rescale_count, *parameter_shard, degree);
+    return true;
+}
+
+bool GpuModSwitchHandler::rescale_ciphertext_many_batch(
+    std::vector<GpuCiphertextView> &destination_views,
+    const std::vector<GpuConstCiphertextView> &source_views,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info,
+    std::size_t rescale_count) const
+{
+    const std::size_t batch_count = source_views.size();
+    if (batch_count == 0 || destination_views.size() != batch_count || rescale_count == 0)
+    {
+        return false;
+    }
+    const std::size_t per_ct = source_views[0].polys.size();
+    const std::size_t total_comp = per_ct * batch_count;
+    if (per_ct == 0 ||
+        total_comp > kernel::kMaxInntPtrsBatch ||
+        total_comp > kernel::kMaxRescaleBatchComponents)
+    {
+        return false;
+    }
+    const std::size_t degree = source_views[0].meta.degree;
+    const std::size_t source_q_count = source_views[0].meta.q_count;
+    const std::size_t destination_q_count = destination_views[0].meta.q_count;
+    if (source_q_count <= rescale_count ||
+        destination_q_count + rescale_count != source_q_count)
+    {
+        return false;
+    }
+    const auto &first_dst = destination_views[0].polys[0].shards.front();
+    const int device_id = first_dst.device_id;
+    const auto *parameter_shard = find_parameter_shard(source_level_info, first_dst);
+    if (parameter_shard == nullptr ||
+        !can_batch_rescale_fourstep(degree, *parameter_shard))
+    {
+        return false;
+    }
+
+    kernel::InntPtrsArgs intt_args{};
+    kernel::ApplyRescalePtrsArgs apply_args{};
+    for (std::size_t i = 0; i < batch_count; ++i)
+    {
+        const auto &src_v = source_views[i];
+        auto &dst_v = destination_views[i];
+        if (src_v.polys.size() != per_ct || dst_v.polys.size() != per_ct)
+        {
+            return false;
+        }
+        validate_rescale_many_ciphertext_shape(
+            dst_v, src_v, source_level_info, destination_level_info, rescale_count);
+        for (std::size_t c = 0; c < per_ct; ++c)
+        {
+            validate_single_shard_poly(
+                "rescale_ciphertext_many_batch src", src_v.polys[c], source_q_count, degree);
+            validate_single_shard_poly(
+                "rescale_ciphertext_many_batch dst", dst_v.polys[c], destination_q_count, degree);
+            const auto &s = src_v.polys[c].shards.front();
+            const auto &d = dst_v.polys[c].shards.front();
+            if (s.device_id != device_id || d.device_id != device_id ||
+                s.limb_begin != 0 || d.limb_begin != 0)
+            {
+                return false;
+            }
+            const std::size_t idx = i * per_ct + c;
+            intt_args.sources[idx] = s.ptr + destination_q_count * degree;
+            apply_args.sources[idx] = s.ptr;
+            apply_args.destinations[idx] = d.ptr;
+        }
+    }
+
+    if (rescale_count == 1)
+    {
+        ensure_rescale_x2_scratch(degree, destination_q_count, total_comp, device_id);
+        launch_dropped_intt_ptrs_list(
+            device_id, rescale_scratch_.dropped_two.data(), intt_args,
+            source_q_count - 1, 1, total_comp, degree, *parameter_shard);
+        kernel::launch_build_q_last_rescale_correction_batch(
+            rescale_scratch_.correction.data(),
+            rescale_scratch_.dropped_two.data(),
+            total_comp, destination_q_count, *parameter_shard, degree);
+        launch_correction_forward_ntt_components(
+            device_id,
+            rescale_scratch_.correction_ntt.data(),
+            rescale_scratch_.correction.data(),
+            destination_q_count, degree, total_comp, *parameter_shard);
+        kernel::launch_apply_q_last_rescale_correction_ptrs(
+            apply_args, rescale_scratch_.correction_ntt.data(),
+            total_comp, destination_q_count, *parameter_shard, degree);
+        return true;
+    }
+
+    if (rescale_count == 2 && parameter_shard->q_last_two_product != 0)
+    {
+        ensure_rescale_x2_scratch(degree, destination_q_count, total_comp, device_id);
+        launch_dropped_intt_ptrs_list(
+            device_id, rescale_scratch_.dropped_two.data(), intt_args,
+            source_q_count - 2, 2, total_comp, degree, *parameter_shard);
+        kernel::launch_build_q_last_two_rescale_correction_batch_fused(
+            rescale_scratch_.correction.data(),
+            rescale_scratch_.dropped_two.data(),
+            total_comp, destination_q_count, *parameter_shard, degree);
+        launch_correction_forward_ntt_components(
+            device_id,
+            rescale_scratch_.correction_ntt.data(),
+            rescale_scratch_.correction.data(),
+            destination_q_count, degree, total_comp, *parameter_shard);
+        kernel::launch_apply_q_last_two_rescale_correction_ptrs(
+            apply_args, rescale_scratch_.correction_ntt.data(),
+            total_comp, destination_q_count, *parameter_shard, degree);
+        return true;
+    }
+
+    ensure_rescale_many_scratch(
+        degree, destination_q_count, total_comp, rescale_count, device_id);
+    launch_dropped_intt_ptrs_list(
+        device_id, rescale_scratch_.dropped_many.data(), intt_args,
+        destination_q_count, rescale_count, total_comp, degree, *parameter_shard);
+    kernel::launch_convert_rescale_dropped_to_mixed_radix(
+        rescale_scratch_.dropped_many.data(),
+        total_comp, source_q_count, rescale_count, *parameter_shard, degree);
+    kernel::launch_build_rescale_many_correction_batch(
+        rescale_scratch_.correction.data(),
+        rescale_scratch_.dropped_many.data(),
+        total_comp, source_q_count, rescale_count, *parameter_shard, degree);
+    launch_correction_forward_ntt_components(
+        device_id,
+        rescale_scratch_.correction_ntt.data(),
+        rescale_scratch_.correction.data(),
+        destination_q_count, degree, total_comp, *parameter_shard);
+    kernel::launch_apply_rescale_many_correction_ptrs(
+        apply_args, rescale_scratch_.correction_ntt.data(),
+        total_comp, source_q_count, rescale_count, *parameter_shard, degree);
+    return true;
 }
 
 void GpuModSwitchHandler::rescale_dynamic_ciphertext(

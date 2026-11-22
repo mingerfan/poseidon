@@ -1,0 +1,158 @@
+{
+  "status": "structural-or-app-failure",
+  "complete_diagnostic": false,
+  "numerical_gates_passed": null,
+  "child_returncode": 1,
+  "outer_classification": "structural_or_resource_failure",
+  "abort_reason": null,
+  "requested_signals": [],
+  "cleanup_error": null,
+  "owned_process_may_still_be_live": false,
+  "start": "2026-11-16T21:06:51.181434+08:00",
+  "end": "2026-11-16T21:08:25.514346+08:00",
+  "failure": [
+    {
+      "line": 33,
+      "error": "PUBLIC_SILU_PAIR_FAILED projection actual N/Q/id/scale/components/device mismatch"
+    }
+  ],
+  "failure_location_source_inference": {
+    "file": "bench/llama_manual/tests/public_paired_silu.cpp:179-186",
+    "stage": "after first-case 16 calls, final shape(runtime,*x,10,2^40), before OFF/ON exact-RNS and final source metrics",
+    "limits": "generic shape predicate; failing output and individual N/Q/parms_id/scale/component/device subfield are not logged; do not infer them"
+  },
+  "observed_counts": {
+    "case_rows": 0,
+    "refresh_rows": 8,
+    "physical_Boot_counter_events": 16,
+    "projection_pair_counter_events": 8,
+    "last_physical_Boot_counter": 16,
+    "last_projection_pair_counter": 8,
+    "physical_Boots_from_DONE": null,
+    "projection_pairs_from_DONE": null,
+    "internal_EvalMod_calls_derived_not_independently_counted": null
+  },
+  "observed_refresh_checks": {
+    "rows": 8,
+    "all_observed_fixed_refresh_gates_pass": true,
+    "identity_max_complex": 7.83342521243629e-05,
+    "real_sine_max_complex": 7.794571379446548e-05,
+    "scope": "observed prefix only; not final source-oracle or whole-control qualification"
+  },
+  "final_validation": {
+    "closed_shape_predicate_failed": true,
+    "shape_failure_detail_scope": "generic predicate only; actual failing output and individual metadata field were not logged",
+    "OFF_ON_same_plan_metadata_RNS_exact": null,
+    "all_inputs_const_decodes_and_outputs_immutable": null,
+    "all_slots_finite": null,
+    "final_Q10_scale2pow40_metadata": null
+  },
+  "timings": {
+    "runtime_profile_setup_seconds": 84.933210287,
+    "completed_case_diagnostic_seconds": [],
+    "incomplete_case_diagnostic_seconds": null,
+    "guard_wall_seconds": 94.33101697638631,
+    "performance_valid": false,
+    "SOURCE_SETUP_completed_seconds": 1.696275776,
+    "scope": "reported setup/guard walls only; no completed case diagnostic wall was printed; no clean online/GPU-busy/performance result; do not subtract to invent diagnostic time"
+  },
+  "telemetry": {
+    "samples": 45,
+    "noncontinuous": true,
+    "start_to_first_sample_s": 0.12310370430350304,
+    "max_gap_between_samples_s": 2.18326204828918,
+    "last_sample_to_terminal_s": 2.0006306674331427,
+    "temperature_min_C": 29,
+    "temperature_max_C": 34,
+    "max_sampled_memory_MiB": 33227,
+    "max_sampled_utilization_percent": 100.0,
+    "max_sampled_power_W": 98.71,
+    "sm_clock_MHz_when_nonzero_util": null,
+    "memory_clock_MHz_when_nonzero_util": null,
+    "clocks_scope": "not sampled by the node2 guard; no inferred clocks",
+    "foreign_samples": 0,
+    "observed_host_pids": [
+      747769
+    ],
+    "registered_host_pids": [
+      747769
+    ],
+    "observed_uuids": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112"
+    ],
+    "registered_uuids": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112"
+    ]
+  },
+  "postflight": {
+    "timestamp": "2026-11-16T21:11:33.345493+08:00",
+    "expected_gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+    "expected_guard_identity": {
+      "pid": 95575,
+      "pgid": 95575,
+      "start_ticks": "1373031093"
+    },
+    "guard_identity_once": null,
+    "scope": "single read-only sample; no continuous exclusivity or lease-release proof",
+    "registered_namespace_identity_once": null,
+    "gpu": {
+      "returncode": 0,
+      "rows": [
+        [
+          "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+          "NVIDIA A800 80GB PCIe",
+          "81920",
+          "0",
+          "29"
+        ]
+      ],
+      "stderr": ""
+    },
+    "compute_apps": {
+      "returncode": 0,
+      "rows": [],
+      "stderr": ""
+    }
+  },
+  "postflight_checks": {
+    "expected_guard_absent": true,
+    "registered_namespace_child_absent": true,
+    "target_gpu_zero_MiB_no_compute_PID": true
+  },
+  "pid_map": {
+    "namespace_pid": 95580,
+    "pgid": 95580,
+    "start_ticks": "1373031700",
+    "nvml_host_pid": 747769,
+    "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+    "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0",
+    "registration_time": 1794834411.4694502,
+    "supervisor_pid": 95575,
+    "parent_death_signal": 15
+  },
+  "remote_SUMMARY_state": "empty",
+  "remote_SUMMARY_bytes": 0,
+  "model_qualification": false,
+  "performance_valid": false,
+  "source_vs_true_SiLU_max_complex_nongating": 0.48781247052462845,
+  "source_vs_true_SiLU_scope": "separate non-gating nominal source vs mathematical SiLU comparison, not Torch qualification",
+  "outer_exit_status_scope": "not independently waitpid-observed by detached monitor; guard classification and final printed record only",
+  "parser_issues": [],
+  "parser_tests": {
+    "final_passed": 27,
+    "scope": "pure local synthetic aggregate tests; no GPU/remote execution"
+  },
+  "collection": {
+    "started_local": "2026-11-16T21:11:32.939026+08:00",
+    "finished_local": "2026-11-16T21:11:33.590615+08:00",
+    "ssh_invocations": 1,
+    "ssh_returncode": 0,
+    "retry_attempted": false,
+    "remote_writes": false,
+    "remote_application_launches": false,
+    "stdout_sha256": "b4274bdd20e27af9a7fda7372b48decfd982846ec29025fc08a49197297cda72",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "operations": "one existing-master SSH, terminal present on first tiny check; one postflight; no remote writes/apps/retries/repair/signals/reconnect/peer contact",
+  "evidence_scope": "public aggregate logs only; no private weights/keys/tensors/CT/PT/arrays; source-only frozen-root assumption; telemetry noncontinuous"
+}

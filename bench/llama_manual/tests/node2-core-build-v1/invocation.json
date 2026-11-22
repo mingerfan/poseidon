@@ -1,0 +1,58 @@
+{
+  "scope": "one CPU6 OMP1 framework core configure/build; CUDA compilation permitted; no GPU or application execution",
+  "remote_root": "/root/private_data/llama-manual-framework-node2-20261116-v1",
+  "authorization_sha256": "f88be3dffec92c6a26a1c9ca5896863da9c741844238e5f0f9e9ab775f2573eb",
+  "local_package": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/workspaces/llama-cerium-align/experiments/20261116-manual-llama/node2-v1/core-package-v1",
+  "pins": {
+    "build-authorization.json": {
+      "sha256": "f88be3dffec92c6a26a1c9ca5896863da9c741844238e5f0f9e9ab775f2573eb",
+      "bytes": 2081
+    },
+    "tools/build_node2_core.py": {
+      "sha256": "36b0300f24bc7bd00c2cb656f22d7e4c7f69e6d1d0dda5a37ab5c5ecb4eccc46",
+      "bytes": 5929
+    },
+    "tools/owned_cpu_group.py": {
+      "sha256": "6e6f69c5d93daeef20c17b0f7dabde856d0cf9755708a9e140e4c0a35a786668",
+      "bytes": 3228
+    },
+    "source.tar.gz": {
+      "sha256": "864924b6175881c1e689030d4949f44a6d051c66345306c2ba2c2924964255e5",
+      "bytes": 7486060
+    },
+    "source-sha256.json": {
+      "sha256": "d3b0c1a488c4220769a1b02f6c50a353d889b2bdf7cf1ac0ed88577186aa820c",
+      "bytes": 1067220
+    }
+  },
+  "GPU_execution_authorized": false,
+  "source_count": 7103,
+  "existing_leases": 8,
+  "ssh_command_template": [
+    "ssh",
+    "-T",
+    "-p",
+    "58222",
+    "-S",
+    "<existing-auth-directory>/socket",
+    "-oControlMaster=no",
+    "-oProxyCommand=false",
+    "-oBatchMode=yes",
+    "hpuict.2121267849739771906@ssh.sd5ai.scnet.cn",
+    "/opt/conda/bin/python3 -I -B -u -"
+  ],
+  "builder_argv": [
+    "taskset",
+    "-c",
+    "6",
+    "/opt/conda/bin/python3",
+    "-I",
+    "-B",
+    "-u",
+    "/root/private_data/llama-manual-framework-node2-20261116-v1/tools/build_node2_core.py"
+  ],
+  "outer_timeout_seconds": 960,
+  "frozen_work_deadline_seconds": 900,
+  "remote_supervisor_sha256": "7d23fa4eb3b16bca78b12068f6136d1dc64a19d06d48bd0cafb67e58b2abb213",
+  "started_utc": "2026-11-16T12:39:36.215477+00:00"
+}

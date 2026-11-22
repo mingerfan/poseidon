@@ -1,0 +1,40 @@
+{
+  "status": "completed_bounded_source_and_std_only_CPU_tests",
+  "changed_existing_source_files": [
+    "bench/llama_manual/source_manual_io.hpp",
+    "bench/llama_manual/manual_main.cpp",
+    "bench/llama_manual/tests/manual_plan_test.cpp"
+  ],
+  "added_paths_root": "bench/llama_manual/tests/input-v2/",
+  "exact_changed_paths": "CHANGED_FILES.txt",
+  "before": {
+    "generation": "g01-before",
+    "compile_exit": 0,
+    "test_exit": 0,
+    "checks": 11,
+    "negative_cases": 328,
+    "baseline_runner_only_change": "relocated synthetic temp path into evidence folder"
+  },
+  "after": {
+    "generation": "g02-after",
+    "compile_exit": 0,
+    "test_exit": 0,
+    "checks": 77,
+    "negative_cases": 739,
+    "compile_stderr_empty": true,
+    "test_stderr_empty": true,
+    "test_invocations": 1
+  },
+  "CPU": 0,
+  "OMP_NUM_THREADS": 1,
+  "CUDA_VISIBLE_DEVICES": "",
+  "external_trusted_Main_payload_hash_preflight_still_required": true,
+  "historical_accuracy_inherited": false,
+  "target_main_compiled_or_linked": false,
+  "GPU_model_FHE_execution": false,
+  "actual_payloads_read_or_hashed": false,
+  "private_data_reads": false,
+  "deployment_owner": "Main",
+  "unrelated_status_observation": "CMakeLists.txt became dirty between initial and final git status; this worker did not edit it and left it untouched. The four initially dirty gpu source files and manual plan/program matched their initial protected hashes at audit.",
+  "blocking_test_failure": null
+}

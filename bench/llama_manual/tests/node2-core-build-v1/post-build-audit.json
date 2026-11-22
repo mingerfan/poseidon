@@ -1,0 +1,14 @@
+{
+  "scope": "local reporting-only audit after the successful remote build",
+  "returncode": 1,
+  "attempt_count": 1,
+  "failure": "AssertionError: {'CXX': 76, 'CUDA': 6}",
+  "incorrect_expected_object_counts": {"CXX": 79, "CUDA": 6},
+  "actual_object_counts_from_compile_stdout": {"CXX": 76, "CUDA": 6, "total": 82},
+  "compilation_database_entry_count": 85,
+  "interpretation": "The failed assertion incorrectly equated compilation-database entries with the object-compilation lines emitted for the selected target. The exact reason for the three-entry difference was not investigated. The database count is not a count of executed compilations.",
+  "remote_command_returncodes": {"ssh": 0, "builder": 0, "configure-core": 0, "compile-core": 0},
+  "remote_build_status": "passed",
+  "action": "Stopped execution; no retry, remote follow-up, build repair, or additional audit command. Recorded the failed local check and corrected only the aggregate report labels.",
+  "manifest_created": false
+}

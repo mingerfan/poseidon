@@ -49,6 +49,19 @@ public:
         const GpuLevelInfo &destination_level_info) const;
 
     /**
+     * @brief Batched one-prime rescale from contiguous [batch][2][q][degree]
+     * Q-only source buffer into size-2 destination views. Returns false if the
+     * four-step batch precondition is not met.
+     */
+    bool rescale_q_batch_to_outputs(
+        const GpuWord *source_batch_q,
+        std::size_t batch_count,
+        std::size_t source_q_count,
+        const std::vector<GpuCiphertextView> &destination_views,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info) const;
+
+    /**
      * @brief Drop two q moduli in one operation, exactly matching two
      * consecutive ordinary CKKS rescales for a two-component ciphertext.
      */
@@ -64,6 +77,38 @@ public:
     void rescale_ciphertext_many(
         GpuCiphertextView &destination_view,
         const GpuConstCiphertextView &source_view,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info,
+        std::size_t rescale_count) const;
+
+    bool rescale_ciphertext_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView &source_b_view,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info) const;
+
+    bool rescale_ciphertext_x2_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView &source_b_view,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info) const;
+
+    bool rescale_ciphertext_many_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView &source_b_view,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info,
+        std::size_t rescale_count) const;
+
+    bool rescale_ciphertext_many_batch(
+        std::vector<GpuCiphertextView> &destination_views,
+        const std::vector<GpuConstCiphertextView> &source_views,
         const GpuLevelInfo &source_level_info,
         const GpuLevelInfo &destination_level_info,
         std::size_t rescale_count) const;

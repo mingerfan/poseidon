@@ -1,0 +1,33 @@
+A800_PID_REGISTRATION {"namespace_pid": 95580, "pgid": 95580, "start_ticks": "1373031700", "nvml_host_pid": 747769, "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112", "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0", "registration_time": 1794834411.4694502, "supervisor_pid": 95575, "parent_death_signal": 15}
+PUBLIC_PROJECTIONS_CPU_DONE cases=10 physical_Boots=40 N=65536 slots=32768 pattern_zero_swap_sign_amplitude=true metadata8_word_mutations=true exclusive_report_symlink=true fixed_full_and_sine_gates=true active38_complex_norm=true no_Runtime_keys_GPU=true
+PUBLIC_SILU_PAIR_CPU_DONE cases=2 planned_physical_Boots=32 planned_projection_pairs=16 fixed_gate25_up8=true no_Runtime_keys_GPU=true
+SOURCE_SETUP stage=cerium_geometry N=65536 complex_slots=32768 token_capacity=128 feature_tile=256 layout_contract_version=1
+SOURCE_SETUP stage=public_and_rotation_keys
+SOURCE_SETUP stage=completed seconds=1.696275776
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.97196323556804 ephemeral_h=32
+PUBLIC_SILU_PAIR_SETUP {"N":65536,"complex_slots":32768,"ratio":65536,"m":2,"eta":1.0319339651593264,"qdiff":0.98168255807403426,"native_q":27,"output_log_scale":50,"runtime_profile_setup_seconds":84.933210286999994,"source_vs_true_SiLU_max_complex":0.48781247052462845,"performance_valid":false}
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=1 pairs=1 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=2 pairs=2 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=3 pairs=3 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=4 pairs=4 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=5 pairs=5 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":0,"lane":0,"fullslot_identity_max_complex":7.8334252124362904e-05,"fullslot_real_sine_max_complex":6.2053847358358905e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":0,"lane":1,"fullslot_identity_max_complex":7.7724917091580103e-05,"fullslot_real_sine_max_complex":6.0758351118298895e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=6 pairs=6 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":1,"lane":0,"fullslot_identity_max_complex":6.223137064761619e-05,"fullslot_real_sine_max_complex":6.2230202678723162e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":1,"lane":1,"fullslot_identity_max_complex":7.2029166411169754e-05,"fullslot_real_sine_max_complex":7.2029900893617801e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=7 pairs=7 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":2,"lane":0,"fullslot_identity_max_complex":6.251873065968907e-05,"fullslot_real_sine_max_complex":6.251801022156673e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":2,"lane":1,"fullslot_identity_max_complex":7.0660978642030794e-05,"fullslot_real_sine_max_complex":7.0659952377095185e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+SOURCE_BOOT_PROJECTIONS_CANDIDATE physical_boot_calls=8 pairs=8 component_outputs=2 semantic_qualification=false output_q=27 log_scale=50
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":3,"lane":0,"fullslot_identity_max_complex":7.3836082855247148e-05,"fullslot_real_sine_max_complex":7.3834539710044896e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+PUBLIC_SILU_PAIR_REFRESH {"ordinal":3,"lane":1,"fullslot_identity_max_complex":7.7946824163767223e-05,"fullslot_real_sine_max_complex":7.7945713794465483e-05,"Q_in":6,"input_log_scale":40,"Q_out":27,"output_log_scale":50,"immutable":true}
+SOURCE_BOOT point=silu_internal:b33_2 input_q=6 output_q=27 log_scale=50 calls=9 corrections=0
+SOURCE_BOOT point=silu60:g2_refresh0 input_q=6 output_q=27 log_scale=50 calls=10 corrections=0
+SOURCE_BOOT point=silu60:g2_refresh1 input_q=6 output_q=27 log_scale=50 calls=11 corrections=0
+SOURCE_BOOT point=silu60:g2_refresh2 input_q=6 output_q=27 log_scale=50 calls=12 corrections=0
+SOURCE_BOOT point=silu_internal:b33_2 input_q=6 output_q=27 log_scale=50 calls=13 corrections=0
+SOURCE_BOOT point=silu60:g2_refresh0 input_q=6 output_q=27 log_scale=50 calls=14 corrections=0
+SOURCE_BOOT point=silu60:g2_refresh1 input_q=6 output_q=27 log_scale=50 calls=15 corrections=0
+SOURCE_BOOT point=silu60:g2_refresh2 input_q=6 output_q=27 log_scale=50 calls=16 corrections=0
+PUBLIC_SILU_PAIR_FAILED projection actual N/Q/id/scale/components/device mismatch

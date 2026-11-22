@@ -1242,5 +1242,658 @@ void GpuElementwiseHandler::multiply_accumulate_poly(
     }
 }
 
+namespace
+{
+
+template <typename ViewT>
+bool same_ciphertext_shape_as_level(
+    const ViewT &view,
+    const GpuLevelInfo &level_info,
+    std::size_t expected_components = 0)
+{
+    if (!(view.meta.parms_id == level_info.parms_id) ||
+        !view.meta.is_ntt_form ||
+        view.meta.degree != level_info.degree ||
+        view.meta.q_count != level_info.q_count ||
+        view.meta.p_count != 0 ||
+        view.polys.empty())
+    {
+        return false;
+    }
+    if (expected_components != 0 && view.polys.size() != expected_components)
+    {
+        return false;
+    }
+    const std::size_t shard_count = view.polys[0].shards.size();
+    if (shard_count == 0)
+    {
+        return false;
+    }
+    for (std::size_t c = 0; c < view.polys.size(); ++c)
+    {
+        if (view.polys[c].shards.size() != shard_count)
+        {
+            return false;
+        }
+        for (std::size_t s = 0; s < shard_count; ++s)
+        {
+            const auto &ref = view.polys[0].shards[s];
+            const auto &cur = view.polys[c].shards[s];
+            if (cur.device_id != ref.device_id ||
+                cur.limb_begin != ref.limb_begin ||
+                cur.limb_count != ref.limb_count ||
+                cur.coeff_begin != ref.coeff_begin ||
+                cur.coeff_count != ref.coeff_count)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+template <typename ShardA, typename ShardB>
+bool matching_shard_placement(const ShardA &a, const ShardB &b)
+{
+    return a.device_id == b.device_id &&
+           a.limb_begin == b.limb_begin &&
+           a.limb_count == b.limb_count &&
+           a.coeff_begin == b.coeff_begin &&
+           a.coeff_count == b.coeff_count;
+}
+
+bool views_share_pair_shards(
+    const GpuConstCiphertextView &lhs_a,
+    const GpuConstCiphertextView &rhs_a,
+    const GpuCiphertextView &dst_a,
+    const GpuConstCiphertextView &lhs_b,
+    const GpuConstCiphertextView &rhs_b,
+    const GpuCiphertextView &dst_b)
+{
+    const std::size_t shard_count = dst_a.polys[0].shards.size();
+    if (lhs_b.polys[0].shards.size() != shard_count ||
+        rhs_a.polys[0].shards.size() != shard_count ||
+        rhs_b.polys[0].shards.size() != shard_count ||
+        dst_b.polys[0].shards.size() != shard_count)
+    {
+        return false;
+    }
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &ref = dst_a.polys[0].shards[s];
+        if (!matching_shard_placement(ref, lhs_a.polys[0].shards[s]) ||
+            !matching_shard_placement(ref, rhs_a.polys[0].shards[s]) ||
+            !matching_shard_placement(ref, lhs_b.polys[0].shards[s]) ||
+            !matching_shard_placement(ref, rhs_b.polys[0].shards[s]) ||
+            !matching_shard_placement(ref, dst_b.polys[0].shards[s]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+}  // namespace
+
+void GpuElementwiseHandler::multiply_plain_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &ciphertext_a_view,
+    const GpuConstCiphertextView &ciphertext_b_view,
+    const GpuConstRNSPolyView &plaintext_poly,
+    const GpuLevelInfo &level_info) const
+{
+    const std::size_t count_a = ciphertext_a_view.polys.size();
+    const std::size_t count_b = ciphertext_b_view.polys.size();
+    const std::size_t total_count = count_a + count_b;
+    const bool shapes_ok =
+        total_count > 0 &&
+        total_count <= kernel::kMaxElementwisePairPtrs &&
+        same_ciphertext_shape_as_level(ciphertext_a_view, level_info) &&
+        same_ciphertext_shape_as_level(destination_a_view, level_info, count_a) &&
+        same_ciphertext_shape_as_level(ciphertext_b_view, level_info) &&
+        same_ciphertext_shape_as_level(destination_b_view, level_info, count_b) &&
+        plaintext_poly.shards.size() == destination_a_view.polys[0].shards.size() &&
+        destination_b_view.polys[0].shards.size() == destination_a_view.polys[0].shards.size();
+
+    bool shards_ok = shapes_ok;
+    if (shards_ok)
+    {
+        for (std::size_t s = 0; s < destination_a_view.polys[0].shards.size(); ++s)
+        {
+            const auto &ref = destination_a_view.polys[0].shards[s];
+            if (!matching_shard_placement(ref, ciphertext_a_view.polys[0].shards[s]) ||
+                !matching_shard_placement(ref, ciphertext_b_view.polys[0].shards[s]) ||
+                !matching_shard_placement(ref, destination_b_view.polys[0].shards[s]) ||
+                !matching_shard_placement(ref, plaintext_poly.shards[s]))
+            {
+                shards_ok = false;
+                break;
+            }
+        }
+    }
+
+    if (!shards_ok)
+    {
+        for (std::size_t c = 0; c < count_a; ++c)
+        {
+            multiply_plain_poly(
+                destination_a_view.polys[c], ciphertext_a_view.polys[c], plaintext_poly, level_info);
+        }
+        for (std::size_t c = 0; c < count_b; ++c)
+        {
+            multiply_plain_poly(
+                destination_b_view.polys[c], ciphertext_b_view.polys[c], plaintext_poly, level_info);
+        }
+        return;
+    }
+
+    const std::size_t shard_count = destination_a_view.polys[0].shards.size();
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &ref = destination_a_view.polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, ref);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("multiply_plain_pair: no matching parameter shard");
+        }
+        kernel::MultiplyPlainPtrsArgs args{};
+        std::size_t idx = 0;
+        for (std::size_t c = 0; c < count_a; ++c, ++idx)
+        {
+            args.dst[idx] = destination_a_view.polys[c].shards[s].ptr;
+            args.src[idx] = ciphertext_a_view.polys[c].shards[s].ptr;
+        }
+        for (std::size_t c = 0; c < count_b; ++c, ++idx)
+        {
+            args.dst[idx] = destination_b_view.polys[c].shards[s].ptr;
+            args.src[idx] = ciphertext_b_view.polys[c].shards[s].ptr;
+        }
+        kernel::launch_multiply_plain_ptrs(
+            args, total_count, plaintext_poly.shards[s], ref, *parameter_shard, level_info.degree);
+    }
+}
+
+void GpuElementwiseHandler::add_or_sub_ciphertext_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &left_a_view,
+    const GpuConstCiphertextView &right_a_view,
+    const GpuConstCiphertextView &left_b_view,
+    const GpuConstCiphertextView &right_b_view,
+    bool subtract,
+    const GpuLevelInfo &level_info) const
+{
+    const std::size_t count_a = left_a_view.polys.size();
+    const std::size_t count_b = left_b_view.polys.size();
+    const std::size_t total_count = count_a + count_b;
+    const bool fast_ok =
+        total_count > 0 &&
+        total_count <= kernel::kMaxElementwisePairPtrs &&
+        same_ciphertext_shape_as_level(left_a_view, level_info) &&
+        same_ciphertext_shape_as_level(right_a_view, level_info, count_a) &&
+        same_ciphertext_shape_as_level(destination_a_view, level_info, count_a) &&
+        same_ciphertext_shape_as_level(left_b_view, level_info) &&
+        same_ciphertext_shape_as_level(right_b_view, level_info, count_b) &&
+        same_ciphertext_shape_as_level(destination_b_view, level_info, count_b) &&
+        views_share_pair_shards(
+            left_a_view, right_a_view, destination_a_view,
+            left_b_view, right_b_view, destination_b_view);
+
+    if (!fast_ok)
+    {
+        if (subtract)
+        {
+            sub_ciphertext(destination_a_view, left_a_view, right_a_view, level_info);
+            sub_ciphertext(destination_b_view, left_b_view, right_b_view, level_info);
+        }
+        else
+        {
+            add_ciphertext(destination_a_view, left_a_view, right_a_view, level_info);
+            add_ciphertext(destination_b_view, left_b_view, right_b_view, level_info);
+        }
+        return;
+    }
+
+    const std::size_t shard_count = destination_a_view.polys[0].shards.size();
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &ref = destination_a_view.polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, ref);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("add_or_sub_ciphertext_pair: no matching parameter shard");
+        }
+        kernel::BinaryPolyPtrsArgs args{};
+        std::size_t idx = 0;
+        for (std::size_t c = 0; c < count_a; ++c, ++idx)
+        {
+            args.dst[idx] = destination_a_view.polys[c].shards[s].ptr;
+            args.lhs[idx] = left_a_view.polys[c].shards[s].ptr;
+            args.rhs[idx] = right_a_view.polys[c].shards[s].ptr;
+        }
+        for (std::size_t c = 0; c < count_b; ++c, ++idx)
+        {
+            args.dst[idx] = destination_b_view.polys[c].shards[s].ptr;
+            args.lhs[idx] = left_b_view.polys[c].shards[s].ptr;
+            args.rhs[idx] = right_b_view.polys[c].shards[s].ptr;
+        }
+        kernel::launch_add_or_sub_ptrs(
+            args, total_count, subtract, ref, *parameter_shard);
+    }
+}
+
+void GpuElementwiseHandler::multiply_ciphertext_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &left_a_view,
+    const GpuConstCiphertextView &right_a_view,
+    const GpuConstCiphertextView &left_b_view,
+    const GpuConstCiphertextView &right_b_view,
+    const GpuLevelInfo &level_info) const
+{
+    const bool fast_ok =
+        use_fused_ciphertext_multiply() &&
+        same_ciphertext_shape_as_level(left_a_view, level_info, 2) &&
+        same_ciphertext_shape_as_level(right_a_view, level_info, 2) &&
+        same_ciphertext_shape_as_level(destination_a_view, level_info, 3) &&
+        same_ciphertext_shape_as_level(left_b_view, level_info, 2) &&
+        same_ciphertext_shape_as_level(right_b_view, level_info, 2) &&
+        same_ciphertext_shape_as_level(destination_b_view, level_info, 3) &&
+        views_share_pair_shards(
+            left_a_view, right_a_view, destination_a_view,
+            left_b_view, right_b_view, destination_b_view);
+
+    if (!fast_ok)
+    {
+        multiply_ciphertext(destination_a_view, left_a_view, right_a_view, level_info);
+        multiply_ciphertext(destination_b_view, left_b_view, right_b_view, level_info);
+        return;
+    }
+
+    const std::size_t shard_count = destination_a_view.polys[0].shards.size();
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &ref = destination_a_view.polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, ref);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("multiply_ciphertext_pair: no matching parameter shard");
+        }
+        const bool is_square =
+            left_a_view.polys[0].shards[s].ptr == right_a_view.polys[0].shards[s].ptr &&
+            left_a_view.polys[1].shards[s].ptr == right_a_view.polys[1].shards[s].ptr &&
+            left_b_view.polys[0].shards[s].ptr == right_b_view.polys[0].shards[s].ptr &&
+            left_b_view.polys[1].shards[s].ptr == right_b_view.polys[1].shards[s].ptr;
+        kernel::launch_multiply_pair_two_components(
+            destination_a_view.polys[0].shards[s],
+            destination_a_view.polys[1].shards[s],
+            destination_a_view.polys[2].shards[s],
+            left_a_view.polys[0].shards[s],
+            left_a_view.polys[1].shards[s],
+            right_a_view.polys[0].shards[s],
+            right_a_view.polys[1].shards[s],
+            &destination_b_view.polys[0].shards[s],
+            &destination_b_view.polys[1].shards[s],
+            &destination_b_view.polys[2].shards[s],
+            &left_b_view.polys[0].shards[s],
+            &left_b_view.polys[1].shards[s],
+            &right_b_view.polys[0].shards[s],
+            &right_b_view.polys[1].shards[s],
+            is_square,
+            *parameter_shard,
+            level_info.degree);
+    }
+}
+
+void GpuElementwiseHandler::square_ciphertext_pair(
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView &destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView &source_b_view,
+    const GpuLevelInfo &level_info) const
+{
+    multiply_ciphertext_pair(
+        destination_a_view,
+        destination_b_view,
+        source_a_view,
+        source_a_view,
+        source_b_view,
+        source_b_view,
+        level_info);
+}
+
+void GpuElementwiseHandler::double_sub_or_add_plain_pair(
+    kernel::DoublePlainPairOp op,
+    GpuCiphertextView &destination_a_view,
+    GpuCiphertextView *destination_b_view,
+    const GpuConstCiphertextView &source_a_view,
+    const GpuConstCiphertextView *source_b_view,
+    const GpuConstRNSPolyView &plaintext_poly,
+    const GpuConstCiphertextView *correction_a_view,
+    const GpuConstCiphertextView *correction_b_view,
+    const GpuLevelInfo &level_info) const
+{
+    const bool has_b = destination_b_view != nullptr && source_b_view != nullptr;
+    if ((destination_b_view == nullptr) != (source_b_view == nullptr))
+    {
+        throw std::invalid_argument("double_sub_or_add_plain_pair: lane B mismatch");
+    }
+    if (!same_ciphertext_shape_as_level(source_a_view, level_info, 2) ||
+        !same_ciphertext_shape_as_level(destination_a_view, level_info, 2))
+    {
+        throw std::invalid_argument("double_sub_or_add_plain_pair: lane A shape mismatch");
+    }
+    const std::size_t shard_count = destination_a_view.polys[0].shards.size();
+    if (plaintext_poly.shards.size() != shard_count)
+    {
+        throw std::invalid_argument("double_sub_or_add_plain_pair: plaintext shard count mismatch");
+    }
+    if (has_b &&
+        (!same_ciphertext_shape_as_level(*source_b_view, level_info, 2) ||
+         !same_ciphertext_shape_as_level(*destination_b_view, level_info, 2) ||
+         destination_b_view->polys[0].shards.size() != shard_count))
+    {
+        throw std::invalid_argument("double_sub_or_add_plain_pair: lane B shape mismatch");
+    }
+    if (op == kernel::DoublePlainPairOp::SubCorr)
+    {
+        if (correction_a_view == nullptr ||
+            !same_ciphertext_shape_as_level(*correction_a_view, level_info, 2) ||
+            correction_a_view->polys[0].shards.size() != shard_count ||
+            (has_b &&
+             (correction_b_view == nullptr ||
+              !same_ciphertext_shape_as_level(*correction_b_view, level_info, 2) ||
+              correction_b_view->polys[0].shards.size() != shard_count)))
+        {
+            throw std::invalid_argument("double_sub_or_add_plain_pair: correction shape mismatch");
+        }
+    }
+
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &dst_a0 = destination_a_view.polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, dst_a0);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("double_sub_or_add_plain_pair: no matching parameter shard");
+        }
+        kernel::launch_double_sub_or_add_plain_pair(
+            op,
+            destination_a_view.polys[0].shards[s],
+            destination_a_view.polys[1].shards[s],
+            source_a_view.polys[0].shards[s],
+            source_a_view.polys[1].shards[s],
+            has_b ? &destination_b_view->polys[0].shards[s] : nullptr,
+            has_b ? &destination_b_view->polys[1].shards[s] : nullptr,
+            has_b ? &source_b_view->polys[0].shards[s] : nullptr,
+            has_b ? &source_b_view->polys[1].shards[s] : nullptr,
+            plaintext_poly.shards[s],
+            correction_a_view ? &correction_a_view->polys[0].shards[s] : nullptr,
+            correction_a_view ? &correction_a_view->polys[1].shards[s] : nullptr,
+            correction_b_view ? &correction_b_view->polys[0].shards[s] : nullptr,
+            correction_b_view ? &correction_b_view->polys[1].shards[s] : nullptr,
+            *parameter_shard);
+    }
+}
+
+void GpuElementwiseHandler::multiply_plain_batch(
+    std::vector<GpuCiphertextView> &destination_views,
+    const std::vector<GpuConstCiphertextView> &ciphertext_views,
+    const GpuConstPlaintextView &plaintext_view,
+    const GpuLevelInfo &level_info) const
+{
+    const std::size_t count = ciphertext_views.size();
+    if (count == 0 || destination_views.size() != count)
+    {
+        throw std::invalid_argument("GpuElementwiseHandler::multiply_plain_batch: size mismatch");
+    }
+    if (count == 1)
+    {
+        multiply_plain_with_ciphertext(
+            destination_views[0], ciphertext_views[0], plaintext_view, level_info);
+        return;
+    }
+    const auto &plaintext_poly = plaintext_view.poly;
+    const std::size_t per_ct = ciphertext_views[0].polys.size();
+    const std::size_t total_polys = count * per_ct;
+    const std::size_t shard_count = plaintext_poly.shards.size();
+    bool fast_ok =
+        total_polys <= kernel::kMaxElementwisePairPtrs &&
+        per_ct > 0 && shard_count > 0 &&
+        plaintext_view.meta.is_ntt_form &&
+        !(plaintext_view.meta.parms_id != level_info.parms_id) &&
+        same_ciphertext_shape_as_level(ciphertext_views[0], level_info, per_ct) &&
+        same_ciphertext_shape_as_level(destination_views[0], level_info, per_ct) &&
+        ciphertext_views[0].polys[0].shards.size() == shard_count &&
+        destination_views[0].polys[0].shards.size() == shard_count;
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        if (ciphertext_views[i].polys.size() != per_ct ||
+            destination_views[i].polys.size() != per_ct ||
+            !same_ciphertext_shape_as_level(ciphertext_views[i], level_info, per_ct) ||
+            !same_ciphertext_shape_as_level(destination_views[i], level_info, per_ct) ||
+            ciphertext_views[i].polys[0].shards.size() != shard_count ||
+            destination_views[i].polys[0].shards.size() != shard_count)
+        {
+            fast_ok = false;
+        }
+        for (std::size_t c = 0; fast_ok && c < per_ct; ++c)
+        {
+            for (std::size_t s = 0; fast_ok && s < shard_count; ++s)
+            {
+                if (!matching_shard_placement(
+                        ciphertext_views[i].polys[c].shards[s], plaintext_poly.shards[s]) ||
+                    !matching_shard_placement(
+                        destination_views[i].polys[c].shards[s], plaintext_poly.shards[s]))
+                {
+                    fast_ok = false;
+                }
+            }
+        }
+    }
+    if (!fast_ok)
+    {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            multiply_plain_with_ciphertext(
+                destination_views[i], ciphertext_views[i], plaintext_view, level_info);
+        }
+        return;
+    }
+
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &dst0 = destination_views[0].polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, dst0);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("multiply_plain_batch: no matching parameter shard");
+        }
+        kernel::MultiplyPlainPtrsArgs args{};
+        std::size_t idx = 0;
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            for (std::size_t c = 0; c < per_ct; ++c, ++idx)
+            {
+                args.dst[idx] = destination_views[i].polys[c].shards[s].ptr;
+                args.src[idx] = ciphertext_views[i].polys[c].shards[s].ptr;
+            }
+        }
+        kernel::launch_multiply_plain_ptrs(
+            args, total_polys, plaintext_poly.shards[s], dst0, *parameter_shard, level_info.degree);
+    }
+}
+
+void GpuElementwiseHandler::add_or_sub_ciphertext_batch(
+    std::vector<GpuCiphertextView> &destination_views,
+    const std::vector<GpuConstCiphertextView> &left_views,
+    const std::vector<GpuConstCiphertextView> &right_views,
+    bool subtract,
+    const GpuLevelInfo &level_info) const
+{
+    const std::size_t count = left_views.size();
+    if (count == 0 || right_views.size() != count || destination_views.size() != count)
+    {
+        throw std::invalid_argument("GpuElementwiseHandler::add_or_sub_ciphertext_batch: size mismatch");
+    }
+    if (count == 1)
+    {
+        if (subtract) sub_ciphertext(destination_views[0], left_views[0], right_views[0], level_info);
+        else add_ciphertext(destination_views[0], left_views[0], right_views[0], level_info);
+        return;
+    }
+    const std::size_t per_ct = left_views[0].polys.size();
+    const std::size_t total_polys = count * per_ct;
+    const std::size_t shard_count = per_ct > 0 ? left_views[0].polys[0].shards.size() : 0;
+    bool fast_ok =
+        total_polys <= kernel::kMaxElementwisePairPtrs &&
+        per_ct > 0 && shard_count > 0;
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        if (!same_ciphertext_shape_as_level(left_views[i], level_info, per_ct) ||
+            !same_ciphertext_shape_as_level(right_views[i], level_info, per_ct) ||
+            !same_ciphertext_shape_as_level(destination_views[i], level_info, per_ct) ||
+            left_views[i].polys[0].shards.size() != shard_count ||
+            right_views[i].polys[0].shards.size() != shard_count ||
+            destination_views[i].polys[0].shards.size() != shard_count)
+        {
+            fast_ok = false;
+        }
+        for (std::size_t c = 0; fast_ok && c < per_ct; ++c)
+        {
+            for (std::size_t s = 0; fast_ok && s < shard_count; ++s)
+            {
+                const auto &ref = left_views[0].polys[0].shards[s];
+                if (!matching_shard_placement(left_views[i].polys[c].shards[s], ref) ||
+                    !matching_shard_placement(right_views[i].polys[c].shards[s], ref) ||
+                    !matching_shard_placement(destination_views[i].polys[c].shards[s], ref))
+                {
+                    fast_ok = false;
+                }
+            }
+        }
+    }
+    if (!fast_ok)
+    {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            if (subtract) sub_ciphertext(destination_views[i], left_views[i], right_views[i], level_info);
+            else add_ciphertext(destination_views[i], left_views[i], right_views[i], level_info);
+        }
+        return;
+    }
+
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &dst0 = destination_views[0].polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, dst0);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("add_or_sub_ciphertext_batch: no matching parameter shard");
+        }
+        kernel::BinaryPolyPtrsArgs args{};
+        std::size_t idx = 0;
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            for (std::size_t c = 0; c < per_ct; ++c, ++idx)
+            {
+                args.dst[idx] = destination_views[i].polys[c].shards[s].ptr;
+                args.lhs[idx] = left_views[i].polys[c].shards[s].ptr;
+                args.rhs[idx] = right_views[i].polys[c].shards[s].ptr;
+            }
+        }
+        kernel::launch_add_or_sub_ptrs(
+            args, total_polys, subtract, dst0, *parameter_shard);
+    }
+}
+
+void GpuElementwiseHandler::multiply_ciphertext_batch(
+    std::vector<GpuCiphertextView> &destination_views,
+    const std::vector<GpuConstCiphertextView> &left_views,
+    const std::vector<GpuConstCiphertextView> &right_views,
+    bool is_square,
+    const GpuLevelInfo &level_info) const
+{
+    const std::size_t count = left_views.size();
+    if (count == 0 || right_views.size() != count || destination_views.size() != count)
+    {
+        throw std::invalid_argument("GpuElementwiseHandler::multiply_ciphertext_batch: size mismatch");
+    }
+    if (count == 1)
+    {
+        if (is_square) square_ciphertext(destination_views[0], left_views[0], level_info);
+        else multiply_ciphertext(destination_views[0], left_views[0], right_views[0], level_info);
+        return;
+    }
+    const std::size_t shard_count =
+        left_views[0].polys.empty() ? 0 : left_views[0].polys[0].shards.size();
+    bool fast_ok =
+        count <= kernel::kMaxElementwiseCiphertextBatch &&
+        shard_count > 0 &&
+        use_fused_ciphertext_multiply();
+    for (std::size_t i = 0; fast_ok && i < count; ++i)
+    {
+        if (!same_ciphertext_shape_as_level(left_views[i], level_info, 2) ||
+            !same_ciphertext_shape_as_level(right_views[i], level_info, 2) ||
+            !same_ciphertext_shape_as_level(destination_views[i], level_info, 3) ||
+            left_views[i].polys[0].shards.size() != shard_count ||
+            right_views[i].polys[0].shards.size() != shard_count ||
+            destination_views[i].polys[0].shards.size() != shard_count)
+        {
+            fast_ok = false;
+        }
+        for (std::size_t s = 0; fast_ok && s < shard_count; ++s)
+        {
+            const auto &ref = left_views[0].polys[0].shards[s];
+            for (std::size_t c = 0; c < 2; ++c)
+            {
+                if (!matching_shard_placement(left_views[i].polys[c].shards[s], ref) ||
+                    !matching_shard_placement(right_views[i].polys[c].shards[s], ref) ||
+                    !matching_shard_placement(destination_views[i].polys[c].shards[s], ref))
+                {
+                    fast_ok = false;
+                }
+            }
+            if (!matching_shard_placement(destination_views[i].polys[2].shards[s], ref))
+            {
+                fast_ok = false;
+            }
+        }
+    }
+    if (!fast_ok)
+    {
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            if (is_square) square_ciphertext(destination_views[i], left_views[i], level_info);
+            else multiply_ciphertext(destination_views[i], left_views[i], right_views[i], level_info);
+        }
+        return;
+    }
+
+    for (std::size_t s = 0; s < shard_count; ++s)
+    {
+        const auto &dst0 = destination_views[0].polys[0].shards[s];
+        const GpuParameterShard *parameter_shard = find_parameter_shard(level_info, dst0);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("multiply_ciphertext_batch: no matching parameter shard");
+        }
+        kernel::MultiplyTwoComponentsBatchArgs args{};
+        for (std::size_t i = 0; i < count; ++i)
+        {
+            args.dst0[i] = destination_views[i].polys[0].shards[s].ptr;
+            args.dst1[i] = destination_views[i].polys[1].shards[s].ptr;
+            args.dst2[i] = destination_views[i].polys[2].shards[s].ptr;
+            args.lhs0[i] = left_views[i].polys[0].shards[s].ptr;
+            args.lhs1[i] = left_views[i].polys[1].shards[s].ptr;
+            args.rhs0[i] = right_views[i].polys[0].shards[s].ptr;
+            args.rhs1[i] = right_views[i].polys[1].shards[s].ptr;
+        }
+        kernel::launch_multiply_batch_two_components(
+            args, count, is_square, dst0, *parameter_shard, level_info.degree);
+    }
+}
+
 }  // namespace gpu
 }  // namespace poseidon

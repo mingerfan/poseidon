@@ -1,0 +1,143 @@
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/factory/poseidon_factory.h:5,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/keygenerator.cpp:12:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/bootstrapper.h:5,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/bootstrapper.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/util/chebyshev_interpolation.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/util/chebyshev_interpolation.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/software/evaluator_ckks_software.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/factory/poseidon_factory.h:5,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/factory/poseidon_factory.cpp:1:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/evaluator_ckks_base.h:4,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/evaluator/software/evaluator_ckks_software.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/factory/poseidon_factory.h:5,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/key/keyswitch_base.cpp:2:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/gpu/gpu_bootstrap_profile.cpp:4:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/homomorphic_mod.h:3,
+                 from /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/gpu/gpu_uploader.cpp:6:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘char& poseidon::Polynomial::is_valid(int)’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:70:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   70 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h: In member function ‘const bool poseidon::Polynomial::is_valid(int) const’:
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/advance/polynomial_evaluation.h:76:13: warning: ‘throw’ will always call ‘terminate’ [-Wterminate]
+   76 |             throw std::out_of_range("invalid index");
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+
+/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/util/exception.h(23): warning #815-D: type qualifier on return type is meaningless
+

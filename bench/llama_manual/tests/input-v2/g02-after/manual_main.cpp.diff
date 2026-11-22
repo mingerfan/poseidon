@@ -1,0 +1,37 @@
+--- g01-before/bench/llama_manual/manual_main.cpp
++++ g02-after/bench/llama_manual/manual_main.cpp
+@@ -67,11 +67,13 @@
+     const auto input=manual::parse_inputs(argc,argv);manual::validate_manifest(input);
+     const auto literal=parameters_from_fixture(input.payloads[0].c_str());require_cerium_parameters(literal);
+     if(input.cpu_only) {
+-        std::cout<<"MANUAL_LLAMA_INPUTS_CPU_DONE pinned_manifest_declarations=true payload_hashing_external_preflight=true no_Context_Runtime_keys_GPU=true"<<std::endl;
++        std::cout<<"MANUAL_LLAMA_INPUTS_CPU_DONE input_version="<<manual::input_version_name(input.version)
++            <<" model_weight_scope="<<manual::model_weight_scope(input.version)
++            <<" pinned_manifest_declarations=true payload_hashing_external_preflight=true no_Context_Runtime_keys_GPU=true"<<std::endl;
+         return 0;
+     }
+     configure_safe_implementation();Report report(input.report);const auto whole=Clock::now();
+-    llama_manual::SafetensorWeights weights(input.payloads[1],input.payloads[2]);weights.validate_model_index(input.layers);
++    llama_manual::SafetensorWeights weights(manual::model_weights_root(input),input.payloads[2]);weights.validate_model_index(input.layers);
+     const auto embeddings=llama_manual::benchmark::read_tensor(input.payloads[3],"embeddings",0);
+     const auto reference=llama_manual::benchmark::read_tensor(input.payloads[4],"hidden",input.layers);
+     if(embeddings.size()!=128*4096||reference.size()!=128*4096)throw std::runtime_error("manual tensor geometry mismatch");
+@@ -88,6 +90,7 @@
+     if(free<(8ULL<<30))throw std::runtime_error("manual setup headroom below8GiB");
+     const auto setup_seconds=seconds(setup);double load_seconds=0,execution_seconds=0;
+     std::cout<<"MANUAL_LLAMA_BEGIN plan="<<input.plan.name()<<" blocks="<<input.layers
++        <<" input_version="<<manual::input_version_name(input.version)<<" model_weight_scope="<<manual::model_weight_scope(input.version)
+         <<" N="<<runtime.context.parameters_literal()->degree()<<" slots="<<runtime.encoder.slot_count()
+         <<" expected_Boots_per_block="<<input.plan.total_boots()<<" precision_policy=typed_integer_unit"
+         <<" actual_seed_consumer_version="<<exp_unit_seed_consumer_version<<" model_qualification=false"<<std::endl;
+@@ -107,7 +110,9 @@
+     }
+     const auto accuracy=metric.finish();const auto decode_seconds=seconds(final_decode);const bool pass=accuracy.passed();
+     std::ostringstream json;json<<std::setprecision(17)<<"{\n\"status\":\"completed_experimental_manual_model\",\"plan\":\""<<input.plan.name()
+-        <<"\",\"implementation\":\"handwritten_poseidon_api\",\"DSL_runtime\":false,\"N\":"<<runtime.context.parameters_literal()->degree()<<",\"complex_slots\":"<<runtime.encoder.slot_count()
++        <<"\",\"input_version\":\""<<manual::input_version_name(input.version)<<"\",\"model_weight_scope\":\""<<manual::model_weight_scope(input.version)
++        <<"\",\"model_weight_layers_available\":"<<(input.version==manual::InputVersion::V1?1:32)
++        <<",\"implementation\":\"handwritten_poseidon_api\",\"DSL_runtime\":false,\"N\":"<<runtime.context.parameters_literal()->degree()<<",\"complex_slots\":"<<runtime.encoder.slot_count()
+         <<",\"blocks\":"<<model.completed_blocks()<<",\"valid_tokens\":38,\"capacity\":128,\"accuracy_gate\":true,\"maximum_complex_error\":"<<accuracy.maximum_complex_error
+         <<",\"maximum_real_error\":"<<accuracy.maximum_real_error<<",\"maximum_imaginary\":"<<accuracy.maximum_imaginary<<",\"real_RMSE\":"<<accuracy.rmse
+         <<",\"precision_passed\":"<<(pass?"true":"false")<<",\"all128_rows_finite\":true,\"production_model_qualification\":false,\"historical_pass_inherited\":false"

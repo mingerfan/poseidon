@@ -1,0 +1,49 @@
+{
+  "framework_base_from_Main_briefing": "319d811959949e1ea9250d2d48dec8362e6d7729",
+  "source_generation": "latest framework plus four additive core extensions; promoted source_manual_boot/silu/pair controls, not historical GPU generation",
+  "source_generation_scope": "Main-provided provenance and frozen-root assumption; monitor did not fetch sources or independently rehash remote binaries",
+  "authorization_path_local": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/workspaces/llama-cerium-align/experiments/20261116-manual-llama/node2-v1/gpu-public-silu-v1/authorization.json",
+  "authorization_sha256": "ea218a2d67a0e04f5f439286b3784a2c915a7bbbb0e6682bbd68549929bb0d13",
+  "checks": {
+    "local_authorization_sha_matches": true,
+    "captured_command_matches_authorization": true,
+    "captured_eight_lease_identities_match_authorization": true,
+    "captured_environment_matches_authorization": true,
+    "captured_gpu_matches_authorization": true,
+    "guard_launch_identity_matches": true,
+    "guard_final_print_matches_terminal": true
+  },
+  "executable_sha256_authorized": "c4d4596412d300a67fa0c9e944459d4dbe7769a13704212742153d1fa3c3d84d",
+  "backend_archive_sha256_authorized": "ba79a5a583ab06dea637d1cefe67427195dd5a8398449ce61c1544e7f37f7adb",
+  "cpu_shared_sha256_authorized": "bd86927386dc3bfe8a3a50104b6b200b97cf1a137cd201aeafbdc0711d0cb688",
+  "remote_source_inventory_sha256_authorized": "ae7030c626682d6292227f21886dacce70553c9cf0a7fe29eccce6c75e4adc82",
+  "guard_artifact_hash_checks_scope": "guard performs pinned-artifact and source-inventory checks before admission; no monitor-side remote rehash",
+  "reference_parser": {
+    "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/workspaces/llama-cerium-align/experiments/20261115-cerium-manual-align/a800-silu-pair-monitor-v1/parse.py",
+    "sha256": "ff30d1df3c70cdb8e7e77909305a003295a3a10c77a7350e75cfa24fa9d8782c"
+  },
+  "reference_tests": {
+    "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/workspaces/llama-cerium-align/experiments/20261115-cerium-manual-align/a800-silu-pair-monitor-v1/test_parse.py",
+    "sha256": "7ed28cb67eff381d7e643bcf9e24c211108ff541e4215450780b5ade885f0314"
+  },
+  "local_source_snapshot_sha256": {
+    "bench/llama_manual/tests/public_paired_silu.cpp": "b8948e0fa0a2523294285f669a6ec27ba4388939691d8da99497deed8e7ae307",
+    "bench/llama_manual/tests/public_paired_projections.cpp": "3aef2e3eb782688a6906d6708ee8a04e0e18e21a8cb803122b988e1dfce5436f",
+    "bench/llama_manual/tests/source_silu_cpu.hpp": "2eddb408c5de9d8cea86efbf08ae017747817e42ad8c30092745393350c9a5cf",
+    "bench/llama_manual/source_manual_pair_silu.hpp": "0060ba3263e8611f8aa69a67ec94eca47b67af04cce8920073355e8d748bb1fa",
+    "bench/llama_manual/source_manual_boot.hpp": "a27d6a73ece3255240cc27edcc2beb377895d4fe47ffc5b047e378eeab877a86",
+    "bench/llama_manual/source_accuracy.hpp": "80c8111298321e3ba17bc1d256fc10fe8bacbcdb208fbe326e9cbe6750d81f4b",
+    "bench/llama_manual/source_ops.hpp": "fc202463b520c30c1e0f9e57e99de8f35461d2e4d5fb737c10583ae7ebcb307f",
+    "bench/llama_manual/tools/run_node2_guard.py": "63fbde9b2eb4cf6860184b237b602b67da53b66bd2135264fe2a5277d6cfd4b7"
+  },
+  "cpu_helper_40_boot_marker_scope": "old primitive planned/CPU schema marker, not actual SiLU GPU work",
+  "expected_full_control": {
+    "cases": 2,
+    "physical_Boots": 32,
+    "projection_pairs": 16,
+    "refresh_rows": 16,
+    "internal_EvalMod_calls_derived_only": 64
+  },
+  "source_oracle": "G/G/F/F/PQ source approximation, not true/HF SiLU; complex norm <=1e-3 unchanged",
+  "domain": "public Gate +/-25, Up +/-8; 32768 complex slots, active38=9728; not full32 model qualification"
+}

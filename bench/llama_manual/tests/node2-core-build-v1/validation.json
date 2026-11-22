@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "one_synchronous_ssh": true,
+  "one_frozen_builder_invocation": true,
+  "all_recorded_command_returncodes": {
+    "ssh": 0,
+    "builder": 0,
+    "configure-core": 0,
+    "compile-core": 0
+  },
+  "durations_seconds": {
+    "ssh": 264.7643268200336,
+    "builder": 264.2044223062694,
+    "configure-core": 16.144095066934824,
+    "compile-core": 244.7078764513135
+  },
+  "authorization_and_four_artifact_pins_verified_before_execution": true,
+  "source_hash_validation": "frozen builder completed verification of all 7103 inventory entries before and after compilation",
+  "ported_file_source_sha256": {
+    "src/poseidon/gpu/gpu_evaluator.h": "3068ac76c4a158011c2a91501206ed9c34b8b10c8c72053e4afa6c8b4e152ce6",
+    "src/poseidon/gpu/gpu_evaluator.cpp": "2116d38db5ffb0ed1a4473b91f1fb6a38220fdcc5dc31e839038c1f8a7924f85",
+    "src/poseidon/gpu/gpu_double_hoist.h": "029023a5e07265c51614c2bad46f04207d704de93025580fb47960ecd360cc6a",
+    "src/poseidon/gpu/gpu_uploader.cpp": "68c44b6662d85e58983252f4cf36d8b362e69bf878d153ac46e150e1cdf2a4ea"
+  },
+  "actual_toolchain": {
+    "cmake": "3.31.6",
+    "nvcc": "11.8.89",
+    "host_compiler": "GNU 11.4.0",
+    "cuda_architecture": "compute_80/sm_80"
+  },
+  "compilation_database_units": {
+    "all": 85,
+    "CUDA": 6,
+    "manual_application": 0
+  },
+  "compiled_objects_observed_in_target_log": {
+    "CXX": 76,
+    "CUDA": 6,
+    "total": 82
+  },
+  "subsequent_local_audit": "A reporting-only count assertion exited 1 because it incorrectly expected 79 CXX objects from the 85-entry compilation database. See post-build-audit.json; no command or build was retried.",
+  "warnings": {
+    "configure_developer_warning_blocks": 3,
+    "compile_warning_counts": {
+      "-Wterminate": 22,
+      "NVCC #815-D": 10
+    },
+    "compile_warning_lines_total": 32,
+    "logs_preserved_byte_for_byte": true
+  },
+  "cleanup": {
+    "owned_configure_session_remaining": [],
+    "owned_compile_session_remaining": [],
+    "forced_kills": 0,
+    "builder_exited": true,
+    "existing_eight_lease_identities_unchanged": true,
+    "matching_proc_locks_after_exit": [],
+    "owned_host_lock_file_preserved_unheld": true,
+    "check_was_read_only": true
+  },
+  "qualification": "compilation/provenance only; no CPU application, GPU application, Boot, private payload, numerical/model accuracy, latency or GPU acceptance qualification",
+  "local_report_contents": "public logs, command/provenance metadata, aggregate hashes only; no objects/libraries/keys/tensors copied"
+}

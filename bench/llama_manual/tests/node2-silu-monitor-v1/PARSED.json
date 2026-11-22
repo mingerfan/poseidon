@@ -1,0 +1,670 @@
+{
+  "schema_version": 2,
+  "status": "structural-or-app-failure",
+  "failure_stage": "PUBLIC_SILU_PAIR_FAILED projection actual N/Q/id/scale/components/device mismatch",
+  "complete_diagnostic": false,
+  "numerical_gates_passed": null,
+  "complete_finite_numeric_negative_rc2": false,
+  "capture_states": {
+    "stdout": "present",
+    "stdout_partial_line": false,
+    "gpu_partial_line": false,
+    "command": "valid",
+    "terminal": "valid",
+    "pid_map": "valid",
+    "summary": "empty",
+    "postflight": "valid",
+    "guard_launch": "valid"
+  },
+  "setup": [
+    {
+      "stdout_line": 8,
+      "data": {
+        "N": 65536,
+        "complex_slots": 32768,
+        "ratio": 65536,
+        "m": 2,
+        "eta": 1.0319339651593264,
+        "qdiff": 0.9816825580740343,
+        "native_q": 27,
+        "output_log_scale": 50,
+        "runtime_profile_setup_seconds": 84.933210287,
+        "source_vs_true_SiLU_max_complex": 0.48781247052462845,
+        "performance_valid": false
+      }
+    }
+  ],
+  "cases": [],
+  "refresh_records": [
+    {
+      "stdout_line": 14,
+      "data": {
+        "ordinal": 0,
+        "lane": 0,
+        "fullslot_identity_max_complex": 7.83342521243629e-05,
+        "fullslot_real_sine_max_complex": 6.20538473583589e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 15,
+      "data": {
+        "ordinal": 0,
+        "lane": 1,
+        "fullslot_identity_max_complex": 7.77249170915801e-05,
+        "fullslot_real_sine_max_complex": 6.0758351118298895e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 17,
+      "data": {
+        "ordinal": 1,
+        "lane": 0,
+        "fullslot_identity_max_complex": 6.223137064761619e-05,
+        "fullslot_real_sine_max_complex": 6.223020267872316e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 18,
+      "data": {
+        "ordinal": 1,
+        "lane": 1,
+        "fullslot_identity_max_complex": 7.202916641116975e-05,
+        "fullslot_real_sine_max_complex": 7.20299008936178e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 20,
+      "data": {
+        "ordinal": 2,
+        "lane": 0,
+        "fullslot_identity_max_complex": 6.251873065968907e-05,
+        "fullslot_real_sine_max_complex": 6.251801022156673e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 21,
+      "data": {
+        "ordinal": 2,
+        "lane": 1,
+        "fullslot_identity_max_complex": 7.06609786420308e-05,
+        "fullslot_real_sine_max_complex": 7.065995237709519e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 23,
+      "data": {
+        "ordinal": 3,
+        "lane": 0,
+        "fullslot_identity_max_complex": 7.383608285524715e-05,
+        "fullslot_real_sine_max_complex": 7.38345397100449e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    },
+    {
+      "stdout_line": 24,
+      "data": {
+        "ordinal": 3,
+        "lane": 1,
+        "fullslot_identity_max_complex": 7.794682416376722e-05,
+        "fullslot_real_sine_max_complex": 7.794571379446548e-05,
+        "Q_in": 6,
+        "input_log_scale": 40,
+        "Q_out": 27,
+        "output_log_scale": 50,
+        "immutable": true
+      }
+    }
+  ],
+  "boot_counter_events": [
+    {
+      "stdout_line": 9,
+      "kind": "pair",
+      "calls": 1,
+      "pairs": 1
+    },
+    {
+      "stdout_line": 10,
+      "kind": "pair",
+      "calls": 2,
+      "pairs": 2
+    },
+    {
+      "stdout_line": 11,
+      "kind": "pair",
+      "calls": 3,
+      "pairs": 3
+    },
+    {
+      "stdout_line": 12,
+      "kind": "pair",
+      "calls": 4,
+      "pairs": 4
+    },
+    {
+      "stdout_line": 13,
+      "kind": "pair",
+      "calls": 5,
+      "pairs": 5
+    },
+    {
+      "stdout_line": 16,
+      "kind": "pair",
+      "calls": 6,
+      "pairs": 6
+    },
+    {
+      "stdout_line": 19,
+      "kind": "pair",
+      "calls": 7,
+      "pairs": 7
+    },
+    {
+      "stdout_line": 22,
+      "kind": "pair",
+      "calls": 8,
+      "pairs": 8
+    },
+    {
+      "stdout_line": 25,
+      "kind": "silu_internal:b33_2",
+      "calls": 9
+    },
+    {
+      "stdout_line": 26,
+      "kind": "silu60:g2_refresh0",
+      "calls": 10
+    },
+    {
+      "stdout_line": 27,
+      "kind": "silu60:g2_refresh1",
+      "calls": 11
+    },
+    {
+      "stdout_line": 28,
+      "kind": "silu60:g2_refresh2",
+      "calls": 12
+    },
+    {
+      "stdout_line": 29,
+      "kind": "silu_internal:b33_2",
+      "calls": 13
+    },
+    {
+      "stdout_line": 30,
+      "kind": "silu60:g2_refresh0",
+      "calls": 14
+    },
+    {
+      "stdout_line": 31,
+      "kind": "silu60:g2_refresh1",
+      "calls": 15
+    },
+    {
+      "stdout_line": 32,
+      "kind": "silu60:g2_refresh2",
+      "calls": 16
+    }
+  ],
+  "done": [],
+  "stdout_registrations": [
+    {
+      "stdout_line": 1,
+      "data": {
+        "namespace_pid": 95580,
+        "pgid": 95580,
+        "start_ticks": "1373031700",
+        "nvml_host_pid": 747769,
+        "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+        "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0",
+        "registration_time": 1794834411.4694502,
+        "supervisor_pid": 95575,
+        "parent_death_signal": 15
+      }
+    }
+  ],
+  "silu_cpu_marker": [
+    {
+      "stdout_line": 3,
+      "raw": "PUBLIC_SILU_PAIR_CPU_DONE cases=2 planned_physical_Boots=32 planned_projection_pairs=16 fixed_gate25_up8=true no_Runtime_keys_GPU=true"
+    }
+  ],
+  "common_cpu_marker": [
+    {
+      "stdout_line": 2,
+      "raw": "PUBLIC_PROJECTIONS_CPU_DONE cases=10 physical_Boots=40 N=65536 slots=32768 pattern_zero_swap_sign_amplitude=true metadata8_word_mutations=true exclusive_report_symlink=true fixed_full_and_sine_gates=true active38_complex_norm=true no_Runtime_keys_GPU=true"
+    }
+  ],
+  "summary": null,
+  "command": {
+    "start": "2026-11-16T21:06:51.181434+08:00",
+    "initial_gpu": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "NVIDIA A800 80GB PCIe",
+      "81920",
+      "0",
+      "29"
+    ],
+    "authorization_sha256": "ea218a2d67a0e04f5f439286b3784a2c915a7bbbb0e6682bbd68549929bb0d13",
+    "command": [
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/build/bin/llama31_public_paired_silu",
+      "--public-silu-pair-v1",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/assets/r20_fixture.txt",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/manifests/public-silu-baseline-v1.tsv",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/reports/public-silu-baseline-v1/SUMMARY.json"
+    ],
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "LD_LIBRARY_PATH": "/root/private_data/FHE_manual_20261114/deps/prefix/lib:/usr/local/cuda-11.8/lib64:/usr/local/nvidia/lib64",
+      "OMP_NUM_THREADS": "6",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "POSEIDON_GPU_QP_PREPARE": "optimized",
+      "POSEIDON_GPU_QP_PREPARE_THREADS": "4",
+      "POSEIDON_GPU_QP_VERIFY_REFERENCE": "0"
+    },
+    "guard_pid": 95575,
+    "owned_shared_leases": {
+      "/root/private_data/bert-dsl-20261115/packing-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28649313282,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-packed12/GPU-499236d3-exclusive.lock": {
+        "inode": 27800516620,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/v4-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 46972075275,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/v6-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28647886850,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-v6/GPU-499236d3-exclusive.lock": {
+        "inode": 29854804745,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/packing-unresolved-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28342542856,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/multi-plan-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28509596163,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-packed-prefix/GPU-499236d3-exclusive.lock": {
+        "inode": 30376604929,
+        "mode": 33188,
+        "uid": 0
+      }
+    }
+  },
+  "terminal": {
+    "start": "2026-11-16T21:06:51.181434+08:00",
+    "initial_gpu": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "NVIDIA A800 80GB PCIe",
+      "81920",
+      "0",
+      "29"
+    ],
+    "authorization_sha256": "ea218a2d67a0e04f5f439286b3784a2c915a7bbbb0e6682bbd68549929bb0d13",
+    "command": [
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/build/bin/llama31_public_paired_silu",
+      "--public-silu-pair-v1",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/assets/r20_fixture.txt",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/manifests/public-silu-baseline-v1.tsv",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/reports/public-silu-baseline-v1/SUMMARY.json"
+    ],
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "LD_LIBRARY_PATH": "/root/private_data/FHE_manual_20261114/deps/prefix/lib:/usr/local/cuda-11.8/lib64:/usr/local/nvidia/lib64",
+      "OMP_NUM_THREADS": "6",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "POSEIDON_GPU_QP_PREPARE": "optimized",
+      "POSEIDON_GPU_QP_PREPARE_THREADS": "4",
+      "POSEIDON_GPU_QP_VERIFY_REFERENCE": "0"
+    },
+    "guard_pid": 95575,
+    "owned_shared_leases": {
+      "/root/private_data/bert-dsl-20261115/packing-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28649313282,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-packed12/GPU-499236d3-exclusive.lock": {
+        "inode": 27800516620,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/v4-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 46972075275,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/v6-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28647886850,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-v6/GPU-499236d3-exclusive.lock": {
+        "inode": 29854804745,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/packing-unresolved-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28342542856,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/multi-plan-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28509596163,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-packed-prefix/GPU-499236d3-exclusive.lock": {
+        "inode": 30376604929,
+        "mode": 33188,
+        "uid": 0
+      }
+    },
+    "child_identity": {
+      "pid": 95580,
+      "pgid": 95580,
+      "sid": 95580,
+      "start_ticks": "1373031700",
+      "uid": 0,
+      "state": "R"
+    },
+    "returncode": 1,
+    "abort_reason": null,
+    "requested_signals": [],
+    "registered": {
+      "namespace_pid": 95580,
+      "pgid": 95580,
+      "start_ticks": "1373031700",
+      "nvml_host_pid": 747769,
+      "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0",
+      "registration_time": 1794834411.4694502,
+      "supervisor_pid": 95575,
+      "parent_death_signal": 15
+    },
+    "wall_seconds": 94.33101697638631,
+    "end": "2026-11-16T21:08:25.514346+08:00",
+    "classification": "structural_or_resource_failure"
+  },
+  "pid_map": {
+    "namespace_pid": 95580,
+    "pgid": 95580,
+    "start_ticks": "1373031700",
+    "nvml_host_pid": 747769,
+    "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+    "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0",
+    "registration_time": 1794834411.4694502,
+    "supervisor_pid": 95575,
+    "parent_death_signal": 15
+  },
+  "telemetry": {
+    "samples": 45,
+    "noncontinuous": true,
+    "start_to_first_sample_s": 0.12310370430350304,
+    "max_gap_between_samples_s": 2.18326204828918,
+    "last_sample_to_terminal_s": 2.0006306674331427,
+    "temperature_min_C": 29,
+    "temperature_max_C": 34,
+    "max_sampled_memory_MiB": 33227,
+    "max_sampled_utilization_percent": 100.0,
+    "max_sampled_power_W": 98.71,
+    "sm_clock_MHz_when_nonzero_util": null,
+    "memory_clock_MHz_when_nonzero_util": null,
+    "clocks_scope": "not sampled by the node2 guard; no inferred clocks",
+    "foreign_samples": 0,
+    "observed_host_pids": [
+      747769
+    ],
+    "registered_host_pids": [
+      747769
+    ],
+    "observed_uuids": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112"
+    ],
+    "registered_uuids": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112"
+    ]
+  },
+  "postflight": {
+    "timestamp": "2026-11-16T21:11:33.345493+08:00",
+    "expected_gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+    "expected_guard_identity": {
+      "pid": 95575,
+      "pgid": 95575,
+      "start_ticks": "1373031093"
+    },
+    "guard_identity_once": null,
+    "scope": "single read-only sample; no continuous exclusivity or lease-release proof",
+    "registered_namespace_identity_once": null,
+    "gpu": {
+      "returncode": 0,
+      "rows": [
+        [
+          "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+          "NVIDIA A800 80GB PCIe",
+          "81920",
+          "0",
+          "29"
+        ]
+      ],
+      "stderr": ""
+    },
+    "compute_apps": {
+      "returncode": 0,
+      "rows": [],
+      "stderr": ""
+    }
+  },
+  "postflight_checks": {
+    "expected_guard_absent": true,
+    "registered_namespace_child_absent": true,
+    "target_gpu_zero_MiB_no_compute_PID": true
+  },
+  "guard_launch_terminal_record": {
+    "start": "2026-11-16T21:06:51.181434+08:00",
+    "initial_gpu": [
+      "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "NVIDIA A800 80GB PCIe",
+      "81920",
+      "0",
+      "29"
+    ],
+    "authorization_sha256": "ea218a2d67a0e04f5f439286b3784a2c915a7bbbb0e6682bbd68549929bb0d13",
+    "command": [
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/build/bin/llama31_public_paired_silu",
+      "--public-silu-pair-v1",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/assets/r20_fixture.txt",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/manifests/public-silu-baseline-v1.tsv",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/reports/public-silu-baseline-v1/SUMMARY.json"
+    ],
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "LD_LIBRARY_PATH": "/root/private_data/FHE_manual_20261114/deps/prefix/lib:/usr/local/cuda-11.8/lib64:/usr/local/nvidia/lib64",
+      "OMP_NUM_THREADS": "6",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "POSEIDON_GPU_QP_PREPARE": "optimized",
+      "POSEIDON_GPU_QP_PREPARE_THREADS": "4",
+      "POSEIDON_GPU_QP_VERIFY_REFERENCE": "0"
+    },
+    "guard_pid": 95575,
+    "owned_shared_leases": {
+      "/root/private_data/bert-dsl-20261115/packing-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28649313282,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-packed12/GPU-499236d3-exclusive.lock": {
+        "inode": 27800516620,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/v4-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 46972075275,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/v6-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28647886850,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-v6/GPU-499236d3-exclusive.lock": {
+        "inode": 29854804745,
+        "mode": 33152,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/packing-unresolved-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28342542856,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/multi-plan-a800/GPU-499236d3-exclusive.lock": {
+        "inode": 28509596163,
+        "mode": 33188,
+        "uid": 0
+      },
+      "/root/private_data/bert-dsl-20261115/full12-packed-prefix/GPU-499236d3-exclusive.lock": {
+        "inode": 30376604929,
+        "mode": 33188,
+        "uid": 0
+      }
+    },
+    "child_identity": {
+      "pid": 95580,
+      "pgid": 95580,
+      "sid": 95580,
+      "start_ticks": "1373031700",
+      "uid": 0,
+      "state": "R"
+    },
+    "returncode": 1,
+    "abort_reason": null,
+    "requested_signals": [],
+    "registered": {
+      "namespace_pid": 95580,
+      "pgid": 95580,
+      "start_ticks": "1373031700",
+      "nvml_host_pid": 747769,
+      "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+      "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0",
+      "registration_time": 1794834411.4694502,
+      "supervisor_pid": 95575,
+      "parent_death_signal": 15
+    },
+    "wall_seconds": 94.33101697638631,
+    "end": "2026-11-16T21:08:25.514346+08:00",
+    "classification": "structural_or_resource_failure"
+  },
+  "child_returncode": 1,
+  "outer_classification": "structural_or_resource_failure",
+  "outer_exit_status_scope": "not independently waitpid-observed by detached monitor; guard classification and final printed record only",
+  "observed_refresh_checks": {
+    "rows": 8,
+    "all_observed_fixed_refresh_gates_pass": true,
+    "identity_max_complex": 7.83342521243629e-05,
+    "real_sine_max_complex": 7.794571379446548e-05,
+    "scope": "observed prefix only; not final source-oracle or whole-control qualification"
+  },
+  "timings": {
+    "runtime_profile_setup_seconds": 84.933210287,
+    "completed_case_diagnostic_seconds": [],
+    "incomplete_case_diagnostic_seconds": null,
+    "guard_wall_seconds": 94.33101697638631,
+    "performance_valid": false
+  },
+  "final_validation": {
+    "closed_shape_predicate_failed": true,
+    "shape_failure_detail_scope": "generic predicate only; actual failing output and individual metadata field were not logged",
+    "OFF_ON_same_plan_metadata_RNS_exact": null,
+    "all_inputs_const_decodes_and_outputs_immutable": null,
+    "all_slots_finite": null,
+    "final_Q10_scale2pow40_metadata": null
+  },
+  "issues": [],
+  "failures": [
+    {
+      "line": 33,
+      "error": "PUBLIC_SILU_PAIR_FAILED projection actual N/Q/id/scale/components/device mismatch"
+    }
+  ],
+  "observed_counts": {
+    "case_rows": 0,
+    "refresh_rows": 8,
+    "physical_Boot_counter_events": 16,
+    "projection_pair_counter_events": 8,
+    "last_physical_Boot_counter": 16,
+    "last_projection_pair_counter": 8,
+    "physical_Boots_from_DONE": null,
+    "projection_pairs_from_DONE": null,
+    "internal_EvalMod_calls_derived_not_independently_counted": null
+  },
+  "scope": "public paired-SiLU one process; no Native-identical FHE/model/Torch/security/performance qualification",
+  "refresh_oracles": "identity uses full complex preinput; real_sine uses factor*sin(real(preinput)/factor) with complex output error, NOT full complex-sine oracle",
+  "conditioned_metrics": "paired conditioned metrics are non-gating, old control conditioned metrics must be null; independent maxima not additive",
+  "timing_scope": "diagnostic wall includes control snapshots and observer decode; GPU busy/clean performance not measured",
+  "source_vs_true_SiLU_max_complex": 0.48781247052462845,
+  "source_vs_true_SiLU_scope": "separate non-gating nominal source vs mathematical SiLU comparison, not Torch qualification",
+  "telemetry_scope": "noncontinuous sampled telemetry; gaps and unsampled tail explicitly reported",
+  "postflight_scope": "one explicit sampled GPU/process observation; no continuous exclusivity or lease-release proof",
+  "hashes": {
+    "stdout": "84faf74a813dd28218d5452bfd492a618eae5b89aeb0b963f2a28bbffac26a46",
+    "command": "048f64f5dace90c6987adf559462daccbab606f4f7c6e897084d342558c3537b",
+    "terminal": "e6eec6cdae26c17f9683905c58c97ee7f069ce274946784cf00b835a0a96e6f4",
+    "gpu": "1fce85de39ee734b2730ef137d7d06db4f5d1d6bf56f66afbe99613f7efa6a00",
+    "pid_map": "824b5c1760b7d59291c590e613c9cdf65c905dbdbac942cb6d47c6f0e8a5fe75",
+    "summary": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "postflight": "81fda1a100ce03eac5aa1814fe7c0add9386882ee3ea777e84c54591dcca0fcc",
+    "guard_launch": "53000c3b4d356a0764c7059bca5e5260ecc13a755dc98ea7de4cfe721f359833"
+  }
+}

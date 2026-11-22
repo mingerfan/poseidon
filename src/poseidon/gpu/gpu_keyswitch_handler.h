@@ -45,6 +45,15 @@ public:
         const GpuEvaluationKeyData &relin_keys_data,
         const GpuLevelInfo &level_info) const;
 
+    void relinearize_hybrid_ciphertext_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView &source_b_view,
+        const GpuConstEvaluationKeyView &relin_keys_view,
+        const GpuEvaluationKeyData &relin_keys_data,
+        const GpuLevelInfo &level_info) const;
+
     void relinearize_hybrid_ciphertext_rescale_x2(
         GpuCiphertextView &destination_view,
         const GpuConstCiphertextView &source_view,
@@ -52,6 +61,27 @@ public:
         const GpuEvaluationKeyData &relin_keys_data,
         const GpuLevelInfo &source_level_info,
         const GpuLevelInfo &destination_level_info) const;
+
+    void relinearize_hybrid_ciphertext_rescale_x2_pair(
+        GpuCiphertextView &destination_a_view,
+        GpuCiphertextView &destination_b_view,
+        const GpuConstCiphertextView &source_a_view,
+        const GpuConstCiphertextView &source_b_view,
+        const GpuConstEvaluationKeyView &relin_keys_view,
+        const GpuEvaluationKeyData &relin_keys_data,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info) const;
+
+    /**
+     * Batched hybrid relinearization for up to kMaxRelinBatchSources size-3
+     * ciphertexts, leaving the ModDown Q results in workspace.inner_q_batch.
+     */
+    bool relinearize_hybrid_ciphertext_batch_to_buffer(
+        const std::vector<GpuConstCiphertextView> &source_views,
+        const GpuConstEvaluationKeyView &relin_keys_view,
+        const GpuEvaluationKeyData &relin_keys_data,
+        const GpuLevelInfo &level_info,
+        GpuDoubleHoistWorkspace &workspace) const;
 
     void switch_key_hybrid_ciphertext(
         GpuCiphertextView &destination_view,
@@ -74,6 +104,18 @@ public:
         const GpuWord *precomputed_source_intt_q = nullptr) const;
 
     /**
+     * Batched variant of hoist_decompose_modup_ntt for multiple switch
+     * polynomials sharing one modulus level and device.
+     */
+    void hoist_decompose_modup_ntt_batch(
+        const std::vector<GpuConstRNSPolyView> &switch_polys_ntt,
+        const GpuLevelInfo &level_info,
+        std::vector<GpuHoistedDecomposition *> &destinations,
+        GpuHybridKeySwitchWorkspace &workspace,
+        const GpuWord *precomputed_source_intt_q_batch = nullptr,
+        std::size_t source_intt_q_stride = 0) const;
+
+    /**
      * Standard-key staged path. The automorphism is applied to each already
      * hoisted digit, then all key products are accumulated in QP without a
      * ModDown. initialize=true overwrites the selected destination batch.
@@ -90,6 +132,22 @@ public:
         const GpuLevelInfo &level_info,
         GpuHybridKeySwitchWorkspace &workspace,
         const GpuWord *lifted_c0_source_q = nullptr) const;
+
+    /**
+     * InversePreRotated HYBRID key-multiply for two ciphertexts sharing one
+     * Galois automorphism, reading each Galois key word once into registers.
+     */
+    void keyswitch_multsum_pre_rotated_pair_no_moddown(
+        const GpuHoistedDecomposition &hoisted_a,
+        const GpuHoistedDecomposition &hoisted_b,
+        std::uint32_t galois_elt,
+        const GpuConstEvaluationKeyView &keys,
+        const GpuEvaluationKeyData &key_storage,
+        std::size_t key_index,
+        GpuQPCiphertextBuffer &destination,
+        const GpuLevelInfo &level_info,
+        const GpuWord *lifted_c0_a_q,
+        const GpuWord *lifted_c0_b_q) const;
 
     /**
      * Apply HYBRID P->Q ModDown to one QP ciphertext batch. P INTT and its

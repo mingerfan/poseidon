@@ -1,0 +1,43 @@
+CMake Warning (dev) at /root/private_data/FHE_manual_20261114/deps/cmake-wheel/cmake/data/share/cmake-3.31/Modules/GNUInstallDirs.cmake:253 (message):
+  Unable to determine default CMAKE_INSTALL_LIBDIR directory because no
+  target architecture is known.  Please enable at least one language before
+  including GNUInstallDirs.
+Call Stack (most recent call first):
+  CMakeLists.txt:8 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Install Path: /usr/local
+CMake Warning (dev) at /root/private_data/FHE_manual_20261114/deps/cmake-wheel/cmake/data/share/cmake-3.31/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  third_party/rmm/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at /root/private_data/FHE_manual_20261114/deps/cmake-wheel/cmake/data/share/cmake-3.31/Modules/FetchContent.cmake:1953 (message):
+  Calling FetchContent_Populate(nvtx3) is deprecated, call
+  FetchContent_MakeAvailable(nvtx3) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(nvtx3) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/nvtx3.cmake:75 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:19 (rapids_cpm_nvtx3)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:23 (find_and_configure_nvtx3)
+  third_party/rmm/CMakeLists.txt:78 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+

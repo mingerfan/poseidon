@@ -1,0 +1,9 @@
+{
+  "scope": "metadata error reporting ONLY; all original gates including exact final scale unchanged, no arithmetic/profile/sourceoracle/counter/case changes",
+  "original_helper_sha256": "3aef2e3eb782688a6906d6708ee8a04e0e18e21a8cb803122b988e1dfce5436f",
+  "original_driver_sha256": "b8948e0fa0a2523294285f669a6ec27ba4388939691d8da99497deed8e7ae307",
+  "files": {
+    "public_paired_silu.cpp": "b8948e0fa0a2523294285f669a6ec27ba4388939691d8da99497deed8e7ae307",
+    "public_paired_projections.cpp": "63b3134c3bd265b1921ca04ccf1c3d07a14916258a43552cf2b7a93651c4bd0d"
+  }
+}

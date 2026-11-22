@@ -239,12 +239,22 @@ struct GpuHybridKeySwitchWorkspace
     DeviceVector<GpuWord> p_coeff1;
     DeviceVector<GpuWord> converted_q0;
     DeviceVector<GpuWord> converted_q1;
+    DeviceVector<GpuWord> batch_modup_q;
+    DeviceVector<GpuWord> batch_modup_p;
 
     void ensure_capacity(
         int requested_device_id,
         std::size_t requested_degree,
         std::size_t requested_q_count,
         std::size_t requested_p_count);
+
+    /**
+     * Ensure batched ModUp scratch fits requested total Q and P word counts.
+     */
+    void ensure_modup_batch_capacity(
+        int requested_device_id,
+        std::size_t requested_batch_q_words,
+        std::size_t requested_batch_p_words);
 };
 
 struct GpuDoubleHoistOperationCounts
@@ -297,6 +307,30 @@ struct GpuDoubleHoistWorkspace
     GpuDoubleHoistOperationCounts last_counts;
     std::vector<GpuDoubleHoistOperationCounts> matrix_counts;
     std::vector<MatrixRescaleTrace> matrix_rescale_trace;
+};
+
+// Caller-scoped owning baby rotations. Source/key objects must stay alive,
+// immutable and on the same stream/resource until the last cache consumer.
+struct GpuDoubleHoistBabyCache
+{
+    GpuCiphertextMeta source_meta{};
+    const GpuWord *source_c0 = nullptr;
+    const GpuWord *source_c1 = nullptr;
+    const void *galois_key_identity = nullptr;
+    std::vector<int> steps;
+    GpuQPCiphertextBuffer rotations;
+    bool ready = false;
+};
+
+// Changes graph rounding order; retained only for explicit rejected controls.
+struct GpuDoubleHoistSumState
+{
+    GpuQPCiphertextBuffer groups;
+    GpuCiphertextMeta source_meta{};
+    double plaintext_scale = 0.0;
+    const void *galois_key_identity = nullptr;
+    std::vector<int> giant_steps;
+    bool initialized = false;
 };
 
 GpuLinearTransformMode gpu_linear_transform_mode_from_environment(

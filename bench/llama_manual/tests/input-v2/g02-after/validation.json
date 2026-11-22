@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "tested_source_snapshots_match_current": {
+    "bench/llama_manual/source_manual_io.hpp": "9f7dd738e577355a73d1baa421e76ca2021acbcf13529925ac1188281acabfd5",
+    "bench/llama_manual/manual_main.cpp": "f1159d3d3fda4249d979d889a01d256ad63793c5c99920286d75978da8fe0b03",
+    "bench/llama_manual/tests/manual_plan_test.cpp": "e977a36cd3766b5dfe049c844dc1beae7dcc4dd511762f4bb1d39d87733d24b2"
+  },
+  "protected_preexisting_source_sha256_unchanged": {
+    "bench/llama_manual/source_manual_plan.hpp": "9e8c581eefc9b7977b0c968ecec4519c5de75aabc25d80425ba666108d091529",
+    "bench/llama_manual/source_manual_program.hpp": "46d2d3cd7a7e65f579ede81f07bf70e4d07dce0959f3994817a18d8caf1d8a98",
+    "src/poseidon/gpu/gpu_double_hoist.h": "029023a5e07265c51614c2bad46f04207d704de93025580fb47960ecd360cc6a",
+    "src/poseidon/gpu/gpu_evaluator.cpp": "2116d38db5ffb0ed1a4473b91f1fb6a38220fdcc5dc31e839038c1f8a7924f85",
+    "src/poseidon/gpu/gpu_evaluator.h": "3068ac76c4a158011c2a91501206ed9c34b8b10c8c72053e4afa6c8b4e152ce6",
+    "src/poseidon/gpu/gpu_uploader.cpp": "68c44b6662d85e58983252f4cf36d8b362e69bf878d153ac46e150e1cdf2a4ea"
+  },
+  "public_metadata_source": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/workspaces/llama-cerium-align/gpu_api/bench/llama31_cerium_source15/inputs/WEIGHT_DOWNLOAD_LOCK.json",
+  "public_model": "LLM-Research/Meta-Llama-3.1-8B",
+  "shard_metadata_only_no_weight_reads": [
+    {
+      "Name": "model-00001-of-00004.safetensors",
+      "Sha256": "f8b9704ab09cdeb097aa4a0a24bca96f906eec36bad63ab495bc21475058601b",
+      "Size": 4976698672,
+      "Revision": "24ce1d3ac24d46a14b16dcb666c4fdd9147b87ea"
+    },
+    {
+      "Name": "model-00002-of-00004.safetensors",
+      "Sha256": "c28b25e7541751056ee126627e007f8d4288319733285e9f7b17b9ff6eb313f0",
+      "Size": 4999802720,
+      "Revision": "24ce1d3ac24d46a14b16dcb666c4fdd9147b87ea"
+    },
+    {
+      "Name": "model-00003-of-00004.safetensors",
+      "Sha256": "d8e9504dd4e4a146d484c52a97584ec14dac92237c46b064934af67a85e7d383",
+      "Size": 4915916176,
+      "Revision": "24ce1d3ac24d46a14b16dcb666c4fdd9147b87ea"
+    },
+    {
+      "Name": "model-00004-of-00004.safetensors",
+      "Sha256": "e4486f35c040f683f7d790354f66c169c109eb9fa0954a4a35d7c458a108405d",
+      "Size": 1168138808,
+      "Revision": "24ce1d3ac24d46a14b16dcb666c4fdd9147b87ea"
+    }
+  ],
+  "no_payload_hashing_or_model_execution": true
+}

@@ -1,0 +1,12 @@
+{
+  "status": "structural-or-app-failure",
+  "complete_diagnostic": false,
+  "failure_stage": "PUBLIC_SILU_PAIR_FAILED projection actual N/Q/id/scale/components/device mismatch",
+  "issues": [],
+  "failures": [
+    {
+      "line": 33,
+      "error": "PUBLIC_SILU_PAIR_FAILED projection actual N/Q/id/scale/components/device mismatch"
+    }
+  ]
+}

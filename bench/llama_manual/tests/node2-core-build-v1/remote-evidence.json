@@ -1,0 +1,225 @@
+{
+  "remote_root": "/root/private_data/llama-manual-framework-node2-20261116-v1",
+  "hostname": "crdnotebook-2121267849739771906-hpuict-12953",
+  "pin_verification": {
+    "build-authorization.json": {
+      "sha256": "f88be3dffec92c6a26a1c9ca5896863da9c741844238e5f0f9e9ab775f2573eb",
+      "bytes": 2081
+    },
+    "tools/build_node2_core.py": {
+      "sha256": "36b0300f24bc7bd00c2cb656f22d7e4c7f69e6d1d0dda5a37ab5c5ecb4eccc46",
+      "bytes": 5929
+    },
+    "tools/owned_cpu_group.py": {
+      "sha256": "6e6f69c5d93daeef20c17b0f7dabde856d0cf9755708a9e140e4c0a35a786668",
+      "bytes": 3228
+    },
+    "source.tar.gz": {
+      "sha256": "864924b6175881c1e689030d4949f44a6d051c66345306c2ba2c2924964255e5",
+      "bytes": 7486060
+    },
+    "source-sha256.json": {
+      "sha256": "d3b0c1a488c4220769a1b02f6c50a353d889b2bdf7cf1ac0ed88577186aa820c",
+      "bytes": 1067220
+    }
+  },
+  "execution": {
+    "invocation_count": 1,
+    "argv": [
+      "taskset",
+      "-c",
+      "6",
+      "/opt/conda/bin/python3",
+      "-I",
+      "-B",
+      "-u",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/tools/build_node2_core.py"
+    ],
+    "started_utc": "2026-11-16T12:39:36Z",
+    "pid": 94465,
+    "returncode": 0,
+    "seconds": 264.2044223062694,
+    "ended_utc": "2026-11-16T12:44:00Z"
+  },
+  "files": {
+    "core-build-result.json": {
+      "exists": true,
+      "bytes": 2811,
+      "sha256": "ce9a186c21392d7b91123b21ce1783ee4634a4978fe795dccb950e5b84986359"
+    },
+    "configure-core.stdout.log": {
+      "exists": true,
+      "bytes": 2804,
+      "sha256": "759a5599cb43624b90e1f1a8f2aaf0c60bf99f8d55260a29a4792e68f9d3c1c9"
+    },
+    "configure-core.stderr.log": {
+      "exists": true,
+      "bytes": 2702,
+      "sha256": "66726314a8c858b17398eb925ebcdaa815707024269795b63bbc3b28a828d5b1"
+    },
+    "compile-core.stdout.log": {
+      "exists": true,
+      "bytes": 8489,
+      "sha256": "e27db9163c3f144959f26f7ba9ac04f51f0cf757506cd39f2bfb823df0c1b8b9"
+    },
+    "compile-core.stderr.log": {
+      "exists": true,
+      "bytes": 17317,
+      "sha256": "ce6a7ae96aae38eedd67e838f9cb4332a26fb49c68744aabd306244770e2507a"
+    }
+  },
+  "post_exit": {
+    "builder_proc_exists": false,
+    "lock_identities": [
+      {
+        "path": "/root/private_data/bert-dsl-20261115/packing-a800/GPU-499236d3-exclusive.lock",
+        "inode": 28649313282,
+        "uid": 0,
+        "mode": 33188,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/full12-packed12/GPU-499236d3-exclusive.lock",
+        "inode": 27800516620,
+        "uid": 0,
+        "mode": 33152,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/v4-a800/GPU-499236d3-exclusive.lock",
+        "inode": 46972075275,
+        "uid": 0,
+        "mode": 33188,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/v6-a800/GPU-499236d3-exclusive.lock",
+        "inode": 28647886850,
+        "uid": 0,
+        "mode": 33152,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/full12-v6/GPU-499236d3-exclusive.lock",
+        "inode": 29854804745,
+        "uid": 0,
+        "mode": 33152,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/packing-unresolved-a800/GPU-499236d3-exclusive.lock",
+        "inode": 28342542856,
+        "uid": 0,
+        "mode": 33188,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/multi-plan-a800/GPU-499236d3-exclusive.lock",
+        "inode": 28509596163,
+        "uid": 0,
+        "mode": 33188,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/bert-dsl-20261115/full12-packed-prefix/GPU-499236d3-exclusive.lock",
+        "inode": 30376604929,
+        "uid": 0,
+        "mode": 33188,
+        "symlink": false,
+        "unchanged": true
+      },
+      {
+        "path": "/root/private_data/llama-manual-framework-node2-20261116-v1/host-build.lock",
+        "inode": 28866281994,
+        "uid": 0,
+        "mode": 33152,
+        "symlink": false
+      }
+    ],
+    "matching_proc_locks": [],
+    "verification": "read-only /proc/locks snapshot; no lock reacquisition or file removal"
+  },
+  "preexisting_build_outputs": [],
+  "pin_verification_passed": true,
+  "artifacts": {
+    "build/libposeidon_gpu.a": {
+      "exists": true,
+      "bytes": 11493838,
+      "sha256": "ba79a5a583ab06dea637d1cefe67427195dd5a8398449ce61c1544e7f37f7adb"
+    },
+    "build/libposeidon_shared.so": {
+      "exists": true,
+      "bytes": 2545616,
+      "sha256": "bd86927386dc3bfe8a3a50104b6b200b97cf1a137cd201aeafbdc0711d0cb688"
+    }
+  },
+  "cmake_cache_selection": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_CUDA_ARCHITECTURES": "80",
+    "CMAKE_CUDA_COMPILER": "/usr/local/cuda/bin/nvcc",
+    "CMAKE_CXX_COMPILER": "/usr/bin/c++",
+    "CMAKE_CXX_FLAGS": "-fopenmp -fno-fast-math",
+    "CMAKE_MAKE_PROGRAM": "/usr/bin/gmake",
+    "CMAKE_PREFIX_PATH": "/root/private_data/FHE_manual_20261114/deps/prefix",
+    "CPM_LOCAL_PACKAGES_ONLY": "ON",
+    "FETCHCONTENT_FULLY_DISCONNECTED": "ON",
+    "GMP_ROOT": "/root/private_data/FHE_manual_20261114/deps/prefix",
+    "POSEIDON_BUILD_BENCH": "OFF",
+    "POSEIDON_BUILD_CKKS_RUNTIME_API": "OFF",
+    "POSEIDON_BUILD_CPU_TESTS": "OFF",
+    "POSEIDON_BUILD_DEPS": "OFF",
+    "POSEIDON_BUILD_EXAMPLES": "OFF",
+    "POSEIDON_BUILD_GPU": "ON",
+    "POSEIDON_BUILD_GPU_ENCODE_BENCH": "OFF",
+    "POSEIDON_BUILD_LLAMA_MANUAL": "OFF",
+    "POSEIDON_BUILD_RESNET20_S2C_FIRST": "OFF",
+    "POSEIDON_BUNDLED_RMM_DIR": "/root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/rmm",
+    "POSEIDON_CKKS_RUNTIME_SOURCE_DIR": "/root/private_data/llama-manual-framework-node2-20261116-v1/source/third_party/ckks-runtime",
+    "POSEIDON_USE_CXX17": "ON",
+    "POSEIDON_USE_HARDWARE": "OFF",
+    "POSEIDON_USE_INTEL_HEXL": "OFF",
+    "POSEIDON_USE_MSGSL": "OFF",
+    "POSEIDON_USE_OPENMP": "OFF",
+    "POSEIDON_USE_SPDLOG": "ON",
+    "POSEIDON_USE_ZLIB": "OFF",
+    "POSEIDON_USE_ZSTD": "OFF",
+    "CMAKE_CACHE_MAJOR_VERSION": "3",
+    "CMAKE_CACHE_MINOR_VERSION": "31",
+    "CMAKE_CACHE_PATCH_VERSION": "6"
+  },
+  "cuda_compiler_provenance": [
+    {
+      "path": "/root/private_data/llama-manual-framework-node2-20261116-v1/build/CMakeFiles/3.31.6/CMakeCUDACompiler.cmake",
+      "sha256": "376bfa2464f1c36762858e5739bbd7b7a84a10caebc8199a53ec6d0276d9c047",
+      "CMAKE_CUDA_COMPILER": "/usr/local/cuda/bin/nvcc",
+      "CMAKE_CUDA_COMPILER_ID": "NVIDIA",
+      "CMAKE_CUDA_COMPILER_VERSION": "11.8.89",
+      "CMAKE_CUDA_COMPILER_TOOLKIT_ROOT": "/usr/local/cuda",
+      "CMAKE_CUDA_ARCHITECTURES_ALL": "35-real;37-real;50-real;52-real;53-real;60-real;61-real;62-real;70-real;72-real;75-real;80-real;86-real;87-real;89-real;90"
+    }
+  ],
+  "compilation_database": {
+    "sha256": "7351270680dbd2f5258560d0ccb7dddb8c8cf21eac4d3ab7a9342eeebeb2cee7",
+    "entries": 85,
+    "cuda_entries": 6,
+    "manual_application_entries": [],
+    "ported_translation_units": [
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/gpu/gpu_uploader.cpp",
+      "/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/gpu/gpu_evaluator.cpp"
+    ],
+    "cuda_command_sample": {
+      "directory": "/root/private_data/llama-manual-framework-node2-20261116-v1/build/src/poseidon/gpu",
+      "command": "/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler -DFMT_HEADER_ONLY=1 -DLIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_CUDA -DTHRUST_DISABLE_ABI_NAMESPACE -DTHRUST_HOST_SYSTEM=THRUST_HOST_SYSTEM_CPP -DTHRUST_IGNORE_ABI_NAMESPACE_ERROR --options-file CMakeFiles/poseidon_gpu.dir/includes_CUDA.rsp -O3 -DNDEBUG -std=c++17 \"--generate-code=arch=compute_80,code=[compute_80,sm_80]\" -Xcompiler=-fPIC --default-stream=per-thread --expt-relaxed-constexpr -x cu -c /root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/gpu/gpu_tensor_core_gemm.cu -o CMakeFiles/poseidon_gpu.dir/gpu_tensor_core_gemm.cu.o",
+      "file": "/root/private_data/llama-manual-framework-node2-20261116-v1/source/src/poseidon/gpu/gpu_tensor_core_gemm.cu",
+      "output": "src/poseidon/gpu/CMakeFiles/poseidon_gpu.dir/gpu_tensor_core_gemm.cu.o"
+    }
+  },
+  "ssh_exit_status_intended": 0
+}

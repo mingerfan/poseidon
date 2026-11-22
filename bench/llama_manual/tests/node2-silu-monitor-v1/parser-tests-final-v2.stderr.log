@@ -1,0 +1,32 @@
+test_complex_norm_not_independent_re_im_bounds (test_parse.Node2SpecificTest.test_complex_norm_not_independent_re_im_bounds) ... ok
+test_node2_classification_mismatch (test_parse.Node2SpecificTest.test_node2_classification_mismatch) ... ok
+test_node2_old_terminal_schema_rejected (test_parse.Node2SpecificTest.test_node2_old_terminal_schema_rejected) ... ok
+test_node2_terminal_registered_map_mismatch (test_parse.Node2SpecificTest.test_node2_terminal_registered_map_mismatch) ... ok
+test_node2_wrong_authorization (test_parse.Node2SpecificTest.test_node2_wrong_authorization) ... ok
+test_orphan_refresh_metadata_still_checked (test_parse.Node2SpecificTest.test_orphan_refresh_metadata_still_checked) ... ok
+test_postflight_foreign_no_release_claim (test_parse.Node2SpecificTest.test_postflight_foreign_no_release_claim) ... ok
+test_postflight_guard_identity_absent_field_not_absent_process (test_parse.Node2SpecificTest.test_postflight_guard_identity_absent_field_not_absent_process) ... ok
+test_structural_prefix_16_not_complete_32 (test_parse.Node2SpecificTest.test_structural_prefix_16_not_complete_32) ... ok
+test_complete_finite_rc2_only_fullsource (test_parse.ParserTest.test_complete_finite_rc2_only_fullsource) ... ok
+test_complete_finite_rc2_only_refresh (test_parse.ParserTest.test_complete_finite_rc2_only_refresh) ... ok
+test_counter_pair_mismatch (test_parse.ParserTest.test_counter_pair_mismatch) ... ok
+test_guard_abnormal_child_not_numeric (test_parse.ParserTest.test_guard_abnormal_child_not_numeric) ... ok
+test_guard_abort_not_numeric (test_parse.ParserTest.test_guard_abort_not_numeric) ... ok
+test_live_partial_files_are_pending (test_parse.ParserTest.test_live_partial_files_are_pending) ... ok
+test_missing_abort_reason_is_not_success (test_parse.ParserTest.test_missing_abort_reason_is_not_success) ... ok
+test_missing_counter_is_not_summary_inference (test_parse.ParserTest.test_missing_counter_is_not_summary_inference) ... ok
+test_no_capture_does_not_forge_counts (test_parse.ParserTest.test_no_capture_does_not_forge_counts) ... ok
+test_nonfinite_fail_closed (test_parse.ParserTest.test_nonfinite_fail_closed) ... ok
+test_old_conditioned_nonnull_fails (test_parse.ParserTest.test_old_conditioned_nonnull_fails) ... ok
+test_old_conditioned_null_is_expected_and_missing_is_failure (test_parse.ParserTest.test_old_conditioned_null_is_expected_and_missing_is_failure) ... ok
+test_partial_rc2_not_complete_negative (test_parse.ParserTest.test_partial_rc2_not_complete_negative) ... ok
+test_pass_and_real_counters_32_16 (test_parse.ParserTest.test_pass_and_real_counters_32_16) ... ok
+test_pid_foreign_fail_closed (test_parse.ParserTest.test_pid_foreign_fail_closed) ... ok
+test_refresh_ordinal_mismatch (test_parse.ParserTest.test_refresh_ordinal_mismatch) ... ok
+test_registration_stdout_mismatch (test_parse.ParserTest.test_registration_stdout_mismatch) ... ok
+test_rns_fail_closed (test_parse.ParserTest.test_rns_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 0.031s
+
+OK

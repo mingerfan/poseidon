@@ -1,0 +1,11 @@
+{
+  "started_local": "2026-11-16T21:11:32.939026+08:00",
+  "finished_local": "2026-11-16T21:11:33.590615+08:00",
+  "ssh_invocations": 1,
+  "ssh_returncode": 0,
+  "retry_attempted": false,
+  "remote_writes": false,
+  "remote_application_launches": false,
+  "stdout_sha256": "b4274bdd20e27af9a7fda7372b48decfd982846ec29025fc08a49197297cda72",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

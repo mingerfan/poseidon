@@ -46,6 +46,94 @@ void launch_apply_q_last_rescale_correction_poly_shard(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+inline constexpr std::size_t kMaxRescaleBatchComponents = 16;
+
+struct ApplyQlastRescaleBatchArgs
+{
+    GpuWord *destinations[kMaxRescaleBatchComponents];
+};
+
+/**
+ * @brief Build one-prime rescale corrections for component_count contiguous q_last limbs.
+ */
+void launch_build_q_last_rescale_correction_batch(
+    GpuWord *correction,
+    const GpuWord *q_last_coeff,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Apply one-prime rescale across component_count strided source polynomials
+ * into destination shard pointers in one launch.
+ */
+void launch_apply_q_last_rescale_correction_batch_ptrs(
+    const ApplyQlastRescaleBatchArgs &destination_args,
+    const GpuWord *source_base,
+    std::size_t source_component_stride,
+    const GpuWord *correction_ntt,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+struct ApplyRescalePtrsArgs
+{
+    GpuWord *destinations[kMaxRescaleBatchComponents];
+    const GpuWord *sources[kMaxRescaleBatchComponents];
+};
+
+void launch_apply_q_last_rescale_correction_ptrs(
+    const ApplyRescalePtrsArgs &args,
+    const GpuWord *correction_ntt,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_apply_q_last_two_rescale_correction_ptrs(
+    const ApplyRescalePtrsArgs &args,
+    const GpuWord *correction_ntt,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_apply_rescale_many_correction_ptrs(
+    const ApplyRescalePtrsArgs &args,
+    const GpuWord *correction_ntt,
+    std::size_t component_count,
+    std::size_t source_q_count,
+    std::size_t rescale_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Build one-prime rescale corrections for two ciphertext components.
+ *
+ * q_last_coeff stores [component][coeff] and correction is written as
+ * [component][retained q limb][coeff].
+ */
+void launch_build_q_last_rescale_correction_batch2(
+    GpuWord *correction,
+    const GpuWord *q_last_coeff,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Apply one-prime rescale to two ciphertext components.
+ */
+void launch_apply_q_last_rescale_correction_batch2(
+    const GpuPolyShardView &destination0,
+    const GpuPolyShardView &destination1,
+    const GpuConstPolyShardView &source0,
+    const GpuConstPolyShardView &source1,
+    const GpuWord *correction_ntt,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 /**
  * @brief Reconstruct centered residues modulo q_last_minus_one*q_last.
  *

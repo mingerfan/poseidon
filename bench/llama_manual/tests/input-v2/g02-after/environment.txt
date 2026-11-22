@@ -1,0 +1,4 @@
+CPU=0
+OMP_NUM_THREADS=1
+CUDA_VISIBLE_DEVICES=
+TMPDIR=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/workspaces/llama-framework-node2/bench/llama_manual/tests/input-v2/g02-after

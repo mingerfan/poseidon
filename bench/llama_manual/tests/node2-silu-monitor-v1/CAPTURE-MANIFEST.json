@@ -1,0 +1,45 @@
+{
+  "schema": "node2-public-silu-readonly-capture-v1",
+  "case": "public-silu-baseline-v1",
+  "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+  "wait_status": "terminal_observed",
+  "terminal_checks_30s_max_cadence": 1,
+  "monitor_wall_seconds": 0.1959942802786827,
+  "files": {
+    "command.json": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/results/public-silu-baseline-v1/command.json",
+      "bytes": 2505,
+      "sha256": "048f64f5dace90c6987adf559462daccbab606f4f7c6e897084d342558c3537b"
+    },
+    "pid-map.json": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/results/public-silu-baseline-v1/pid-map.json",
+      "bytes": 352,
+      "sha256": "824b5c1760b7d59291c590e613c9cdf65c905dbdbac942cb6d47c6f0e8a5fe75"
+    },
+    "stdout.log": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/results/public-silu-baseline-v1/stdout.log",
+      "bytes": 5208,
+      "sha256": "84faf74a813dd28218d5452bfd492a618eae5b89aeb0b963f2a28bbffac26a46"
+    },
+    "gpu.jsonl": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/results/public-silu-baseline-v1/gpu.jsonl",
+      "bytes": 24857,
+      "sha256": "1fce85de39ee734b2730ef137d7d06db4f5d1d6bf56f66afbe99613f7efa6a00"
+    },
+    "terminal.json": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/results/public-silu-baseline-v1/terminal.json",
+      "bytes": 3247,
+      "sha256": "e6eec6cdae26c17f9683905c58c97ee7f069ce274946784cf00b835a0a96e6f4"
+    },
+    "SUMMARY.json": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/reports/public-silu-baseline-v1/SUMMARY.json",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guard-launch.log": {
+      "remote_path": "/root/private_data/llama-manual-framework-node2-20261116-v1/public-silu-baseline-v1-guard-launch.log",
+      "bytes": 2835,
+      "sha256": "53000c3b4d356a0764c7059bca5e5260ecc13a755dc98ea7de4cfe721f359833"
+    }
+  }
+}

@@ -12,6 +12,7 @@
 #include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/gpu_modswitch_handler.h"
 
+#include <array>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -361,6 +362,9 @@ struct GpuBootstrapWorkspace
     bool capture_eval_mod_stage_timing{false};
     EvalModStageTiming eval_mod_stage_timing;
     std::vector<EvalModMultiplyTiming> eval_mod_multiply_timings;
+    std::vector<GpuCiphertextData> eval_mod_basis_imag;
+    std::vector<GpuCiphertextData> eval_mod_nodes_imag;
+    std::array<GpuCiphertextData, 6> eval_mod_scratch_imag;
 
     // Optional correctness-only snapshots. They remain disabled in timed and
     // production bootstrap calls, so the hot path pays no copy or storage cost.
@@ -570,6 +574,125 @@ public:
         GpuCiphertextData &destination_ciphertext,
         double min_scale) const;
 
+    void add_pair(
+        const GpuCiphertextData &left_a,
+        const GpuCiphertextData &right_a,
+        const GpuCiphertextData &left_b,
+        const GpuCiphertextData &right_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void sub_pair(
+        const GpuCiphertextData &left_a,
+        const GpuCiphertextData &right_a,
+        const GpuCiphertextData &left_b,
+        const GpuCiphertextData &right_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void add_batch(
+        const std::vector<const GpuCiphertextData *> &lefts,
+        const std::vector<const GpuCiphertextData *> &rights,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    void sub_batch(
+        const std::vector<const GpuCiphertextData *> &lefts,
+        const std::vector<const GpuCiphertextData *> &rights,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    void multiply_pair(
+        const GpuCiphertextData &left_a,
+        const GpuCiphertextData &right_a,
+        const GpuCiphertextData &left_b,
+        const GpuCiphertextData &right_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void multiply_q_prefix_pair(
+        const GpuCiphertextData &left_a,
+        const GpuCiphertextData &right_a,
+        const GpuCiphertextData &left_b,
+        const GpuCiphertextData &right_b,
+        parms_id_type target_parms_id,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void square_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void multiply_plain_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        const GpuPlaintextData &source_plaintext,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void multiply_batch(
+        const std::vector<const GpuCiphertextData *> &lefts,
+        const std::vector<const GpuCiphertextData *> &rights,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    void square_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    void multiply_plain_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const GpuPlaintextData &source_plaintext,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    void multiply_plain_q_prefix_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        const GpuPlaintextData &source_plaintext,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void rescale_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void rescale_x2_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void rescale_many_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b,
+        std::uint32_t rescale_count) const;
+
+    void rescale_many_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        std::vector<GpuCiphertextData> &destinations,
+        std::uint32_t rescale_count) const;
+
+    void rescale_dynamic_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b,
+        double min_scale) const;
+
+    void double_sub_or_add_plain_pair(
+        kernel::DoublePlainPairOp op,
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData *source_b,
+        const GpuPlaintextData &plaintext,
+        const GpuCiphertextData *correction_a,
+        const GpuCiphertextData *correction_b,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData *destination_b,
+        const char *caller_name) const;
+
     void drop_modulus(
         const GpuCiphertextData &source_ciphertext,
         GpuCiphertextData &destination_ciphertext,
@@ -640,6 +763,13 @@ public:
         const GpuRelinKeysData &relin_keys,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void relinearize_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        const GpuRelinKeysData &relin_keys,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
     /**
      * @brief Relinearize and drop two q primes in one HYBRID finalize path.
      *
@@ -650,6 +780,23 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuRelinKeysData &relin_keys,
         GpuCiphertextData &destination_ciphertext) const;
+
+    void relinearize_rescale_x2_hybrid_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        const GpuRelinKeysData &relin_keys,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void relinearize_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const GpuRelinKeysData &relin_keys,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    void relinearize_rescale_x2_hybrid_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const GpuRelinKeysData &relin_keys,
+        std::vector<GpuCiphertextData> &destinations) const;
 
     /**
      * @brief Rotate ciphertext.
@@ -711,6 +858,31 @@ public:
         std::vector<GpuCiphertextData> &destination_ciphertexts) const;
 
     /**
+     * @brief Rotate multiple aligned ciphertexts by the same nonzero steps while
+     * sharing Galois key reads across all sources in each step chunk.
+     */
+    void rotate_many_hoisted_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const std::vector<int> &steps,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        std::vector<std::vector<GpuCiphertextData>> &destination_batches) const;
+
+    void rotate_many_hoisted_contiguous(
+        const GpuCiphertextData &source_ciphertext,
+        const std::vector<int> &steps,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuWord *destination_q) const;
+
+    void rotate_many_hoisted_batch_contiguous(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const std::vector<int> &steps,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        const std::vector<GpuWord *> &destination_qs) const;
+
+    /**
      * @brief Materialize an immutable, reusable HYBRID c1 decomposition.
      *
      * Requires one full shard, two Q-only NTT components and compatible
@@ -757,6 +929,30 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuGaloisKeysData &galois_keys,
         GpuCiphertextData &destination_ciphertext) const;
+
+    void conjugate_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
+
+    void conjugate_batch(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const GpuGaloisKeysData &galois_keys,
+        std::vector<GpuCiphertextData> &destinations) const;
+
+    /**
+     * @brief Rotate two ciphertexts at the same level by the same nonzero step,
+     * sharing InversePreRotated Galois key reads across both lanes.
+     */
+    void rotate_pair(
+        const GpuCiphertextData &source_a,
+        const GpuCiphertextData &source_b,
+        int step,
+        const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_a,
+        GpuCiphertextData &destination_b) const;
 
     void conjugate_pre_rotated(
         const GpuCiphertextData &source_ciphertext,
@@ -806,6 +1002,46 @@ public:
         GpuDoubleHoistWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
+    // Llama-only opt-in extensions; existing overload retains its path.
+    void prepare_double_hoist_babies(
+        const GpuCiphertextData &, const std::vector<int> &,
+        const GpuGaloisKeysData &, GpuDoubleHoistWorkspace &,
+        GpuDoubleHoistBabyCache &) const;
+    void multiply_by_diag_matrix_bsgs_double_hoist(
+        const GpuCiphertextData &, const GpuMatrixPlainQP &,
+        const GpuGaloisKeysData &, std::uint32_t,
+        GpuDoubleHoistWorkspace &, GpuCiphertextData &,
+        const GpuDoubleHoistBabyCache *) const;
+    // Different rounding schedule; rejected model mode, never default.
+    void multiply_by_diag_matrix_bsgs_double_hoist_sum(
+        const GpuCiphertextData &, const GpuMatrixPlainQP &,
+        const GpuGaloisKeysData &, std::uint32_t,
+        GpuDoubleHoistWorkspace &, GpuDoubleHoistSumState &, bool,
+        GpuCiphertextData &, const GpuDoubleHoistBabyCache * = nullptr) const;
+    void giant_reduce_q_groups(
+        const GpuWord *inner_q_batch,
+        std::size_t q_count,
+        parms_id_type parms_id,
+        double product_scale,
+        const std::vector<int> &giant_steps,
+        const GpuGaloisKeysData &galois_keys,
+        std::uint32_t rescale_count,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    void giant_reduce_q_groups_batch(
+        const GpuWord *inner_q_batch,
+        std::size_t batch_count,
+        std::size_t inner_batch_stride_words,
+        std::size_t q_count,
+        parms_id_type parms_id,
+        double product_scale,
+        const std::vector<int> &giant_steps,
+        const GpuGaloisKeysData &galois_keys,
+        std::uint32_t rescale_count,
+        GpuDoubleHoistWorkspace &workspace,
+        std::vector<GpuCiphertextData> &destination_ciphertexts) const;
+
     /**
      * @brief Apply a pre-uploaded DFT linear matrix group.
      */
@@ -827,6 +1063,11 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuDoubleHoistWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
+
+    // Owning Q-prefix arithmetic; does not mutate either source.
+    void add_sub_q_prefix(
+        const GpuCiphertextData &, const GpuCiphertextData &,
+        GpuCiphertextData &, parms_id_type, bool subtract = false) const;
 
     /**
      * @brief CKKS CoeffToSlot with CPU-precomputed matrices already on GPU.
@@ -906,6 +1147,18 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuBootstrapWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
+
+    struct ManualBootstrapProjections
+    {
+        GpuCiphertextData real;
+        GpuCiphertextData imaginary;
+    };
+    // Experimental owning real/+i*(conj(h)-h) projections. The caller must
+    // independently qualify the exact profile, phase/layout and message domain.
+    ManualBootstrapProjections bootstrap_manual_projections(
+        const GpuCiphertextData &, const GpuBootstrapData &,
+        const GpuRelinKeysData &, const GpuGaloisKeysData &,
+        GpuBootstrapWorkspace &) const;
 
     /*
      * The steps of bootstrap(), one call each, for a Boot the compiler
@@ -993,7 +1246,49 @@ public:
         GpuBootstrapWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void eval_mod_high_precision_pair(
+        const GpuCiphertextData &source_real,
+        const GpuCiphertextData &source_imag,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuRelinKeysData &relin_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_real,
+        GpuCiphertextData &destination_imag) const;
+
 private:
+    void automorphism_batch_impl(
+        const std::vector<const GpuCiphertextData *> &sources,
+        bool is_conjugate,
+        int step,
+        const GpuGaloisKeysData &galois_keys_in,
+        const std::vector<GpuCiphertextData *> &destinations) const;
+    void add_or_sub_batch_impl(
+        const std::vector<const GpuCiphertextData *> &lefts,
+        const std::vector<const GpuCiphertextData *> &rights,
+        bool subtract,
+        std::vector<GpuCiphertextData> &destinations) const;
+    void relinearize_batch_impl(
+        const std::vector<const GpuCiphertextData *> &sources,
+        const GpuRelinKeysData &relin_keys_in,
+        bool rescale_x2,
+        std::vector<GpuCiphertextData> &destinations) const;
+    void eval_mod_high_precision_impl(
+        std::array<const GpuCiphertextData *, 2> sources,
+        std::size_t lane_count,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuRelinKeysData &relin_keys,
+        GpuBootstrapWorkspace &workspace,
+        std::array<GpuCiphertextData *, 2> destinations) const;
+    void bootstrap_impl(
+        const GpuCiphertextData &, const GpuBootstrapData &,
+        const GpuRelinKeysData &, const GpuGaloisKeysData &,
+        GpuBootstrapWorkspace &, GpuCiphertextData &,
+        GpuCiphertextData *imaginary_projection) const;
+    void double_hoist_impl(
+        const GpuCiphertextData &, const GpuMatrixPlainQP &,
+        const GpuGaloisKeysData &, std::uint32_t,
+        GpuDoubleHoistWorkspace &, GpuCiphertextData &,
+        const GpuDoubleHoistBabyCache *, GpuDoubleHoistSumState *, bool) const;
     void validate_plain_input(const GpuCiphertextData &ciphertext,
                               const GpuPlaintextData &plaintext) const;
     const GpuParameterData &params_;

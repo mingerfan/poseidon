@@ -21,6 +21,8 @@
 #include <bit>
 #include <chrono>
 #include <cstdio>
+#include <charconv>
+#include <cstring>
 #include <cmath>
 #include <complex>
 #include <cstdlib>
@@ -2135,6 +2137,22 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     const bool dynamic_rescale = options.dynamic_rescale.has_value()
         ? *options.dynamic_rescale
         : env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE");
+    // Explicit Llama precision plan; unset/0 leaves framework planning intact.
+    double quotient_physical_floor = 0.0;
+    if (const char *raw = std::getenv("POSEIDON_EVALMOD_QUOTIENT_MIN_LOG2"))
+    {
+        unsigned bits = 0;
+        const char *end = raw + std::strlen(raw);
+        const auto parsed = std::from_chars(raw, end, bits);
+        if (raw == end || parsed.ec != std::errc{} || parsed.ptr != end ||
+            (bits != 0 && (bits < 40 || bits > 80)))
+            throw std::invalid_argument("POSEIDON_EVALMOD_QUOTIENT_MIN_LOG2 requires 0 or decimal [40,80]");
+        if (bits != 0)
+        {
+            if (!dynamic_rescale)throw std::invalid_argument("quotient precision floor requires dynamic EvalMod");
+            quotient_physical_floor = std::exp2(static_cast<double>(bits));
+        }
+    }
     const double effective_input_scale = input_scale > 0.0
         ? input_scale
         : target_scale;
@@ -2962,9 +2980,12 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 return remainder_only;
             }
 
-            const double quotient_min_scale = node.polynomial.lead()
+            const double original_quotient_min_scale = node.polynomial.lead()
                 ? context.parameters_literal()->scale()
                 : pow_scale;
+            const double quotient_min_scale = quotient_physical_floor > 0.0
+                ? std::max(original_quotient_min_scale, 2.0 * quotient_physical_floor)
+                : original_quotient_min_scale;
             const auto quotient_rescale_count =
                 choose_dynamic_rescale_allow_zero(
                     quotient.q_count,
@@ -2977,6 +2998,9 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                     quotient.q_count,
                     quotient.scale,
                     quotient_rescale_count);
+            if (quotient_physical_floor > 0.0 &&
+                quotient_scale_after < quotient_physical_floor * (1.0 - 1e-12))
+                throw std::invalid_argument("dynamic EvalMod quotient cannot meet physical precision floor");
             const std::size_t product_q_count =
                 std::min(quotient_q_count, basis_q_iter->second);
             const double product_scale =

@@ -1,0 +1,6 @@
+# Preserve source, inputs and evidence bytes recorded in the SHA256 manifests.
+* -text whitespace=cr-at-eol
+evidence/** -whitespace
+inputs/** -whitespace
+GPU_UTILIZATION.svg -whitespace
+LICENSE_LLAMA3_REFERENCE.txt -whitespace

@@ -1,0 +1,119 @@
+{
+  "collected_utc": "2026-11-13T08:23:34.737264+00:00",
+  "server_directory": "/root/private_data/llama-api-20261111/cerium-execution-v2/source15",
+  "terminal_status": "completed_finite_output",
+  "files": {
+    "CLUSTER_SOURCE13_MANIFEST.json": {
+      "bytes": 5069,
+      "sha256": "3d3d54ba5202f4d602ea06827181e5d463f05eb1ec423171ba2765d10bd0fbb2"
+    },
+    "CMakeLists.txt": {
+      "bytes": 2614,
+      "sha256": "0051358eb44b152532c22f7ee336373741990e55ebd2a4f0c49ddb61dad39efa"
+    },
+    "INPUT_RECEIPT.json": {
+      "bytes": 1126,
+      "sha256": "274dfbd6bdf460ee969c98c918e69cc7966d1f97cd882c8b5ca633c83f5c8170"
+    },
+    "TRANSFER.json": {
+      "bytes": 5109,
+      "sha256": "5393c294606cd6a6f67d042c3133cef57c1568c4205fb6bc2cde155a45836756"
+    },
+    "WEIGHT_DOWNLOAD_LOCK.json": {
+      "bytes": 6102,
+      "sha256": "3ae27d8a8ea1cafcdfb2e6b63486f86597600feb941a047a4a9b9fdfbc3a10f7"
+    },
+    "binary.json": {
+      "bytes": 184,
+      "sha256": "38855a6895e52b8135f8b7a10615ef1873ffce74bac3c0cbdca2e09188ee95dd"
+    },
+    "build.log": {
+      "bytes": 424,
+      "sha256": "2bb20d00852b70dac1febfed452da799398731aea60bd5477481b6b5e76dccdb"
+    },
+    "components-child.json": {
+      "bytes": 364,
+      "sha256": "99f7bc4bff5300a394cf144a60d93f19b8cecd8f57e4d80b3bc607e328dd6b28"
+    },
+    "components-half-hour.jsonl": {
+      "bytes": 1647,
+      "sha256": "a6e5475f3cd9cb461b34c112dda73375374364c6b8b03d54580a9a2f850c2783"
+    },
+    "components-resources.jsonl": {
+      "bytes": 1343,
+      "sha256": "22944cf31bbccda11db6766a48040a6fbad75ba1c484cba74a37f01627e76e08"
+    },
+    "components-terminal.json": {
+      "bytes": 97,
+      "sha256": "85bcfd2c2be0248ef3a5f9aa0a4bbf7ed9abc538da1b3df03e6317d1cfea628e"
+    },
+    "components-time.txt": {
+      "bytes": 1011,
+      "sha256": "75d322a881b590f1427b3115bcad253135ac2b716710ab595db875bd15b3a5f0"
+    },
+    "components.log": {
+      "bytes": 5358,
+      "sha256": "5b75e2629684de8f7d9053460e69f26b5d777d35074c8af87d01e3c753960b4b"
+    },
+    "configure.log": {
+      "bytes": 781,
+      "sha256": "08b78dd6052e0f8b539ddb3b19a9df037201dfc17bc2e5e08de70666d2c99d98"
+    },
+    "launch.json": {
+      "bytes": 284,
+      "sha256": "96f25a93b2d8e86c2e166f72ef43c869844ce182249776e22ac4f72473eabaaf"
+    },
+    "model-child.json": {
+      "bytes": 905,
+      "sha256": "c8aaf24f552632c27a5d08a518fbfc6c47659cbe28515dcf576ecec171aba03e"
+    },
+    "model-half-hour.jsonl": {
+      "bytes": 8656,
+      "sha256": "83c697f328b870652a69f273ba90f3a5628a68b1f293b8062f2e903ea83d1f73"
+    },
+    "model-resources.jsonl": {
+      "bytes": 22841,
+      "sha256": "687c1762b9c163a0df1d5485f59d6a39d55658d0ad0453e3ad26f437b59646b4"
+    },
+    "model-result.json": {
+      "bytes": 870,
+      "sha256": "55f609ea884c23d1d7e739e5cb7788c06a49a824e03bd2aae1933f0ac83eac01"
+    },
+    "model-terminal.json": {
+      "bytes": 97,
+      "sha256": "4e08e3e6a35cd813e02e01353ff362c5ae73a86a91cfb982376c00547c794142"
+    },
+    "model-time.txt": {
+      "bytes": 1507,
+      "sha256": "3f3a2bc38baf00eadc84a13ba10d90367126e2c6671f77749cc8504e087f6725"
+    },
+    "model.log": {
+      "bytes": 1976157,
+      "sha256": "4759268c6e9c9a9d83f49ab70ecf0f497ab39ea7c56d8303a95e2388c7d41233"
+    },
+    "output-block32.bin": {
+      "bytes": 4194346,
+      "sha256": "2249a7591fd44eefd7334ee326bb99d70bedc4cc3777bb1cfc1701b0ab5dc3a6"
+    },
+    "preflight.json": {
+      "bytes": 2036,
+      "sha256": "fd21a4744e9dff54558961e5e2b66717d93cb032fec74fa1e8d70035730202a0"
+    },
+    "run_worker.py": {
+      "bytes": 7399,
+      "sha256": "c17ab0061ced3f3c8d3c81b8c2bbccbe23c0e74ae0a61fdaf6e876fcd6c3296c"
+    },
+    "stage.txt": {
+      "bytes": 10,
+      "sha256": "d3be030801b90ea8057d3997d9845c7f850cc7b784450645d5ec2811cc927d7a"
+    },
+    "terminal.json": {
+      "bytes": 1359,
+      "sha256": "74ad65a6c8834eeb94b86cd8867b86601a6803dcc44ab3f93007db1406c85ff8"
+    },
+    "worker.log": {
+      "bytes": 1236,
+      "sha256": "1920d24e4ef05183f4ec9d707390afa5931c44a2b290e772f728ea8e3f7ed6b7"
+    }
+  }
+}

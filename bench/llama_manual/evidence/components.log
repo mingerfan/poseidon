@@ -1,0 +1,51 @@
+SOURCE_SETUP stage=public_and_rotation_keys
+SOURCE_SETUP stage=native_bootstrap_profile application_keys=102 elapsed_seconds=92.857140978999993
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.97196323556804 ephemeral_h=32
+SOURCE_SETUP stage=completed seconds=355.47838168099997
+SOURCE_BOOT point=rmsnorm:input_0:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=1 corrections=0
+SOURCE_BOOT point=rmsnorm:input_1:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=2 corrections=0
+SOURCE_BOOT point=rmsnorm:input_2:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=3 corrections=0
+SOURCE_BOOT point=rmsnorm:input_3:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=4 corrections=0
+SOURCE_BOOT point=rmsnorm:input_4:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=5 corrections=0
+SOURCE_BOOT point=rmsnorm:input_5:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=6 corrections=0
+SOURCE_BOOT point=rmsnorm:input_6:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=7 corrections=0
+SOURCE_BOOT point=rmsnorm:input_7:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=8 corrections=0
+SOURCE_BOOT point=rmsnorm:input_8:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=9 corrections=0
+SOURCE_BOOT point=rmsnorm:input_9:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=10 corrections=0
+SOURCE_BOOT point=rmsnorm:input_10:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=11 corrections=0
+SOURCE_BOOT point=rmsnorm:input_11:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=12 corrections=0
+SOURCE_BOOT point=rmsnorm:input_12:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=13 corrections=0
+SOURCE_BOOT point=rmsnorm:input_13:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=14 corrections=0
+SOURCE_BOOT point=rmsnorm:input_14:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=15 corrections=0
+SOURCE_BOOT point=rmsnorm:input_15:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=16 corrections=0
+SOURCE_BOOT point=inverse_sqrt:seed_after_four_squares:b35 input_q=6 output_q=30 log_scale=40 calls=17 corrections=0
+SOURCE_BOOT point=inverse_sqrt:newton_2:b35 input_q=6 output_q=30 log_scale=40 calls=18 corrections=0
+SOURCE_BOOT point=inverse_sqrt:newton_4:b35 input_q=6 output_q=30 log_scale=40 calls=19 corrections=0
+SOURCE_BOOT point=inverse_sqrt:newton_6:b35 input_q=6 output_q=30 log_scale=40 calls=20 corrections=0
+SOURCE_BOOT point=inverse_sqrt:newton_8:b35 input_q=6 output_q=30 log_scale=40 calls=21 corrections=0
+SOURCE_BOOT point=inverse_sqrt:newton_10:b35 input_q=6 output_q=30 log_scale=40 calls=22 corrections=0
+SOURCE_STAGE name=rmsnorm_full4096 seconds=2.1516889460000002 q=16 log_scale=40 boots=22
+SOURCE_STAGE name=qk_two_queries seconds=1.579748323 q=9 log_scale=40 boots=22
+SOURCE_BOOT point=softmax_128x128:input:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=23 corrections=0
+SOURCE_BOOT point=array_max:step_1:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=24 corrections=0
+SOURCE_BOOT point=array_max:step_2:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=25 corrections=0
+SOURCE_BOOT point=array_max:step_3:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=26 corrections=0
+SOURCE_BOOT point=array_max:step_4:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=27 corrections=0
+SOURCE_BOOT point=array_max:step_5:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=28 corrections=0
+SOURCE_BOOT point=array_max:step_6:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=29 corrections=0
+SOURCE_BOOT point=array_max:step_7:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=30 corrections=0
+SOURCE_BOOT point=exp_vec:after_five_squares:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=31 corrections=0
+SOURCE_BOOT point=softmax_128x128:row_sum:b35_2_lane input_q=6 output_q=30 log_scale=40 calls=32 corrections=0
+SOURCE_BOOT point=inverse_sqrt2:newton_2:b35 input_q=6 output_q=30 log_scale=40 calls=33 corrections=0
+SOURCE_BOOT point=inverse_sqrt2:newton_4:b35 input_q=6 output_q=30 log_scale=40 calls=34 corrections=0
+SOURCE_BOOT point=inverse_sqrt2:newton_6:b35 input_q=6 output_q=30 log_scale=40 calls=35 corrections=0
+SOURCE_STAGE name=softmax_128 seconds=1.9025183029999999 q=11 log_scale=40 boots=35
+SOURCE_STAGE name=av_four_queries seconds=1.5295242849999999 q=8 log_scale=40 boots=35
+SOURCE_BOOT point=silu_internal:b33_2 input_q=6 output_q=30 log_scale=40 calls=36 corrections=0
+SOURCE_STAGE name=swiglu_projection_budget seconds=0.36455309499999999 q=10 log_scale=40 boots=36
+SOURCE_FINITE name=rmsnorm max_abs=0.9768342249417924 max_imag=0.00072996061626463436 q=16 finite=true accuracy_gate=false
+SOURCE_FINITE name=qk max_abs=9.7603451325113963e-06 max_imag=6.2273819520442769e-08 q=9 finite=true accuracy_gate=false
+SOURCE_FINITE name=softmax_times_two max_abs=24.356032856959068 max_imag=0.00013329783916601304 q=11 finite=true accuracy_gate=false
+SOURCE_FINITE name=av max_abs=1.0902656247625024 max_imag=6.5178417393894884e-05 q=8 finite=true accuracy_gate=false
+SOURCE_FINITE name=swiglu max_abs=0.014701240282863254 max_imag=4.3230614981409866e-07 q=10 finite=true accuracy_gate=false
+SOURCE_CHAIN_COMPLETE full_model=false isolated_operators=true intermediate_decryption=false implicit_bootstraps=0 accuracy_gate=false boots=36 plain_cache_hits=15 plain_cache_misses=389 compact_plain_preparations=389 live_peak_bytes=21642270796 pool_reserved=32245809152

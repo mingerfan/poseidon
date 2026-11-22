@@ -1,0 +1,23 @@
+	Command being timed: "timeout --signal=TERM --kill-after=30 14400 /root/private_data/llama-api-20261111/cerium-execution-v2/source15/build/source_benchmark /root/private_data/llama-api-20261111/delivery-v1-20261112/source/gpu_api/Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt /root/private_data/llama-api-20261111/models/Meta-Llama-3.1-8B /root/private_data/llama-api-20261111/models/llama31_checked_index.tsv /root/private_data/llama-api-20261111/models/real-first-layer-v1/embeddings.bin /root/private_data/llama-api-20261111/models/original-model-reference-v2/reference-block32.bin /root/private_data/llama-api-20261111/cerium-execution-v2/source15/output-block32.bin 32 38 /root/private_data/llama-api-20261111/cerium-execution-v2/source15/model-result.json"
+	User time (seconds): 32936.99
+	System time (seconds): 754.17
+	Percent of CPU this job got: 419%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:13:42
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 25743484
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 1268
+	Minor (reclaiming a frame) page faults: 147237191
+	Voluntary context switches: 1194025
+	Involuntary context switches: 331118
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,11 @@
+{
+  "namespace_pid": 95580,
+  "pgid": 95580,
+  "start_ticks": "1373031700",
+  "nvml_host_pid": 747769,
+  "gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+  "registration_cudart": "/usr/local/cuda-11.8/targets/x86_64-linux/lib/libcudart.so.11.0",
+  "registration_time": 1794834411.4694502,
+  "supervisor_pid": 95575,
+  "parent_death_signal": 15
+}

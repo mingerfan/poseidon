@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026-11-16T21:11:33.345493+08:00",
+  "expected_gpu_uuid": "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+  "expected_guard_identity": {
+    "pid": 95575,
+    "pgid": 95575,
+    "start_ticks": "1373031093"
+  },
+  "guard_identity_once": null,
+  "scope": "single read-only sample; no continuous exclusivity or lease-release proof",
+  "registered_namespace_identity_once": null,
+  "gpu": {
+    "returncode": 0,
+    "rows": [
+      [
+        "GPU-499236d3-b46c-5d25-4a22-530d47ed5112",
+        "NVIDIA A800 80GB PCIe",
+        "81920",
+        "0",
+        "29"
+      ]
+    ],
+    "stderr": ""
+  },
+  "compute_apps": {
+    "returncode": 0,
+    "rows": [],
+    "stderr": ""
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "utc": "2026-11-13T05:57:53.523946+00:00",
+  "source13_cpp_byte_identical": true,
+  "input_sha256_verified": true,
+  "weight_sizes_verified": true,
+  "weight_hashes_recomputed_this_run": false,
+  "gpu": "Fri Nov 13 13:57:53 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 580.95.05              Driver Version: 580.95.05      CUDA Version: 13.0     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA A800 80GB PCIe LC       On  |   00000000:B9:00.0 Off |                    0 |\n| N/A   35C    P0             48W /  300W |       0MiB /  81920MiB |      0%      Default |\n|                                         |                        |             Disabled |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+",
+  "cpu_max": "700000 100000",
+  "fixture_sha256": "d9a79047125a6506c6b2d4c335737ccdb52a216f398a8150b133d47a44f72f56"
+}

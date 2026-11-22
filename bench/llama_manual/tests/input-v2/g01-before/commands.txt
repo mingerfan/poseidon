@@ -1,0 +1,2 @@
+taskset -c 0 env OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= g++ -std=c++17 -O2 -Wall -Wextra -pedantic -I g01-before/source -I bench/llama_manual g01-before/baseline_runner.cpp -o g01-before/manual_plan_test
+taskset -c 0 env OMP_NUM_THREADS=1 CUDA_VISIBLE_DEVICES= g01-before/manual_plan_test

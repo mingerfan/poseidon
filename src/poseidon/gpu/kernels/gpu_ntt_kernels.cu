@@ -1891,7 +1891,7 @@ __global__ void forward_ntt_cheddar_two_components_phase2_65536_kernel(
     }
 }
 
-__global__ void forward_ntt_cheddar_qp_active_phase1_65536_kernel(
+__device__ __forceinline__ void forward_ntt_cheddar_qp_active_phase1_65536_impl(
     GpuWord *destination_q,
     GpuWord *destination_p,
     const GpuWord *source_q,
@@ -1985,6 +1985,73 @@ __global__ void forward_ntt_cheddar_qp_active_phase1_65536_kernel(
     {
         destination_limb[destination_base + (i << 9)] = local[i];
     }
+}
+
+__global__ void forward_ntt_cheddar_qp_active_phase1_65536_kernel(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const GpuWord *source_q,
+    const GpuWord *source_p,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    GpuWord *destination_q_b = nullptr,
+    GpuWord *destination_p_b = nullptr,
+    const GpuWord *source_q_b = nullptr,
+    const GpuWord *source_p_b = nullptr)
+{
+    if (blockIdx.z == 1 && destination_q_b != nullptr)
+    {
+        destination_q = destination_q_b;
+        destination_p = destination_p_b;
+        source_q = source_q_b;
+        source_p = source_p_b;
+    }
+    forward_ntt_cheddar_qp_active_phase1_65536_impl(
+        destination_q,
+        destination_p,
+        source_q,
+        source_p,
+        rns_primes,
+        rns_modulus_constants,
+        roots,
+        base_q_size,
+        base_p_size,
+        decomp_limb_begin,
+        decomp_limb_count);
+}
+
+__global__ void forward_ntt_cheddar_qp_active_phase1_batch_65536_kernel(
+    QpActiveNttBatchArgs batch_args,
+    std::size_t batch_count,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count)
+{
+    if (blockIdx.z >= batch_count)
+    {
+        return;
+    }
+    forward_ntt_cheddar_qp_active_phase1_65536_impl(
+        batch_args.destination_q[blockIdx.z],
+        batch_args.destination_p[blockIdx.z],
+        batch_args.source_q[blockIdx.z],
+        batch_args.source_p[blockIdx.z],
+        rns_primes,
+        rns_modulus_constants,
+        roots,
+        base_q_size,
+        base_p_size,
+        decomp_limb_begin,
+        decomp_limb_count);
 }
 
 template <int FixedSourceLimbCount, bool SourcePreweighted>
@@ -2351,7 +2418,7 @@ hybrid_modup_p9_forward_ntt_qp_active_phase1_grouped_65536_kernel(
     }
 }
 
-__global__ void forward_ntt_cheddar_qp_active_phase2_65536_kernel(
+__device__ __forceinline__ void forward_ntt_cheddar_qp_active_phase2_65536_impl(
     GpuWord *values_q,
     GpuWord *values_p,
     const GpuWord *rns_primes,
@@ -2460,6 +2527,132 @@ __global__ void forward_ntt_cheddar_qp_active_phase2_65536_kernel(
     }
 }
 
+__global__ void forward_ntt_cheddar_qp_active_phase2_65536_kernel(
+    GpuWord *values_q,
+    GpuWord *values_p,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count)
+{
+    forward_ntt_cheddar_qp_active_phase2_65536_impl(
+        values_q,
+        values_p,
+        rns_primes,
+        rns_modulus_constants,
+        roots,
+        base_q_size,
+        base_p_size,
+        decomp_limb_begin,
+        decomp_limb_count);
+}
+
+__global__ void forward_ntt_cheddar_qp_active_phase2_batch_65536_kernel(
+    QpActiveNttBatchArgs batch_args,
+    std::size_t batch_count,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count)
+{
+    if (blockIdx.z >= batch_count)
+    {
+        return;
+    }
+    forward_ntt_cheddar_qp_active_phase2_65536_impl(
+        batch_args.destination_q[blockIdx.z],
+        batch_args.destination_p[blockIdx.z],
+        rns_primes,
+        rns_modulus_constants,
+        roots,
+        base_q_size,
+        base_p_size,
+        decomp_limb_begin,
+        decomp_limb_count);
+}
+
+__device__ __forceinline__ void fourstep_phase2_ntt_65536_to_shared(
+    const GpuWord *__restrict__ limb_values,
+    const GpuWord *__restrict__ limb_roots,
+    GpuWord modulus,
+    GpuWide barrett_ratio,
+    GpuWord *__restrict__ shared_values,
+    int batch,
+    std::size_t coefficient_block,
+    std::size_t final_twiddle)
+{
+    constexpr int kRadix = 8;
+    constexpr int kSharedStride = kRadix + 1;
+    const int load_base = batch + static_cast<int>(coefficient_block);
+    GpuWord local[kRadix];
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        local[i] = limb_values[load_base + (i << 6)];
+    }
+
+    fourstep_forward_first<kRadix, 3>(
+        local,
+        final_twiddle >> 6,
+        limb_roots,
+        modulus,
+        barrett_ratio);
+
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        shared_values[batch + (i << 6)] = local[i];
+    }
+    __syncthreads();
+
+    int shared_index = ((batch >> 3) << 6) + (batch & 7);
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        local[i] = shared_values[shared_index + (i << 3)];
+    }
+    fourstep_forward_radix<kRadix, 3>(
+        local,
+        final_twiddle >> 3,
+        limb_roots,
+        modulus,
+        barrett_ratio);
+
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        shared_values[shared_index + (i << 3)] = local[i];
+    }
+    __syncthreads();
+
+    shared_index = batch << 3;
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        local[i] = shared_values[shared_index + i];
+    }
+    fourstep_forward_radix<kRadix, 3>(
+        local,
+        final_twiddle,
+        limb_roots,
+        modulus,
+        barrett_ratio);
+
+    __syncthreads();
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        shared_values[batch * kSharedStride + i] = local[i];
+    }
+    __syncthreads();
+}
+
 __global__ __launch_bounds__(64, 24) void
 forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     GpuWord *__restrict__ values_q,
@@ -2561,7 +2754,7 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     const GpuWord modulus = rns_primes[table_limb];
     const GpuWide barrett_ratio = rns_modulus_constants[table_limb];
     const GpuWord *limb_roots = roots + table_limb * kDegree;
-    GpuWord *limb_values =
+    const GpuWord *limb_values =
         (is_p_limb ? values_p : values_q) + local_limb * kDegree;
     GpuWord *accum0 =
         (is_p_limb ? accum_p0 : accum_q0) + local_limb * kDegree;
@@ -2571,71 +2764,17 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     const GpuWord *key1 = is_p_limb ? key_p1 : key_q1;
     const std::size_t key_limb_offset = local_limb * kDegree;
 
-    const int load_base = batch + (blockIdx.x << 9);
-    GpuWord local[kRadix];
-#pragma unroll
-    for (int i = 0; i < kRadix; ++i)
-    {
-        local[i] = limb_values[load_base + (i << 6)];
-    }
-
     const std::size_t x_index = (blockIdx.x << 6) + batch;
     const std::size_t final_twiddle = (1 << 13) + x_index;
-    fourstep_forward_first<kRadix, 3>(
-        local,
-        final_twiddle >> 6,
+    fourstep_phase2_ntt_65536_to_shared(
+        limb_values,
         limb_roots,
         modulus,
-        barrett_ratio);
-
-#pragma unroll
-    for (int i = 0; i < kRadix; ++i)
-    {
-        shared_values[batch + (i << 6)] = local[i];
-    }
-    __syncthreads();
-
-    int shared_index = ((batch >> 3) << 6) + (batch & 7);
-#pragma unroll
-    for (int i = 0; i < kRadix; ++i)
-    {
-        local[i] = shared_values[shared_index + (i << 3)];
-    }
-    fourstep_forward_radix<kRadix, 3>(
-        local,
-        final_twiddle >> 3,
-        limb_roots,
-        modulus,
-        barrett_ratio);
-
-#pragma unroll
-    for (int i = 0; i < kRadix; ++i)
-    {
-        shared_values[shared_index + (i << 3)] = local[i];
-    }
-    __syncthreads();
-
-    shared_index = batch << 3;
-#pragma unroll
-    for (int i = 0; i < kRadix; ++i)
-    {
-        local[i] = shared_values[shared_index + i];
-    }
-    fourstep_forward_radix<kRadix, 3>(
-        local,
-        final_twiddle,
-        limb_roots,
-        modulus,
-        barrett_ratio);
-
-    // The padded transpose reuses both warp halves of shared memory.
-    __syncthreads();
-#pragma unroll
-    for (int i = 0; i < kRadix; ++i)
-    {
-        shared_values[batch * kSharedStride + i] = local[i];
-    }
-    __syncthreads();
+        barrett_ratio,
+        shared_values,
+        batch,
+        coefficient_block,
+        final_twiddle);
 
 #pragma unroll
     for (int i = 0; i < kRadix; ++i)
@@ -2676,48 +2815,202 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     }
 }
 
-template <bool Batched>
-__global__ void inverse_ntt_cheddar_phase1_65536_kernel(
+__global__ __launch_bounds__(64, 16) void
+forward_ntt_cheddar_qp_active_phase2_mul_accumulate_pair_65536_kernel(
+    const GpuWord *__restrict__ values_q_a,
+    const GpuWord *__restrict__ values_p_a,
+    GpuWord *__restrict__ accum_q0_a,
+    GpuWord *__restrict__ accum_p0_a,
+    GpuWord *__restrict__ accum_q1_a,
+    GpuWord *__restrict__ accum_p1_a,
+    const GpuWord *__restrict__ c2_ntt_a,
+    const GpuWord *__restrict__ values_q_b,
+    const GpuWord *__restrict__ values_p_b,
+    GpuWord *__restrict__ accum_q0_b,
+    GpuWord *__restrict__ accum_p0_b,
+    GpuWord *__restrict__ accum_q1_b,
+    GpuWord *__restrict__ accum_p1_b,
+    const GpuWord *__restrict__ c2_ntt_b,
+    const GpuWord *__restrict__ key_q0,
+    const GpuWord *__restrict__ key_p0,
+    const GpuWord *__restrict__ key_q1,
+    const GpuWord *__restrict__ key_p1,
+    const GpuWord *__restrict__ rns_primes,
+    const GpuWide *__restrict__ rns_modulus_constants,
+    const GpuWord *__restrict__ roots,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    bool overwrite_accum)
+{
+    constexpr int kLogDegree = 16;
+    constexpr int kDegree = 1 << kLogDegree;
+    constexpr int kRadix = 8;
+    constexpr int kSharedStride = kRadix + 1;
+    extern __shared__ GpuWord shared_values[];
+
+    const std::size_t active_q_count = base_q_size - decomp_limb_count;
+    const std::size_t active_limb_count = active_q_count + base_p_size;
+    const std::size_t packed_limb = blockIdx.y;
+    const int batch = threadIdx.x;
+    const std::size_t coefficient_block = blockIdx.x << 9;
+
+    if (packed_limb >= active_limb_count)
+    {
+        const std::size_t decomp_limb =
+            decomp_limb_begin + packed_limb - active_limb_count;
+        if (decomp_limb >= decomp_limb_begin + decomp_limb_count)
+        {
+            return;
+        }
+
+        const GpuWord modulus = rns_primes[decomp_limb];
+        const GpuWide barrett_ratio = rns_modulus_constants[decomp_limb];
+        const std::size_t limb_offset = decomp_limb * kDegree;
+#pragma unroll
+        for (int i = 0; i < kRadix; ++i)
+        {
+            const std::size_t coefficient =
+                coefficient_block + (i << 6) + batch;
+            const std::size_t offset = limb_offset + coefficient;
+            const GpuWord k0 = key_q0[offset];
+            const GpuWord k1 = key_q1[offset];
+            const GpuWord va = c2_ntt_a[offset];
+            const GpuWord vb = c2_ntt_b[offset];
+            const GpuWord pa0 = mul_mod(va, k0, modulus, barrett_ratio);
+            const GpuWord pa1 = mul_mod(va, k1, modulus, barrett_ratio);
+            const GpuWord pb0 = mul_mod(vb, k0, modulus, barrett_ratio);
+            const GpuWord pb1 = mul_mod(vb, k1, modulus, barrett_ratio);
+            if (overwrite_accum)
+            {
+                accum_q0_a[offset] = pa0;
+                accum_q1_a[offset] = pa1;
+                accum_q0_b[offset] = pb0;
+                accum_q1_b[offset] = pb1;
+            }
+            else
+            {
+                accum_q0_a[offset] = add_mod(accum_q0_a[offset], pa0, modulus);
+                accum_q1_a[offset] = add_mod(accum_q1_a[offset], pa1, modulus);
+                accum_q0_b[offset] = add_mod(accum_q0_b[offset], pb0, modulus);
+                accum_q1_b[offset] = add_mod(accum_q1_b[offset], pb1, modulus);
+            }
+        }
+        return;
+    }
+
+    const bool is_p_limb = packed_limb >= active_q_count;
+    std::size_t local_limb = packed_limb;
+    if (is_p_limb)
+    {
+        local_limb -= active_q_count;
+    }
+    else if (local_limb >= decomp_limb_begin)
+    {
+        local_limb += decomp_limb_count;
+    }
+
+    const std::size_t table_limb = is_p_limb
+        ? base_q_size + local_limb
+        : local_limb;
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWide barrett_ratio = rns_modulus_constants[table_limb];
+    const GpuWord *limb_roots = roots + table_limb * kDegree;
+    const GpuWord *limb_values_a =
+        (is_p_limb ? values_p_a : values_q_a) + local_limb * kDegree;
+    const GpuWord *limb_values_b =
+        (is_p_limb ? values_p_b : values_q_b) + local_limb * kDegree;
+    GpuWord *accum0_a =
+        (is_p_limb ? accum_p0_a : accum_q0_a) + local_limb * kDegree;
+    GpuWord *accum1_a =
+        (is_p_limb ? accum_p1_a : accum_q1_a) + local_limb * kDegree;
+    GpuWord *accum0_b =
+        (is_p_limb ? accum_p0_b : accum_q0_b) + local_limb * kDegree;
+    GpuWord *accum1_b =
+        (is_p_limb ? accum_p1_b : accum_q1_b) + local_limb * kDegree;
+    const GpuWord *key0 = is_p_limb ? key_p0 : key_q0;
+    const GpuWord *key1 = is_p_limb ? key_p1 : key_q1;
+    const std::size_t key_limb_offset = local_limb * kDegree;
+
+    const std::size_t x_index = (blockIdx.x << 6) + batch;
+    const std::size_t final_twiddle = (1 << 13) + x_index;
+    fourstep_phase2_ntt_65536_to_shared(
+        limb_values_a,
+        limb_roots,
+        modulus,
+        barrett_ratio,
+        shared_values,
+        batch,
+        coefficient_block,
+        final_twiddle);
+    GpuWord val_a[kRadix];
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        const int source_thread = (i << 3) + (batch >> 3);
+        const int source_item = batch & 7;
+        val_a[i] = shared_values[source_thread * kSharedStride + source_item];
+    }
+    __syncthreads();
+
+    fourstep_phase2_ntt_65536_to_shared(
+        limb_values_b,
+        limb_roots,
+        modulus,
+        barrett_ratio,
+        shared_values,
+        batch,
+        coefficient_block,
+        final_twiddle);
+
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        const std::size_t coefficient =
+            coefficient_block + (i << 6) + batch;
+        const int source_thread = (i << 3) + (batch >> 3);
+        const int source_item = batch & 7;
+        const GpuWord val_b =
+            shared_values[source_thread * kSharedStride + source_item];
+        const std::size_t key_offset = key_limb_offset + coefficient;
+        const GpuWord k0 = key0[key_offset];
+        const GpuWord k1 = key1[key_offset];
+        const GpuWord pa0 = mul_mod(val_a[i], k0, modulus, barrett_ratio);
+        const GpuWord pa1 = mul_mod(val_a[i], k1, modulus, barrett_ratio);
+        const GpuWord pb0 = mul_mod(val_b, k0, modulus, barrett_ratio);
+        const GpuWord pb1 = mul_mod(val_b, k1, modulus, barrett_ratio);
+        if (overwrite_accum)
+        {
+            accum0_a[coefficient] = pa0;
+            accum1_a[coefficient] = pa1;
+            accum0_b[coefficient] = pb0;
+            accum1_b[coefficient] = pb1;
+        }
+        else
+        {
+            accum0_a[coefficient] = add_mod(accum0_a[coefficient], pa0, modulus);
+            accum1_a[coefficient] = add_mod(accum1_a[coefficient], pa1, modulus);
+            accum0_b[coefficient] = add_mod(accum0_b[coefficient], pb0, modulus);
+            accum1_b[coefficient] = add_mod(accum1_b[coefficient], pb1, modulus);
+        }
+    }
+}
+
+__device__ __forceinline__ void inverse_ntt_cheddar_phase1_65536_body(
     GpuWord *destination,
     const GpuWord *source,
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
-    std::size_t modulus_offset,
-    std::size_t limb_count,
-    std::size_t batch_count,
-    GpuWord *destination1 = nullptr,
-    const GpuWord *source1 = nullptr)
+    std::size_t table_limb,
+    std::size_t local_limb)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
     constexpr int kRadix = 8;
     extern __shared__ GpuWord shared_values[];
 
-    const std::size_t local_limb = blockIdx.y;
-    const std::size_t batch_index = Batched ? blockIdx.z : 0;
-    if (local_limb >= limb_count || batch_index >= batch_count)
-    {
-        return;
-    }
-    if constexpr (!Batched)
-    {
-        // Two-component launch: blockIdx.z == 1 is a second allocation.
-        if (destination1 != nullptr && blockIdx.z == 1)
-        {
-            destination = destination1;
-            source = source1;
-        }
-    }
-
-    if constexpr (Batched)
-    {
-        const std::size_t q_words = limb_count * kDegree;
-        destination += batch_index * q_words;
-        source += batch_index * 2 * q_words;
-    }
-
-    const std::size_t table_limb = modulus_offset + local_limb;
     const GpuWord modulus = rns_primes[table_limb];
     const GpuWide barrett_ratio = rns_modulus_constants[table_limb];
     const GpuWord *limb_roots = roots + table_limb * kDegree;
@@ -2786,6 +3079,76 @@ __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     {
         destination_limb[destination_base + (i << 6)] = local[i];
     }
+}
+
+template <bool Batched>
+__global__ void inverse_ntt_cheddar_phase1_65536_kernel(
+    GpuWord *destination,
+    const GpuWord *source,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t batch_count,
+    GpuWord *destination1 = nullptr,
+    const GpuWord *source1 = nullptr,
+    std::size_t source_batch_stride = 0)
+{
+    constexpr int kDegree = 1 << 16;
+    const std::size_t local_limb = blockIdx.y;
+    const std::size_t batch_index = Batched ? blockIdx.z : 0;
+    if (local_limb >= limb_count || batch_index >= batch_count)
+    {
+        return;
+    }
+    if constexpr (!Batched)
+    {
+        if (destination1 != nullptr && blockIdx.z == 1)
+        {
+            destination = destination1;
+            source = source1;
+        }
+    }
+
+    if constexpr (Batched)
+    {
+        const std::size_t q_words = limb_count * kDegree;
+        destination += batch_index * q_words;
+        source += batch_index * (source_batch_stride != 0 ? source_batch_stride : (2 * q_words));
+    }
+
+    inverse_ntt_cheddar_phase1_65536_body(
+        destination, source, rns_primes, rns_modulus_constants, roots,
+        modulus_offset + local_limb, local_limb);
+}
+
+__global__ void inverse_ntt_ptrs_phase1_65536_kernel(
+    GpuWord *destination,
+    InntPtrsArgs source_args,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t batch_count)
+{
+    constexpr int kDegree = 1 << 16;
+    const std::size_t local_limb = blockIdx.y;
+    const std::size_t batch_index = blockIdx.z;
+    if (local_limb >= limb_count || batch_index >= batch_count)
+    {
+        return;
+    }
+    const std::size_t q_words = limb_count * kDegree;
+    inverse_ntt_cheddar_phase1_65536_body(
+        destination + batch_index * q_words,
+        source_args.sources[batch_index],
+        rns_primes,
+        rns_modulus_constants,
+        roots,
+        modulus_offset + local_limb,
+        local_limb);
 }
 
 template <bool Batched>
@@ -6367,7 +6730,7 @@ void launch_inverse_ntt_poly_shard_batch_fourstep_65536(
         first_destination_shard.limb_count * degree;
     if (first_destination_shard.ptr == first_source_shard.ptr ||
         destination_batch_stride != words_per_batch ||
-        source_batch_stride != 2 * words_per_batch ||
+        source_batch_stride < words_per_batch ||
         batch_count > std::numeric_limits<unsigned int>::max())
     {
         throw std::invalid_argument(
@@ -6403,7 +6766,10 @@ void launch_inverse_ntt_poly_shard_batch_fourstep_65536(
             parameter_shard.fourstep_intt_tables.data(),
             modulus_offset,
             first_destination_shard.limb_count,
-            batch_count);
+            batch_count,
+            nullptr,
+            nullptr,
+            source_batch_stride);
     gpu_check_cuda(
         cudaGetLastError(),
         "batched inverse NTT phase1 kernel launch");
@@ -6427,6 +6793,68 @@ void launch_inverse_ntt_poly_shard_batch_fourstep_65536(
     gpu_check_cuda(
         cudaGetLastError(),
         "batched inverse NTT phase2 kernel launch");
+}
+
+void launch_inverse_ntt_ptrs_fourstep_65536(
+    GpuWord *destination,
+    const InntPtrsArgs &source_args,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t batch_count,
+    const GpuParameterShard &parameter_shard)
+{
+    const char *name = "launch_inverse_ntt_ptrs_fourstep_65536";
+    if (destination == nullptr || limb_count == 0 ||
+        batch_count == 0 || batch_count > kMaxInntPtrsBatch)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid batch shape");
+    }
+    for (std::size_t b = 0; b < batch_count; ++b)
+    {
+        if (source_args.sources[b] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null source pointer");
+        }
+    }
+    const std::size_t required_limbs = modulus_offset + limb_count;
+    if (parameter_shard.fourstep_intt_tables.data() == nullptr ||
+        parameter_shard.fourstep_intt_tables.size() < required_limbs * 65536ULL ||
+        parameter_shard.rns_primes.size() < required_limbs ||
+        parameter_shard.rns_modulus_constants.size() < required_limbs ||
+        parameter_shard.inv_degree_modulo.size() < required_limbs)
+    {
+        throw std::invalid_argument(std::string(name) + ": parameter tables too small");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    const unsigned int batch_grid = static_cast<unsigned int>(batch_count);
+    inverse_ntt_ptrs_phase1_65536_kernel<<<
+        dim3(128, static_cast<unsigned int>(limb_count), batch_grid),
+        64,
+        64 * 8 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
+            destination,
+            source_args,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.fourstep_intt_tables.data(),
+            modulus_offset,
+            limb_count,
+            batch_count);
+    gpu_check_cuda(cudaGetLastError(), "ptrs inverse NTT phase1");
+    inverse_ntt_cheddar_phase2_65536_kernel<true><<<
+        dim3(32, static_cast<unsigned int>(limb_count), batch_grid),
+        128,
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
+            destination,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.fourstep_intt_tables.data(),
+            parameter_shard.inv_degree_modulo.data(),
+            modulus_offset,
+            limb_count,
+            batch_count);
+    gpu_check_cuda(cudaGetLastError(), "ptrs inverse NTT phase2");
 }
 
 void launch_forward_ntt_poly_shard_fourstep_65536(
@@ -6584,6 +7012,117 @@ void launch_inverse_ntt_two_components_fourstep_65536(
     gpu_check_cuda(cudaGetLastError(), "two-component inverse NTT phase2");
 }
 
+void launch_forward_ntt_limbs_batch_inplace_fourstep_65536(
+    GpuWord *values,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t batch_count,
+    std::size_t batch_stride,
+    const GpuParameterShard &parameter_shard)
+{
+    if (batch_count == 0 || limb_count == 0)
+    {
+        return;
+    }
+    if (values == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_forward_ntt_limbs_batch_inplace_fourstep_65536: null data pointer");
+    }
+    if (batch_count > 1 && batch_stride < limb_count * 65536ULL)
+    {
+        throw std::invalid_argument(
+            "launch_forward_ntt_limbs_batch_inplace_fourstep_65536: batch stride too small");
+    }
+    if (modulus_offset < parameter_shard.limb_begin)
+    {
+        throw std::invalid_argument(
+            "launch_forward_ntt_limbs_batch_inplace_fourstep_65536: modulus offset out of shard range");
+    }
+    const std::size_t local_modulus_offset = modulus_offset - parameter_shard.limb_begin;
+    const std::size_t required_limbs = local_modulus_offset + limb_count;
+    if (local_modulus_offset + limb_count > parameter_shard.limb_count ||
+        parameter_shard.rns_primes.size() < required_limbs ||
+        parameter_shard.rns_modulus_constants.size() < required_limbs ||
+        parameter_shard.ntt_tables.size() < required_limbs * 65536ULL)
+    {
+        throw std::invalid_argument(
+            "launch_forward_ntt_limbs_batch_inplace_fourstep_65536: parameter shard tables incomplete");
+    }
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_forward_ntt_limbs_batch_inplace_fourstep_65536 cudaSetDevice");
+
+    forward_ntt_cheddar_phase1_65536_kernel<<<
+        dim3(32, static_cast<unsigned int>(limb_count), static_cast<unsigned int>(batch_count)),
+        128,
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
+            values,
+            values,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.ntt_tables.data(),
+            local_modulus_offset,
+            limb_count,
+            batch_stride);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_forward_ntt_limbs_batch_inplace_fourstep_65536 phase1");
+
+    forward_ntt_cheddar_phase2_65536_kernel<<<
+        dim3(128, static_cast<unsigned int>(limb_count), static_cast<unsigned int>(batch_count)),
+        64,
+        64 * 8 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
+            values,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.ntt_tables.data(),
+            local_modulus_offset,
+            limb_count,
+            batch_stride);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_forward_ntt_limbs_batch_inplace_fourstep_65536 phase2");
+}
+
+static std::size_t validate_forward_ntt_qp_active_fourstep_65536(
+    const char *name,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (degree != 65536)
+    {
+        throw std::invalid_argument(std::string(name) + ": degree must be 65536");
+    }
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    if (decomp_limb_count == 0 ||
+        decomp_limb_begin + decomp_limb_count > base_q_size)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": invalid decomposition range");
+    }
+    if (parameter_shard.limb_begin != 0 ||
+        parameter_shard.limb_count < base_q_size + base_p_size ||
+        parameter_shard.rns_primes.size() < base_q_size + base_p_size ||
+        parameter_shard.rns_modulus_constants.size() <
+            base_q_size + base_p_size ||
+        parameter_shard.ntt_tables.size() <
+            (base_q_size + base_p_size) * degree)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": parameter shard does not cover QP");
+    }
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        (std::string(name) + " cudaSetDevice").c_str());
+    return base_q_size - decomp_limb_count + base_p_size;
+}
+
 void launch_forward_ntt_qp_active_fourstep_65536(
     GpuWord *destination_q,
     GpuWord *destination_p,
@@ -6595,44 +7134,18 @@ void launch_forward_ntt_qp_active_fourstep_65536(
     std::size_t degree,
     bool phase1_ready)
 {
-    if (degree != 65536)
-    {
-        throw std::invalid_argument(
-            "launch_forward_ntt_qp_active_fourstep_65536: degree must be 65536");
-    }
+    const char *name = "launch_forward_ntt_qp_active_fourstep_65536";
     if (destination_q == nullptr || destination_p == nullptr ||
         source_q == nullptr || source_p == nullptr)
     {
-        throw std::invalid_argument(
-            "launch_forward_ntt_qp_active_fourstep_65536: null data pointer");
+        throw std::invalid_argument(std::string(name) + ": null data pointer");
     }
 
     const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
     const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
-    if (decomp_limb_count == 0 ||
-        decomp_limb_begin + decomp_limb_count > base_q_size)
-    {
-        throw std::invalid_argument(
-            "launch_forward_ntt_qp_active_fourstep_65536: invalid decomposition range");
-    }
-    if (parameter_shard.limb_begin != 0 ||
-        parameter_shard.limb_count < base_q_size + base_p_size ||
-        parameter_shard.rns_primes.size() < base_q_size + base_p_size ||
-        parameter_shard.rns_modulus_constants.size() <
-            base_q_size + base_p_size ||
-        parameter_shard.ntt_tables.size() <
-            (base_q_size + base_p_size) * degree)
-    {
-        throw std::invalid_argument(
-            "launch_forward_ntt_qp_active_fourstep_65536: parameter shard does not cover QP");
-    }
-
-    gpu_check_cuda(
-        cudaSetDevice(parameter_shard.device_id),
-        "launch_forward_ntt_qp_active_fourstep_65536 cudaSetDevice");
-
     const std::size_t active_limb_count =
-        base_q_size - decomp_limb_count + base_p_size;
+        validate_forward_ntt_qp_active_fourstep_65536(
+            name, decomp_limb_begin, decomp_limb_count, parameter_shard, degree);
     if (!phase1_ready)
     {
         forward_ntt_cheddar_qp_active_phase1_65536_kernel<<<
@@ -6671,6 +7184,99 @@ void launch_forward_ntt_qp_active_fourstep_65536(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_forward_ntt_qp_active_fourstep_65536 phase2 kernel launch");
+}
+
+void launch_forward_ntt_qp_active_batch_fourstep_65536(
+    const QpActiveNttBatchArgs &batch_args,
+    std::size_t batch_count,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool phase1_ready)
+{
+    if (batch_count == 0)
+    {
+        return;
+    }
+    if (batch_count == 1)
+    {
+        launch_forward_ntt_qp_active_fourstep_65536(
+            batch_args.destination_q[0],
+            batch_args.destination_p[0],
+            batch_args.source_q[0],
+            batch_args.source_p[0],
+            decomp_limb_begin,
+            decomp_limb_count,
+            parameter_shard,
+            degree,
+            phase1_ready);
+        return;
+    }
+    const char *name = "launch_forward_ntt_qp_active_batch_fourstep_65536";
+    if (batch_count > kMaxQpActiveNttBatch)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": batch_count exceeds kMaxQpActiveNttBatch");
+    }
+    for (std::size_t i = 0; i < batch_count; ++i)
+    {
+        if (batch_args.destination_q[i] == nullptr ||
+            batch_args.destination_p[i] == nullptr ||
+            batch_args.source_q[i] == nullptr ||
+            batch_args.source_p[i] == nullptr)
+        {
+            throw std::invalid_argument(std::string(name) + ": null data pointer");
+        }
+    }
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    const std::size_t active_limb_count =
+        validate_forward_ntt_qp_active_fourstep_65536(
+            name, decomp_limb_begin, decomp_limb_count, parameter_shard, degree);
+
+    if (!phase1_ready)
+    {
+        forward_ntt_cheddar_qp_active_phase1_batch_65536_kernel<<<
+            dim3(
+                32,
+                static_cast<unsigned int>(active_limb_count),
+                static_cast<unsigned int>(batch_count)),
+            128,
+            128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
+                batch_args,
+                batch_count,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                base_q_size,
+                base_p_size,
+                decomp_limb_begin,
+                decomp_limb_count);
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_forward_ntt_qp_active_batch_fourstep_65536 phase1 kernel launch");
+    }
+
+    forward_ntt_cheddar_qp_active_phase2_batch_65536_kernel<<<
+        dim3(
+            128,
+            static_cast<unsigned int>(active_limb_count),
+            static_cast<unsigned int>(batch_count)),
+        64,
+        64 * 8 * sizeof(GpuWord), gpu_execution_stream()>>>(
+            batch_args,
+            batch_count,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.ntt_tables.data(),
+            base_q_size,
+            base_p_size,
+            decomp_limb_begin,
+            decomp_limb_count);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_forward_ntt_qp_active_batch_fourstep_65536 phase2 kernel launch");
 }
 
 void launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
@@ -6979,6 +7585,141 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536 phase2 kernel launch");
+}
+
+void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_pair_65536(
+    GpuWord *partial_q_a,
+    GpuWord *partial_p_a,
+    const GpuWord *source_q_a,
+    const GpuWord *source_p_a,
+    GpuWord *accum_q0_a,
+    GpuWord *accum_p0_a,
+    GpuWord *accum_q1_a,
+    GpuWord *accum_p1_a,
+    const GpuWord *c2_ntt_a,
+    GpuWord *partial_q_b,
+    GpuWord *partial_p_b,
+    const GpuWord *source_q_b,
+    const GpuWord *source_p_b,
+    GpuWord *accum_q0_b,
+    GpuWord *accum_p0_b,
+    GpuWord *accum_q1_b,
+    GpuWord *accum_p1_b,
+    const GpuWord *c2_ntt_b,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    bool overwrite_accum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool phase1_ready)
+{
+    const char *name =
+        "launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_pair_65536";
+    if (degree != 65536)
+    {
+        throw std::invalid_argument(std::string(name) + ": degree must be 65536");
+    }
+    if (partial_q_a == nullptr || partial_p_a == nullptr ||
+        source_q_a == nullptr || source_p_a == nullptr ||
+        accum_q0_a == nullptr || accum_p0_a == nullptr ||
+        accum_q1_a == nullptr || accum_p1_a == nullptr ||
+        c2_ntt_a == nullptr ||
+        partial_q_b == nullptr || partial_p_b == nullptr ||
+        source_q_b == nullptr || source_p_b == nullptr ||
+        accum_q0_b == nullptr || accum_p0_b == nullptr ||
+        accum_q1_b == nullptr || accum_p1_b == nullptr ||
+        c2_ntt_b == nullptr ||
+        key_q0 == nullptr || key_p0 == nullptr ||
+        key_q1 == nullptr || key_p1 == nullptr)
+    {
+        throw std::invalid_argument(std::string(name) + ": null data pointer");
+    }
+
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    if (decomp_limb_count == 0 ||
+        decomp_limb_begin + decomp_limb_count > base_q_size)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": invalid decomposition range");
+    }
+    if (parameter_shard.limb_begin != 0 ||
+        parameter_shard.limb_count < base_q_size + base_p_size ||
+        parameter_shard.rns_primes.size() < base_q_size + base_p_size ||
+        parameter_shard.rns_modulus_constants.size() <
+            base_q_size + base_p_size ||
+        parameter_shard.ntt_tables.size() <
+            (base_q_size + base_p_size) * degree)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": parameter shard does not cover QP");
+    }
+
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+
+    const std::size_t active_limb_count =
+        base_q_size - decomp_limb_count + base_p_size;
+    if (!phase1_ready)
+    {
+        forward_ntt_cheddar_qp_active_phase1_65536_kernel<<<
+            dim3(32, static_cast<unsigned int>(active_limb_count), 2),
+            128,
+            128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
+                partial_q_a,
+                partial_p_a,
+                source_q_a,
+                source_p_a,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                base_q_size,
+                base_p_size,
+                decomp_limb_begin,
+                decomp_limb_count,
+                partial_q_b,
+                partial_p_b,
+                source_q_b,
+                source_p_b);
+        gpu_check_cuda(cudaGetLastError(), "qp pair phase1 kernel launch");
+    }
+
+    const std::size_t packed_limb_count =
+        active_limb_count + decomp_limb_count;
+    forward_ntt_cheddar_qp_active_phase2_mul_accumulate_pair_65536_kernel<<<
+        dim3(128, static_cast<unsigned int>(packed_limb_count)),
+        64,
+        64 * 9 * sizeof(GpuWord), gpu_execution_stream()>>>(
+            partial_q_a,
+            partial_p_a,
+            accum_q0_a,
+            accum_p0_a,
+            accum_q1_a,
+            accum_p1_a,
+            c2_ntt_a,
+            partial_q_b,
+            partial_p_b,
+            accum_q0_b,
+            accum_p0_b,
+            accum_q1_b,
+            accum_p1_b,
+            c2_ntt_b,
+            key_q0,
+            key_p0,
+            key_q1,
+            key_p1,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.ntt_tables.data(),
+            base_q_size,
+            base_p_size,
+            decomp_limb_begin,
+            decomp_limb_count,
+            overwrite_accum);
+    gpu_check_cuda(cudaGetLastError(), "qp pair phase2 kernel launch");
 }
 
 void launch_hybrid_convert_p_to_q_forward_ntt_two_components_fourstep_65536(

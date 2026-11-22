@@ -25,6 +25,62 @@ void launch_hybrid_modup_decomposition(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+void launch_hybrid_modup_decomposition_pair(
+    GpuWord *modup_q0,
+    GpuWord *modup_p0,
+    const GpuWord *c2_coeff0,
+    const GpuWord *c2_ntt0,
+    GpuWord *modup_q1,
+    GpuWord *modup_p1,
+    const GpuWord *c2_coeff1,
+    const GpuWord *c2_ntt1,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+inline constexpr std::size_t kMaxHybridModUpBatch = 32;
+
+struct CopyDecompQBatchArgs
+{
+    GpuWord *digit0_q[kMaxHybridModUpBatch];
+    const GpuWord *source_q[kMaxHybridModUpBatch];
+};
+
+struct HybridModUpBatchArgs
+{
+    GpuWord *modup_q[kMaxHybridModUpBatch];
+    GpuWord *modup_p[kMaxHybridModUpBatch];
+    const GpuWord *c2_coeff[kMaxHybridModUpBatch];
+    const GpuWord *c2_ntt[kMaxHybridModUpBatch];
+};
+
+/**
+ * Copy all Q decomposition intervals from a batch of NTT source polynomials
+ * into each hoisted decomposition's per-digit Q buffers in a single launch.
+ */
+void launch_copy_decomp_q_limbs_batch(
+    const CopyDecompQBatchArgs &args,
+    std::size_t batch_count,
+    std::size_t q_count,
+    std::size_t p_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * Execute lazy HYBRID ModUp decomposition across a batch of ciphertexts that
+ * share the same decomposition index and modulus level.
+ */
+void launch_hybrid_modup_decomposition_batch(
+    const HybridModUpBatchArgs &batch_args,
+    std::size_t batch_count,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_modup_decomposition_forward_ntt_first_stage(
     GpuWord *modup_q,
     GpuWord *modup_p,
@@ -221,6 +277,17 @@ void launch_hybrid_convert_p_to_q_coeff_lazy(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * Contiguous batched P->Q basis conversion into coefficient form for
+ * `batch_count` ciphertexts ([batch][2][q_count|p_count][degree]).
+ */
+void launch_hybrid_convert_p_to_q_coeff_lazy_batch(
+    GpuWord *converted_q,
+    const GpuWord *p_coeff,
+    std::size_t batch_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 /** Most components launch_hybrid_apply_moddown_ntt_selected accepts. */
 inline constexpr std::size_t kMaxSelectedModDownComponents = 64;
 
@@ -278,6 +345,30 @@ void launch_apply_galois_ntt_poly_shard(
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &source_shard,
     std::uint32_t galois_elt,
+    std::size_t degree);
+
+inline constexpr std::size_t kMaxRelinBatchSources = 8;
+inline constexpr std::size_t kMaxRelinDnum = 8;
+
+struct RelinKeymulBatchArgs
+{
+    const GpuWord *digits_q[kMaxRelinBatchSources];
+    const GpuWord *digits_p[kMaxRelinBatchSources];
+    const GpuWord *c0_q[kMaxRelinBatchSources];
+    const GpuWord *c1_q[kMaxRelinBatchSources];
+    const GpuWord *key_q0[kMaxRelinDnum];
+    const GpuWord *key_p0[kMaxRelinDnum];
+    const GpuWord *key_q1[kMaxRelinDnum];
+    const GpuWord *key_p1[kMaxRelinDnum];
+};
+
+void launch_relin_keymul_batch(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const RelinKeymulBatchArgs &args,
+    std::size_t source_count,
+    std::size_t dnum,
+    const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
 }  // namespace kernel
