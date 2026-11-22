@@ -42,6 +42,8 @@ struct GpuEvalModUploadOptions
     std::optional<bool> flat_bsgs_b8;
     std::optional<bool> virtual_degree_bound;
     std::optional<bool> lead_leaf_resplit;
+    // Keep leading quotients at EvalMod working precision during dynamic rescale.
+    bool retain_leading_quotient_scale = false;
 };
 
 /**

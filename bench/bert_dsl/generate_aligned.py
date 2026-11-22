@@ -83,6 +83,8 @@ def bind_native_config(probe, context, original_fixture=None):
         for key, value in reported.items():
             if key != 'profile_id' and native.get(key) != value:
                 raise ValueError('probe and original fixture disagree on ' + key)
+    # Older reports predate this option and cannot certify the precise plan.
+    native['preserve_eval_mod_precision'] = reported.get('preserve_eval_mod_precision', False)
     native['profile_id'] = actual['profile_id']
     return native
 
@@ -104,6 +106,8 @@ def make_parser():
                         help='opt in to CPU-validated small-ring preparation; strict encoding is default')
     parser.add_argument('--algebra-rewrite', action='store_true',
                         help='opt in to equivalent full-slot scalar/Newton seed rewrites; re-lower physical schedule')
+    parser.add_argument('--boot-precision', action='store_true',
+                        help='use the precise q52-p11 r256 Boot profile and normalize attention denominators')
     parser.add_argument('--shared-rotation-rescale', action='store_true',
                         help='experimentally rescale a reused pending source once before its rotations')
     parser.add_argument('--prepared-qk', action='store_true',
@@ -155,7 +159,15 @@ def main(argv=None):
         parser.error('--data-prefix-layers requires --data-from-plan')
     if args.data_from_plan and (args.scope != 'encoder' or args.profile_fixture_only):
         parser.error('--data-from-plan requires an encoder inference plan')
+    if args.boot_precision and (
+            args.candidate != 'q52-p11' or args.bootstrap_ratio != 256 or
+            (not args.profile_fixture_only and (args.scope != 'encoder' or
+             args.attention_layout != 'cyclic' or args.strategy != 'selective' or args.input_level != 12))):
+        parser.error('--boot-precision requires a cyclic selective q52-p11 r256 encoder at input L12 (or its profile fixture)')
     context, profile, native = candidate(args.candidate, args.bootstrap_ratio)
+    if args.boot_precision:
+        profile['profile_id'] += '-precision'
+        native.update(profile_id=profile['profile_id'], preserve_eval_mod_precision=True)
     probe = None
     if args.profile_report:
         probe = json.loads(args.profile_report.read_bytes())
@@ -174,6 +186,8 @@ def main(argv=None):
             parser.error(str(exc))
         if native['bootstrap_ratio'] != args.bootstrap_ratio:
             parser.error('probe bootstrap ratio differs; select the matching --bootstrap-ratio explicitly')
+        if native['preserve_eval_mod_precision'] != args.boot_precision:
+            parser.error('probe precision mode differs; use a report from the same --boot-precision mode')
     if args.profile_fixture_only:
         args.output_dir.mkdir(parents=True)
         (args.output_dir / 'fixture.json').write_bytes(json_bytes(dict(format_version=1,
@@ -206,6 +220,12 @@ def main(argv=None):
     else:
         outputs = graph.compact_linear(inputs, weights[0]['ffn_up_weight'], weights[0]['ffn_up_bias'],
                                        config=config, label='layer0.ffn_up_weight')
+    normalization_stats = None
+    if args.boot_precision:
+        from numeric_boot_normalize import normalize_denominator_bootstraps
+        graph, outputs, normalization_stats = normalize_denominator_bootstraps(graph, outputs, tokens=config.tokens)
+        if not normalization_stats['normalized_labels']:
+            raise ValueError('no attention denominator Boot hints to normalize')
     rewrite_stats = None
     if args.algebra_rewrite:
         from equivalent_rewrite import rewrite_compact_graph
@@ -239,6 +259,9 @@ def main(argv=None):
     if data_binding is not None:
         fixture['model']['data_binding'] = data_binding
         schedule['data_binding'] = data_binding
+    if normalization_stats is not None:
+        fixture['model']['numeric_boot_normalization'] = normalization_stats
+        schedule['numeric_boot_normalization'] = normalization_stats
     if rewrite_stats is not None:
         fixture['model']['algebra_rewrite'] = rewrite_stats
         schedule['algebra_rewrite'] = rewrite_stats

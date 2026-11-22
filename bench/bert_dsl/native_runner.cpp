@@ -264,7 +264,7 @@ poseidon::gpu::GpuBootstrapProfileConfig boot_config(const Json &fixture, const 
     BOOT_FIELD(logical_rescale_count) BOOT_FIELD(c2s_log_bsgs_ratio) BOOT_FIELD(c2s_layer_groups)
     BOOT_FIELD(c2s_direct_layer_threshold) BOOT_FIELD(s2c_log_bsgs_ratio) BOOT_FIELD(project_real)
     BOOT_FIELD(sparse_secret_hamming_weight) BOOT_FIELD(eval_mod_full_coefficients)
-    BOOT_FIELD(compress_linear_plaintexts)
+    BOOT_FIELD(compress_linear_plaintexts) BOOT_FIELD(preserve_eval_mod_precision)
 #undef BOOT_FIELD
     if(j.contains("eval_mod_truncate_degree") && !j.at("eval_mod_truncate_degree").is_null())
         c.eval_mod_truncate_degree=j.at("eval_mod_truncate_degree").get<std::uint32_t>();
@@ -294,7 +294,8 @@ Json profile_report(const poseidon::gpu::GpuBootstrapProfile &p, const poseidon:
           {"c2s_layer_groups",c.c2s_layer_groups},{"c2s_log_bsgs_ratio",c.c2s_log_bsgs_ratio},
           {"s2c_log_bsgs_ratio",c.s2c_log_bsgs_ratio},
           {"c2s_direct_layer_threshold",c.c2s_direct_layer_threshold},
-          {"compress_linear_plaintexts",c.compress_linear_plaintexts}}}};
+          {"compress_linear_plaintexts",c.compress_linear_plaintexts},
+          {"preserve_eval_mod_precision",c.preserve_eval_mod_precision}}}};
 }
 fhegpu::PrepareBackend parse_backend(const std::string &s) {
     if(s=="cpu") return fhegpu::PrepareBackend::Cpu;

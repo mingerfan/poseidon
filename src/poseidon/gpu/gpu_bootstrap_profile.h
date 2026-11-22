@@ -66,6 +66,9 @@ struct GpuBootstrapProfileConfig
      * OperatorSpec, and SlotToCoeff runs on fewer limbs.
      */
     std::optional<int> output_level;
+    // Preserve the ModRaise period and EvalMod working precision, and fold
+    // the output gain into S2C. Legacy profiles retain their existing plan.
+    bool preserve_eval_mod_precision = false;
 };
 
 /**

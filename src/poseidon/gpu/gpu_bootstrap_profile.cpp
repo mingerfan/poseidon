@@ -705,12 +705,18 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
             "GPU bootstrap EvalMod polynomial degree does not match profile");
     }
 
-    const double c2s_scaling =
-        eval_mod_poly.q_div() /
-        (eval_mod_poly.k() * eval_mod_poly.sc_fac() * eval_mod_poly.q_diff());
-    const double s2c_scaling =
-        parameters->scale() /
-        (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
+    const bool precise = config.preserve_eval_mod_precision;
+    const double full_k = eval_mod_poly.k() * eval_mod_poly.sc_fac();
+    // q_div() is capped at one. At high EvalMod scales, use the actual
+    // ModRaise modulus and scale to preserve the integer period instead.
+    const double c2s_scaling = precise
+        ? eval_mod_scale / (full_k * context.crt_context()->q0())
+        : eval_mod_poly.q_div() / (full_k * eval_mod_poly.q_diff());
+    // Fold the output gain into the S2C diagonals so it does not amplify
+    // noise from S2C. Real projection also sums the conjugate, hence the half.
+    const double s2c_scaling = precise
+        ? static_cast<double>(eval_mod_poly.message_ratio()) / (config.project_real ? 2.0 : 1.0)
+        : parameters->scale() / (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
     const double raised_scale = eval_mod_scale;
 
     auto coeff_to_slot = make_coeff_to_slot_matrix_group(
@@ -746,6 +752,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     eval_mod_options.virtual_degree_bound =
         config.eval_mod_virtual_degree_bound;
     eval_mod_options.lead_leaf_resplit = false;
+    eval_mod_options.retain_leading_quotient_scale = precise;
     auto eval_mod = GpuUploader::upload_eval_mod_high_precision(
         eval_mod_poly,
         encoder,
@@ -902,10 +909,11 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     bootstrap_data.raised_scale_override = raised_scale;
     bootstrap_data.slot_to_coeff_input_scale = s2c_input_scale;
     bootstrap_data.project_real = config.project_real;
-    // S2C already includes context_scale * message_ratio / evalmod_scale.
-    // Compensate its actual value factor, independently of message_ratio.
-    bootstrap_data.output_ratio = std::uint32_t{1} <<
-        (config.eval_mod_log_scale - parameters->log_scale());
+    // With folded gain only the real-projection ratio remains. Otherwise
+    // compensate the context_scale / eval_mod_scale factor used in S2C.
+    bootstrap_data.output_ratio = precise
+        ? (config.project_real ? 2U : 1U)
+        : (std::uint32_t{1} << (config.eval_mod_log_scale - parameters->log_scale()));
     bootstrap_data.slot_to_coeff_output_scale = eval_mod_scale;
     if (config.linear_transform_mode ==
         GpuLinearTransformMode::DoubleHoistBsgs)

@@ -2962,8 +2962,12 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 return remainder_only;
             }
 
+            const double context_scale = context.parameters_literal()->scale();
+            // Small leading quotients can lose accuracy if rescaled down to
+            // message precision. Replan the real Rescales at the higher floor.
             const double quotient_min_scale = node.polynomial.lead()
-                ? context.parameters_literal()->scale()
+                ? (options.retain_leading_quotient_scale
+                    ? std::max(context_scale, target_scale) : context_scale)
                 : pow_scale;
             const auto quotient_rescale_count =
                 choose_dynamic_rescale_allow_zero(
