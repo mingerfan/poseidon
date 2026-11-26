@@ -2,6 +2,9 @@
 #include "poseidon/basics/util/uintarith.h"
 #include "poseidon/basics/util/uintarithsmallmod.h"
 #include <algorithm>
+#include <exception>
+#include <mutex>
+#include <optional>
 #ifdef POSEIDON_USE_INTEL_HEXL
 #include "hexl/hexl.hpp"
 #include "poseidon/basics/memorymanager.h"
@@ -377,10 +380,77 @@ void CreateNTTTables(int coeff_count_power, const vector<Modulus> &modulus,
     {
         POSEIDON_THROW(invalid_argument_error, "invalid modulus");
     }
-    // coeff_count_power and modulus will be validated by "allocate"
+    // Construct independent per-modulus NTT tables in parallel, then move into
+    // the contiguous Pointer<NTTTables> allocation.
+    const size_t count = modulus.size();
+    if (count == 1)
+    {
+        NTTTablesCreateIter iter(coeff_count_power, modulus, pool);
+        tables = allocate(iter, count, pool);
+        return;
+    }
 
-    NTTTablesCreateIter iter(coeff_count_power, modulus, pool);
-    tables = allocate(iter, modulus.size(), pool);
+    vector<optional<NTTTables>> built(count);
+    exception_ptr first_exc = nullptr;
+    mutex exc_mutex;
+
+#pragma omp parallel for schedule(dynamic, 1)
+    for (size_t i = 0; i < count; ++i)
+    {
+        try
+        {
+            built[i].emplace(coeff_count_power, modulus[i], pool);
+        }
+        catch (...)
+        {
+            lock_guard<mutex> lock(exc_mutex);
+            if (!first_exc)
+            {
+                first_exc = current_exception();
+            }
+        }
+    }
+
+    if (first_exc)
+    {
+        rethrow_exception(first_exc);
+    }
+
+    class NTTTablesMoveIter
+    {
+    public:
+        using value_type = NTTTables;
+        using pointer = void;
+        using reference = value_type;
+        using difference_type = ptrdiff_t;
+        using iterator_category = input_iterator_tag;
+
+        explicit NTTTablesMoveIter(vector<optional<NTTTables>> &src, size_t idx = 0)
+            : src_(&src), idx_(idx)
+        {
+        }
+        value_type operator*() const { return std::move((*src_)[idx_].value()); }
+        NTTTablesMoveIter &operator++() noexcept
+        {
+            ++idx_;
+            return *this;
+        }
+        NTTTablesMoveIter operator++(int) noexcept
+        {
+            auto copy = *this;
+            ++idx_;
+            return copy;
+        }
+        bool operator==(const NTTTablesMoveIter &o) const noexcept { return idx_ == o.idx_; }
+        bool operator!=(const NTTTablesMoveIter &o) const noexcept { return idx_ != o.idx_; }
+
+    private:
+        vector<optional<NTTTables>> *src_;
+        size_t idx_;
+    };
+
+    NTTTablesMoveIter move_iter(built, 0);
+    tables = allocate(move_iter, count, pool);
 }
 
 void ntt_negacyclic_harvey_lazy(CoeffIter operand, const NTTTables &tables)

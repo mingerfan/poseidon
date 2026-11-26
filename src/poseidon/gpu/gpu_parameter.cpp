@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -40,6 +41,8 @@ constexpr const char *kFusedMatrixFp64TablesEnv =
     "POSEIDON_NTT_FUSED_MATRIX_FP64_TABLES";
 constexpr const char *kFusedMatrixMaxLevelsEnv =
     "POSEIDON_NTT_FUSED_MATRIX_MAX_LEVELS";
+constexpr const char *kSkipMontgomeryTablesEnv =
+    "POSEIDON_GPU_SKIP_MONTGOMERY_TABLES";
 
 std::string format_parms_id_for_error(const parms_id_type &parms_id)
 {
@@ -86,19 +89,6 @@ GpuWord checked_gpu_word(std::uint64_t value, const char *what)
     return static_cast<GpuWord>(value);
 }
 
-std::vector<GpuWord> copy_moduli_to_gpu_words(
-    const std::vector<Modulus> &moduli,
-    const char *what)
-{
-    std::vector<GpuWord> result;
-    result.reserve(moduli.size());
-    for (const auto &modulus : moduli)
-    {
-        result.push_back(checked_gpu_word(modulus.value(), what));
-    }
-    return result;
-}
-
 std::vector<Modulus> copy_rns_base_moduli(const util::RNSBase &base)
 {
     std::vector<Modulus> result;
@@ -120,17 +110,6 @@ GpuWide barrett_ratio_64(const Modulus &modulus)
 
     const auto numerator = static_cast<unsigned __int128>(1) << 64;
     return static_cast<GpuWide>(numerator / value);
-}
-
-std::vector<GpuWide> copy_barrett_ratios(const std::vector<Modulus> &moduli)
-{
-    std::vector<GpuWide> result;
-    result.reserve(moduli.size());
-    for (const auto &modulus : moduli)
-    {
-        result.push_back(barrett_ratio_64(modulus));
-    }
-    return result;
 }
 
 GpuWord montgomery_r_mod(const Modulus &modulus)
@@ -172,62 +151,14 @@ GpuWord multiply_mod_host(
         static_cast<GpuWide>(modulus.value()));
 }
 
-std::vector<GpuWord> make_montgomery_operands(
-    const std::vector<GpuWord> &values,
-    const std::vector<Modulus> &moduli,
-    std::size_t degree)
+GpuWord multiply_mod_host(
+    GpuWord left,
+    GpuWord right,
+    GpuWord modulus)
 {
-    if (values.size() != moduli.size() * degree)
-    {
-        throw std::invalid_argument("GpuParameterData Montgomery NTT table size mismatch");
-    }
-
-    std::vector<GpuWord> result(values.size());
-    for (std::size_t limb = 0; limb < moduli.size(); ++limb)
-    {
-        const GpuWord r_mod = montgomery_r_mod(moduli[limb]);
-        for (std::size_t coeff = 0; coeff < degree; ++coeff)
-        {
-            const std::size_t index = limb * degree + coeff;
-            result[index] = multiply_mod_host(
-                values[index],
-                r_mod,
-                moduli[limb]);
-        }
-    }
-    return result;
-}
-
-std::vector<GpuWord> make_montgomery_scalars(
-    const std::vector<GpuWord> &values,
-    const std::vector<Modulus> &moduli)
-{
-    if (values.size() != moduli.size())
-    {
-        throw std::invalid_argument("GpuParameterData Montgomery scalar table size mismatch");
-    }
-
-    std::vector<GpuWord> result(values.size());
-    for (std::size_t limb = 0; limb < moduli.size(); ++limb)
-    {
-        result[limb] = multiply_mod_host(
-            values[limb],
-            montgomery_r_mod(moduli[limb]),
-            moduli[limb]);
-    }
-    return result;
-}
-
-std::vector<GpuWord> copy_montgomery_neg_inverses(
-    const std::vector<Modulus> &moduli)
-{
-    std::vector<GpuWord> result;
-    result.reserve(moduli.size());
-    for (const auto &modulus : moduli)
-    {
-        result.push_back(montgomery_neg_inverse_u32(modulus));
-    }
-    return result;
+    return static_cast<GpuWord>(
+        (static_cast<GpuWide>(left) * static_cast<GpuWide>(right)) %
+        static_cast<GpuWide>(modulus));
 }
 
 template <typename T>
@@ -243,156 +174,77 @@ std::vector<T> concatenate_vectors(
 }
 
 template <typename T>
-DeviceVector<T> copy_to_device_vector(const std::vector<T> &host, int device_id)
+DeviceVector<T> copy_to_device_vector_async(
+    const std::vector<T> &host,
+    int device_id,
+    cudaStream_t stream)
 {
     DeviceVector<T> result(host.size(), device_id);
     if (!host.empty())
     {
-        result.copy_from_host(host.data(), host.size());
+        gpu_check_cuda(
+            cudaMemcpyAsync(
+                result.data(),
+                host.data(),
+                host.size() * sizeof(T),
+                cudaMemcpyHostToDevice,
+                stream),
+            "GpuParameterData cudaMemcpyAsync HostToDevice");
     }
     return result;
 }
 
-std::vector<GpuWord> copy_ntt_root_operands(
-    const util::NTTTables *ntt_tables,
-    std::size_t limb_count,
+DeviceVector<GpuWord> slice_master_roots_d2d_async(
+    const DeviceVector<GpuWord> &master,
+    std::size_t max_q_used,
+    std::size_t q_count,
+    std::size_t p_count,
     std::size_t degree,
-    bool inverse)
+    int device_id,
+    cudaStream_t stream)
 {
-    if (limb_count != 0 && ntt_tables == nullptr)
+    const std::size_t total_elems = (q_count + p_count) * degree;
+    DeviceVector<GpuWord> result(total_elems, device_id);
+    if (q_count > 0 && degree > 0)
     {
-        throw std::invalid_argument("GpuParameterData requires CPU NTT tables");
+        gpu_check_cuda(
+            cudaMemcpyAsync(
+                result.data(),
+                master.data(),
+                q_count * degree * sizeof(GpuWord),
+                cudaMemcpyDeviceToDevice,
+                stream),
+            "GpuParameterData cudaMemcpyAsync D2D Q roots");
     }
-
-    std::vector<GpuWord> result(limb_count * degree);
-    for (std::size_t limb = 0; limb < limb_count; ++limb)
+    if (p_count > 0 && degree > 0)
     {
-        const auto &table = ntt_tables[limb];
-        if (table.coeff_count() != degree)
-        {
-            throw std::invalid_argument("GpuParameterData NTT table degree mismatch");
-        }
-
-        const auto *roots = inverse
-            ? table.get_from_inv_root_powers()
-            : table.get_from_root_powers();
-
-        for (std::size_t i = 0; i < degree; ++i)
-        {
-            result[limb * degree + i] = checked_gpu_word(
-                roots[i].operand,
-                inverse
-                    ? "GpuParameterData only supports inverse NTT roots that fit in GpuWord"
-                    : "GpuParameterData only supports NTT roots that fit in GpuWord");
-        }
+        gpu_check_cuda(
+            cudaMemcpyAsync(
+                result.data() + q_count * degree,
+                master.data() + max_q_used * degree,
+                p_count * degree * sizeof(GpuWord),
+                cudaMemcpyDeviceToDevice,
+                stream),
+            "GpuParameterData cudaMemcpyAsync D2D P roots");
     }
     return result;
 }
 
-std::vector<GpuWord> copy_inv_degree_operands(
-    const util::NTTTables *ntt_tables,
-    std::size_t limb_count)
+struct StreamSyncOnExit
 {
-    if (limb_count != 0 && ntt_tables == nullptr)
-    {
-        throw std::invalid_argument("GpuParameterData requires CPU NTT tables");
-    }
+    int device_id = 0;
+    cudaStream_t stream = nullptr;
+    bool synced = false;
 
-    std::vector<GpuWord> result(limb_count);
-    for (std::size_t limb = 0; limb < limb_count; ++limb)
+    ~StreamSyncOnExit()
     {
-        result[limb] = checked_gpu_word(
-            ntt_tables[limb].inv_degree_modulo().operand,
-            "GpuParameterData only supports inverse degree constants that fit in GpuWord");
-    }
-    return result;
-}
-
-std::vector<GpuWord> make_fourstep_inverse_roots(
-    const std::vector<GpuWord> &inverse_roots,
-    std::size_t degree)
-{
-    if (inverse_roots.empty())
-    {
-        return {};
-    }
-    if (degree == 0 || inverse_roots.size() % degree != 0)
-    {
-        throw std::invalid_argument(
-            "GpuParameterData four-step inverse root shape mismatch");
-    }
-
-    int log_degree = 0;
-    for (std::size_t value = degree; value > 1; value >>= 1)
-    {
-        ++log_degree;
-    }
-
-    std::vector<GpuWord> result(inverse_roots.size());
-    const std::size_t limb_count = inverse_roots.size() / degree;
-    for (std::size_t limb = 0; limb < limb_count; ++limb)
-    {
-        const std::size_t limb_offset = limb * degree;
-        result[limb_offset] = inverse_roots[limb_offset];
-        for (std::size_t cheddar_index = 1;
-             cheddar_index < degree;
-             ++cheddar_index)
+        if (!synced && stream != nullptr)
         {
-            const std::size_t inverse_power =
-                util::reverse_bits(cheddar_index, log_degree);
-            const std::size_t poseidon_index =
-                util::reverse_bits(inverse_power - 1, log_degree) + 1;
-            result[limb_offset + cheddar_index] =
-                inverse_roots[limb_offset + poseidon_index];
+            (void)cudaSetDevice(device_id);
+            (void)cudaStreamSynchronize(stream);
         }
     }
-    return result;
-}
-
-GpuWord multiply_mod_host(
-    GpuWord left,
-    GpuWord right,
-    GpuWord modulus)
-{
-    return static_cast<GpuWord>(
-        (static_cast<GpuWide>(left) * static_cast<GpuWide>(right)) %
-        static_cast<GpuWide>(modulus));
-}
-
-std::vector<GpuWord> make_normalized_final_intt_roots(
-    std::vector<GpuWord> roots,
-    const std::vector<Modulus> &moduli,
-    const std::vector<GpuWord> &inv_degree,
-    std::size_t degree)
-{
-    if (degree == 0)
-    {
-        return roots;
-    }
-    if (moduli.size() != inv_degree.size())
-    {
-        throw std::invalid_argument(
-            "GpuParameterData normalized INTT table shape mismatch");
-    }
-    if (roots.size() != moduli.size() * degree)
-    {
-        throw std::invalid_argument(
-            "GpuParameterData normalized INTT root table shape mismatch");
-    }
-
-    for (std::size_t limb = 0; limb < moduli.size(); ++limb)
-    {
-        const GpuWord modulus = checked_gpu_word(
-            moduli[limb].value(),
-            "GpuParameterData only supports moduli that fit in GpuWord");
-        const std::size_t final_root_index = limb * degree + degree - 1;
-        roots[final_root_index] = multiply_mod_host(
-            roots[final_root_index],
-            inv_degree[limb],
-            modulus);
-    }
-    return roots;
-}
+};
 
 struct FusedNttMatrixTables
 {
@@ -439,6 +291,24 @@ bool env_enabled(const char *name)
 bool fused_matrix_progress_enabled()
 {
     return env_enabled(kFusedMatrixProgressEnv);
+}
+
+bool skip_montgomery_tables_enabled()
+{
+    if (!env_enabled(kSkipMontgomeryTablesEnv))
+    {
+        return false;
+    }
+    const char *algorithm = std::getenv("POSEIDON_NTT_ALGO");
+    if (algorithm != nullptr)
+    {
+        const std::string value(algorithm);
+        if (value == "montgomery" || value == "mont")
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool is_fp64_tensor_ntt_algorithm(const std::string &value)
@@ -1616,13 +1486,14 @@ RescaleX2Constants compute_rescale_x2_constants(
     return result;
 }
 
-std::vector<GpuWord> compute_rescale_q_inv_mod_q(
-    const std::vector<Modulus> &q)
+std::vector<GpuWord> compute_master_rescale_q_inv_mod_q(
+    const std::vector<Modulus> &q,
+    std::size_t count)
 {
-    std::vector<GpuWord> result(q.size() * q.size(), 0);
-    for (std::size_t i = 0; i < q.size(); ++i)
+    std::vector<GpuWord> result(count * count, 0);
+    for (std::size_t i = 0; i < count; ++i)
     {
-        for (std::size_t j = 0; j < q.size(); ++j)
+        for (std::size_t j = 0; j < count; ++j)
         {
             if (i == j)
             {
@@ -1637,10 +1508,26 @@ std::vector<GpuWord> compute_rescale_q_inv_mod_q(
                 throw std::invalid_argument(
                     "GpuParameterData cannot invert one q prime modulo another");
             }
-            result[i * q.size() + j] = checked_gpu_word(
+            result[i * count + j] = checked_gpu_word(
                 inverse,
                 "GpuParameterData pairwise q inverse does not fit GpuWord");
         }
+    }
+    return result;
+}
+
+std::vector<GpuWord> slice_rescale_q_inv_mod_q(
+    const std::vector<GpuWord> &master,
+    std::size_t master_q_count,
+    std::size_t q_count)
+{
+    std::vector<GpuWord> result(q_count * q_count, 0);
+    for (std::size_t i = 0; i < q_count; ++i)
+    {
+        std::memcpy(
+            result.data() + i * q_count,
+            master.data() + i * master_q_count,
+            q_count * sizeof(GpuWord));
     }
     return result;
 }
@@ -1676,14 +1563,31 @@ void append_base_converter_matrix_padded(
     }
 }
 
-void copy_hybrid_key_switch_tables(
-    const util::RNSToolQP *rns_qp,
-    GpuParameterShard &shard,
-    int device_id)
+struct HybridKeySwitchHostTables
 {
+    std::size_t base_q_count = 0;
+    std::size_t base_p_count = 0;
+    std::size_t decomp_count = 0;
+    std::vector<GpuWord> decomp_start;
+    std::vector<GpuWord> decomp_end;
+    std::vector<GpuWord> p_mod_q;
+    std::vector<GpuWord> inv_p_mod_q;
+    std::vector<GpuWord> q_matrix_offsets;
+    std::vector<GpuWord> p_matrix_offsets;
+    std::vector<GpuWord> q_matrices;
+    std::vector<GpuWord> p_matrices;
+    std::vector<GpuWord> moddown_p_to_q_matrix;
+    std::vector<GpuWord> qi_inv_punctured;
+    std::vector<GpuWord> p_inv_punctured;
+};
+
+HybridKeySwitchHostTables prepare_hybrid_key_switch_tables(
+    const util::RNSToolQP *rns_qp)
+{
+    HybridKeySwitchHostTables out;
     if (rns_qp == nullptr || rns_qp->base_q() == nullptr || rns_qp->base_p() == nullptr)
     {
-        return;
+        return out;
     }
 
     const std::size_t base_q_size = rns_qp->base_q()->size();
@@ -1691,7 +1595,7 @@ void copy_hybrid_key_switch_tables(
     const std::size_t decomp_count = rns_qp->decomp_count();
     if (base_q_size == 0 || base_p_size == 0 || decomp_count == 0)
     {
-        return;
+        return out;
     }
     if (base_q_size > std::numeric_limits<GpuWord>::max() ||
         base_p_size > std::numeric_limits<GpuWord>::max() ||
@@ -1700,42 +1604,38 @@ void copy_hybrid_key_switch_tables(
         throw std::invalid_argument("GpuParameterData HYBRID table shape does not fit GpuWord");
     }
 
-    shard.hybrid_base_q_count = base_q_size;
-    shard.hybrid_base_p_count = base_p_size;
-    shard.hybrid_decomp_count = decomp_count;
-
-    std::vector<GpuWord> decomp_start(decomp_count);
-    std::vector<GpuWord> decomp_end(decomp_count);
-    std::vector<GpuWord> q_matrix_offsets(decomp_count + 1);
-    std::vector<GpuWord> p_matrix_offsets(decomp_count + 1);
-    std::vector<GpuWord> q_matrices;
-    std::vector<GpuWord> p_matrices;
-    std::vector<GpuWord> moddown_p_to_q_matrix;
-    std::vector<GpuWord> qi_inv_punctured(decomp_count * base_p_size, 0);
+    out.base_q_count = base_q_size;
+    out.base_p_count = base_p_size;
+    out.decomp_count = decomp_count;
+    out.decomp_start.resize(decomp_count);
+    out.decomp_end.resize(decomp_count);
+    out.q_matrix_offsets.resize(decomp_count + 1);
+    out.p_matrix_offsets.resize(decomp_count + 1);
+    out.qi_inv_punctured.assign(decomp_count * base_p_size, 0);
 
     for (std::size_t decomp_index = 0; decomp_index < decomp_count; ++decomp_index)
     {
         const auto &decomp = rns_qp->decomp(decomp_index);
         const std::size_t start = decomp.base_start_idx();
         const std::size_t end = decomp.base_last_idx();
-        decomp_start[decomp_index] = checked_gpu_word(
+        out.decomp_start[decomp_index] = checked_gpu_word(
             start,
             "GpuParameterData HYBRID decomp start does not fit GpuWord");
-        decomp_end[decomp_index] = checked_gpu_word(
+        out.decomp_end[decomp_index] = checked_gpu_word(
             end,
             "GpuParameterData HYBRID decomp end does not fit GpuWord");
-        q_matrix_offsets[decomp_index] = checked_gpu_word(
-            q_matrices.size(),
+        out.q_matrix_offsets[decomp_index] = checked_gpu_word(
+            out.q_matrices.size(),
             "GpuParameterData HYBRID q matrix offset does not fit GpuWord");
-        p_matrix_offsets[decomp_index] = checked_gpu_word(
-            p_matrices.size(),
+        out.p_matrix_offsets[decomp_index] = checked_gpu_word(
+            out.p_matrices.size(),
             "GpuParameterData HYBRID p matrix offset does not fit GpuWord");
 
         if (!decomp.has_base_conversion())
         {
-            qi_inv_punctured[decomp_index * base_p_size] = 1;
-            q_matrices.resize(q_matrices.size() + base_q_size * base_p_size, 0);
-            p_matrices.resize(p_matrices.size() + base_p_size * base_p_size, 0);
+            out.qi_inv_punctured[decomp_index * base_p_size] = 1;
+            out.q_matrices.resize(out.q_matrices.size() + base_q_size * base_p_size, 0);
+            out.p_matrices.resize(out.p_matrices.size() + base_p_size * base_p_size, 0);
             continue;
         }
 
@@ -1744,7 +1644,7 @@ void copy_hybrid_key_switch_tables(
             decomp_ibase.inv_punctured_prod_mod_base_array();
         for (std::size_t col = 0; col < decomp_ibase.size(); ++col)
         {
-            qi_inv_punctured[decomp_index * base_p_size + col] = checked_gpu_word(
+            out.qi_inv_punctured[decomp_index * base_p_size + col] = checked_gpu_word(
                 decomp_inv_punctured[col].operand,
                 "GpuParameterData HYBRID Q_i inv punctured constant does not fit GpuWord");
         }
@@ -1757,7 +1657,7 @@ void copy_hybrid_key_switch_tables(
             {
                 for (std::size_t col = 0; col < base_p_size; ++col)
                 {
-                    q_matrices.push_back(0);
+                    out.q_matrices.push_back(0);
                 }
                 continue;
             }
@@ -1770,104 +1670,103 @@ void copy_hybrid_key_switch_tables(
             append_base_converter_matrix_padded(
                 *found->second,
                 base_p_size,
-                q_matrices,
+                out.q_matrices,
                 "GpuParameterData HYBRID q conversion constant does not fit GpuWord");
         }
 
         append_base_converter_matrix_padded(
             *decomp.obase_p_conv(),
             base_p_size,
-            p_matrices,
+            out.p_matrices,
             "GpuParameterData HYBRID p conversion constant does not fit GpuWord");
     }
 
-    q_matrix_offsets[decomp_count] = checked_gpu_word(
-        q_matrices.size(),
+    out.q_matrix_offsets[decomp_count] = checked_gpu_word(
+        out.q_matrices.size(),
         "GpuParameterData HYBRID q matrix final offset does not fit GpuWord");
-    p_matrix_offsets[decomp_count] = checked_gpu_word(
-        p_matrices.size(),
+    out.p_matrix_offsets[decomp_count] = checked_gpu_word(
+        out.p_matrices.size(),
         "GpuParameterData HYBRID p matrix final offset does not fit GpuWord");
 
-    auto p_mod_q = copy_mod_operand_array(
+    out.p_mod_q = copy_mod_operand_array(
         rns_qp->p_mod_qi(),
         base_q_size,
         "GpuParameterData HYBRID p_mod_q constant does not fit GpuWord");
-    auto inv_p_mod_q = copy_mod_operand_array(
+    out.inv_p_mod_q = copy_mod_operand_array(
         rns_qp->p_inv_mod_qi(),
         base_q_size,
         "GpuParameterData HYBRID inv_p_mod_q constant does not fit GpuWord");
-    auto p_inv_punctured = copy_mod_operand_array(
+    out.p_inv_punctured = copy_mod_operand_array(
         rns_qp->base_p()->inv_punctured_prod_mod_base_array(),
         base_p_size,
         "GpuParameterData HYBRID P inv punctured constant does not fit GpuWord");
     append_base_converter_matrix_padded(
         rns_qp->base_p_to_q_conv(),
         base_p_size,
-        moddown_p_to_q_matrix,
+        out.moddown_p_to_q_matrix,
         "GpuParameterData HYBRID moddown P-to-Q conversion constant does not fit GpuWord");
-
-    shard.hybrid_decomp_start = DeviceVector<GpuWord>(decomp_start.size(), device_id);
-    shard.hybrid_decomp_end = DeviceVector<GpuWord>(decomp_end.size(), device_id);
-    shard.hybrid_p_mod_q = DeviceVector<GpuWord>(p_mod_q.size(), device_id);
-    shard.hybrid_inv_p_mod_q = DeviceVector<GpuWord>(inv_p_mod_q.size(), device_id);
-    shard.hybrid_q_conv_matrix_offsets =
-        DeviceVector<GpuWord>(q_matrix_offsets.size(), device_id);
-    shard.hybrid_p_conv_matrix_offsets =
-        DeviceVector<GpuWord>(p_matrix_offsets.size(), device_id);
-    shard.hybrid_q_conv_matrices = DeviceVector<GpuWord>(q_matrices.size(), device_id);
-    shard.hybrid_p_conv_matrices = DeviceVector<GpuWord>(p_matrices.size(), device_id);
-    shard.hybrid_moddown_p_to_q_matrix =
-        DeviceVector<GpuWord>(moddown_p_to_q_matrix.size(), device_id);
-    shard.hybrid_qi_inv_punctured =
-        DeviceVector<GpuWord>(qi_inv_punctured.size(), device_id);
-    shard.hybrid_p_inv_punctured =
-        DeviceVector<GpuWord>(p_inv_punctured.size(), device_id);
-
-    shard.hybrid_decomp_start.copy_from_host(decomp_start.data(), decomp_start.size());
-    shard.hybrid_decomp_end.copy_from_host(decomp_end.data(), decomp_end.size());
-    shard.hybrid_p_mod_q.copy_from_host(p_mod_q.data(), p_mod_q.size());
-    shard.hybrid_inv_p_mod_q.copy_from_host(inv_p_mod_q.data(), inv_p_mod_q.size());
-    shard.hybrid_qi_inv_punctured.copy_from_host(
-        qi_inv_punctured.data(),
-        qi_inv_punctured.size());
-    shard.hybrid_p_inv_punctured.copy_from_host(
-        p_inv_punctured.data(),
-        p_inv_punctured.size());
-    shard.hybrid_q_conv_matrix_offsets.copy_from_host(
-        q_matrix_offsets.data(),
-        q_matrix_offsets.size());
-    shard.hybrid_p_conv_matrix_offsets.copy_from_host(
-        p_matrix_offsets.data(),
-        p_matrix_offsets.size());
-    if (!q_matrices.empty())
-    {
-        shard.hybrid_q_conv_matrices.copy_from_host(q_matrices.data(), q_matrices.size());
-    }
-    if (!p_matrices.empty())
-    {
-        shard.hybrid_p_conv_matrices.copy_from_host(p_matrices.data(), p_matrices.size());
-    }
-    if (!moddown_p_to_q_matrix.empty())
-    {
-        shard.hybrid_moddown_p_to_q_matrix.copy_from_host(
-            moddown_p_to_q_matrix.data(),
-            moddown_p_to_q_matrix.size());
-    }
+    return out;
 }
 
-void copy_bootstrap_raise_tables(
+void upload_hybrid_key_switch_tables_async(
+    const HybridKeySwitchHostTables &host,
+    GpuParameterShard &shard,
+    int device_id,
+    cudaStream_t stream)
+{
+    if (host.base_q_count == 0 || host.base_p_count == 0 || host.decomp_count == 0)
+    {
+        return;
+    }
+
+    shard.hybrid_base_q_count = host.base_q_count;
+    shard.hybrid_base_p_count = host.base_p_count;
+    shard.hybrid_decomp_count = host.decomp_count;
+    shard.hybrid_decomp_start =
+        copy_to_device_vector_async(host.decomp_start, device_id, stream);
+    shard.hybrid_decomp_end =
+        copy_to_device_vector_async(host.decomp_end, device_id, stream);
+    shard.hybrid_p_mod_q =
+        copy_to_device_vector_async(host.p_mod_q, device_id, stream);
+    shard.hybrid_inv_p_mod_q =
+        copy_to_device_vector_async(host.inv_p_mod_q, device_id, stream);
+    shard.hybrid_qi_inv_punctured =
+        copy_to_device_vector_async(host.qi_inv_punctured, device_id, stream);
+    shard.hybrid_p_inv_punctured =
+        copy_to_device_vector_async(host.p_inv_punctured, device_id, stream);
+    shard.hybrid_q_conv_matrix_offsets =
+        copy_to_device_vector_async(host.q_matrix_offsets, device_id, stream);
+    shard.hybrid_p_conv_matrix_offsets =
+        copy_to_device_vector_async(host.p_matrix_offsets, device_id, stream);
+    shard.hybrid_q_conv_matrices =
+        copy_to_device_vector_async(host.q_matrices, device_id, stream);
+    shard.hybrid_p_conv_matrices =
+        copy_to_device_vector_async(host.p_matrices, device_id, stream);
+    shard.hybrid_moddown_p_to_q_matrix =
+        copy_to_device_vector_async(host.moddown_p_to_q_matrix, device_id, stream);
+}
+
+struct BootstrapRaiseHostTables
+{
+    std::size_t source_q_count = 0;
+    std::size_t target_q_count = 0;
+    std::vector<GpuWord> inv_punctured;
+    std::vector<GpuWord> matrix;
+};
+
+BootstrapRaiseHostTables prepare_bootstrap_raise_tables(
     const std::vector<Modulus> &source_q,
     const std::vector<Modulus> &target_q,
-    GpuParameterShard &shard,
-    int device_id)
+    const util::RNSTool *rns_tool)
 {
+    BootstrapRaiseHostTables out;
     const std::size_t source_q_count = source_q.size();
     const std::size_t target_q_count = target_q.size();
     if (source_q_count == 0 ||
         target_q_count == 0 ||
         source_q_count > target_q_count)
     {
-        return;
+        return out;
     }
     if (source_q_count > std::numeric_limits<GpuWord>::max() ||
         target_q_count > std::numeric_limits<GpuWord>::max())
@@ -1876,12 +1775,12 @@ void copy_bootstrap_raise_tables(
             "GpuParameterData bootstrap ModRaise table shape does not fit GpuWord");
     }
 
-    shard.bootstrap_raise_source_q_count = source_q_count;
-    shard.bootstrap_raise_target_q_count = target_q_count;
+    out.source_q_count = source_q_count;
+    out.target_q_count = target_q_count;
 
     if (source_q_count == target_q_count)
     {
-        return;
+        return out;
     }
 
     std::vector<Modulus> raise_q;
@@ -1890,28 +1789,107 @@ void copy_bootstrap_raise_tables(
         target_q.begin() + source_q_count,
         target_q.end());
 
-    auto pool = MemoryManager::GetPool();
-    util::RNSBase source_base(source_q, pool);
-    util::RNSBase raise_base(raise_q, pool);
-    util::BaseConverter converter(source_base, raise_base, pool);
+    auto pool = MemoryManager::GetPool(mm_prof_opt::mm_force_thread_local);
+    const util::RNSBase *reusable_source_base = nullptr;
+    if (rns_tool != nullptr &&
+        rns_tool->base_q() != nullptr &&
+        rns_tool->base_q()->size() == source_q_count)
+    {
+        reusable_source_base = rns_tool->base_q();
+    }
 
-    auto inv_punctured = copy_mod_operand_array(
-        source_base.inv_punctured_prod_mod_base_array(),
-        source_base.size(),
+    std::unique_ptr<util::RNSBase> owned_source_base;
+    if (reusable_source_base == nullptr)
+    {
+        owned_source_base = std::make_unique<util::RNSBase>(source_q, pool);
+        reusable_source_base = owned_source_base.get();
+    }
+
+    util::RNSBase raise_base(raise_q, pool);
+    util::BaseConverter converter(*reusable_source_base, raise_base, pool);
+
+    out.inv_punctured = copy_mod_operand_array(
+        reusable_source_base->inv_punctured_prod_mod_base_array(),
+        reusable_source_base->size(),
         "GpuParameterData bootstrap ModRaise inv punctured constant does not fit GpuWord");
 
-    std::vector<GpuWord> matrix;
     append_base_converter_matrix_padded(
         converter,
         source_q_count,
-        matrix,
+        out.matrix,
         "GpuParameterData bootstrap ModRaise conversion constant does not fit GpuWord");
+    return out;
+}
+
+void upload_bootstrap_raise_tables_async(
+    const BootstrapRaiseHostTables &host,
+    GpuParameterShard &shard,
+    int device_id,
+    cudaStream_t stream)
+{
+    if (host.source_q_count == 0 || host.target_q_count == 0)
+    {
+        return;
+    }
+
+    shard.bootstrap_raise_source_q_count = host.source_q_count;
+    shard.bootstrap_raise_target_q_count = host.target_q_count;
+    if (host.source_q_count == host.target_q_count)
+    {
+        return;
+    }
 
     shard.bootstrap_raise_inv_punctured =
-        copy_to_device_vector(inv_punctured, device_id);
+        copy_to_device_vector_async(host.inv_punctured, device_id, stream);
     shard.bootstrap_raise_matrix =
-        copy_to_device_vector(matrix, device_id);
+        copy_to_device_vector_async(host.matrix, device_id, stream);
 }
+
+struct SelectedContextLevel
+{
+    std::shared_ptr<const CrtContext::ContextData> context_data;
+    std::size_t level_index = 0;
+    std::vector<Modulus> parameter_p;
+};
+
+struct HostLevelPrep
+{
+    parms_id_type parms_id{};
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    std::size_t parameter_p_count = 0;
+    GpuWord q_last = 0;
+    GpuWord half_q_last = 0;
+    GpuWord q_second_last = 0;
+    GpuWide q_last_two_product = 0;
+    GpuWide half_q_last_two_product = 0;
+    GpuWord inv_q_last_mod_q_second_last = 0;
+    GpuWide q_second_last_modulus_constant = 0;
+
+    std::vector<GpuWord> q_words;
+    std::vector<GpuWord> p_words;
+    std::vector<GpuWord> rns_words;
+    std::vector<GpuWide> q_barrett_ratios;
+    std::vector<GpuWide> p_barrett_ratios;
+    std::vector<GpuWide> rns_barrett_ratios;
+    std::vector<GpuWord> rns_inv_degree;
+    std::vector<GpuWord> rns_montgomery_inv_degree;
+    std::vector<GpuWord> rns_montgomery_neg_inv;
+    std::vector<GpuWord> half_q_last_mod_q;
+    std::vector<GpuWord> inv_q_last_mod_q;
+    std::vector<GpuWord> q_last_two_product_mod_q;
+    std::vector<GpuWord> inv_q_last_two_product_mod_q;
+    std::vector<GpuWord> rescale_q_inv_mod_q;
+
+    HybridKeySwitchHostTables hybrid;
+    BootstrapRaiseHostTables bootstrap_raise;
+
+    FusedNttMatrixTables fused_ntt;
+    FusedNttMatrixTables fused_intt;
+    FusedNttMatrixFp64SplitTables fused_ntt_fp64;
+    FusedNttMatrixFp64SplitTables fused_intt_fp64;
+};
 
 }  // namespace
 
@@ -1923,27 +1901,29 @@ GpuParameterData::GpuParameterData(const PoseidonContext &context, int device_id
 GpuParameterData::GpuParameterData(
     const PoseidonContext &context,
     int device_id,
-    const std::vector<std::size_t> &active_q_counts)
+    const std::vector<std::size_t> &active_q_counts,
+    bool include_key_level)
 {
     if (active_q_counts.empty())
     {
         throw std::invalid_argument(
             "GpuParameterData sparse construction requires active q levels");
     }
-    build_from_poseidon_context(context, device_id, active_q_counts);
+    build_from_poseidon_context(context, device_id, active_q_counts, include_key_level);
 }
 
 void GpuParameterData::build_from_poseidon_context(
     const PoseidonContext &context,
     int device_id)
 {
-    build_from_poseidon_context(context, device_id, {});
+    build_from_poseidon_context(context, device_id, {}, false);
 }
 
 void GpuParameterData::build_from_poseidon_context(
     const PoseidonContext &context,
     int device_id,
-    const std::vector<std::size_t> &active_q_counts)
+    const std::vector<std::size_t> &active_q_counts,
+    bool include_key_level)
 {
     levels_.clear();
 
@@ -1969,9 +1949,10 @@ void GpuParameterData::build_from_poseidon_context(
         throw std::invalid_argument("GpuParameterData requires a first q-only context level");
     }
     const auto &first_q = first_context_data->parms().q();
+    const auto &master_q_moduli = context.parameters_literal()->q();
+    const auto &master_p_moduli = context.parameters_literal()->p();
     const auto *small_ntt_tables = crt_context->small_ntt_tables();
-    const std::size_t p_ntt_table_offset =
-        context.parameters_literal()->q().size();
+    const std::size_t p_ntt_table_offset = master_q_moduli.size();
     const int precomputed_fused_matrix_stages =
         read_precomputed_fused_matrix_stages();
     const bool precompute_fused_matrix_fp64_tables =
@@ -1982,6 +1963,12 @@ void GpuParameterData::build_from_poseidon_context(
         !fp64_tensor_ntt_algorithm_requested();
     const std::size_t fused_matrix_max_levels =
         read_fused_matrix_max_levels();
+    const bool skip_montgomery = skip_montgomery_tables_enabled();
+
+    std::vector<SelectedContextLevel> selected;
+    std::size_t max_q_used = 0;
+    std::size_t max_p_used = 0;
+    std::size_t common_degree = 0;
 
     auto context_data = crt_context->key_context_data();
     if (!context_data)
@@ -1994,6 +1981,27 @@ void GpuParameterData::build_from_poseidon_context(
         const auto &parms = context_data->parms();
         const auto &q = parms.q();
         const auto &p = parms.p();
+        const bool is_key_level = !p.empty();
+
+        if (sparse_q_only)
+        {
+            if (is_key_level)
+            {
+                if (!include_key_level)
+                {
+                    context_data = context_data->next_context_data();
+                    ++level_index;
+                    continue;
+                }
+            }
+            else if (requested_q_counts.count(q.size()) == 0)
+            {
+                context_data = context_data->next_context_data();
+                ++level_index;
+                continue;
+            }
+        }
+
         const auto *rns_qp = context_data->qp_rns_tool();
         std::vector<Modulus> parameter_p = p;
         if (parameter_p.empty() && rns_qp != nullptr && rns_qp->base_p() != nullptr)
@@ -2001,434 +2009,43 @@ void GpuParameterData::build_from_poseidon_context(
             parameter_p = copy_rns_base_moduli(*rns_qp->base_p());
         }
 
-        // Sparse application evaluators only operate on explicitly planned
-        // q-only levels.  Skip before allocating or uploading any per-level
-        // NTT/RNS tables; the key context is intentionally not retained.
-        if (sparse_q_only &&
-            (!p.empty() || requested_q_counts.count(q.size()) == 0))
+        if (selected.empty())
         {
-            context_data = context_data->next_context_data();
-            ++level_index;
-            continue;
+            common_degree = parms.degree();
+        }
+        else if (parms.degree() != common_degree)
+        {
+            throw std::invalid_argument("GpuParameterData requires uniform polynomial degree across levels");
+        }
+        if (q.size() > master_q_moduli.size() || parameter_p.size() > master_p_moduli.size())
+        {
+            throw std::invalid_argument("GpuParameterData level modulus count exceeds context parameters");
+        }
+        for (std::size_t i = 0; i < q.size(); ++i)
+        {
+            if (q[i] != master_q_moduli[i])
+            {
+                throw std::invalid_argument("GpuParameterData requires level q primes to match context prefix");
+            }
+        }
+        for (std::size_t i = 0; i < parameter_p.size(); ++i)
+        {
+            if (parameter_p[i] != master_p_moduli[i])
+            {
+                throw std::invalid_argument("GpuParameterData requires level p primes to match context prefix");
+            }
         }
 
-        GpuLevelInfo level;
-        level.parms_id = context_data->parms_id();
-        level.degree = parms.degree();
-        level.q_count = q.size();
-        level.p_count = p.size();
-
-        GpuParameterShard shard;
-        shard.device_id = device_id;
-        shard.limb_begin = 0;
-        shard.limb_count = level.q_count + parameter_p.size();
-        if (!q.empty())
-        {
-            shard.q_last = checked_gpu_word(
-                q.back().value(),
-                "GpuParameterData only supports q_last that fits in GpuWord");
-            shard.half_q_last = static_cast<GpuWord>(shard.q_last >> 1);
-        }
-
-        auto q_words = copy_moduli_to_gpu_words(
-            q,
-            "GpuParameterData only supports q primes that fit in GpuWord");
-        auto p_words = copy_moduli_to_gpu_words(
-            parameter_p,
-            "GpuParameterData only supports p primes that fit in GpuWord");
-        auto q_barrett_ratios = copy_barrett_ratios(q);
-        auto p_barrett_ratios = copy_barrett_ratios(parameter_p);
-        auto rns_words = concatenate_vectors(q_words, p_words);
-        auto rns_barrett_ratios =
-            concatenate_vectors(q_barrett_ratios, p_barrett_ratios);
-
-        const auto *p_ntt_tables = small_ntt_tables + p_ntt_table_offset;
-        auto q_ntt_roots = copy_ntt_root_operands(
-            small_ntt_tables,
-            q.size(),
-            level.degree,
-            false);
-        auto p_ntt_roots = copy_ntt_root_operands(
-            p_ntt_tables,
-            parameter_p.size(),
-            level.degree,
-            false);
-        auto q_intt_roots = copy_ntt_root_operands(
-            small_ntt_tables,
-            q.size(),
-            level.degree,
-            true);
-        auto p_intt_roots = copy_ntt_root_operands(
-            p_ntt_tables,
-            parameter_p.size(),
-            level.degree,
-            true);
-        auto q_inv_degree = copy_inv_degree_operands(
-            small_ntt_tables,
-            q.size());
-        auto p_inv_degree = copy_inv_degree_operands(
-            p_ntt_tables,
-            parameter_p.size());
-        auto rns_ntt_roots =
-            concatenate_vectors(q_ntt_roots, p_ntt_roots);
-        auto rns_intt_roots =
-            concatenate_vectors(q_intt_roots, p_intt_roots);
-        auto rns_fourstep_intt_roots =
-            make_fourstep_inverse_roots(rns_intt_roots, level.degree);
-        auto rns_inv_degree =
-            concatenate_vectors(q_inv_degree, p_inv_degree);
-        auto rns_moduli =
-            concatenate_vectors(q, parameter_p);
-        auto rns_normalized_intt_roots =
-            make_normalized_final_intt_roots(
-                rns_intt_roots,
-                rns_moduli,
-                rns_inv_degree,
-                level.degree);
-        auto rns_montgomery_ntt_roots =
-            make_montgomery_operands(
-                rns_ntt_roots,
-                rns_moduli,
-                level.degree);
-        auto rns_montgomery_intt_roots =
-            make_montgomery_operands(
-                rns_intt_roots,
-                rns_moduli,
-                level.degree);
-        auto rns_montgomery_normalized_intt_roots =
-            make_montgomery_operands(
-                rns_normalized_intt_roots,
-                rns_moduli,
-                level.degree);
-        auto rns_montgomery_inv_degree =
-            make_montgomery_scalars(
-                rns_inv_degree,
-                rns_moduli);
-        auto rns_montgomery_neg_inv =
-            copy_montgomery_neg_inverses(rns_moduli);
-        const auto rns_ntt_table_ptrs = collect_rns_ntt_table_pointers(
-            small_ntt_tables,
-            q.size(),
-            p_ntt_tables,
-            parameter_p.size());
-        const int level_fused_matrix_stages =
-            level_index < fused_matrix_max_levels
-                ? precomputed_fused_matrix_stages
-                : 0;
-        const bool level_precompute_fused_matrix_fp64_tables =
-            level_fused_matrix_stages > 0 &&
-            precompute_fused_matrix_fp64_tables;
-
-        const auto rns_fused_ntt_matrices =
-            load_or_build_fused_matrix_tables(
-                rns_ntt_table_ptrs,
-                level.degree,
-                level_fused_matrix_stages,
-                false);
-        const auto rns_fused_intt_matrices =
-            load_or_build_fused_matrix_tables(
-                rns_ntt_table_ptrs,
-                level.degree,
-                level_fused_matrix_stages,
-                true);
-        FusedNttMatrixFp64SplitTables rns_fused_ntt_matrices_fp64;
-        FusedNttMatrixFp64SplitTables rns_fused_intt_matrices_fp64;
-        if (level_precompute_fused_matrix_fp64_tables)
-        {
-            rns_fused_ntt_matrices_fp64 =
-                split_fused_matrices_for_fp64(rns_fused_ntt_matrices.matrices);
-            rns_fused_intt_matrices_fp64 =
-                split_fused_matrices_for_fp64(rns_fused_intt_matrices.matrices);
-        }
-        auto half_q_last_mod_q =
-            compute_half_q_last_mod_q(q, shard.half_q_last);
-        auto inv_q_last_mod_q = copy_inv_q_last_mod_q_operands(
-            context_data->rns_tool(),
-            q.size());
-        auto rescale_x2_constants = compute_rescale_x2_constants(q);
-        auto rescale_q_inv_mod_q = compute_rescale_q_inv_mod_q(q);
-        shard.q_second_last = rescale_x2_constants.q_second_last;
-        shard.q_last_two_product = rescale_x2_constants.product;
-        shard.half_q_last_two_product = rescale_x2_constants.half_product;
-        shard.inv_q_last_mod_q_second_last =
-            rescale_x2_constants.inv_q_last_mod_q_second_last;
-        if (q.size() >= 3)
-        {
-            shard.q_second_last_modulus_constant =
-                q_barrett_ratios[q.size() - 2];
-        }
-
-        shard.q_primes = DeviceVector<GpuWord>(q_words.size(), device_id);
-        if (!q_words.empty())
-        {
-            shard.q_primes.copy_from_host(q_words.data(), q_words.size());
-        }
-
-        shard.p_primes = DeviceVector<GpuWord>(p_words.size(), device_id);
-        if (!p_words.empty())
-        {
-            shard.p_primes.copy_from_host(p_words.data(), p_words.size());
-        }
-
-        shard.rns_primes = DeviceVector<GpuWord>(rns_words.size(), device_id);
-        if (!rns_words.empty())
-        {
-            shard.rns_primes.copy_from_host(
-                rns_words.data(),
-                rns_words.size());
-        }
-
-        shard.q_modulus_constants =
-            DeviceVector<GpuWide>(q_barrett_ratios.size(), device_id);
-        if (!q_barrett_ratios.empty())
-        {
-            shard.q_modulus_constants.copy_from_host(
-                q_barrett_ratios.data(),
-                q_barrett_ratios.size());
-        }
-
-        shard.p_modulus_constants =
-            DeviceVector<GpuWide>(p_barrett_ratios.size(), device_id);
-        if (!p_barrett_ratios.empty())
-        {
-            shard.p_modulus_constants.copy_from_host(
-                p_barrett_ratios.data(),
-                p_barrett_ratios.size());
-        }
-
-        shard.rns_modulus_constants =
-            DeviceVector<GpuWide>(rns_barrett_ratios.size(), device_id);
-        if (!rns_barrett_ratios.empty())
-        {
-            shard.rns_modulus_constants.copy_from_host(
-                rns_barrett_ratios.data(),
-                rns_barrett_ratios.size());
-        }
-
-        shard.half_q_last_mod_q =
-            DeviceVector<GpuWord>(half_q_last_mod_q.size(), device_id);
-        if (!half_q_last_mod_q.empty())
-        {
-            shard.half_q_last_mod_q.copy_from_host(
-                half_q_last_mod_q.data(),
-                half_q_last_mod_q.size());
-        }
-
-        shard.inv_q_last_mod_q =
-            DeviceVector<GpuWord>(inv_q_last_mod_q.size(), device_id);
-        if (!inv_q_last_mod_q.empty())
-        {
-            shard.inv_q_last_mod_q.copy_from_host(
-                inv_q_last_mod_q.data(),
-                inv_q_last_mod_q.size());
-        }
-
-        shard.q_last_two_product_mod_q = DeviceVector<GpuWord>(
-            rescale_x2_constants.product_mod_q.size(),
-            device_id);
-        if (!rescale_x2_constants.product_mod_q.empty())
-        {
-            shard.q_last_two_product_mod_q.copy_from_host(
-                rescale_x2_constants.product_mod_q.data(),
-                rescale_x2_constants.product_mod_q.size());
-        }
-
-        shard.inv_q_last_two_product_mod_q = DeviceVector<GpuWord>(
-            rescale_x2_constants.inv_product_mod_q.size(),
-            device_id);
-        if (!rescale_x2_constants.inv_product_mod_q.empty())
-        {
-            shard.inv_q_last_two_product_mod_q.copy_from_host(
-                rescale_x2_constants.inv_product_mod_q.data(),
-                rescale_x2_constants.inv_product_mod_q.size());
-        }
-
-        shard.rescale_q_inv_mod_q = DeviceVector<GpuWord>(
-            rescale_q_inv_mod_q.size(),
-            device_id);
-        if (!rescale_q_inv_mod_q.empty())
-        {
-            shard.rescale_q_inv_mod_q.copy_from_host(
-                rescale_q_inv_mod_q.data(),
-                rescale_q_inv_mod_q.size());
-        }
-
-        shard.ntt_tables =
-            DeviceVector<GpuWord>(rns_ntt_roots.size(), device_id);
-        if (!rns_ntt_roots.empty())
-        {
-            shard.ntt_tables.copy_from_host(
-                rns_ntt_roots.data(),
-                rns_ntt_roots.size());
-        }
-
-        shard.intt_tables =
-            DeviceVector<GpuWord>(rns_intt_roots.size(), device_id);
-        if (!rns_intt_roots.empty())
-        {
-            shard.intt_tables.copy_from_host(
-                rns_intt_roots.data(),
-                rns_intt_roots.size());
-        }
-
-        shard.fourstep_intt_tables =
-            DeviceVector<GpuWord>(
-                rns_fourstep_intt_roots.size(),
-                device_id);
-        if (!rns_fourstep_intt_roots.empty())
-        {
-            shard.fourstep_intt_tables.copy_from_host(
-                rns_fourstep_intt_roots.data(),
-                rns_fourstep_intt_roots.size());
-        }
-
-        shard.intt_tables_normalized =
-            DeviceVector<GpuWord>(
-                rns_normalized_intt_roots.size(),
-                device_id);
-        if (!rns_normalized_intt_roots.empty())
-        {
-            shard.intt_tables_normalized.copy_from_host(
-                rns_normalized_intt_roots.data(),
-                rns_normalized_intt_roots.size());
-        }
-
-        shard.inv_degree_modulo =
-            DeviceVector<GpuWord>(rns_inv_degree.size(), device_id);
-        if (!rns_inv_degree.empty())
-        {
-            shard.inv_degree_modulo.copy_from_host(
-                rns_inv_degree.data(),
-                rns_inv_degree.size());
-        }
-
-        shard.montgomery_ntt_tables =
-            DeviceVector<GpuWord>(
-                rns_montgomery_ntt_roots.size(),
-                device_id);
-        if (!rns_montgomery_ntt_roots.empty())
-        {
-            shard.montgomery_ntt_tables.copy_from_host(
-                rns_montgomery_ntt_roots.data(),
-                rns_montgomery_ntt_roots.size());
-        }
-
-        shard.montgomery_intt_tables =
-            DeviceVector<GpuWord>(
-                rns_montgomery_intt_roots.size(),
-                device_id);
-        if (!rns_montgomery_intt_roots.empty())
-        {
-            shard.montgomery_intt_tables.copy_from_host(
-                rns_montgomery_intt_roots.data(),
-                rns_montgomery_intt_roots.size());
-        }
-
-        shard.montgomery_intt_tables_normalized =
-            DeviceVector<GpuWord>(
-                rns_montgomery_normalized_intt_roots.size(),
-                device_id);
-        if (!rns_montgomery_normalized_intt_roots.empty())
-        {
-            shard.montgomery_intt_tables_normalized.copy_from_host(
-                rns_montgomery_normalized_intt_roots.data(),
-                rns_montgomery_normalized_intt_roots.size());
-        }
-
-        shard.montgomery_inv_degree_modulo =
-            DeviceVector<GpuWord>(
-                rns_montgomery_inv_degree.size(),
-                device_id);
-        if (!rns_montgomery_inv_degree.empty())
-        {
-            shard.montgomery_inv_degree_modulo.copy_from_host(
-                rns_montgomery_inv_degree.data(),
-                rns_montgomery_inv_degree.size());
-        }
-
-        shard.montgomery_neg_inv_modulo =
-            DeviceVector<GpuWord>(
-                rns_montgomery_neg_inv.size(),
-                device_id);
-        if (!rns_montgomery_neg_inv.empty())
-        {
-            shard.montgomery_neg_inv_modulo.copy_from_host(
-                rns_montgomery_neg_inv.data(),
-                rns_montgomery_neg_inv.size());
-        }
-
-        shard.ntt_fused_matrix_fusion_stages =
-            rns_fused_ntt_matrices.fusion_stages;
-        shard.ntt_fused_matrix_stage_counts =
-            copy_to_device_vector(
-                rns_fused_ntt_matrices.stage_counts,
-                device_id);
-        shard.ntt_fused_matrix_group_counts =
-            copy_to_device_vector(
-                rns_fused_ntt_matrices.group_counts,
-                device_id);
-        shard.ntt_fused_matrix_stage_offsets =
-            copy_to_device_vector(
-                rns_fused_ntt_matrices.stage_offsets,
-                device_id);
-        if (precompute_word_fused_matrix_tables)
-        {
-            shard.ntt_fused_matrices =
-                copy_to_device_vector(
-                    rns_fused_ntt_matrices.matrices,
-                    device_id);
-        }
-        shard.ntt_fused_matrices_fp64_lo =
-            copy_to_device_vector(
-                rns_fused_ntt_matrices_fp64.lo,
-                device_id);
-        shard.ntt_fused_matrices_fp64_hi =
-            copy_to_device_vector(
-                rns_fused_ntt_matrices_fp64.hi,
-                device_id);
-
-        shard.intt_fused_matrix_fusion_stages =
-            rns_fused_intt_matrices.fusion_stages;
-        shard.intt_fused_matrix_stage_counts =
-            copy_to_device_vector(
-                rns_fused_intt_matrices.stage_counts,
-                device_id);
-        shard.intt_fused_matrix_group_counts =
-            copy_to_device_vector(
-                rns_fused_intt_matrices.group_counts,
-                device_id);
-        shard.intt_fused_matrix_stage_offsets =
-            copy_to_device_vector(
-                rns_fused_intt_matrices.stage_offsets,
-                device_id);
-        if (precompute_word_fused_matrix_tables)
-        {
-            shard.intt_fused_matrices =
-                copy_to_device_vector(
-                    rns_fused_intt_matrices.matrices,
-                    device_id);
-        }
-        shard.intt_fused_matrices_fp64_lo =
-            copy_to_device_vector(
-                rns_fused_intt_matrices_fp64.lo,
-                device_id);
-        shard.intt_fused_matrices_fp64_hi =
-            copy_to_device_vector(
-                rns_fused_intt_matrices_fp64.hi,
-                device_id);
-
-        copy_hybrid_key_switch_tables(rns_qp, shard, device_id);
-        if (level.p_count == 0)
-        {
-            copy_bootstrap_raise_tables(q, first_q, shard, device_id);
-        }
-
-        level.shards.push_back(std::move(shard));
-        levels_.push_back(std::move(level));
-        if (sparse_q_only)
+        max_q_used = std::max(max_q_used, q.size());
+        max_p_used = std::max(max_p_used, parameter_p.size());
+        if (sparse_q_only && !is_key_level)
         {
             built_q_counts.insert(q.size());
         }
+        selected.push_back(SelectedContextLevel{
+            context_data,
+            level_index,
+            std::move(parameter_p)});
 
         context_data = context_data->next_context_data();
         ++level_index;
@@ -2449,6 +2066,482 @@ void GpuParameterData::build_from_poseidon_context(
         }
         throw std::out_of_range(stream.str());
     }
+
+    if (selected.empty())
+    {
+        return;
+    }
+
+    const std::size_t total_primes = max_q_used + max_p_used;
+    if (total_primes != 0 && small_ntt_tables == nullptr)
+    {
+        throw std::invalid_argument("GpuParameterData requires CPU NTT tables");
+    }
+
+    gpu_check_cuda(cudaSetDevice(device_id), "GpuParameterData cudaSetDevice");
+    const cudaStream_t stream = gpu_execution_stream();
+
+    // 1. Precompute per-prime master root tables ONCE across the unique Q and P primes
+    //    in parallel, then upload ONE master GPU copy and release the host root buffers.
+    std::vector<GpuWord> master_words(total_primes);
+    std::vector<GpuWide> master_barrett(total_primes);
+    std::vector<GpuWord> master_inv_degree(total_primes);
+    std::vector<GpuWord> master_mont_inv_degree(skip_montgomery ? 0 : total_primes);
+    std::vector<GpuWord> master_mont_neg_inv(skip_montgomery ? 0 : total_primes);
+
+    DeviceVector<GpuWord> d_master_ntt;
+    DeviceVector<GpuWord> d_master_intt;
+    DeviceVector<GpuWord> d_master_fourstep_intt;
+    DeviceVector<GpuWord> d_master_norm_intt;
+    DeviceVector<GpuWord> d_master_mont_ntt;
+    DeviceVector<GpuWord> d_master_mont_intt;
+    DeviceVector<GpuWord> d_master_mont_norm_intt;
+
+    if (total_primes > 0)
+    {
+        std::vector<std::size_t> fourstep_perm(common_degree, 0);
+        if (common_degree > 0)
+        {
+            int log_degree = 0;
+            for (std::size_t value = common_degree; value > 1; value >>= 1)
+            {
+                ++log_degree;
+            }
+            fourstep_perm[0] = 0;
+            for (std::size_t cheddar_index = 1;
+                 cheddar_index < common_degree;
+                 ++cheddar_index)
+            {
+                const std::size_t inverse_power =
+                    util::reverse_bits(cheddar_index, log_degree);
+                fourstep_perm[cheddar_index] =
+                    util::reverse_bits(inverse_power - 1, log_degree) + 1;
+            }
+        }
+
+        const std::size_t master_root_elems = total_primes * common_degree;
+        std::vector<GpuWord> master_ntt(master_root_elems);
+        std::vector<GpuWord> master_intt(master_root_elems);
+        std::vector<GpuWord> master_fourstep_intt(master_root_elems);
+        std::vector<GpuWord> master_norm_intt(master_root_elems);
+        std::vector<GpuWord> master_mont_ntt(skip_montgomery ? 0 : master_root_elems);
+        std::vector<GpuWord> master_mont_intt(skip_montgomery ? 0 : master_root_elems);
+        std::vector<GpuWord> master_mont_norm_intt(skip_montgomery ? 0 : master_root_elems);
+
+        std::exception_ptr master_error;
+        #pragma omp parallel for schedule(static)
+        for (std::size_t idx = 0; idx < total_primes; ++idx)
+        {
+            try
+            {
+                const bool is_q = idx < max_q_used;
+                const std::size_t p_idx = is_q ? 0 : (idx - max_q_used);
+                const auto &modulus = is_q ? master_q_moduli[idx] : master_p_moduli[p_idx];
+                const auto &table = is_q
+                    ? small_ntt_tables[idx]
+                    : small_ntt_tables[p_ntt_table_offset + p_idx];
+                if (table.coeff_count() != common_degree)
+                {
+                    throw std::invalid_argument("GpuParameterData NTT table degree mismatch");
+                }
+
+                const GpuWord mod_word = checked_gpu_word(
+                    modulus.value(),
+                    is_q ? "GpuParameterData only supports q primes that fit in GpuWord"
+                         : "GpuParameterData only supports p primes that fit in GpuWord");
+                master_words[idx] = mod_word;
+                master_barrett[idx] = barrett_ratio_64(modulus);
+                const GpuWord inv_deg = checked_gpu_word(
+                    table.inv_degree_modulo().operand,
+                    "GpuParameterData only supports inverse degree constants that fit in GpuWord");
+                master_inv_degree[idx] = inv_deg;
+
+                const auto *fwd_roots = table.get_from_root_powers();
+                const auto *inv_roots = table.get_from_inv_root_powers();
+                const std::size_t off = idx * common_degree;
+                GpuWord *ntt_dst = master_ntt.data() + off;
+                GpuWord *intt_dst = master_intt.data() + off;
+                GpuWord *fs_dst = master_fourstep_intt.data() + off;
+                GpuWord *norm_dst = master_norm_intt.data() + off;
+
+                for (std::size_t i = 0; i < common_degree; ++i)
+                {
+                    ntt_dst[i] = checked_gpu_word(
+                        fwd_roots[i].operand,
+                        "GpuParameterData only supports NTT roots that fit in GpuWord");
+                    intt_dst[i] = checked_gpu_word(
+                        inv_roots[i].operand,
+                        "GpuParameterData only supports inverse NTT roots that fit in GpuWord");
+                }
+                for (std::size_t i = 0; i < common_degree; ++i)
+                {
+                    fs_dst[i] = intt_dst[fourstep_perm[i]];
+                }
+                if (common_degree > 0)
+                {
+                    std::memcpy(norm_dst, intt_dst, common_degree * sizeof(GpuWord));
+                    norm_dst[common_degree - 1] = multiply_mod_host(
+                        norm_dst[common_degree - 1],
+                        inv_deg,
+                        mod_word);
+                }
+
+                if (!skip_montgomery)
+                {
+                    const GpuWord r_mod = montgomery_r_mod(modulus);
+                    master_mont_neg_inv[idx] = montgomery_neg_inverse_u32(modulus);
+                    master_mont_inv_degree[idx] = multiply_mod_host(inv_deg, r_mod, modulus);
+                    GpuWord *m_ntt_dst = master_mont_ntt.data() + off;
+                    GpuWord *m_intt_dst = master_mont_intt.data() + off;
+                    GpuWord *m_norm_dst = master_mont_norm_intt.data() + off;
+                    for (std::size_t i = 0; i < common_degree; ++i)
+                    {
+                        m_ntt_dst[i] = multiply_mod_host(ntt_dst[i], r_mod, modulus);
+                        m_intt_dst[i] = multiply_mod_host(intt_dst[i], r_mod, modulus);
+                    }
+                    if (common_degree > 0)
+                    {
+                        std::memcpy(m_norm_dst, m_intt_dst, common_degree * sizeof(GpuWord));
+                        m_norm_dst[common_degree - 1] = multiply_mod_host(
+                            norm_dst[common_degree - 1],
+                            r_mod,
+                            modulus);
+                    }
+                }
+            }
+            catch (...)
+            {
+                #pragma omp critical
+                {
+                    if (!master_error)
+                    {
+                        master_error = std::current_exception();
+                    }
+                }
+            }
+        }
+        if (master_error)
+        {
+            std::rethrow_exception(master_error);
+        }
+
+        StreamSyncOnExit master_sync{device_id, stream, false};
+        d_master_ntt = copy_to_device_vector_async(master_ntt, device_id, stream);
+        d_master_intt = copy_to_device_vector_async(master_intt, device_id, stream);
+        d_master_fourstep_intt =
+            copy_to_device_vector_async(master_fourstep_intt, device_id, stream);
+        d_master_norm_intt =
+            copy_to_device_vector_async(master_norm_intt, device_id, stream);
+        if (!skip_montgomery)
+        {
+            d_master_mont_ntt =
+                copy_to_device_vector_async(master_mont_ntt, device_id, stream);
+            d_master_mont_intt =
+                copy_to_device_vector_async(master_mont_intt, device_id, stream);
+            d_master_mont_norm_intt =
+                copy_to_device_vector_async(master_mont_norm_intt, device_id, stream);
+        }
+        gpu_check_cuda(
+            cudaStreamSynchronize(stream),
+            "GpuParameterData master root tables H2D sync");
+        master_sync.synced = true;
+    }
+
+    // 2. Precompute pairwise q^{-1} mod q ONCE and prepare all per-level CPU tables in parallel.
+    const auto master_q_inv_mod_q =
+        compute_master_rescale_q_inv_mod_q(master_q_moduli, max_q_used);
+
+    std::vector<HostLevelPrep> preps(selected.size());
+    std::exception_ptr prep_error;
+    #pragma omp parallel for schedule(dynamic, 1)
+    for (std::size_t idx = 0; idx < selected.size(); ++idx)
+    {
+        try
+        {
+            const auto &sel = selected[idx];
+            const auto &cd = *sel.context_data;
+            const auto &parms = cd.parms();
+            const auto &q = parms.q();
+            const auto &p = parms.p();
+            const std::size_t q_count = q.size();
+            const std::size_t param_p_count = sel.parameter_p.size();
+
+            auto &prep = preps[idx];
+            prep.parms_id = cd.parms_id();
+            prep.degree = parms.degree();
+            prep.q_count = q_count;
+            prep.p_count = p.size();
+            prep.parameter_p_count = param_p_count;
+
+            if (!q.empty())
+            {
+                prep.q_last = checked_gpu_word(
+                    q.back().value(),
+                    "GpuParameterData only supports q_last that fits in GpuWord");
+                prep.half_q_last = static_cast<GpuWord>(prep.q_last >> 1);
+            }
+
+            prep.q_words.assign(master_words.begin(), master_words.begin() + q_count);
+            prep.p_words.assign(
+                master_words.begin() + max_q_used,
+                master_words.begin() + max_q_used + param_p_count);
+            prep.rns_words = concatenate_vectors(prep.q_words, prep.p_words);
+
+            prep.q_barrett_ratios.assign(
+                master_barrett.begin(),
+                master_barrett.begin() + q_count);
+            prep.p_barrett_ratios.assign(
+                master_barrett.begin() + max_q_used,
+                master_barrett.begin() + max_q_used + param_p_count);
+            prep.rns_barrett_ratios =
+                concatenate_vectors(prep.q_barrett_ratios, prep.p_barrett_ratios);
+
+            prep.rns_inv_degree.reserve(q_count + param_p_count);
+            prep.rns_inv_degree.insert(
+                prep.rns_inv_degree.end(),
+                master_inv_degree.begin(),
+                master_inv_degree.begin() + q_count);
+            prep.rns_inv_degree.insert(
+                prep.rns_inv_degree.end(),
+                master_inv_degree.begin() + max_q_used,
+                master_inv_degree.begin() + max_q_used + param_p_count);
+
+            if (!skip_montgomery)
+            {
+                prep.rns_montgomery_inv_degree.reserve(q_count + param_p_count);
+                prep.rns_montgomery_inv_degree.insert(
+                    prep.rns_montgomery_inv_degree.end(),
+                    master_mont_inv_degree.begin(),
+                    master_mont_inv_degree.begin() + q_count);
+                prep.rns_montgomery_inv_degree.insert(
+                    prep.rns_montgomery_inv_degree.end(),
+                    master_mont_inv_degree.begin() + max_q_used,
+                    master_mont_inv_degree.begin() + max_q_used + param_p_count);
+
+                prep.rns_montgomery_neg_inv.reserve(q_count + param_p_count);
+                prep.rns_montgomery_neg_inv.insert(
+                    prep.rns_montgomery_neg_inv.end(),
+                    master_mont_neg_inv.begin(),
+                    master_mont_neg_inv.begin() + q_count);
+                prep.rns_montgomery_neg_inv.insert(
+                    prep.rns_montgomery_neg_inv.end(),
+                    master_mont_neg_inv.begin() + max_q_used,
+                    master_mont_neg_inv.begin() + max_q_used + param_p_count);
+            }
+
+            prep.half_q_last_mod_q = compute_half_q_last_mod_q(q, prep.half_q_last);
+            prep.inv_q_last_mod_q = copy_inv_q_last_mod_q_operands(cd.rns_tool(), q_count);
+
+            auto rescale_x2 = compute_rescale_x2_constants(q);
+            prep.q_second_last = rescale_x2.q_second_last;
+            prep.q_last_two_product = rescale_x2.product;
+            prep.half_q_last_two_product = rescale_x2.half_product;
+            prep.inv_q_last_mod_q_second_last = rescale_x2.inv_q_last_mod_q_second_last;
+            prep.q_last_two_product_mod_q = std::move(rescale_x2.product_mod_q);
+            prep.inv_q_last_two_product_mod_q = std::move(rescale_x2.inv_product_mod_q);
+            if (q_count >= 3)
+            {
+                prep.q_second_last_modulus_constant = prep.q_barrett_ratios[q_count - 2];
+            }
+            prep.rescale_q_inv_mod_q =
+                slice_rescale_q_inv_mod_q(master_q_inv_mod_q, max_q_used, q_count);
+
+            prep.hybrid = prepare_hybrid_key_switch_tables(cd.qp_rns_tool());
+            if (prep.p_count == 0)
+            {
+                prep.bootstrap_raise =
+                    prepare_bootstrap_raise_tables(q, first_q, cd.rns_tool());
+            }
+        }
+        catch (...)
+        {
+            #pragma omp critical
+            {
+                if (!prep_error)
+                {
+                    prep_error = std::current_exception();
+                }
+            }
+        }
+    }
+    if (prep_error)
+    {
+        std::rethrow_exception(prep_error);
+    }
+
+    // Optional experimental TAM fused matrices (default stages=0 => skipped).
+    if (precomputed_fused_matrix_stages > 0)
+    {
+        const auto *p_ntt_tables = small_ntt_tables + p_ntt_table_offset;
+        for (std::size_t idx = 0; idx < selected.size(); ++idx)
+        {
+            const auto &sel = selected[idx];
+            auto &prep = preps[idx];
+            const int level_fused_matrix_stages =
+                sel.level_index < fused_matrix_max_levels
+                    ? precomputed_fused_matrix_stages
+                    : 0;
+            if (level_fused_matrix_stages <= 0)
+            {
+                continue;
+            }
+            const auto rns_ntt_table_ptrs = collect_rns_ntt_table_pointers(
+                small_ntt_tables,
+                prep.q_count,
+                p_ntt_tables,
+                prep.parameter_p_count);
+            prep.fused_ntt = load_or_build_fused_matrix_tables(
+                rns_ntt_table_ptrs,
+                prep.degree,
+                level_fused_matrix_stages,
+                false);
+            prep.fused_intt = load_or_build_fused_matrix_tables(
+                rns_ntt_table_ptrs,
+                prep.degree,
+                level_fused_matrix_stages,
+                true);
+            if (precompute_fused_matrix_fp64_tables)
+            {
+                prep.fused_ntt_fp64 =
+                    split_fused_matrices_for_fp64(prep.fused_ntt.matrices);
+                prep.fused_intt_fp64 =
+                    split_fused_matrices_for_fp64(prep.fused_intt.matrices);
+            }
+        }
+    }
+
+    // 3. Allocate per-level GPU shards on the calling thread (preserving TLS stream & RMM),
+    //    fill giant root tables via fast async HBM D2D from the master GPU copy,
+    //    enqueue tiny scalar/base-conv async H2D copies, and sync ONCE at the end.
+    levels_.reserve(selected.size());
+    StreamSyncOnExit upload_sync{device_id, stream, false};
+
+    for (std::size_t idx = 0; idx < selected.size(); ++idx)
+    {
+        const auto &prep = preps[idx];
+
+        GpuLevelInfo level;
+        level.parms_id = prep.parms_id;
+        level.degree = prep.degree;
+        level.q_count = prep.q_count;
+        level.p_count = prep.p_count;
+
+        GpuParameterShard shard;
+        shard.device_id = device_id;
+        shard.limb_begin = 0;
+        shard.limb_count = prep.q_count + prep.parameter_p_count;
+        shard.q_last = prep.q_last;
+        shard.half_q_last = prep.half_q_last;
+        shard.q_second_last = prep.q_second_last;
+        shard.q_last_two_product = prep.q_last_two_product;
+        shard.half_q_last_two_product = prep.half_q_last_two_product;
+        shard.inv_q_last_mod_q_second_last = prep.inv_q_last_mod_q_second_last;
+        shard.q_second_last_modulus_constant = prep.q_second_last_modulus_constant;
+
+        shard.q_primes = copy_to_device_vector_async(prep.q_words, device_id, stream);
+        shard.p_primes = copy_to_device_vector_async(prep.p_words, device_id, stream);
+        shard.rns_primes = copy_to_device_vector_async(prep.rns_words, device_id, stream);
+        shard.q_modulus_constants =
+            copy_to_device_vector_async(prep.q_barrett_ratios, device_id, stream);
+        shard.p_modulus_constants =
+            copy_to_device_vector_async(prep.p_barrett_ratios, device_id, stream);
+        shard.rns_modulus_constants =
+            copy_to_device_vector_async(prep.rns_barrett_ratios, device_id, stream);
+        shard.half_q_last_mod_q =
+            copy_to_device_vector_async(prep.half_q_last_mod_q, device_id, stream);
+        shard.inv_q_last_mod_q =
+            copy_to_device_vector_async(prep.inv_q_last_mod_q, device_id, stream);
+        shard.q_last_two_product_mod_q =
+            copy_to_device_vector_async(prep.q_last_two_product_mod_q, device_id, stream);
+        shard.inv_q_last_two_product_mod_q =
+            copy_to_device_vector_async(prep.inv_q_last_two_product_mod_q, device_id, stream);
+        shard.rescale_q_inv_mod_q =
+            copy_to_device_vector_async(prep.rescale_q_inv_mod_q, device_id, stream);
+
+        shard.ntt_tables = slice_master_roots_d2d_async(
+            d_master_ntt, max_q_used, prep.q_count, prep.parameter_p_count,
+            prep.degree, device_id, stream);
+        shard.intt_tables = slice_master_roots_d2d_async(
+            d_master_intt, max_q_used, prep.q_count, prep.parameter_p_count,
+            prep.degree, device_id, stream);
+        shard.fourstep_intt_tables = slice_master_roots_d2d_async(
+            d_master_fourstep_intt, max_q_used, prep.q_count, prep.parameter_p_count,
+            prep.degree, device_id, stream);
+        shard.intt_tables_normalized = slice_master_roots_d2d_async(
+            d_master_norm_intt, max_q_used, prep.q_count, prep.parameter_p_count,
+            prep.degree, device_id, stream);
+        shard.inv_degree_modulo =
+            copy_to_device_vector_async(prep.rns_inv_degree, device_id, stream);
+
+        if (!skip_montgomery)
+        {
+            shard.montgomery_ntt_tables = slice_master_roots_d2d_async(
+                d_master_mont_ntt, max_q_used, prep.q_count, prep.parameter_p_count,
+                prep.degree, device_id, stream);
+            shard.montgomery_intt_tables = slice_master_roots_d2d_async(
+                d_master_mont_intt, max_q_used, prep.q_count, prep.parameter_p_count,
+                prep.degree, device_id, stream);
+            shard.montgomery_intt_tables_normalized = slice_master_roots_d2d_async(
+                d_master_mont_norm_intt, max_q_used, prep.q_count, prep.parameter_p_count,
+                prep.degree, device_id, stream);
+            shard.montgomery_inv_degree_modulo =
+                copy_to_device_vector_async(prep.rns_montgomery_inv_degree, device_id, stream);
+            shard.montgomery_neg_inv_modulo =
+                copy_to_device_vector_async(prep.rns_montgomery_neg_inv, device_id, stream);
+        }
+
+        if (precomputed_fused_matrix_stages > 0)
+        {
+            shard.ntt_fused_matrix_fusion_stages = prep.fused_ntt.fusion_stages;
+            shard.ntt_fused_matrix_stage_counts =
+                copy_to_device_vector_async(prep.fused_ntt.stage_counts, device_id, stream);
+            shard.ntt_fused_matrix_group_counts =
+                copy_to_device_vector_async(prep.fused_ntt.group_counts, device_id, stream);
+            shard.ntt_fused_matrix_stage_offsets =
+                copy_to_device_vector_async(prep.fused_ntt.stage_offsets, device_id, stream);
+            if (precompute_word_fused_matrix_tables)
+            {
+                shard.ntt_fused_matrices =
+                    copy_to_device_vector_async(prep.fused_ntt.matrices, device_id, stream);
+            }
+            shard.ntt_fused_matrices_fp64_lo =
+                copy_to_device_vector_async(prep.fused_ntt_fp64.lo, device_id, stream);
+            shard.ntt_fused_matrices_fp64_hi =
+                copy_to_device_vector_async(prep.fused_ntt_fp64.hi, device_id, stream);
+
+            shard.intt_fused_matrix_fusion_stages = prep.fused_intt.fusion_stages;
+            shard.intt_fused_matrix_stage_counts =
+                copy_to_device_vector_async(prep.fused_intt.stage_counts, device_id, stream);
+            shard.intt_fused_matrix_group_counts =
+                copy_to_device_vector_async(prep.fused_intt.group_counts, device_id, stream);
+            shard.intt_fused_matrix_stage_offsets =
+                copy_to_device_vector_async(prep.fused_intt.stage_offsets, device_id, stream);
+            if (precompute_word_fused_matrix_tables)
+            {
+                shard.intt_fused_matrices =
+                    copy_to_device_vector_async(prep.fused_intt.matrices, device_id, stream);
+            }
+            shard.intt_fused_matrices_fp64_lo =
+                copy_to_device_vector_async(prep.fused_intt_fp64.lo, device_id, stream);
+            shard.intt_fused_matrices_fp64_hi =
+                copy_to_device_vector_async(prep.fused_intt_fp64.hi, device_id, stream);
+        }
+
+        upload_hybrid_key_switch_tables_async(prep.hybrid, shard, device_id, stream);
+        if (level.p_count == 0)
+        {
+            upload_bootstrap_raise_tables_async(
+                prep.bootstrap_raise, shard, device_id, stream);
+        }
+
+        level.shards.push_back(std::move(shard));
+        levels_.push_back(std::move(level));
+    }
+
+    gpu_check_cuda(
+        cudaStreamSynchronize(stream),
+        "GpuParameterData build_from_poseidon_context sync");
+    upload_sync.synced = true;
 }
 
 const GpuLevelInfo &GpuParameterData::get_level(const parms_id_type &parms_id) const
@@ -2500,6 +2593,79 @@ const GpuLevelInfo &GpuParameterData::get_level_by_q_count(
     }
 
     throw std::out_of_range("GpuParameterData level not found for q_count");
+}
+
+GpuLevelInfo GpuParameterData::take_level_by_q_count(std::size_t q_count)
+{
+    for (auto &level : levels_)
+    {
+        if (level.q_count == q_count && level.p_count == 0)
+        {
+            GpuLevelInfo result = std::move(level);
+            level = GpuLevelInfo{};
+            return result;
+        }
+    }
+    throw std::out_of_range("GpuParameterData::take_level_by_q_count: level not found");
+}
+
+void GpuParameterData::adopt_level(GpuLevelInfo level)
+{
+    for (auto &existing : levels_)
+    {
+        if (existing.parms_id == level.parms_id && existing.p_count == level.p_count)
+        {
+            if (existing.degree != level.degree || existing.q_count != level.q_count ||
+                level.shards.size() != existing.shards.size())
+            {
+                throw std::invalid_argument(
+                    "GpuParameterData::adopt_level: level shape differs from the replaced level");
+            }
+            existing = std::move(level);
+            return;
+        }
+    }
+    throw std::out_of_range("GpuParameterData::adopt_level: no level with this parms_id");
+}
+
+void GpuParameterData::adopt_or_insert_level(GpuLevelInfo level)
+{
+    if (level.degree == 0 || level.q_count == 0 || level.shards.empty())
+    {
+        throw std::invalid_argument(
+            "GpuParameterData::adopt_or_insert_level: invalid level");
+    }
+    for (auto &existing : levels_)
+    {
+        if (existing.parms_id == level.parms_id && existing.p_count == level.p_count)
+        {
+            if (existing.degree != level.degree || existing.q_count != level.q_count ||
+                level.shards.size() != existing.shards.size())
+            {
+                throw std::invalid_argument(
+                    "GpuParameterData::adopt_or_insert_level: level shape differs from the replaced level");
+            }
+            existing = std::move(level);
+            return;
+        }
+    }
+
+    auto comes_before = [](const GpuLevelInfo &lhs, const GpuLevelInfo &rhs) {
+        const bool lhs_key = lhs.p_count != 0;
+        const bool rhs_key = rhs.p_count != 0;
+        if (lhs_key != rhs_key)
+        {
+            return lhs_key;
+        }
+        return lhs.q_count > rhs.q_count;
+    };
+
+    auto it = levels_.begin();
+    while (it != levels_.end() && comes_before(*it, level))
+    {
+        ++it;
+    }
+    levels_.insert(it, std::move(level));
 }
 
 const GpuLevelInfo &GpuParameterData::get_first_q_level() const

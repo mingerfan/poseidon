@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -248,6 +249,21 @@ struct GpuBootstrapData
     GpuLinearMatrixGroup slot_to_coeff_matrix;
     GpuLinearMatrixGroupQP coeff_to_slot_matrix_qp;
     GpuLinearMatrixGroupQP slot_to_coeff_matrix_qp;
+    /* Optional shared GPU-resident C2S/S2C QP matrices so multiple Boot
+     * profiles can reuse one device copy without duplicating VRAM. */
+    std::shared_ptr<const GpuLinearMatrixGroupQP> shared_coeff_to_slot_matrix_qp;
+    std::shared_ptr<const GpuLinearMatrixGroupQP> shared_slot_to_coeff_matrix_qp;
+
+    const GpuLinearMatrixGroupQP &active_coeff_to_slot_matrix_qp() const noexcept
+    {
+        return shared_coeff_to_slot_matrix_qp ? *shared_coeff_to_slot_matrix_qp
+                                              : coeff_to_slot_matrix_qp;
+    }
+    const GpuLinearMatrixGroupQP &active_slot_to_coeff_matrix_qp() const noexcept
+    {
+        return shared_slot_to_coeff_matrix_qp ? *shared_slot_to_coeff_matrix_qp
+                                              : slot_to_coeff_matrix_qp;
+    }
     GpuPlaintextData minus_i_plaintext;
     GpuPlaintextData plus_i_plaintext;
 

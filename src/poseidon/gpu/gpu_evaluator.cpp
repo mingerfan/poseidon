@@ -5173,14 +5173,14 @@ void GpuEvaluator::bootstrap(
     if ((!use_double_hoist &&
          bootstrap_data.coeff_to_slot_matrix.data().empty()) ||
         (use_double_hoist &&
-         bootstrap_data.coeff_to_slot_matrix_qp.data().empty()))
+         bootstrap_data.active_coeff_to_slot_matrix_qp().data().empty()))
     {
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty CoeffToSlot matrix group");
     }
     if ((!use_double_hoist &&
          bootstrap_data.slot_to_coeff_matrix.data().empty()) ||
         (use_double_hoist &&
-         bootstrap_data.slot_to_coeff_matrix_qp.data().empty()))
+         bootstrap_data.active_slot_to_coeff_matrix_qp().data().empty()))
     {
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty SlotToCoeff matrix group");
     }
@@ -5241,7 +5241,7 @@ void GpuEvaluator::bootstrap(
         {
             coeff_to_slot_double_hoist(
                 *raised_for_c2s,
-                bootstrap_data.coeff_to_slot_matrix_qp,
+                bootstrap_data.active_coeff_to_slot_matrix_qp(),
                 bootstrap_data.minus_i_plaintext,
                 galois_keys,
                 workspace.coeff_to_slot_double_hoist,
@@ -5307,7 +5307,7 @@ void GpuEvaluator::bootstrap(
             slot_to_coeff_double_hoist(
                 workspace.eval_mod_real,
                 workspace.eval_mod_imag,
-                bootstrap_data.slot_to_coeff_matrix_qp,
+                bootstrap_data.active_slot_to_coeff_matrix_qp(),
                 bootstrap_data.plus_i_plaintext,
                 galois_keys,
                 workspace.slot_to_coeff_double_hoist,
