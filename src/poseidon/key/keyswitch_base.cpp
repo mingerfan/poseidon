@@ -1,6 +1,9 @@
 #include "keyswitch_base.h"
 #include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/util/thread_pool.h"
+#include <exception>
+#include <mutex>
+#include <unordered_set>
 #ifdef USING_HARDWARE
 #include "poseidon_hardware/hardware_drive/ckks_hardware_api.h"
 #endif
@@ -196,44 +199,68 @@ GaloisKeys KSwitchGenBase::create_galois_keys(const std::vector<uint32_t> &galoi
         POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
+    // Validate and deduplicate Galois elements before parallel generation so
+    // each parallel iteration writes to a distinct slot without a global lock
+    // and never throws across an OpenMP region boundary.
+    std::vector<std::pair<uint32_t, size_t>> unique_elts;
+    unique_elts.reserve(galois_elts.size());
+    std::unordered_set<size_t> seen_indices;
+    seen_indices.reserve(galois_elts.size());
+    for (uint32_t galois_elt : galois_elts)
+    {
+        if (!(galois_elt & 1) || (galois_elt >= coeff_count << 1))
+        {
+            POSEIDON_THROW(invalid_argument_error, "Galois element is not valid");
+        }
+        size_t index = GaloisKeys::get_index(galois_elt);
+        if (seen_indices.insert(index).second)
+        {
+            unique_elts.emplace_back(galois_elt, index);
+        }
+    }
+
     // Create the GaloisKeys object to return
     GaloisKeys galois_keys;
 
     // The max number of keys is equal to number of coefficients
     galois_keys.data().resize(coeff_count);
 
-#pragma omp parallel for
-    for (size_t i = 0; i < galois_elts.size(); i++)
+    std::exception_ptr first_exception = nullptr;
+    std::mutex exception_mutex;
+
+#pragma omp parallel for schedule(dynamic, 1)
+    for (size_t i = 0; i < unique_elts.size(); i++)
     {
-        uint32_t galois_elt = galois_elts[i];
-        // Verify coprime conditions.
-        if (!(galois_elt & 1) || (galois_elt >= coeff_count << 1))
+        try
         {
-            POSEIDON_THROW(invalid_argument_error, "Galois element is not valid");
-        }
+            const uint32_t galois_elt = unique_elts[i].first;
+            const size_t index = unique_elts[i].second;
 
-        // Do we already have the key?
-        if (galois_keys.has_key(galois_elt))
-        {
-            continue;
-        }
+            // Rotate secret key for each coeff_modulus
+            POSEIDON_ALLOCATE_GET_RNS_ITER(rotated_secret_key, coeff_count, coeff_modulus_size,
+                                           pool_);
+            ConstRNSIter secret_key(prev_secret_key.data().data(), coeff_count);
+            galois_tool->apply_galois_ntt(secret_key, coeff_modulus_size, galois_elt,
+                                          rotated_secret_key);
 
-        // Rotate secret key for each coeff_modulus
-        POSEIDON_ALLOCATE_GET_RNS_ITER(rotated_secret_key, coeff_count, coeff_modulus_size, pool_);
-        ConstRNSIter secret_key(prev_secret_key.data().data(), coeff_count);
-        galois_tool->apply_galois_ntt(secret_key, coeff_modulus_size, galois_elt,
-                                      rotated_secret_key);
-
-        // Initialize Galois key
-        // This is the location in the galois_keys vector
-        size_t index = GaloisKeys::get_index(galois_elt);
-
-// Create Galois keys.
-#pragma omp critical
-        {
+            // Each unique element maps to a distinct slot in galois_keys.data(),
+            // and generate_one_kswitch_key uses thread-safe pool/PRNG instances.
             generate_one_kswitch_key(prev_secret_key, rotated_secret_key,
                                      galois_keys.data()[index]);
         }
+        catch (...)
+        {
+            std::lock_guard<std::mutex> lock(exception_mutex);
+            if (!first_exception)
+            {
+                first_exception = std::current_exception();
+            }
+        }
+    }
+
+    if (first_exception)
+    {
+        std::rethrow_exception(first_exception);
     }
 
     // Set the parms_id

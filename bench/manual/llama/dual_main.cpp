@@ -1,6 +1,7 @@
 // Dual-GPU handwritten LLaMA runner for 2xA800 execution, BF16 GPU weight
 // loading, compute/comm ratio sweeps, and simulator calibration telemetry.
 #include "source_dual_model.hpp"
+#include "source_checkpoint.hpp"
 #include "llama_manual/benchmark_io.hpp"
 #include <condition_variable>
 #include <fcntl.h>
@@ -49,7 +50,13 @@ struct CliArgs {
     int gpus = 2;
     cerium_source::manual::Mode mode = cerium_source::manual::Mode::Fast;
     std::string fixture, weights, index, embeddings, reference, report, sweep_jobs_path;
+    std::string public_cache, dev_key_cache, ckpt_save_dir, ckpt_load;
     std::size_t layers = 1;
+    std::size_t start_layer = 0;
+    std::size_t end_layer = 0;
+    bool start_layer_explicit = false;
+    bool end_layer_explicit = false;
+    std::size_t ckpt_save_every = 1;
     std::size_t valid_tokens = 38;
     cerium_source::dual::RunOptions opt;
     bool check_accuracy = true;
@@ -72,7 +79,14 @@ CliArgs parse_cli(int argc, char **argv) {
         else if (k == "--reference") a.reference = next("--reference");
         else if (k == "--report") a.report = next("--report");
         else if (k == "--sweep-jobs") a.sweep_jobs_path = next("--sweep-jobs");
+        else if (k == "--public-cache") a.public_cache = next("--public-cache");
+        else if (k == "--dev-key-cache") a.dev_key_cache = next("--dev-key-cache");
+        else if (k == "--ckpt-save-dir") a.ckpt_save_dir = next("--ckpt-save-dir");
+        else if (k == "--ckpt-save-every") a.ckpt_save_every = std::stoull(next("--ckpt-save-every"));
+        else if (k == "--ckpt-load") a.ckpt_load = next("--ckpt-load");
         else if (k == "--layers") a.layers = std::stoull(next("--layers"));
+        else if (k == "--start-layer") { a.start_layer = std::stoull(next("--start-layer")); a.start_layer_explicit = true; }
+        else if (k == "--end-layer") { a.end_layer = std::stoull(next("--end-layer")); a.end_layer_explicit = true; }
         else if (k == "--valid-tokens") a.valid_tokens = std::stoull(next("--valid-tokens"));
         else if (k == "--subbench") a.opt.subbench = next("--subbench");
         else if (k == "--compute-scale") a.opt.compute_scale = std::stoi(next("--compute-scale"));
@@ -83,6 +97,13 @@ CliArgs parse_cli(int argc, char **argv) {
         else throw std::invalid_argument("unknown argument: " + k);
     }
     if (a.gpus != 1 && a.gpus != 2) throw std::invalid_argument("--gpus must be 1 or 2");
+    if (a.ckpt_save_every == 0) throw std::invalid_argument("--ckpt-save-every must be >= 1");
+    a.public_cache = cerium_source::cache::public_cache_dir(a.public_cache);
+    a.dev_key_cache = cerium_source::cache::dev_key_cache_dir(a.dev_key_cache);
+    if (a.ckpt_save_dir.empty()) a.ckpt_save_dir = cerium_source::cache::env_path("LLAMA_CKPT_SAVE_DIR");
+    if (a.ckpt_load.empty()) a.ckpt_load = cerium_source::cache::env_path("LLAMA_CKPT_LOAD");
+    if (!a.end_layer_explicit) a.end_layer = a.layers;
+    if (a.end_layer == 0 || a.end_layer > a.layers) throw std::invalid_argument("--end-layer out of range");
     a.opt.gpus = a.gpus;
     if (a.fixture.empty() || a.weights.empty() || a.index.empty() ||
         a.embeddings.empty() || a.reference.empty() || a.report.empty()) {
@@ -325,17 +346,39 @@ int main(int argc, char **argv) {
             pool[r] = std::make_unique<PersistentWorkerThread>();
         }
 
-        // 1. Setup: Host KeyGen/DFT ONCE + parallel GPU init on persistent threads.
+        // 1. Setup: Host KeyGen/DFT ONCE (or from opt-in disk cache) + parallel GPU init on persistent threads.
         const auto setup0 = Clock::now();
         const bool is_fast = (cli.mode == manual::Mode::Fast);
         const auto rot_steps = source_rotations();
-        HostRuntimeKeys host_keys = HostRuntimeKeys::create(literal, rot_steps);
+        HostRuntimeKeys host_keys = HostRuntimeKeys::create(literal, rot_steps, cli.dev_key_cache);
         std::unique_ptr<fast_boot::HostFastBootBundle> fast_bundle;
         if (is_fast && fast_boot::fast_p_enabled()) {
             poseidon::KeyGenerator setup_kg(host_keys.context, host_keys.secret_key);
             poseidon::CKKSEncoder setup_enc(host_keys.context);
             fast_bundle = std::make_unique<fast_boot::HostFastBootBundle>(
-                fast_boot::prepare_host_fast_boot_bundle(host_keys.context, setup_kg, setup_enc, rot_steps));
+                fast_boot::prepare_host_fast_boot_bundle(
+                    host_keys.context, setup_kg, setup_enc, rot_steps, cli.public_cache, cli.dev_key_cache));
+        }
+
+        // Optional checkpoint load: validate before uploading weights so we skip layers < start_layer.
+        std::size_t start_layer = cli.start_layer;
+        const std::size_t end_layer = cli.end_layer;
+        std::vector<poseidon::Ciphertext> ckpt_cpu_tiles;
+        if (!cli.ckpt_load.empty()) {
+            checkpoint::Metadata meta{};
+            ckpt_cpu_tiles = checkpoint::load_cpu_tiles(
+                cli.ckpt_load, host_keys.context, host_keys.secret_key, meta);
+            if (ckpt_cpu_tiles.size() != 16)
+                throw std::runtime_error("dual checkpoint tile count must be 16");
+            if (cli.start_layer_explicit && start_layer != meta.completed_layers)
+                throw std::invalid_argument("--start-layer disagrees with checkpoint completed_layers");
+            start_layer = static_cast<std::size_t>(meta.completed_layers);
+            if (start_layer > end_layer)
+                throw std::invalid_argument("checkpoint completed_layers exceeds --end-layer");
+            std::cout << "DUAL_LLAMA_CKPT_LOADED path=" << cli.ckpt_load
+                      << " start_layer=" << start_layer << " end_layer=" << end_layer << std::endl;
+        } else if (start_layer != 0) {
+            throw std::invalid_argument("--start-layer > 0 requires --ckpt-load");
         }
 
         std::unique_ptr<DualPeerTransfer> peer_comm;
@@ -362,11 +405,12 @@ int main(int argc, char **argv) {
         });
         const double setup_s = seconds(setup0);
 
-        // 2. Load & upload per-layer BF16 shards cleanly onto persistent worker threads.
+        // 2. Load & upload per-layer BF16 shards cleanly onto persistent worker threads
+        //    (only for layers in [start_layer, end_layer)).
         const auto load0 = Clock::now();
         std::array<std::vector<FastLinearEngine::GpuBf16LayerShard>, 2> gpu_weights;
-        for (int r = 0; r < cli.gpus; ++r) gpu_weights[r].reserve(cli.layers);
-        for (std::size_t l = 0; l < cli.layers; ++l) {
+        for (int r = 0; r < cli.gpus; ++r) gpu_weights[r].resize(cli.layers);
+        for (std::size_t l = start_layer; l < end_layer; ++l) {
             std::array<llama_manual::LayerWeightsBf16Shard, 2> host_shards;
             for (int r = 0; r < cli.gpus; ++r) {
                 host_shards[r] = weights_reader.load_layer_bf16_shard(l, r, cli.gpus);
@@ -380,7 +424,7 @@ int main(int argc, char **argv) {
                 uploaded[r] = FastLinearEngine::upload_bf16_layer_shard(host_shards[r], w.device_id);
                 gpu_check_cuda(cudaStreamSynchronize(w.stream), "upload weight sync");
             });
-            for (int r = 0; r < cli.gpus; ++r) gpu_weights[r].push_back(std::move(uploaded[r]));
+            for (int r = 0; r < cli.gpus; ++r) gpu_weights[r][l] = std::move(uploaded[r]);
         }
         const double weight_load_s = seconds(load0);
 
@@ -415,31 +459,35 @@ int main(int argc, char **argv) {
                       << " weight_load_seconds=" << weight_load_s << std::endl;
 
             std::array<WorkerResult, 2> results;
-            std::array<std::vector<CT>, 2> final_shards;
-            std::array<std::vector<CT>, 2> job_inputs;
+            std::array<std::vector<CT>, 2> cur_shards;
             run_on_workers(pool, cli.gpus, [&](int r) {
                 auto &w = *workers[r];
                 gpu_check_cuda(cudaSetDevice(w.device_id), "job encrypt dev");
                 ScopedGpuExecutionStream sc_s(w.stream);
                 ScopedGpuMemoryResource sc_m(w.memory.get());
                 w.linear->fast_engine().release_input();
-                job_inputs[r].reserve(local_tiles);
+                cur_shards[r].reserve(local_tiles);
                 const std::size_t offset = static_cast<std::size_t>(r) * local_tiles;
-                for (std::size_t lt = 0; lt < local_tiles; ++lt) {
-                    job_inputs[r].push_back(w.runtime->encrypt(layout::pack_tile(embeddings, 4096, offset + lt), 6));
+                if (!ckpt_cpu_tiles.empty()) {
+                    for (std::size_t lt = 0; lt < local_tiles; ++lt) {
+                        cur_shards[r].push_back(GpuUploader::upload_ciphertext(ckpt_cpu_tiles[offset + lt], w.device_id));
+                    }
+                } else {
+                    for (std::size_t lt = 0; lt < local_tiles; ++lt) {
+                        cur_shards[r].push_back(w.runtime->encrypt(layout::pack_tile(embeddings, 4096, offset + lt), 6));
+                    }
                 }
                 gpu_check_cuda(cudaStreamSynchronize(w.stream), "job encrypt sync");
             });
 
             const auto exec0 = Clock::now();
-            run_on_workers(pool, cli.gpus, [&](int r) {
-                auto &w = *workers[r];
-                std::vector<CT> cur = std::move(job_inputs[r]);
-                for (std::size_t l = 0; l < cli.layers; ++l) {
+            for (std::size_t l = start_layer; l < end_layer; ++l) {
+                run_on_workers(pool, cli.gpus, [&](int r) {
+                    auto &w = *workers[r];
                     WorkerResult layer_res;
-                    cur = run_worker_block(w, peer_comm.get(), gpu_weights[r][l], std::move(cur),
-                                           worker_masks[r], l, job.opt, use_1boot_silu, layer_res);
-                    if (l == 0) results[r] = std::move(layer_res);
+                    cur_shards[r] = run_worker_block(w, peer_comm.get(), gpu_weights[r][l], std::move(cur_shards[r]),
+                                                     worker_masks[r], l, job.opt, use_1boot_silu, layer_res);
+                    if (l == start_layer) results[r] = std::move(layer_res);
                     else {
                         results[r].exec_wall_s += layer_res.exec_wall_s;
                         results[r].compute_sum_ms += layer_res.compute_sum_ms;
@@ -454,15 +502,38 @@ int main(int argc, char **argv) {
                         results[r].stages.insert(results[r].stages.end(), layer_res.stages.begin(), layer_res.stages.end());
                         results[r].comms.insert(results[r].comms.end(), layer_res.comms.begin(), layer_res.comms.end());
                     }
+                });
+                if (!cli.ckpt_save_dir.empty() && job.opt.subbench == "full" &&
+                    (((l + 1) % cli.ckpt_save_every == 0) || (l + 1 == end_layer))) {
+                    const auto t_sv = Clock::now();
+                    std::vector<poseidon::Ciphertext> global_tiles(16);
+                    run_on_workers(pool, cli.gpus, [&](int r) {
+                        auto &w = *workers[r];
+                        gpu_check_cuda(cudaSetDevice(w.device_id), "ckpt download dev");
+                        ScopedGpuExecutionStream sc_s(w.stream);
+                        ScopedGpuMemoryResource sc_m(w.memory.get());
+                        const std::size_t offset = static_cast<std::size_t>(r) * local_tiles;
+                        for (std::size_t lt = 0; lt < local_tiles; ++lt) {
+                            GpuUploader::download_ciphertext(cur_shards[r][lt], global_tiles[offset + lt], w.runtime->context);
+                        }
+                        gpu_check_cuda(cudaStreamSynchronize(w.stream), "ckpt download sync");
+                    });
+                    const auto ck_path = checkpoint::layer_checkpoint_path(cli.ckpt_save_dir, l + 1);
+                    checkpoint::save_cpu_tiles(ck_path, host_keys.context, host_keys.secret_key,
+                                               global_tiles, l + 1, cli.valid_tokens);
+                    std::cout << "DUAL_LLAMA_CKPT_SAVED path=" << ck_path.string()
+                              << " completed_layers=" << (l + 1)
+                              << " seconds=" << seconds(t_sv) << std::endl;
                 }
-                final_shards[r] = std::move(cur);
-            });
+            }
+            auto &final_shards = cur_shards;
             const double exec_wall_s = seconds(exec0);
 
             const auto dec0 = Clock::now();
             ComplexReferenceSummary acc{};
+            const bool do_accuracy = job.check_accuracy && (end_layer == cli.layers);
             bool pass = true;
-            if (job.check_accuracy) {
+            if (do_accuracy) {
                 ComplexReferenceMetric metric;
                 std::array<std::vector<std::complex<double>>, 2> decoded_tiles;
                 run_on_workers(pool, cli.gpus, [&](int r) {
@@ -509,7 +580,7 @@ int main(int argc, char **argv) {
 
             const std::string job_json = format_job_json(
                 cli.gpus, route, plan_name, job.opt, cli.layers,
-                job.check_accuracy, pass, acc,
+                do_accuracy, pass, acc,
                 setup_s, weight_load_s, exec_wall_s, decode_s, whole_s, results);
             if (is_sweep) {
                 ExclusiveReport rep(job.report_path);

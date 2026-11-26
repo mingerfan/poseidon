@@ -261,10 +261,37 @@ struct GpuBootstrapData
     GpuLinearMatrixGroup slot_to_coeff_matrix;
     GpuLinearMatrixGroupQP coeff_to_slot_matrix_qp;
     GpuLinearMatrixGroupQP slot_to_coeff_matrix_qp;
+    /* Optional shared GPU-resident C2S/S2C QP matrices so multiple Boot
+     * profiles (e.g., LLaMA r=8192 and r=65536) reuse one device copy. */
+    std::shared_ptr<const GpuLinearMatrixGroupQP> shared_coeff_to_slot_matrix_qp;
+    std::shared_ptr<const GpuLinearMatrixGroupQP> shared_slot_to_coeff_matrix_qp;
     /* Double-hoist only: [layer][giant group] views of the QP matrices above,
      * for the bsgs_group step of an expanded Boot. */
     std::vector<std::vector<GpuMatrixPlainQP>> coeff_to_slot_groups_qp;
     std::vector<std::vector<GpuMatrixPlainQP>> slot_to_coeff_groups_qp;
+    std::shared_ptr<const std::vector<std::vector<GpuMatrixPlainQP>>> shared_coeff_to_slot_groups_qp;
+    std::shared_ptr<const std::vector<std::vector<GpuMatrixPlainQP>>> shared_slot_to_coeff_groups_qp;
+
+    const GpuLinearMatrixGroupQP &active_coeff_to_slot_matrix_qp() const noexcept
+    {
+        return shared_coeff_to_slot_matrix_qp ? *shared_coeff_to_slot_matrix_qp
+                                              : coeff_to_slot_matrix_qp;
+    }
+    const GpuLinearMatrixGroupQP &active_slot_to_coeff_matrix_qp() const noexcept
+    {
+        return shared_slot_to_coeff_matrix_qp ? *shared_slot_to_coeff_matrix_qp
+                                              : slot_to_coeff_matrix_qp;
+    }
+    const std::vector<std::vector<GpuMatrixPlainQP>> &active_coeff_to_slot_groups_qp() const noexcept
+    {
+        return shared_coeff_to_slot_groups_qp ? *shared_coeff_to_slot_groups_qp
+                                              : coeff_to_slot_groups_qp;
+    }
+    const std::vector<std::vector<GpuMatrixPlainQP>> &active_slot_to_coeff_groups_qp() const noexcept
+    {
+        return shared_slot_to_coeff_groups_qp ? *shared_slot_to_coeff_groups_qp
+                                              : slot_to_coeff_groups_qp;
+    }
     GpuPlaintextData minus_i_plaintext;
     GpuPlaintextData plus_i_plaintext;
 
@@ -1330,9 +1357,9 @@ void bootstrap_schedule(
     using CT = GpuCiphertextData;
     const auto mode = bootstrap_validate_schedule(source, data);
     const bool double_hoist = mode == GpuLinearTransformMode::DoubleHoistBsgs;
-    const auto c2s_count = double_hoist ? data.coeff_to_slot_matrix_qp.data().size()
+    const auto c2s_count = double_hoist ? data.active_coeff_to_slot_matrix_qp().data().size()
                                         : data.coeff_to_slot_matrix.data().size();
-    const auto s2c_count = double_hoist ? data.slot_to_coeff_matrix_qp.data().size()
+    const auto s2c_count = double_hoist ? data.active_slot_to_coeff_matrix_qp().data().size()
                                         : data.slot_to_coeff_matrix.data().size();
     // Move local results only after their consumers have seen their trace IDs.
     auto layers = [&](const CT &input, bool c2s, std::size_t count) {

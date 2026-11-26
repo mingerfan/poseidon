@@ -36,3 +36,8 @@ add_executable(llama31_poseidon_dual dual_main.cpp support/checkpoint.cpp fast_l
 target_compile_features(llama31_poseidon_dual PRIVATE cxx_std_20)
 target_include_directories(llama31_poseidon_dual PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} support/include)
 target_link_libraries(llama31_poseidon_dual PRIVATE poseidon::gpu OpenMP::OpenMP_CXX ${CMAKE_DL_LIBS})
+
+add_executable(llama31_setup_cache_ckpt_test tests/setup_cache_ckpt_test.cpp)
+target_compile_features(llama31_setup_cache_ckpt_test PRIVATE cxx_std_20)
+target_include_directories(llama31_setup_cache_ckpt_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} support/include)
+target_link_libraries(llama31_setup_cache_ckpt_test PRIVATE poseidon::gpu OpenMP::OpenMP_CXX ${CMAKE_DL_LIBS})

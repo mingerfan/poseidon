@@ -1211,8 +1211,8 @@ std::size_t GpuBootstrapData::allocated_bytes() const
         plain(step.product_scale_plaintext); plain(step.remainder_scale_plaintext);
     }
     classic(coeff_to_slot_matrix); classic(slot_to_coeff_matrix);
-    qp(coeff_to_slot_matrix_qp); qp(slot_to_coeff_matrix_qp);
-    group_views(coeff_to_slot_groups_qp); group_views(slot_to_coeff_groups_qp);
+    qp(active_coeff_to_slot_matrix_qp()); qp(active_slot_to_coeff_matrix_qp());
+    group_views(active_coeff_to_slot_groups_qp()); group_views(active_slot_to_coeff_groups_qp());
     return bytes;
 }
 

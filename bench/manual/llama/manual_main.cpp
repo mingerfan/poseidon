@@ -4,6 +4,7 @@
 #include "source_manual_program.hpp"
 #include "source_manual_io.hpp"
 #include "source_accuracy.hpp"
+#include "source_checkpoint.hpp"
 #include "llama_manual/benchmark_io.hpp"
 #include <rmm/mr/device/pool_memory_resource.hpp>
 #include <rmm/mr/device/statistics_resource_adaptor.hpp>
@@ -88,39 +89,98 @@ int main(int argc,char **argv)try {
     rmm::mr::pool_memory_resource<rmm::mr::device_memory_resource> pool(old,64ULL<<20,64ULL<<30);
     rmm::mr::statistics_resource_adaptor<rmm::mr::device_memory_resource> memory(&pool);RestoreResource restore{old};
     rmm::mr::set_current_device_resource(&memory);
-    const auto setup=Clock::now();Runtime runtime(literal,false,source_rotations());manual::Llama model(runtime,input.plan);
+    const auto setup=Clock::now();
+    const std::string pub_cache=cache::public_cache_dir();
+    const std::string dev_key_cache=cache::dev_key_cache_dir();
+    const std::string ckpt_load_path=cache::env_path("LLAMA_CKPT_LOAD");
+    const std::string ckpt_save_dir=cache::env_path("LLAMA_CKPT_SAVE_DIR");
+    std::size_t ckpt_save_every=1;
+    if(const std::string ev=cache::env_path("LLAMA_CKPT_SAVE_EVERY");!ev.empty()) {
+        ckpt_save_every=std::stoull(ev);
+        if(ckpt_save_every==0)throw std::invalid_argument("LLAMA_CKPT_SAVE_EVERY must be >= 1");
+    }
+    std::size_t end_layer=input.layers;
+    if(const std::string el=cache::env_path("LLAMA_CKPT_END_LAYER");!el.empty()) {
+        end_layer=std::stoull(el);
+        if(end_layer==0||end_layer>input.layers)
+            throw std::invalid_argument("LLAMA_CKPT_END_LAYER out of range");
+    }
+    HostRuntimeKeys host_keys=HostRuntimeKeys::create(literal,source_rotations(),dev_key_cache);
+    Runtime runtime(host_keys,0);
+    manual::Llama model(runtime,input.plan);
+    std::size_t start_layer=0;
     std::vector<CT> state;
-    for(std::size_t tile=0;tile<16;++tile)state.push_back(runtime.encrypt(layout::pack_tile(embeddings,4096,tile),6));
+    if(!ckpt_load_path.empty()) {
+        const auto t_ck=Clock::now();
+        checkpoint::Metadata meta{};
+        state=checkpoint::load_gpu_tiles(ckpt_load_path,runtime.context,runtime.keys.secret_key(),0,meta);
+        if(state.size()!=16)throw std::runtime_error("manual checkpoint tile count must be 16");
+        if(meta.completed_layers>end_layer)
+            throw std::invalid_argument("manual checkpoint completed_layers exceeds end_layer");
+        start_layer=static_cast<std::size_t>(meta.completed_layers);
+        if(start_layer>0)model.resume_from_checkpoint(start_layer);
+        std::cout<<"MANUAL_LLAMA_CKPT_LOADED path="<<ckpt_load_path
+                 <<" start_layer="<<start_layer<<" end_layer="<<end_layer
+                 <<" seconds="<<seconds(t_ck)<<std::endl;
+    } else {
+        for(std::size_t tile=0;tile<16;++tile)state.push_back(runtime.encrypt(layout::pack_tile(embeddings,4096,tile),6));
+    }
     auto mask=runtime.encrypt(layout::causal_mask(input.valid_tokens),27);
     gpu_check_cuda(cudaDeviceSynchronize(),"manual model encrypted inputs ready");
     std::size_t free=0,total=0;gpu_check_cuda(cudaMemGetInfo(&free,&total),"manual setup headroom");
     if(free<(8ULL<<30))throw std::runtime_error("manual setup headroom below8GiB");
-    const auto setup_seconds=seconds(setup);double load_seconds=0,execution_seconds=0;
+    const auto setup_seconds=seconds(setup);double load_seconds=0,execution_seconds=0,ckpt_save_seconds=0;
+    std::size_t checkpoints_saved=0;
     std::cout<<"MANUAL_LLAMA_BEGIN plan="<<input.plan.name()<<" blocks="<<input.layers
+        <<" start_layer="<<start_layer<<" end_layer="<<end_layer
+        <<" public_cache="<<(!pub_cache.empty()?"true":"false")
+        <<" dev_key_cache="<<(host_keys.loaded_from_dev_cache?"hit":(!dev_key_cache.empty()?"populated":"off"))
         <<" input_version="<<manual::input_version_name(input.version)<<" model_weight_scope="<<manual::model_weight_scope(input.version)
         <<" N="<<runtime.context.parameters_literal()->degree()<<" slots="<<runtime.encoder.slot_count()
         <<" expected_Boots_per_block="<<input.plan.total_boots()<<" precision_policy=typed_integer_unit"
         <<" actual_seed_consumer_version="<<exp_unit_seed_consumer_version<<" model_qualification=false"<<std::endl;
-    for(std::size_t layer=0;layer<input.layers;++layer) {
+    for(std::size_t layer=start_layer;layer<end_layer;++layer) {
         const auto load=Clock::now();auto w=weights.load_layer(layer);load_seconds+=seconds(load);
         const auto begin=Clock::now();state=model.decoder_block(state,w,mask,layer);const auto wall=seconds(begin);execution_seconds+=wall;
         std::cout<<"MANUAL_LLAMA_BLOCK layer="<<layer<<" encrypted_execution_wall_seconds="<<wall
             <<" primary_Boots="<<model.primary_boots()<<" SiLU_Boots="<<model.silu_boots()
             <<" projection_pairs="<<model.projection_pairs()<<" selected_integer_seeds="<<model.integer_exp_seeds()<<std::endl;
+        if(!ckpt_save_dir.empty()&&(((layer+1)%ckpt_save_every==0)||(layer+1==end_layer))) {
+            const auto t_sv=Clock::now();
+            const auto ck_path=checkpoint::layer_checkpoint_path(ckpt_save_dir,layer+1);
+            checkpoint::save_gpu_tiles(ck_path,runtime.context,runtime.keys.secret_key(),state,layer+1,input.valid_tokens);
+            const double sv_s=seconds(t_sv);ckpt_save_seconds+=sv_s;++checkpoints_saved;
+            std::cout<<"MANUAL_LLAMA_CKPT_SAVED path="<<ck_path.string()
+                     <<" completed_layers="<<(layer+1)<<" seconds="<<sv_s<<std::endl;
+        }
     }
     // Only after ALL encrypted blocks. No hidden/plain tensor or key export.
-    const auto final_decode=Clock::now();ComplexReferenceMetric metric;
-    for(std::size_t tile=0;tile<16;++tile) {
-        const auto values=runtime.decrypt_final(state[tile]);if(values.size()!=32768)throw std::runtime_error("manual final slot count");
-        for(std::size_t token=0;token<128;++token)for(std::size_t feature=0;feature<256;++feature)
-            metric.observe(values[token*256+feature],reference[token*4096+tile*256+feature],token<input.valid_tokens);
+    const auto final_decode=Clock::now();
+    const bool partial_run=(end_layer!=input.layers);
+    ComplexReferenceSummary accuracy{};
+    bool pass=true;
+    if(!partial_run) {
+        ComplexReferenceMetric metric;
+        for(std::size_t tile=0;tile<16;++tile) {
+            const auto values=runtime.decrypt_final(state[tile]);if(values.size()!=32768)throw std::runtime_error("manual final slot count");
+            for(std::size_t token=0;token<128;++token)for(std::size_t feature=0;feature<256;++feature)
+                metric.observe(values[token*256+feature],reference[token*4096+tile*256+feature],token<input.valid_tokens);
+        }
+        accuracy=metric.finish();pass=accuracy.passed();
     }
-    const auto accuracy=metric.finish();const auto decode_seconds=seconds(final_decode);const bool pass=accuracy.passed();
+    const auto decode_seconds=seconds(final_decode);
     std::ostringstream json;json<<std::setprecision(17)<<"{\n\"status\":\"completed_experimental_manual_model\",\"plan\":\""<<input.plan.name()
         <<"\",\"input_version\":\""<<manual::input_version_name(input.version)<<"\",\"model_weight_scope\":\""<<manual::model_weight_scope(input.version)
         <<"\",\"model_weight_layers_available\":"<<(input.version==manual::InputVersion::V1?1:32)
         <<",\"implementation\":\"handwritten_poseidon_api\",\"DSL_runtime\":false,\"N\":"<<runtime.context.parameters_literal()->degree()<<",\"complex_slots\":"<<runtime.encoder.slot_count()
-        <<",\"blocks\":"<<model.completed_blocks()<<",\"valid_tokens\":38,\"capacity\":128,\"accuracy_gate\":true,\"maximum_complex_error\":"<<accuracy.maximum_complex_error
+        <<",\"blocks\":"<<model.completed_blocks()<<",\"start_layer\":"<<start_layer<<",\"end_layer\":"<<end_layer
+        <<",\"partial_checkpoint_run\":"<<(partial_run?"true":"false")
+        <<",\"public_cache_enabled\":"<<(!pub_cache.empty()?"true":"false")
+        <<",\"dev_key_cache_enabled\":"<<(!dev_key_cache.empty()?"true":"false")
+        <<",\"dev_key_cache_hit\":"<<(host_keys.loaded_from_dev_cache?"true":"false")
+        <<",\"checkpoint_loaded\":"<<(!ckpt_load_path.empty()?"true":"false")
+        <<",\"checkpoints_saved\":"<<checkpoints_saved<<",\"checkpoint_save_seconds\":"<<ckpt_save_seconds
+        <<",\"valid_tokens\":38,\"capacity\":128,\"accuracy_gate\":"<<(partial_run?"false":"true")<<",\"maximum_complex_error\":"<<accuracy.maximum_complex_error
         <<",\"maximum_real_error\":"<<accuracy.maximum_real_error<<",\"maximum_imaginary\":"<<accuracy.maximum_imaginary<<",\"real_RMSE\":"<<accuracy.rmse
         <<",\"precision_passed\":"<<(pass?"true":"false")<<",\"all128_rows_finite\":true,\"production_model_qualification\":false,\"historical_pass_inherited\":false"
         <<",\"reference_kind\":\"frozen_Cerium_original_callpath_v2_float64_approx_packed_fixed_jitter_not_HF\",\"security_qualification\":false"

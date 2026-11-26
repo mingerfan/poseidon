@@ -9217,10 +9217,10 @@ GpuLinearTransformMode bootstrap_validate_schedule(
     if (mode == GpuLinearTransformMode::SingleHoistBsgs)
         throw std::invalid_argument("GpuEvaluator::bootstrap: single_hoist mode is reserved for staged validation; select classic, double_hoist, loose_coupled, or no_hoist");
     if ((!dh && data.coeff_to_slot_matrix.data().empty()) ||
-        (dh && data.coeff_to_slot_matrix_qp.data().empty()))
+        (dh && data.active_coeff_to_slot_matrix_qp().data().empty()))
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty CoeffToSlot matrix group");
     if ((!dh && data.slot_to_coeff_matrix.data().empty()) ||
-        (dh && data.slot_to_coeff_matrix_qp.data().empty()))
+        (dh && data.active_slot_to_coeff_matrix_qp().data().empty()))
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty SlotToCoeff matrix group");
     if (data.minus_i_plaintext.empty())
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty minus-i plaintext");
@@ -9238,7 +9238,7 @@ GpuLinearTransformMode bootstrap_validate_schedule(
             group.rescale_counts().size() != group.data().size())
             throw std::invalid_argument("GpuEvaluator::bootstrap: dynamic rescale plan size mismatch");
     };
-    if (dh) { check(data.coeff_to_slot_matrix_qp); check(data.slot_to_coeff_matrix_qp); }
+    if (dh) { check(data.active_coeff_to_slot_matrix_qp()); check(data.active_slot_to_coeff_matrix_qp()); }
     else { check(data.coeff_to_slot_matrix); check(data.slot_to_coeff_matrix); }
     return mode;
 }
@@ -9344,14 +9344,14 @@ void GpuEvaluator::bootstrap_impl(
     if ((!use_double_hoist &&
          bootstrap_data.coeff_to_slot_matrix.data().empty()) ||
         (use_double_hoist &&
-         bootstrap_data.coeff_to_slot_matrix_qp.data().empty()))
+         bootstrap_data.active_coeff_to_slot_matrix_qp().data().empty()))
     {
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty CoeffToSlot matrix group");
     }
     if ((!use_double_hoist &&
          bootstrap_data.slot_to_coeff_matrix.data().empty()) ||
         (use_double_hoist &&
-         bootstrap_data.slot_to_coeff_matrix_qp.data().empty()))
+         bootstrap_data.active_slot_to_coeff_matrix_qp().data().empty()))
     {
         throw std::invalid_argument("GpuEvaluator::bootstrap: empty SlotToCoeff matrix group");
     }
@@ -9425,7 +9425,7 @@ void GpuEvaluator::bootstrap_impl(
                 !use_double_hoist)
                 throw std::invalid_argument("S2C-first Boot requires its declared input Q/scale and double-hoist mode");
             dft_double_hoist(source_ciphertext,
-                bootstrap_data.slot_to_coeff_matrix_qp, galois_keys,
+                bootstrap_data.active_slot_to_coeff_matrix_qp(), galois_keys,
                 workspace.slot_to_coeff_double_hoist, workspace.scratch0);
             if (workspace.scratch0.meta.parms_id != bootstrap_data.q0_parms_id)
                 throw std::runtime_error("S2C-first Boot S2C output level differs from q0");
@@ -9488,7 +9488,7 @@ void GpuEvaluator::bootstrap_impl(
         {
             coeff_to_slot_double_hoist(
                 *raised_for_c2s,
-                bootstrap_data.coeff_to_slot_matrix_qp,
+                bootstrap_data.active_coeff_to_slot_matrix_qp(),
                 bootstrap_data.minus_i_plaintext,
                 galois_keys,
                 workspace.coeff_to_slot_double_hoist,
@@ -9657,7 +9657,7 @@ void GpuEvaluator::bootstrap_impl(
             slot_to_coeff_double_hoist(
                 workspace.eval_mod_real,
                 workspace.eval_mod_imag,
-                bootstrap_data.slot_to_coeff_matrix_qp,
+                bootstrap_data.active_slot_to_coeff_matrix_qp(),
                 bootstrap_data.plus_i_plaintext,
                 galois_keys,
                 workspace.slot_to_coeff_double_hoist,
@@ -9817,8 +9817,8 @@ void GpuEvaluator::bootstrap_linear_layer(
     if (mode == GpuLinearTransformMode::DoubleHoistBsgs)
     {
         const auto &group = coeff_to_slot
-            ? bootstrap_data.coeff_to_slot_matrix_qp
-            : bootstrap_data.slot_to_coeff_matrix_qp;
+            ? bootstrap_data.active_coeff_to_slot_matrix_qp()
+            : bootstrap_data.active_slot_to_coeff_matrix_qp();
         const bool dynamic_rescale = group.rescale_min_scale() > 0.0;
         GpuCiphertextData product;
         multiply_by_diag_matrix_bsgs_double_hoist(
@@ -9876,8 +9876,8 @@ void GpuEvaluator::bootstrap_bsgs_group(
     GpuCiphertextData &destination_ciphertext) const
 {
     const auto &groups = coeff_to_slot
-        ? bootstrap_data.coeff_to_slot_groups_qp
-        : bootstrap_data.slot_to_coeff_groups_qp;
+        ? bootstrap_data.active_coeff_to_slot_groups_qp()
+        : bootstrap_data.active_slot_to_coeff_groups_qp();
     if (groups.empty())
     {
         throw std::invalid_argument(

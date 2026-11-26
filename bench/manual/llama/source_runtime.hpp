@@ -1,6 +1,7 @@
 // Common benchmark setup. Only the caller owns the secret key; Api does not.
 #pragma once
 #include "source_ops.hpp"
+#include "source_cache.hpp"
 #include "poseidon/keygenerator.h"
 #include "poseidon/encryptor.h"
 #include "poseidon/decryptor.h"
@@ -51,6 +52,7 @@ struct HostRuntimeKeys {
     poseidon::RelinKeys relin;
     poseidon::GaloisKeys galois;
     bool use_double_hoist_galois=false;
+    bool loaded_from_dev_cache=false;
     HostRuntimeKeys(const poseidon::PoseidonContext &ctx,const poseidon::KeyGenerator &kg,
                     const std::vector<int> &steps)
         :context(ctx),secret_key(kg.secret_key()) {
@@ -71,9 +73,53 @@ struct HostRuntimeKeys {
         use_double_hoist_galois=(fast_p||fast_l);
         std::cout<<"SOURCE_SETUP stage=host_keys_ready seconds="<<seconds(start)<<std::endl;
     }
+private:
+    HostRuntimeKeys(const poseidon::PoseidonContext &ctx,
+                    poseidon::SecretKey sk,
+                    poseidon::PublicKey pk,
+                    poseidon::RelinKeys rk,
+                    poseidon::GaloisKeys gk,
+                    bool dh)
+        :context(ctx),secret_key(std::move(sk)),public_key(std::move(pk)),
+         relin(std::move(rk)),galois(std::move(gk)),use_double_hoist_galois(dh),loaded_from_dev_cache(true) {}
+public:
     static HostRuntimeKeys create(const poseidon::ParametersLiteral &literal,
-                                  const std::vector<int> &steps=source_rotations()) {
+                                  const std::vector<int> &steps=source_rotations(),
+                                  const std::string &dev_key_cache_override={}) {
         poseidon::PoseidonContext ctx(require_cerium_parameters(literal));
+        const std::string cache_root=cache::dev_key_cache_dir(dev_key_cache_override);
+        const char *fp_env=std::getenv("LLAMA_FAST_P");const bool fast_p=fp_env&&std::string(fp_env)=="1";
+        const char *fl_env=std::getenv("LLAMA_FAST_LINEAR");const bool fast_l=fl_env&&*fl_env&&std::string(fl_env)!="0";
+        const char *fe_env=std::getenv("LLAMA_FAST_EVALMOD_P");const bool fast_evalmod_p=fe_env&&*fe_env&&std::string(fe_env)=="1";
+        const std::vector<int> main_steps=fast_p?std::vector<int>{0}:steps;
+        if(!cache_root.empty()) {
+            const auto ns=cache::dev_key_namespace_key(literal,steps,fast_p,fast_evalmod_p,32U);
+            cache::Hasher kh;
+            kh.str("LLAMA_HOST_KEYS_V1");
+            kh.pod(cache::parameters_fingerprint(literal));
+            kh.pod(static_cast<std::uint8_t>(fast_p?1:0));
+            kh.pod(static_cast<std::uint64_t>(main_steps.size()));
+            for(int s:main_steps)kh.pod(static_cast<std::int32_t>(s));
+            const std::uint64_t host_fp=kh.finish();
+            const auto path=std::filesystem::path(cache_root)/ns/"host_keys.bin";
+            const auto t0=Clock::now();
+            poseidon::SecretKey sk;poseidon::PublicKey pk;poseidon::RelinKeys rk;poseidon::GaloisKeys gk;
+            if(cache::load_host_keys_file(path,host_fp,ctx,sk,pk,rk,gk)) {
+                const auto &secret=sk.data();
+                if(std::all_of(secret.data(),secret.data()+layout::ring_degree,[](auto v){return v==0;}))
+                    throw std::runtime_error("cached dev secret key is zero");
+                std::cout<<"LLAMA_DEV_KEY_CACHE hit=true dev_only=true path="<<path.string()
+                         <<" seconds="<<seconds(t0)<<std::endl;
+                return HostRuntimeKeys(ctx,std::move(sk),std::move(pk),std::move(rk),std::move(gk),fast_p||fast_l);
+            }
+            poseidon::KeyGenerator kg(ctx);
+            HostRuntimeKeys fresh(ctx,kg,steps);
+            const auto ts=Clock::now();
+            cache::save_host_keys_file(path,host_fp,fresh.secret_key,fresh.public_key,fresh.relin,fresh.galois);
+            std::cout<<"LLAMA_DEV_KEY_CACHE hit=false saved=true dev_only=true path="<<path.string()
+                     <<" save_seconds="<<seconds(ts)<<std::endl;
+            return fresh;
+        }
         poseidon::KeyGenerator kg(ctx);
         return HostRuntimeKeys(ctx,kg,steps);
     }

@@ -46,8 +46,8 @@ inline void verify_profile(Runtime &runtime,const GpuBootstrapProfile &profile,u
        d.slot_to_coeff_input_q_count!=27||d.slot_to_coeff_input_parms_id!=id||d.slot_to_coeff_output_scale!=std::exp2(50.)||
        d.eval_mod.output_q_count!=27||d.eval_mod.output_parms_id!=id||d.eval_mod.target_scale!=std::exp2(50.)||
        d.eval_mod.polynomial_degree!=30||!d.eval_mod.dynamic_rescale||d.eval_mod.double_angle_constants.size()!=3||
-       d.coeff_to_slot_matrix_qp.rescale_counts()!=std::vector<std::uint32_t>{1,2,1}||
-       d.slot_to_coeff_matrix_qp.rescale_counts()!=std::vector<std::uint32_t>{1,1,2}||
+       d.active_coeff_to_slot_matrix_qp().rescale_counts()!=std::vector<std::uint32_t>{1,2,1}||
+       d.active_slot_to_coeff_matrix_qp().rescale_counts()!=std::vector<std::uint32_t>{1,1,2}||
        d.plus_i_plaintext.meta.q_count!=27||d.plus_i_plaintext.meta.parms_id!=id||d.plus_i_plaintext.meta.scale!=1.||
        profile.output_level!=26||profile.output_scale_log2!=50||!profile.level_parameters.empty())
         throw std::runtime_error("mixed immutable corrected profile contract");
@@ -57,7 +57,7 @@ inline void verify_profile(Runtime &runtime,const GpuBootstrapProfile &profile,u
        d.sparse_switch_to_ephemeral->meta.degree!=65536||d.sparse_switch_to_ephemeral->meta.component_count!=2)
         throw std::runtime_error("mixed sparse-low Q2/P2 owner/key contract");
     check_key_meta(*d.sparse_switch_to_dense);
-    const auto [s,q]=planned_scale(*runtime.api,d.raised_scale_override,d.coeff_to_slot_matrix_qp);
+    const auto [s,q]=planned_scale(*runtime.api,d.raised_scale_override,d.active_coeff_to_slot_matrix_qp());
     if(q!=45||!Api::same_scale(s,d.eval_mod.input_scale))throw std::runtime_error("mixed actual supplied C2S output/EvalMod input");
     for(const auto &c:d.eval_mod.polynomial_combine_steps)
         if(c.output_q_count!=c.product_q_count||!(c.product_scale>0&&std::isfinite(c.product_scale))||

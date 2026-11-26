@@ -40,7 +40,7 @@ class Llama {
     }
     static Runtime &prepare_runtime(Runtime &r,Plan plan) {
         checked_runtime(r);
-        if(plan.mode==Mode::Fast&&fast_boot::fast_p_enabled()&&!r.galois.level_keys)
+        if(plan.mode==Mode::Fast&&fast_boot::fast_p_enabled()&&!fast_boot::fast_boot_enabled()&&!r.galois.level_keys)
             fast_boot::install_fast_runtime_levels(r,source_rotations());
         return r;
     }
@@ -48,8 +48,14 @@ class Llama {
     static BuiltPair build_profiles(Runtime &r,Plan plan) {
         prepare_runtime(r,plan);
         manual_backend::SubmissionOwner setup_owner;
-        if(plan.mode==Mode::Fast&&fast_boot::fast_boot_enabled())
+        if(plan.mode==Mode::Fast&&fast_boot::fast_boot_enabled()) {
+            if(fast_boot::fast_p_enabled()) {
+                auto bundle=fast_boot::prepare_host_fast_boot_bundle(r.context,r.keys,r.encoder,source_rotations());
+                if(!r.galois.level_keys)fast_boot::install_fast_runtime_levels_from_bundle(r,bundle);
+                return fast_boot::make_fast_profile_pair(r,setup_owner,&bundle);
+            }
             return fast_boot::make_fast_profile_pair(r,setup_owner);
+        }
         return {manual_backend::make_profile(r,8192,setup_owner),manual_backend::make_profile(r,65536,setup_owner)};
     }
     Llama(Runtime &r,Plan plan,std::size_t linear_cache,BuiltPair built)
@@ -79,6 +85,11 @@ public:
     const manual_backend::ProfileNumbers &silu_profile_numbers() const {return silu_.config();}
     std::size_t actual_boot_output_q() const {return primary_.get_profile().bootstrap_data.eval_mod.output_q_count;}
     double actual_boot_output_scale() const {return primary_.get_profile().bootstrap_data.slot_to_coeff_output_scale;}
+    void resume_from_checkpoint(std::size_t completed_layers) {
+        if(completed_blocks_!=0||completed_layers>=32)
+            throw std::invalid_argument("manual checkpoint resume requires fresh model and completed_layers < 32");
+        completed_blocks_=completed_layers;
+    }
     std::vector<CT> decoder_block(const std::vector<CT> &input,const llama_manual::LayerWeights &weights,
                                  const CT &encrypted_mask,std::size_t layer) {
         bindings();if(layer!=completed_blocks_||layer>=32||input.size()!=16)
