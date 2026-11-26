@@ -1,0 +1,162 @@
+# 2026-11-26, V100-SXM2-32GB, Release, sm70, N=65536. No secret coefficients recorded.
+# Old and ratio-32 ablations: a separate random key per configuration, three encryptions of each of four plaintexts.
+# PROBE pattern=0 mixed, 1 legacy-grid, 2 complex-corners, 3 zero-message. max_wrap is max |round(16 * C2S coordinate)| over both branches.
+# Official 30 runs: fresh audited keys per process, all 32768 complex slots. Steady-clock median of 18 resident Boot calls after 3 warmups.
+
+# old period + h=32, GPU 3
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+Q30_CHECK encapsulated=1
+PROBE t=0 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.0145752905149 rms=0.00456240914449 above_1e-3=30823 above_1e-4=31837 max_wrap=7 tail_components=0
+PROBE t=0 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.0142865741908 rms=0.00459006570765 above_1e-3=30833 above_1e-4=31984 max_wrap=7 tail_components=0
+PROBE t=0 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=0.0146730129566 rms=0.00470144728856 above_1e-3=32768 above_1e-4=32768 max_wrap=7 tail_components=0
+PROBE t=0 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=0.0140537941944 rms=0.00457199379158 above_1e-3=30911 above_1e-4=30911 max_wrap=7 tail_components=0
+PROBE t=1 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.0143270255667 rms=0.00456639282201 above_1e-3=30889 above_1e-4=31855 max_wrap=7 tail_components=0
+PROBE t=1 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.0140904585276 rms=0.00458022331523 above_1e-3=30811 above_1e-4=32021 max_wrap=7 tail_components=0
+PROBE t=1 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=0.0151594380373 rms=0.00473301493318 above_1e-3=32768 above_1e-4=32768 max_wrap=8 tail_components=0
+PROBE t=1 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=0.0141892635469 rms=0.00459074648246 above_1e-3=30952 above_1e-4=30952 max_wrap=7 tail_components=0
+PROBE t=2 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.0142514510285 rms=0.00456942468257 above_1e-3=30877 above_1e-4=31868 max_wrap=6 tail_components=0
+PROBE t=2 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.0137619597869 rms=0.00455226422901 above_1e-3=30841 above_1e-4=31997 max_wrap=7 tail_components=0
+PROBE t=2 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=0.0146729199762 rms=0.0046900384119 above_1e-3=32768 above_1e-4=32768 max_wrap=7 tail_components=0
+PROBE t=2 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=0.013779924072 rms=0.004556792797 above_1e-3=30923 above_1e-4=30923 max_wrap=7 tail_components=0
+
+# correct period and gain + main h=192, GPU 2
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+Q30_CHECK encapsulated=0
+PROBE t=0 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.217822912837 rms=0.00142132238951 above_1e-3=3 above_1e-4=17098 max_wrap=17 tail_components=3
+PROBE t=0 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=1.2710275154 rms=0.00703597594698 above_1e-3=698 above_1e-4=19239 max_wrap=18 tail_components=3
+PROBE t=0 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=1.20760426763 rms=0.00681339329735 above_1e-3=32768 above_1e-4=32768 max_wrap=18 tail_components=8
+PROBE t=0 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=1.8474239292e+23 rms=1.02056717818e+21 above_1e-3=32768 above_1e-4=32768 max_wrap=22 tail_components=8
+PROBE t=1 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=2.95875261893 rms=0.0231291068153 above_1e-3=10 above_1e-4=17107 max_wrap=18 tail_components=10
+PROBE t=1 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.124331085142 rms=0.000826784306439 above_1e-3=653 above_1e-4=19244 max_wrap=17 tail_components=6
+PROBE t=1 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=2.9565785203 rms=0.0164467589545 above_1e-3=32768 above_1e-4=32768 max_wrap=18 tail_components=9
+PROBE t=1 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=2.95799837002 rms=0.0163424045282 above_1e-3=4 above_1e-4=4 max_wrap=18 tail_components=4
+PROBE t=2 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.0286201416518 rms=0.000395375802991 above_1e-3=6 above_1e-4=17112 max_wrap=16 tail_components=6
+PROBE t=2 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.126464233806 rms=0.000822136916082 above_1e-3=694 above_1e-4=19234 max_wrap=17 tail_components=5
+PROBE t=2 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=2.92403121884 rms=0.0161969547919 above_1e-3=32768 above_1e-4=32768 max_wrap=18 tail_components=4
+PROBE t=2 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=0.0285621553579 rms=0.000184753063427 above_1e-3=4 above_1e-4=4 max_wrap=16 tail_components=4
+
+# correct period and gain + h=32 + ratio 32, GPU 1
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+Q30_CHECK encapsulated=1
+PROBE t=0 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.00082875264192 rms=0.000269943597252 above_1e-3=0 above_1e-4=17081 max_wrap=7 tail_components=0
+PROBE t=0 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.00100227813827 rms=0.000416974008279 above_1e-3=363 above_1e-4=19272 max_wrap=7 tail_components=0
+PROBE t=0 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=0.00118245088262 rms=0.00117793203062 above_1e-3=32768 above_1e-4=32768 max_wrap=8 tail_components=0
+PROBE t=0 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=4.48298307228e-06 rms=1.33253388416e-06 above_1e-3=0 above_1e-4=0 max_wrap=7 tail_components=0
+PROBE t=1 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.000830291879007 rms=0.000269958645709 above_1e-3=0 above_1e-4=17087 max_wrap=7 tail_components=0
+PROBE t=1 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.00100287417954 rms=0.000416962245886 above_1e-3=325 above_1e-4=19272 max_wrap=7 tail_components=0
+PROBE t=1 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=0.00118157483433 rms=0.00117793033531 above_1e-3=32768 above_1e-4=32768 max_wrap=7 tail_components=0
+PROBE t=1 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=4.80970846276e-06 rms=1.33165333852e-06 above_1e-3=0 above_1e-4=0 max_wrap=7 tail_components=0
+PROBE t=2 pattern=0 slots=32768 q=14 log2_scale=50.1140754498 max=0.000829380621853 rms=0.000269952026213 above_1e-3=0 above_1e-4=17084 max_wrap=7 tail_components=0
+PROBE t=2 pattern=1 slots=32768 q=14 log2_scale=50.1140754498 max=0.0010033407987 rms=0.000416973220555 above_1e-3=355 above_1e-4=19272 max_wrap=8 tail_components=0
+PROBE t=2 pattern=2 slots=32768 q=14 log2_scale=50.1140754498 max=0.00118211050387 rms=0.00117794173942 above_1e-3=32768 above_1e-4=32768 max_wrap=8 tail_components=0
+PROBE t=2 pattern=3 slots=32768 q=14 log2_scale=50.1140754498 max=4.70357052009e-06 rms=1.33041663778e-06 above_1e-3=0 above_1e-4=0 max_wrap=8 tail_components=0
+
+# corrected public profile, key A, GPU 3
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=155.101
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50.1140754498 max_abs=6.17222512187e-05 rms=1.76963769654e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50.1140754498 max_abs=7.66695860434e-05 rms=2.66291692894e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50.1140754498 max_abs=9.24093660753e-05 rms=7.38658093531e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50.1140754498 max_abs=1.91491499079e-05 rms=5.33584482075e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50.1140754498 max_abs=6.13494938252e-05 rms=1.76966155788e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50.1140754498 max_abs=7.66763596008e-05 rms=2.66129248841e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50.1140754498 max_abs=8.85828387945e-05 rms=7.3851850504e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50.1140754498 max_abs=1.73169044741e-05 rms=5.36691262136e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50.1140754498 max_abs=5.95173344215e-05 rms=1.76727680148e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50.1140754498 max_abs=7.57418085551e-05 rms=2.6625134283e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50.1140754498 max_abs=8.95365176365e-05 rms=7.38722340258e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50.1140754498 max_abs=1.7331266589e-05 rms=5.35442661351e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=63.889992
+
+# corrected public profile, key B, GPU 2
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=149.37
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50.1140754498 max_abs=6.20821616171e-05 rms=1.77149470807e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50.1140754498 max_abs=7.55656171815e-05 rms=2.65917242056e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50.1140754498 max_abs=9.27517882109e-05 rms=7.38195635334e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50.1140754498 max_abs=1.75452549383e-05 rms=5.32119389475e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50.1140754498 max_abs=6.42568950225e-05 rms=1.76941371772e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50.1140754498 max_abs=7.72257739101e-05 rms=2.66325341843e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50.1140754498 max_abs=8.93741879306e-05 rms=7.38089148312e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50.1140754498 max_abs=1.89955052679e-05 rms=5.28353518175e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50.1140754498 max_abs=6.68226116977e-05 rms=1.77024189098e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50.1140754498 max_abs=7.44445664428e-05 rms=2.6600157471e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50.1140754498 max_abs=9.28500479312e-05 rms=7.38604320725e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50.1140754498 max_abs=1.80723073588e-05 rms=5.377347746e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=66.5367115
+
+# corrected public profile, key C, GPU 2
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=149.662
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50.1140754498 max_abs=6.13214981774e-05 rms=1.76507273848e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50.1140754498 max_abs=7.43734171341e-05 rms=2.6634394816e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50.1140754498 max_abs=8.9066853703e-05 rms=7.38436377289e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50.1140754498 max_abs=1.64650491774e-05 rms=5.28173655704e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50.1140754498 max_abs=6.44479681976e-05 rms=1.77183175847e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50.1140754498 max_abs=7.72302018739e-05 rms=2.66609524421e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50.1140754498 max_abs=9.11547862924e-05 rms=7.38555481787e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50.1140754498 max_abs=1.77650639077e-05 rms=5.37508318132e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50.1140754498 max_abs=6.2631864983e-05 rms=1.77215329724e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50.1140754498 max_abs=7.37881676325e-05 rms=2.66339806233e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50.1140754498 max_abs=8.98364204356e-05 rms=7.38392125337e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50.1140754498 max_abs=1.82627502735e-05 rms=5.3005011081e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=66.6215995
+
+# degree22 public regressions, GPU 1
+SECRET_AUDIT role=main actual_h=32768 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.972 ephemeral_h=32
+KEY_BUDGET kind=rotation active_q=4 storage_q=4 P=4 dnum=1 log2_pq=255.944
+KEY_BUDGET kind=rotation active_q=5 storage_q=5 P=5 dnum=1 log2_pq=319.93
+KEY_BUDGET kind=rotation active_q=6 storage_q=6 P=6 dnum=1 log2_pq=383.917
+KEY_BUDGET kind=rotation active_q=24 storage_q=24 P=12 dnum=2 log2_pq=1143.57
+KEY_BUDGET kind=rotation active_q=39 storage_q=39 P=13 dnum=3 log2_pq=1646.44
+KEY_BUDGET kind=rotation active_q=41 storage_q=42 P=14 dnum=3 log2_pq=1774.41
+KEY_BUDGET kind=rotation active_q=42 storage_q=42 P=14 dnum=3 log2_pq=1774.41
+KEY_BUDGET kind=rotation active_q=43 storage_q=43 P=11 dnum=4 log2_pq=1708.4
+KEY_BUDGET kind=relin active_q=26 storage_q=39 P=13 dnum=3 log2_pq=1646.44
+KEY_BUDGET kind=relin active_q=28 storage_q=42 P=14 dnum=3 log2_pq=1774.41
+KEY_BUDGET kind=relin active_q=29 storage_q=29 P=15 dnum=2 log2_pq=1395.45
+KEY_BUDGET kind=relin active_q=31 storage_q=32 P=16 dnum=2 log2_pq=1522.42
+KEY_BUDGET kind=relin active_q=32 storage_q=32 P=16 dnum=2 log2_pq=1522.42
+KEY_BUDGET kind=relin active_q=33 storage_q=34 P=17 dnum=2 log2_pq=1617.39
+KEY_BUDGET kind=relin active_q=34 storage_q=34 P=17 dnum=2 log2_pq=1617.39
+KEY_BUDGET kind=relin active_q=36 storage_q=36 P=18 dnum=2 log2_pq=1711.38
+KEY_BUDGET kind=relin active_q=37 storage_q=37 P=19 dnum=2 log2_pq=1775.35
+KEY_BUDGET kind=relin active_q=39 storage_q=39 P=13 dnum=3 log2_pq=1646.44
+KEY_BUDGET kind=main_to_ephemeral active_q=2 storage_q=2 P=2 dnum=1 log2_pq=127.972
+KEY_BUDGET kind=ephemeral_to_main active_q=43 storage_q=43 P=11 dnum=4 log2_pq=1708.4
+KEY_BUDGET max_log2_pq=1775.35 budget_bits=1782 global_key_fallback=absent
+SETUP seconds=321.12
+PRECISION profile=s2c-first-degree22-da3-q43-dnum4-real-only pattern=mixed trial=0 q=24 log2_scale=40 max_abs=0.000860263261151 rms=0.000277594845926 slots=32768 slots_above_1e-3=0 slots_above_1e-4=13471
+ONLINE profile=s2c-first-degree22-da3-q43-dnum4-real-only warmup=3 calls=18 median_ms=49.10356
+PRECISION profile=s2c-first-degree22-da3-q43-dnum4 pattern=mixed trial=0 q=24 log2_scale=40 max_abs=0.000862527720546 rms=0.000277597351466 slots=32768 slots_above_1e-3=0 slots_above_1e-4=13469
+ONLINE profile=s2c-first-degree22-da3-q43-dnum4 warmup=3 calls=18 median_ms=60.1631825
+
+# degree59 public regression, GPU 3
+SECRET_AUDIT role=main actual_h=192 rns_limbs=75 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SETUP seconds=291.244
+PRECISION profile=s2c-first-degree59-da2-q50p25 pattern=mixed trial=0 q=31 log2_scale=40 max_abs=0.000869348062348 rms=0.000277616581325 slots=32768 slots_above_1e-3=0 slots_above_1e-4=13459
+ONLINE profile=s2c-first-degree59-da2-q50p25 warmup=3 calls=18 median_ms=104.4849895
+
+# cpu
+10 Poseidon CPU Runtime Api tests passed
+
+# runtime
+100% tests passed, 0 tests failed out of 8
+
+# gpu-api
+25 Poseidon GPU Runtime Api tests passed
+
+# Expected rejection: POSEIDON_GPU_SSE_LOW_P=0, exit 1 before Boot or timing.
+[FAIL] sparse bootstrap requires Q2/P2 for the switch to the ephemeral key

@@ -235,7 +235,7 @@ poseidon::ParametersLiteral make_parameters()
         /*log_n=*/std::getenv("POSEIDON_WATERLINE_LOG_N") ? std::stoi(std::getenv("POSEIDON_WATERLINE_LOG_N")) : 12,
         /*log_slots=*/std::getenv("POSEIDON_WATERLINE_LOG_N") ? std::stoi(std::getenv("POSEIDON_WATERLINE_LOG_N"))-1 : 11,
         /*log_scale=*/kDefaultScaleLog2,
-        /*hamming_weight=*/0,
+        /*hamming_weight=*/192,
         /*q0_level=*/0,
         poseidon::Modulus(0),
         {},

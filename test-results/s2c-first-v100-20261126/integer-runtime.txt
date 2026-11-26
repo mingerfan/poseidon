@@ -1,0 +1,107 @@
+# 2026-11-26. Tesla V100-SXM2-32GB. Release, sm70, N=65536, slots=32768.
+# Poseidon parent d2f7584e97a6919fb191e55c3b2e4cb472fdf6fb.
+# Unmodified ckks-runtime at 369bdc55a8e585442784d5a6001e6e9dd04ce6f6. OperatorSpec V1, RuntimePlan V1.
+# All tested secrets freshly sampled with OS entropy. No secret coefficients logged.
+# Precision uses abs(complex decoded - reference); 3 warmups + 18 resident calls, median wall time.
+
+# Formal CTest run: q59, physical GPU 3
+SECRET_AUDIT role=main actual_h=192 rns_limbs=75 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SETUP seconds=290.371
+PRECISION profile=s2c-first-degree59-da2-q50p25 pattern=mixed trial=0 q=31 log2_scale=40 max_abs=0.000871974864892 rms=0.000277626751616 slots=32768 slots_above_1e-3=0 slots_above_1e-4=13460
+ONLINE profile=s2c-first-degree59-da2-q50p25 warmup=3 calls=18 median_ms=104.4225105
+
+# Formal CTest run: q30, physical GPU 2
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=148.618
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50 max_abs=6.15344370659e-05 rms=1.77116713128e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50 max_abs=7.44927797505e-05 rms=2.66535668319e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50 max_abs=8.891667022e-05 rms=7.38308794271e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50 max_abs=1.71377621926e-05 rms=5.35252613595e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50 max_abs=6.30672710932e-05 rms=1.76514056745e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50 max_abs=7.53869352841e-05 rms=2.65935901234e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50 max_abs=9.08754751772e-05 rms=7.38539494165e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50 max_abs=1.78724930546e-05 rms=5.34058900905e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50 max_abs=6.29704188639e-05 rms=1.77555078627e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50 max_abs=7.67977940408e-05 rms=2.66118498686e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50 max_abs=8.99620621237e-05 rms=7.38405780914e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50 max_abs=1.77091644142e-05 rms=5.34268275595e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=66.628427
+
+# Formal CTest run: q22, physical GPU 1
+SECRET_AUDIT role=main actual_h=32768 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.972 ephemeral_h=32
+KEY_BUDGET max_log2_pq=1775.35 budget_bits=1782 global_key_fallback=absent
+SETUP seconds=316.151
+PRECISION profile=s2c-first-degree22-da3-q43-dnum4-real-only pattern=mixed trial=0 q=24 log2_scale=40 max_abs=0.00086083850766 rms=0.000277601953976 slots=32768 slots_above_1e-3=0 slots_above_1e-4=13465
+ONLINE profile=s2c-first-degree22-da3-q43-dnum4-real-only warmup=3 calls=18 median_ms=49.013729
+PRECISION profile=s2c-first-degree22-da3-q43-dnum4 pattern=mixed trial=0 q=24 log2_scale=40 max_abs=0.000861673757189 rms=0.000277603234233 slots=32768 slots_above_1e-3=0 slots_above_1e-4=13472
+ONLINE profile=s2c-first-degree22-da3-q43-dnum4 warmup=3 calls=18 median_ms=60.087424
+
+# General API regression.
+10 Poseidon CPU Runtime Api tests passed
+
+# General API regression (GPU: physical devices 1,2).
+25 Poseidon GPU Runtime Api tests passed
+
+# Prior integer-scale compatibility experiment, independent keys, physical GPU 1
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=152.687
+RUNTIME pinned=369bdc5 spec=1 plan=1
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50 max_abs=6.65606133126e-05 rms=1.76963038498e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50 max_abs=7.43838054864e-05 rms=2.66193554001e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50 max_abs=8.85953104041e-05 rms=7.38181932553e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50 max_abs=1.86189207626e-05 rms=5.33028029279e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50 max_abs=6.26538081844e-05 rms=1.7715520507e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50 max_abs=7.53317345116e-05 rms=2.66173851969e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50 max_abs=8.91544388781e-05 rms=7.38455728996e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50 max_abs=1.97872417381e-05 rms=5.33297567576e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50 max_abs=6.09049674245e-05 rms=1.76883930082e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50 max_abs=7.6719057125e-05 rms=2.65839384533e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50 max_abs=9.0611257241e-05 rms=7.3847390351e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50 max_abs=1.69742622601e-05 rms=5.31452733122e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=66.7711365
+
+# Prior integer-scale compatibility experiment, independent keys, physical GPU 2
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=156.208
+RUNTIME pinned=369bdc5 spec=1 plan=1
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50 max_abs=6.17655890124e-05 rms=1.7681163743e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50 max_abs=7.52031709599e-05 rms=2.66131846675e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50 max_abs=8.79576268207e-05 rms=7.38634625531e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50 max_abs=1.81533389102e-05 rms=5.3696602763e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50 max_abs=6.01757975667e-05 rms=1.7687018478e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50 max_abs=7.54043114083e-05 rms=2.66198551305e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50 max_abs=9.05423184986e-05 rms=7.38456519253e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50 max_abs=2.20718240818e-05 rms=5.32250852464e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50 max_abs=6.16301592891e-05 rms=1.76966901253e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50 max_abs=7.36088541118e-05 rms=2.65960191248e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50 max_abs=9.45908493287e-05 rms=7.38580772775e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50 max_abs=1.93628001631e-05 rms=5.3310349898e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=66.6148345
+
+# Prior integer-scale compatibility experiment, independent keys, physical GPU 3
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.966 ephemeral_h=32
+SETUP seconds=152.702
+RUNTIME pinned=369bdc5 spec=1 plan=1
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=0 q=14 log2_scale=50 max_abs=6.39070144593e-05 rms=1.77050829431e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=0 q=14 log2_scale=50 max_abs=7.40392195423e-05 rms=2.66198470639e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=0 q=14 log2_scale=50 max_abs=8.92218806994e-05 rms=7.3883598568e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=0 q=14 log2_scale=50 max_abs=1.78070436582e-05 rms=5.35890756713e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=1 q=14 log2_scale=50 max_abs=6.28025154334e-05 rms=1.77396301809e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=1 q=14 log2_scale=50 max_abs=7.6165743907e-05 rms=2.66180673443e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=1 q=14 log2_scale=50 max_abs=9.17924909347e-05 rms=7.38201504758e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=1 q=14 log2_scale=50 max_abs=1.83899820767e-05 rms=5.34809411292e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=mixed trial=2 q=14 log2_scale=50 max_abs=6.1652437492e-05 rms=1.77106249502e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=legacy-grid trial=2 q=14 log2_scale=50 max_abs=7.37379986386e-05 rms=2.66541792004e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=complex-corners trial=2 q=14 log2_scale=50 max_abs=8.98225082551e-05 rms=7.38601874708e-05 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+PRECISION profile=s2c-first-degree30-da3-q34p9 pattern=zero-message trial=2 q=14 log2_scale=50 max_abs=1.7059077327e-05 rms=5.33167730965e-06 slots=32768 slots_above_1e-3=0 slots_above_1e-4=0
+ONLINE profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=63.8998445

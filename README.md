@@ -73,6 +73,9 @@ Validation status and reproducible evidence are in
 The integration is disabled by default. When disabled, Poseidon does not inspect
 or build the Runtime submodule.
 
+The GPU runtime exposes four S2C-first bootstrap profiles through the native `Boot` operator.
+See [profile selection, output contracts, and V100 regression results](docs/gpu-bootstrap-migration.md).
+
 Configure the Runtime Api with the bundled Runtime:
 
 ```bash

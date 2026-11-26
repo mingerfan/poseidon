@@ -107,6 +107,35 @@ void KeyGenerator::generate_sk(bool is_initialized)
         secret_key_.parms_id() = param_id;
     }
 
+    if (secret_key_.parms_id() != param_id ||
+        secret_key_.data().coeff_count() != mul_safe(coeff_count, coeff_modulus_size))
+        throw invalid_argument("secret key shape does not match the key context");
+
+    // Verify the polynomial that will actually be used, including imported keys.
+    // The private pool clears this inverse-NTT copy on destruction.
+    const auto audit_pool = MemoryManager::GetPool(mm_prof_opt::mm_force_new, true);
+    auto decoded = allocate_poly(coeff_count, coeff_modulus_size, audit_pool);
+    set_poly(secret_key_.data().data(), coeff_count, coeff_modulus_size, decoded.get());
+    inverse_ntt_negacyclic_harvey(RNSIter(decoded.get(), coeff_count), coeff_modulus_size,
+                                  global_context_data->small_ntt_tables());
+    const auto first_prime = coeff_modulus.front().value();
+    for (size_t i = 0; i < coeff_count; ++i) {
+        const auto value = decoded[i];
+        const bool negative = value == first_prime - 1;
+        if (value > 1 && !negative)
+            throw invalid_argument("non-ternary secret rejected");
+        actual_secret_weight_ += (value != 0);
+        actual_positive_count_ += (value == 1);
+        for (size_t limb = 1; limb < coeff_modulus_size; ++limb) {
+            const auto expected = negative ? coeff_modulus[limb].value() - 1 : value;
+            if (decoded[limb * coeff_count + i] != expected)
+                throw invalid_argument("inconsistent secret RNS limbs");
+        }
+    }
+    if (!actual_secret_weight_ || (!is_initialized && scheme == CKKS &&
+            actual_secret_weight_ != context_.parameters_literal()->hamming_weight()))
+        throw invalid_argument("zero or wrong-weight generated secret rejected");
+
     // Set the secret_key_array to have size 1 (first power of secret)
     secret_key_array_ = allocate_poly(coeff_count, coeff_modulus_size, pool_);
     set_poly(secret_key_.data().data(), coeff_count, coeff_modulus_size, secret_key_array_.get());

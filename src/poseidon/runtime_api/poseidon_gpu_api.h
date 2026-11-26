@@ -1,5 +1,6 @@
 #pragma once
 #include "runtime/waterline.hpp"
+#include "poseidon/runtime_api/s2c_bootstrap.h"
 
 #include "poseidon/ciphertext.h"
 #include "poseidon/gpu/gpu_ciphertext.h"
@@ -27,6 +28,7 @@
 
 namespace poseidon
 {
+class KeyGenerator;
 class CKKSEncoder;
 class Decryptor;
 class Encryptor;
@@ -151,6 +153,12 @@ public:
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
     PoseidonGpuApi &operator=(const PoseidonGpuApi &) = delete;
+
+    // Prepare selected profiles on the device and return their compiler-visible
+    // descriptors. Pass both Q43 IDs together to share the uploaded material.
+    std::vector<fhegpu::BootProfile> configure_s2c_bootstrap(
+        int logical_device_index, KeyGenerator &generator,
+        const std::vector<std::string_view> &profile_ids);
 
     /**
      * @brief Install one fully uploaded native-bootstrap profile on a device.

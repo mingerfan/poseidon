@@ -1,0 +1,84 @@
+# Historical benchmark measurement lines, 2026-11-23, Tesla V100-SXM2-32GB
+PROFILE id=s2c-first-degree22-da3-full-coefficients-q43-layered-dnum4 gpu="Tesla V100-SXM2-32GB" N=65536 degree=22 double_angle=3 K=12 Q=43 available_p=22 input_q=6 output_q=24 dnum1_max_q=22 input_encryption=symmetric_Q6 evalmod_branches=2 entropy=OS_random
+SECRET_AUDIT role=main actual_h=32768 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.971963 ephemeral_h=32
+GPU_BOOT_LEVEL_P galois_level q=4 elements=11
+GPU_BOOT_LEVEL_P galois_level q=5 elements=15
+GPU_BOOT_LEVEL_P galois_level q=6 elements=15
+GPU_BOOT_LEVEL_P galois_level q=24 elements=1
+GPU_BOOT_LEVEL_P galois_level q=39 elements=1
+GPU_BOOT_LEVEL_P galois_level q=41 elements=15
+GPU_BOOT_LEVEL_P galois_level q=42 elements=15
+GPU_BOOT_LEVEL_P galois_level q=43 elements=11
+GPU_BOOT_LEVEL_P p=4 dnum=1 top_q=4 levels=1 galois_levels=1 elements=11 relin_levels=0 key_modulus_bits=255.944213
+GPU_BOOT_LEVEL_P p=5 dnum=1 top_q=5 levels=1 galois_levels=1 elements=15 relin_levels=0 key_modulus_bits=319.93021
+GPU_BOOT_LEVEL_P p=6 dnum=1 top_q=6 levels=1 galois_levels=1 elements=15 relin_levels=0 key_modulus_bits=383.916918
+GPU_BOOT_LEVEL_P p=11 dnum=4 top_q=43 levels=1 galois_levels=1 elements=11 relin_levels=0 key_modulus_bits=1708.40117
+GPU_BOOT_LEVEL_P p=12 dnum=2 top_q=24 levels=1 galois_levels=1 elements=1 relin_levels=0 key_modulus_bits=1143.57076
+GPU_BOOT_LEVEL_P p=13 dnum=3 top_q=39 levels=2 galois_levels=1 elements=1 relin_levels=2 key_modulus_bits=1646.44071
+GPU_BOOT_LEVEL_P p=14 dnum=3 top_q=42 levels=3 galois_levels=2 elements=29 relin_levels=1 key_modulus_bits=1774.41178
+GPU_BOOT_LEVEL_P p=15 dnum=2 top_q=29 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1395.45055
+GPU_BOOT_LEVEL_P p=16 dnum=2 top_q=32 levels=2 galois_levels=0 elements=0 relin_levels=2 key_modulus_bits=1522.41834
+GPU_BOOT_LEVEL_P p=17 dnum=2 top_q=34 levels=2 galois_levels=0 elements=0 relin_levels=2 key_modulus_bits=1617.39389
+GPU_BOOT_LEVEL_P p=18 dnum=2 top_q=36 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1711.37588
+GPU_BOOT_LEVEL_P p=19 dnum=2 top_q=37 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1775.35322
+GPU_BOOT_LEVEL_P mode=secure groups=12 adopted_levels=17 main_galois_elements=0 max_key_modulus_bits=1775.35322
+KEY_BUDGET kind=rotation active_q=4 storage_q=4 P=4 dnum=1 log2_pq=255.944213
+KEY_BUDGET kind=rotation active_q=5 storage_q=5 P=5 dnum=1 log2_pq=319.93021
+KEY_BUDGET kind=rotation active_q=6 storage_q=6 P=6 dnum=1 log2_pq=383.916918
+KEY_BUDGET kind=rotation active_q=24 storage_q=24 P=12 dnum=2 log2_pq=1143.57076
+KEY_BUDGET kind=rotation active_q=39 storage_q=39 P=13 dnum=3 log2_pq=1646.44071
+KEY_BUDGET kind=rotation active_q=41 storage_q=42 P=14 dnum=3 log2_pq=1774.41178
+KEY_BUDGET kind=rotation active_q=42 storage_q=42 P=14 dnum=3 log2_pq=1774.41178
+KEY_BUDGET kind=rotation active_q=43 storage_q=43 P=11 dnum=4 log2_pq=1708.40117
+KEY_BUDGET kind=relin active_q=26 storage_q=39 P=13 dnum=3 log2_pq=1646.44071
+KEY_BUDGET kind=relin active_q=28 storage_q=42 P=14 dnum=3 log2_pq=1774.41178
+KEY_BUDGET kind=relin active_q=29 storage_q=29 P=15 dnum=2 log2_pq=1395.45055
+KEY_BUDGET kind=relin active_q=31 storage_q=32 P=16 dnum=2 log2_pq=1522.41834
+KEY_BUDGET kind=relin active_q=32 storage_q=32 P=16 dnum=2 log2_pq=1522.41834
+KEY_BUDGET kind=relin active_q=33 storage_q=34 P=17 dnum=2 log2_pq=1617.39389
+KEY_BUDGET kind=relin active_q=34 storage_q=34 P=17 dnum=2 log2_pq=1617.39389
+KEY_BUDGET kind=relin active_q=36 storage_q=36 P=18 dnum=2 log2_pq=1711.37588
+KEY_BUDGET kind=relin active_q=37 storage_q=37 P=19 dnum=2 log2_pq=1775.35322
+KEY_BUDGET kind=relin active_q=39 storage_q=39 P=13 dnum=3 log2_pq=1646.44071
+KEY_BUDGET kind=main_to_ephemeral active_q=2 storage_q=2 P=2 dnum=1 log2_pq=127.971963
+KEY_BUDGET kind=ephemeral_to_main active_q=43 storage_q=43 P=11 dnum=4 log2_pq=1708.40117
+KEY_BUDGET max_log2_pq=1775.35322 budget_bits=1782 global_key_fallback=absent
+KEYSWITCH Q=4 P=4 dnum=1
+KEYSWITCH Q=5 P=5 dnum=1
+KEYSWITCH Q=6 P=6 dnum=1
+KEYSWITCH Q=24 P=12 dnum=2
+KEYSWITCH Q=26 P=13 dnum=2
+KEYSWITCH Q=28 P=14 dnum=2
+KEYSWITCH Q=29 P=15 dnum=2
+KEYSWITCH Q=31 P=16 dnum=2
+KEYSWITCH Q=32 P=16 dnum=2
+KEYSWITCH Q=33 P=17 dnum=2
+KEYSWITCH Q=34 P=17 dnum=2
+KEYSWITCH Q=36 P=18 dnum=2
+KEYSWITCH Q=37 P=19 dnum=2
+KEYSWITCH Q=39 P=13 dnum=3
+KEYSWITCH Q=41 P=14 dnum=3
+KEYSWITCH Q=42 P=14 dnum=3
+KEYSWITCH Q=43 P=11 dnum=4
+SECRET_AUDIT role=q26_projected_main actual_h=32768 rns_limbs=52 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+KEY_BUDGET experiment=q26-dnum1 kind=relin active_q=26 storage_q=26 P=26 dnum=1 log2_pq=1651.326
+SETUP seconds=312.013111 pool_reserved_MiB=17664
+BENCH_CASE name=q26-dnum2
+PRECISION sample=warmup slots=32768 output_q=24 log2_scale=40 max_abs=0.000862172157 rms=0.000277600757 max_abs_limit=0.001
+PRECISION sample=timed slots=32768 output_q=24 log2_scale=40 max_abs=0.000862172157 rms=0.000277600757 max_abs_limit=0.001
+CUDA_EVENT samples_ms=62.3943672,62.2776337,62.1885452,61.2935677,61.2904968,61.2526093,61.2730865,61.2372475,61.2208633,61.3529587,61.2577286,61.2802544,61.2761612,61.2648964,61.2495346,61.2597771,61.2229118,61.2413445,61.215744,61.2095985,61.2505608,61.2505608,61.2290573,61.1676178,61.2638702,61.211647,61.2044792,61.2270088,61.2413445,61.2372475,61.2454414,61.2669449,61.2628479,61.2331505,61.2311058,61.302784 median_ms=61.2505608
+ONLINE_WALL samples_ms=62.418783,62.285574,62.197087,61.301153,61.298548,61.261364,61.281744,61.244634,61.228314,61.367973,61.265544,61.28942,61.283754,61.272292,61.257568,61.272154,61.230258,61.254254,61.224639,61.217642,61.259809,61.258504,61.240635,61.17896,61.272509,61.220214,61.212861,61.235085,61.249805,61.25335,61.259022,61.276989,61.272229,61.240517,62.324223,61.311182 median_ms=61.2605865
+GPU_ACTIVITY_TIMING gpu_total_ms=2202.894456 activities=19332 host_transfers=0 host_transfer_bytes=0
+CUPTI calls=36 activity_ms_per_boot=61.1915127 pool_reserved_MiB=17664
+PRECISION sample=cupti slots=32768 output_q=24 log2_scale=40 max_abs=0.000862172157 rms=0.000277600757 max_abs_limit=0.001
+BENCH_CASE name=q26-dnum1
+PRECISION sample=warmup slots=32768 output_q=24 log2_scale=40 max_abs=0.000862229581 rms=0.000277595816 max_abs_limit=0.001
+PRECISION sample=timed slots=32768 output_q=24 log2_scale=40 max_abs=0.000862229581 rms=0.000277595816 max_abs_limit=0.001
+CUDA_EVENT samples_ms=61.424736,61.3639679,61.3415985,61.2825279,61.3140144,61.261055,61.2805138,61.2940178,61.2479362,61.2813759,61.3277779,61.2745285,61.3151054,61.3156166,61.252224,61.3057289,61.304512,61.2664642,61.288929,61.2703362,61.2761917,61.271904,61.2305908,61.2487679,61.2416954,61.2721596,61.2911034,61.2843513,61.2230721,61.2375031,61.2703362,61.2578239,61.2984657,61.2897263,61.2357101,61.2501755 median_ms=61.2783527
+ONLINE_WALL samples_ms=61.445286,61.372955,61.351592,61.291626,61.322511,61.269641,61.289772,61.303151,61.256962,61.290593,61.336418,61.283337,61.323785,61.32415,61.261246,61.315616,61.313308,61.281088,61.298554,61.279006,61.289208,61.280619,61.243766,61.257593,61.255122,61.28609,61.304301,61.293386,61.240598,61.248499,61.279588,61.266854,61.314878,61.299813,61.244563,61.2599 median_ms=61.28949
+GPU_ACTIVITY_TIMING gpu_total_ms=2203.529077 activities=19224 host_transfers=0 host_transfer_bytes=0
+CUPTI calls=36 activity_ms_per_boot=61.209141 pool_reserved_MiB=17664
+PRECISION sample=cupti slots=32768 output_q=24 log2_scale=40 max_abs=0.000862229581 rms=0.000277595816 max_abs_limit=0.001
+PAIRED_OUTPUT slots=32768 max_abs_delta=4.31747423e-06 rms_delta=6.09366291e-07

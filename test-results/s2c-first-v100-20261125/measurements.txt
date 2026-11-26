@@ -1,0 +1,90 @@
+# 2026-11-25. Selected stdout from local Release / sm70 runs.
+# Native latencies use a synchronized wall clock; CUPTI below belongs to the separate benchmark.
+
+# Runtime, degree 59, V100-SXM2-32GB (device 3)
+# Source: acceptance-q50.log
+SECRET_AUDIT role=main actual_h=192 rns_limbs=75 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SETUP seconds=305.466
+PRECISION profile=s2c-first-degree59-da2-q50p25 q=31 log2_scale=40 max_abs=0.000869247822121 rms=0.000277620173255 slots=32768 slots_above_1e-3=0
+ONLINE profile=s2c-first-degree59-da2-q50p25 warmup=3 calls=18 median_ms=104.63877
+
+# Runtime, both degree 22 profiles, same key and ciphertext, V100-SXM2-32GB (device 1)
+# Source: acceptance-q43.log
+SECRET_AUDIT role=main actual_h=32768 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+KEY_BUDGET max_log2_pq=1775.35 budget_bits=1782 global_key_fallback=absent
+SETUP seconds=315.958
+PRECISION profile=s2c-first-degree22-da3-q43-dnum4-real-only q=24 log2_scale=40 max_abs=0.000860766145551 rms=0.000277600783899 slots=32768 slots_above_1e-3=0
+ONLINE profile=s2c-first-degree22-da3-q43-dnum4-real-only warmup=3 calls=18 median_ms=49.0010045
+PRECISION profile=s2c-first-degree22-da3-q43-dnum4 q=24 log2_scale=40 max_abs=0.000860899908851 rms=0.000277600893719 slots=32768 slots_above_1e-3=0
+ONLINE profile=s2c-first-degree22-da3-q43-dnum4 warmup=3 calls=18 median_ms=60.0698775
+
+# Runtime, degree 30, final V2 OperatorSpec / V9 plan, V100-SXM2-32GB (device 2)
+# Source: spec-v2-q30.log
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SETUP seconds=151.385
+PRECISION profile=s2c-first-degree30-da3-q34p9 q=14 log2_scale=50.1140754498 max_abs=22829.0725414 rms=126.114000507 slots=32768 slots_above_1e-3=32482
+DIAGNOSTIC_LATENCY profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=65.5410935
+[FAIL] maximum error exceeds 1e-3
+
+# Runtime, degree 30, preceding full-slot run, V100-SXM2-32GB (device 2)
+# Source: final-q30.log
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SETUP seconds=153.47
+PRECISION profile=s2c-first-degree30-da3-q34p9 q=14 log2_scale=50.1140754498 max_abs=0.159069185224 rms=0.0112414250292 slots=32768 slots_above_1e-3=32452
+DIAGNOSTIC_LATENCY profile=s2c-first-degree30-da3-q34p9 warmup=3 calls=18 median_ms=65.563556
+[FAIL] maximum error exceeds 1e-3
+
+# Degree 30, additional independent key, precision-only regression
+# Source: calibrated-q30.log
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SETUP seconds=154.136
+PRECISION profile=s2c-first-degree30-da3-q34p9 q=14 log2_scale=50.1140754498 max_abs=3.00118916713 rms=0.019939011295 slots=32768
+[FAIL] maximum error exceeds 1e-3
+
+# Degree 30, additional independent key, C2S coordinates replayed with a plaintext polynomial
+# Source: q30-oracle.log
+SECRET_AUDIT role=main actual_h=192 rns_limbs=43 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+ORACLE q=14 logscale=50.1140754498 max_domain=1.06346932856 outside=3 gpu_vs_polynomial=2.35633668766e-05 polynomial_vs_sine=0.127200597954 sine_vs_source=0.0336308698491 gpu_vs_source=0.159579697187 inside_domain_max_error=0.0598124369503 above_1e3=32465
+
+# Compatibility entry point, degree 22 at N=16384 with a nonzero secret
+# Source: public-legacy.log
+[INFO] output size=2 scale=3.51844e+13 q_count=11
+[FAIL] Runtime native bootstrap error exceeds tolerance: 5684.313714
+
+# Separate benchmark, paired Q43, also sampled with CUPTI
+# Source: agent22-target.log
+SECRET_AUDIT role=main actual_h=32768 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+KEY_BUDGET max_log2_pq=1775.35322 budget_bits=1782 global_key_fallback=absent
+SETUP seconds=310.739925 pool_reserved_MiB=17664
+PROFILE id=s2c-first-degree22-da3-q43-dnum4-real-only gpu="Tesla V100-SXM2-32GB" N=65536 degree=22 double_angle=3 K=12 Q=43 available_p=22 input_q=6 output_q=24 dnum1_max_q=22 input_encryption=symmetric_Q6 evalmod_branches=1 entropy=OS_random
+PRECISION sample=warmup slots=32768 output_q=24 log2_scale=40 max_abs=0.000860249336 rms=0.000277599047 max_abs_limit=0.001
+PRECISION sample=timed slots=32768 output_q=24 log2_scale=40 max_abs=0.000860249336 rms=0.000277599047 max_abs_limit=0.001
+ONLINE_WALL samples_ms=49.708639,49.665164,49.445494,48.906242,48.81947,48.812848,48.761627,48.900642,48.843461,48.810462,48.815704,48.822536,48.878056,48.781602,48.759907,48.775995,48.784007,48.743605 median_ms=48.817587
+CUPTI calls=18 activity_ms_per_boot=48.674513 pool_reserved_MiB=17664
+PRECISION sample=cupti slots=32768 output_q=24 log2_scale=40 max_abs=0.000860249336 rms=0.000277599047 max_abs_limit=0.001
+PROFILE id=s2c-first-degree22-da3-q43-dnum4 gpu="Tesla V100-SXM2-32GB" N=65536 degree=22 double_angle=3 K=12 Q=43 available_p=22 input_q=6 output_q=24 dnum1_max_q=22 input_encryption=symmetric_Q6 evalmod_branches=2 entropy=OS_random
+PRECISION sample=warmup slots=32768 output_q=24 log2_scale=40 max_abs=0.000860585859 rms=0.000277592584 max_abs_limit=0.001
+PRECISION sample=timed slots=32768 output_q=24 log2_scale=40 max_abs=0.000860585859 rms=0.000277592584 max_abs_limit=0.001
+ONLINE_WALL samples_ms=60.028502,59.912858,59.901473,59.887925,60.025066,59.99947,59.954291,59.979374,59.861876,59.986315,59.976219,59.962384,59.944338,59.983888,59.935309,59.927569,59.96971,59.924198 median_ms=59.9583375
+CUPTI calls=18 activity_ms_per_boot=59.8788329 pool_reserved_MiB=17664
+PRECISION sample=cupti slots=32768 output_q=24 log2_scale=40 max_abs=0.000860585859 rms=0.000277592584 max_abs_limit=0.001
+
+# Poseidon CPU API
+# Source: cpu-api-verified.log
+[PASS] secret weight and RNS audit rejects invalid keys
+10 Poseidon CPU Runtime Api tests passed
+
+# Poseidon GPU API, two devices
+# Source: gpu-api-two.log
+25 Poseidon GPU Runtime Api tests passed
+
+# ckks-runtime codec, verification, and runtime tests
+# Source: verified-ctest.log
+100% tests passed, 0 tests failed out of 8
+
+# CPU/GPU adapters, original unmodified ckks-runtime headers (compile check only)
+# Source: old-headers.log
+PASS poseidon_cpu_api.cpp against unmodified ckks-runtime 369bdc55 headers
+PASS poseidon_gpu_api.cpp against unmodified ckks-runtime 369bdc55 headers

@@ -2,6 +2,7 @@
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
 #include "poseidon/gpu/gpu_bootstrap_profile.h"
+#include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
@@ -11,6 +12,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
+#include <iomanip>
 #include <complex>
 #include <cstdint>
 #include <cstdlib>
@@ -80,7 +83,7 @@ poseidon::PoseidonContext make_context(std::size_t degree)
         log_n,
         log_n - 1,
         kLogScale,
-        /*hamming_weight=*/0,
+        /*hamming_weight=*/192,
         kQ0Level,
         poseidon::Modulus(0),
         {},
@@ -176,7 +179,7 @@ fhegpu::LoadedRuntimePlan make_plan(
 {
     const auto host = host_place();
     const auto device = device_place();
-    const int input_level = loaded_spec.spec.level_upper_bound;
+    const int input_level = profile.input_level_max;
 
     fhegpu::RuntimePlan plan;
     plan.plan_id = 1;
@@ -229,9 +232,125 @@ std::vector<std::complex<double>> make_message(std::size_t slot_count)
     return result;
 }
 
+void public_profiles(const std::vector<std::string_view> &names)
+{
+    using namespace poseidon;
+    using namespace runtime_api;
+    using Clock = std::chrono::steady_clock;
+    const auto setup = Clock::now();
+    auto ctx = make_s2c_bootstrap_context(names.front());
+    auto secret = make_s2c_bootstrap_secret(ctx, names.front());
+    KeyGenerator keygen(ctx, secret);
+    PoseidonGpuApi api(kContextId, ctx, 0);
+    const auto profiles = api.configure_s2c_bootstrap(0, keygen, names);
+    CKKSEncoder encoder(ctx);
+    Decryptor decryptor(ctx, secret);
+    std::vector<std::complex<double>> message(32768);
+    const bool complex_input = names.front() == s2c_bootstrap_profiles[1];
+    for (size_t i = 0; i < message.size(); ++i)
+        message[i] = {0.3 * std::sin(0.07 * i) + 0.2 * std::cos(0.17 * i),
+                      complex_input ? 0.21 * std::cos(0.11 * i) - 0.09 * std::sin(0.13 * i) : 0.0};
+    Plaintext plain;
+    encoder.encode(message, ctx.crt_context()->parms_id_map().at(5), std::exp2(40.0), plain);
+    Ciphertext ct;
+    Encryptor(ctx, secret).encrypt_symmetric(plain, ct);
+    const auto resident =
+        PoseidonGpuValue::from_device_ciphertext(gpu::GpuUploader::upload_ciphertext(ct, 0));
+    const auto host = PoseidonGpuValue::from_host_ciphertext(std::move(ct));
+    std::cout << "SETUP seconds=" << std::chrono::duration<double>(Clock::now() - setup).count()
+              << std::endl;
+    for (const auto &profile : profiles)
+    {
+        const auto spec = make_operator_spec(ctx, profile);
+        const auto plan = make_plan(spec, profile);
+        if (spec.spec.format_version != 1 || plan.plan.format_version != 1)
+            throw std::runtime_error("public Boot profiles require OperatorSpec V1 and RuntimePlan V1");
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api);
+        auto check_precision = [&](const PoseidonGpuValue &input,
+                                   const std::vector<std::complex<double>> &reference,
+                                   const char *pattern, int trial) {
+            const auto artifact = runtime.run(plan, {spec, std::nullopt, false}, {{0, input}});
+            const auto &out = artifact.values.at(3).value.host_ciphertext();
+            const double log_scale = std::log2(out.scale());
+            if (complex_input && (out.coeff_modulus_size() != 14 ||
+                out.scale() != std::exp2(50.0)))
+                throw std::runtime_error("degree-30 complex Boot changed its Q14/scale contract");
+            Plaintext decrypted;
+            decryptor.decrypt(out, decrypted);
+            std::vector<std::complex<double>> decoded;
+            encoder.decode(decrypted, decoded);
+            if (decoded.size() != reference.size())
+                throw std::runtime_error("slot count mismatch");
+            double max_err = 0, ss = 0;
+            size_t above_target = 0, failed = 0;
+            for (size_t i = 0; i < reference.size(); ++i)
+            {
+                const double err = std::abs(decoded[i] - reference[i]);
+                if (!std::isfinite(err))
+                    throw std::runtime_error("nonfinite Boot error");
+                max_err = std::max(max_err, err);
+                ss += err * err;
+                above_target += err > 0.0001;
+                failed += err > 0.001;
+            }
+            std::cout << std::setprecision(12) << "PRECISION profile=" << profile.profile_id
+                      << " pattern=" << pattern << " trial=" << trial
+                      << " q=" << out.coeff_modulus_size() << " log2_scale=" << log_scale
+                      << " max_abs=" << max_err << " rms=" << std::sqrt(ss / decoded.size())
+                      << " slots=" << decoded.size() << " slots_above_1e-3=" << failed
+                      << " slots_above_1e-4=" << above_target << std::endl;
+            return failed;
+        };
+
+        size_t failed_slots = check_precision(host, message, "mixed", 0);
+        if (complex_input)
+        {
+            auto corners = message;
+            for (size_t i = 0; i < corners.size(); ++i)
+                corners[i] = {i % 2 ? 0.5 : -0.5, i % 4 < 2 ? 0.5 : -0.5};
+            const auto grid = make_message(message.size());
+            const std::vector<std::complex<double>> zero(message.size());
+            auto check_fresh = [&](const auto &reference, const char *pattern, int trial) {
+                Plaintext pt;
+                encoder.encode(reference, ctx.crt_context()->parms_id_map().at(5), std::exp2(40.0), pt);
+                Ciphertext ct;
+                Encryptor(ctx, secret).encrypt_symmetric(pt, ct);
+                return check_precision(PoseidonGpuValue::from_host_ciphertext(std::move(ct)),
+                                       reference, pattern, trial);
+            };
+            for (int trial = 0; trial < 3; ++trial)
+            {
+                if (trial != 0)
+                    failed_slots += check_fresh(message, "mixed", trial);
+                failed_slots += check_fresh(grid, "legacy-grid", trial);
+                failed_slots += check_fresh(corners, "complex-corners", trial);
+                failed_slots += check_fresh(zero, "zero-message", trial);
+            }
+        }
+
+        // Time only a resident native Boot. The verifier above also exercised host transfers.
+        const auto &op = std::get<fhegpu::ComputeOp>(plan.plan.execution[0].body);
+        const std::vector<PoseidonGpuValue> inputs{resident};
+        std::vector<double> samples;
+        for (int i = -3; i < 18; ++i)
+        {
+            const auto t = Clock::now();
+            auto output = api.compute(op, inputs);
+            api.synchronize(output);
+            if (i >= 0)
+                samples.push_back(std::chrono::duration<double, std::milli>(Clock::now() - t).count());
+        }
+        std::sort(samples.begin(), samples.end());
+        std::cout << (failed_slots ? "DIAGNOSTIC_LATENCY" : "ONLINE")
+                  << " profile=" << profile.profile_id
+                  << " warmup=3 calls=18 median_ms=" << (samples[8] + samples[9]) / 2 << std::endl;
+        if (failed_slots)
+            throw std::runtime_error("maximum error exceeds 1e-3");
+    }
+}
 } // namespace
 
-int main()
+int main(int argc, char **argv)
 {
     int device_count = 0;
     const cudaError_t cuda_status = cudaGetDeviceCount(&device_count);
@@ -244,6 +363,17 @@ int main()
 
     try
     {
+        if (argc == 1)
+        {
+            const auto &profiles = poseidon::runtime_api::s2c_bootstrap_profiles;
+            public_profiles({profiles[3], profiles[2]});
+            return 0;
+        }
+        if (argc != 2 || std::string_view(argv[1]) != "--legacy-diagnostic")
+        {
+            public_profiles(std::vector<std::string_view>(argv + 1, argv + argc));
+            return 0;
+        }
         const std::size_t degree = env_size_or(
             "POSEIDON_RUNTIME_BOOTSTRAP_DEGREE", 16384);
         auto context = make_context(degree);

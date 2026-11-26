@@ -1,0 +1,52 @@
+# Historical benchmark measurement lines, 2026-11-23, Tesla V100-SXM2-32GB
+PROFILE id=s2c-first-degree22-da3-full-coefficients-q43p22 gpu="Tesla V100-SXM2-32GB" N=65536 degree=22 double_angle=3 K=12 Q=43 P=22 input_q=6 output_q=24 dnum1_max_q=9 evalmod_branches=2 entropy=OS_random
+SECRET_AUDIT role=main actual_h=32768 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=balanced_fixed_weight
+SECRET_AUDIT role=ephemeral actual_h=32 rns_limbs=65 nonzero=PASS ternary=PASS RNS=PASS distribution=fixed_weight
+GPU_BOOT_SSE dense_to_ephemeral_modulus=low q=2 p=2 bits=127.971963 ephemeral_h=32
+GPU_BOOT_LEVEL_P galois_level q=4 elements=11
+GPU_BOOT_LEVEL_P galois_level q=5 elements=15
+GPU_BOOT_LEVEL_P galois_level q=6 elements=15
+GPU_BOOT_LEVEL_P galois_level q=24 elements=1
+GPU_BOOT_LEVEL_P galois_level q=39 elements=1
+GPU_BOOT_LEVEL_P galois_level q=41 elements=15
+GPU_BOOT_LEVEL_P galois_level q=42 elements=15
+GPU_BOOT_LEVEL_P galois_level q=43 elements=11
+GPU_BOOT_LEVEL_P p=4 dnum=1 top_q=4 levels=1 galois_levels=1 elements=11 relin_levels=0 key_modulus_bits=255.944213
+GPU_BOOT_LEVEL_P p=5 dnum=1 top_q=5 levels=1 galois_levels=1 elements=15 relin_levels=0 key_modulus_bits=319.93021
+GPU_BOOT_LEVEL_P p=6 dnum=1 top_q=6 levels=1 galois_levels=1 elements=15 relin_levels=0 key_modulus_bits=383.916918
+GPU_BOOT_LEVEL_P p=12 dnum=2 top_q=24 levels=1 galois_levels=1 elements=1 relin_levels=0 key_modulus_bits=1143.57076
+GPU_BOOT_LEVEL_P p=13 dnum=2 top_q=26 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1238.54066
+GPU_BOOT_LEVEL_P p=14 dnum=2 top_q=28 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1332.47288
+GPU_BOOT_LEVEL_P p=15 dnum=2 top_q=29 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1395.45055
+GPU_BOOT_LEVEL_P p=16 dnum=2 top_q=32 levels=2 galois_levels=0 elements=0 relin_levels=2 key_modulus_bits=1522.41834
+GPU_BOOT_LEVEL_P p=17 dnum=2 top_q=34 levels=2 galois_levels=0 elements=0 relin_levels=2 key_modulus_bits=1617.39389
+GPU_BOOT_LEVEL_P p=18 dnum=2 top_q=36 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1711.37588
+GPU_BOOT_LEVEL_P p=19 dnum=2 top_q=37 levels=1 galois_levels=0 elements=0 relin_levels=1 key_modulus_bits=1775.35322
+GPU_BOOT_LEVEL_P p=20 dnum=2 top_q=39 levels=1 galois_levels=1 elements=1 relin_levels=1 key_modulus_bits=1870.33066
+GPU_BOOT_LEVEL_P p=21 dnum=2 top_q=42 levels=2 galois_levels=2 elements=29 relin_levels=0 key_modulus_bits=1998.29807
+GPU_BOOT_LEVEL_P p=22 dnum=2 top_q=43 levels=1 galois_levels=1 elements=11 relin_levels=0 key_modulus_bits=2060.23224 shared_with_main=true
+GPU_BOOT_LEVEL_P mode=performance groups=14 adopted_levels=16 main_galois_elements=11 max_key_modulus_bits=2060.23224
+KEYSWITCH Q=4 P=4 dnum=1
+KEYSWITCH Q=5 P=5 dnum=1
+KEYSWITCH Q=6 P=6 dnum=1
+KEYSWITCH Q=24 P=12 dnum=2
+KEYSWITCH Q=26 P=13 dnum=2
+KEYSWITCH Q=28 P=14 dnum=2
+KEYSWITCH Q=29 P=15 dnum=2
+KEYSWITCH Q=31 P=16 dnum=2
+KEYSWITCH Q=32 P=16 dnum=2
+KEYSWITCH Q=33 P=17 dnum=2
+KEYSWITCH Q=34 P=17 dnum=2
+KEYSWITCH Q=36 P=18 dnum=2
+KEYSWITCH Q=37 P=19 dnum=2
+KEYSWITCH Q=39 P=20 dnum=2
+KEYSWITCH Q=41 P=21 dnum=2
+KEYSWITCH Q=42 P=21 dnum=2
+SETUP seconds=324.108248 pool_reserved_MiB=17664
+PRECISION sample=warmup slots=32768 output_q=24 log2_scale=40 max_abs=0.000860578886 rms=0.000277600235 max_abs_limit=0.001
+PRECISION sample=timed slots=32768 output_q=24 log2_scale=40 max_abs=0.000860578886 rms=0.000277600235 max_abs_limit=0.001
+CUDA_EVENT samples_ms=57.6071663,57.6430092,57.665535,57.2907524,56.6640625,56.7121925,56.650753,56.6251526,56.6312943,56.5760002,56.6364174,56.6384659,56.6231041,56.5637131,56.5862389,56.5698547,56.5811195,56.5647354 median_ms=56.6338558
+ONLINE_WALL samples_ms=57.631881,57.661907,57.680006,57.299261,56.674177,56.721324,56.658993,56.632967,56.639925,56.584964,56.645085,56.646841,56.632685,56.572719,56.595042,56.584843,56.589693,56.572535 median_ms=56.642505
+GPU_ACTIVITY_TIMING gpu_total_ms=1017.902125 activities=8928 host_transfers=0 host_transfer_bytes=0
+CUPTI calls=18 activity_ms_per_boot=56.5501181 pool_reserved_MiB=17664
+PRECISION sample=cupti slots=32768 output_q=24 log2_scale=40 max_abs=0.000860578886 rms=0.000277600235 max_abs_limit=0.001

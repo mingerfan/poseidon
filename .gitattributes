@@ -2,3 +2,7 @@
 llm_dsl/** -text -whitespace
 test-results/qwen-dacapo-188-20261010/** -text -whitespace
 test-results/qwen24-dacapo-188-20261010/** -text -whitespace
+
+# A blank context line in a unified diff starts with a required space.
+bench/bootstrap_agent22/vendor/local.patch whitespace=-blank-at-eol
+src/poseidon/runtime_api/s2c/native.patch whitespace=-blank-at-eol

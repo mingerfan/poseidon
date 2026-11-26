@@ -1,6 +1,7 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 
 #include "gpu_plaintext_encoder.h"
+#include "s2c/native_boot.h"
 #include "rescale_normalization.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
@@ -842,6 +843,10 @@ struct PoseidonGpuApi::DeviceState
               galois_keys(std::move(galois_keys))
         {}
 
+        NativeBootstrapState(std::shared_ptr<s2c::NativeBoot> backend, bool real)
+            : s2c_boot(std::move(backend)), real_only(real) {}
+        std::shared_ptr<s2c::NativeBoot> s2c_boot;
+        bool real_only = false;
         gpu::GpuBootstrapData bootstrap_data;
         std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys;
         std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys;
@@ -1426,6 +1431,50 @@ PoseidonGpuApi::~PoseidonGpuApi()
     }
 }
 
+std::vector<fhegpu::BootProfile> PoseidonGpuApi::configure_s2c_bootstrap(
+    int index, KeyGenerator &generator, const std::vector<std::string_view> &ids)
+{
+    if (ids.empty())
+        throw std::invalid_argument("select at least one S2C-first Boot profile");
+    auto &device = device_state(index);
+    auto &installed = device.native_bootstrap_by_profile;
+    std::set<std::string_view> requested;
+    for (const auto id : ids)
+    {
+        const auto first = s2c_bootstrap_profiles.begin();
+        const auto end = s2c_bootstrap_profiles.end();
+        if (std::find(first, end, id) == end || !requested.insert(id).second ||
+            installed.count(std::string(id)))
+            throw std::invalid_argument("unknown or duplicate S2C-first Boot profile: " +
+                                        std::string(id));
+        if (id != ids.front() &&
+            ((id != first[2] && id != first[3]) || (ids.front() != first[2] && ids.front() != first[3])))
+            throw std::invalid_argument("requested Boot profiles require different encryption contexts");
+    }
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "select S2C-first Boot setup device");
+    auto backend =
+        std::make_shared<s2c::NativeBoot>(context_, generator, device.cuda_device_id, ids.front());
+    decltype(device.native_bootstrap_by_profile) pending;
+    std::vector<fhegpu::BootProfile> descriptors;
+    for (const auto id : ids)
+    {
+        fhegpu::BootProfile profile;
+        profile.profile_id = std::string(id);
+        profile.implementation = fhegpu::BootImplementation::Native;
+        profile.input_level_min = profile.input_level_max = 5;
+        profile.input_components = profile.output_components = 2;
+        profile.output_level = backend->output_level();
+        profile.output_scale_log2 = backend->output_scale_log2();
+        profile.needs_secret_key = profile.needs_host_compute = false;
+        pending.emplace(profile.profile_id, std::make_unique<DeviceState::NativeBootstrapState>(
+                                                backend, id == s2c_bootstrap_profiles[3]));
+        descriptors.push_back(std::move(profile));
+    }
+    installed.reserve(installed.size() + pending.size());
+    installed.merge(pending);
+    return descriptors;
+}
+
 void PoseidonGpuApi::configure_native_bootstrap(
     std::string operator_profile,
     int logical_device_index,
@@ -1454,6 +1503,9 @@ void PoseidonGpuApi::configure_native_bootstrap(
     std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
     std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys)
 {
+    if (std::find(s2c_bootstrap_profiles.begin(),s2c_bootstrap_profiles.end(),operator_profile)
+        != s2c_bootstrap_profiles.end())
+        throw std::invalid_argument("use configure_s2c_bootstrap for a reserved public Boot profile");
     if (operator_profile.empty())
     {
         throw std::invalid_argument(
@@ -2069,13 +2121,16 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             try
             {
                 auto &native = *resources->second;
-                device.evaluator->bootstrap(
-                    require_ciphertext(inputs, 0),
-                    native.bootstrap_data,
-                    *native.relin_keys,
-                    *native.galois_keys,
-                    native.workspace,
-                    output);
+                if (native.s2c_boot)
+                {
+                    native.s2c_boot->execute(require_ciphertext(inputs, 0), native.real_only, output);
+                }
+                else
+                {
+                    device.evaluator->bootstrap(
+                        require_ciphertext(inputs, 0), native.bootstrap_data, *native.relin_keys,
+                        *native.galois_keys, native.workspace, output);
+                }
                 if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
                     output.meta.component_count !=
                         static_cast<std::size_t>(attrs.target_components) ||

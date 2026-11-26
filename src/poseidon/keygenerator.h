@@ -54,6 +54,8 @@ public:
     Returns a const reference to the secret key.
     */
     POSEIDON_NODISCARD const SecretKey &secret_key() const;
+    std::size_t actual_positive_count() const noexcept { return actual_positive_count_; }
+    std::size_t actual_secret_weight() const noexcept { return actual_secret_weight_; }
 
     /**
     Generates a public key and stores the result in destination. Every time
@@ -360,6 +362,8 @@ private:
 
     mutable util::ReaderWriterLocker secret_key_array_locker_;
 
+    std::size_t actual_secret_weight_ = 0;
+    std::size_t actual_positive_count_ = 0;
     bool sk_generated_ = false;
 
     bool using_keyswitch_ = true;

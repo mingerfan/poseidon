@@ -1,0 +1,255 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -212,7 +212,10 @@
+         message(STATUS "spdlog: download ...")
+         poseidon_fetch_thirdparty_content(ExternalSpdlog)
+     else()
+-        find_package(spdlog REQUIRED)
++        include("${POSEIDON_INCLUDES_DIR}/third_party/rmm/rapids_config.cmake")
++        include(rapids-cpm)
++        rapids_cpm_init()
++        include("${POSEIDON_INCLUDES_DIR}/third_party/rmm/cmake/thirdparty/get_spdlog.cmake")
+         # RMM also uses these packages from a child directory and requires
+         # global imported targets. Promote them where find_package created them.
+         foreach(_logging_target IN ITEMS
+@@ -411,3 +414,5 @@
+         ARCHIVE DESTINATION lib
+         PUBLIC_HEADER DESTINATION include
+ )
++
++include("${POSEIDON_AGENT22_BENCH_DIR}/benchmark.cmake")
+--- a/src/poseidon/gpu/gpu_bootstrap_profile.cpp
++++ b/src/poseidon/gpu/gpu_bootstrap_profile.cpp
+@@ -1,4 +1,5 @@
+ #include "poseidon/gpu/gpu_bootstrap_profile.h"
++#include "secret_audit.h"
+ 
+ #include "poseidon/advance/homomorphic_dft.h"
+ #include "poseidon/advance/homomorphic_mod.h"
+@@ -261,6 +262,8 @@
+     secret.data().resize(context, parms_id, degree * modulus_count);
+     util::sample_poly_ternary_with_hamming(context.random_generator()->create(), context,
+                                            parms_id, hamming_weight, secret.data().data());
++    agent22::audit_secret("ephemeral", secret.data().data(), degree,
++                          key_context.coeff_modulus(), hamming_weight, false);
+     util::RNSIter coefficients(secret.data().data(), degree);
+     util::ntt_negacyclic_harvey(coefficients, modulus_count,
+                                 global_context_data->small_ntt_tables());
+@@ -440,7 +443,7 @@
+         double p_bits = 0;
+         for (std::size_t j = 0; j < candidate; ++j)
+             p_bits += std::log2(static_cast<double>(global.p()[j].value()));
+-        if (q_bits + p_bits <= options.secure_modulus_bits)
++        if (q_bits + p_bits < options.secure_modulus_bits)
+             return candidate;
+     }
+     throw std::invalid_argument("secure Boot special modulus: Q" + std::to_string(q) +
+@@ -451,9 +454,8 @@
+ // levels are grouped by their P; each group gets one Q-prefix + P-prefix
+ // sub-context covering its highest level, its Galois keys (the group's
+ // elements) and/or relinearization key, and the parameter levels to adopt.
+-// A group whose P is the context's own keeps the main keys and levels, and
+-// the main Galois key set is regenerated with only the elements those levels
+-// use (or just the conjugation key when every level has its own P).
++// Performance mode can share the full-context key set. Secure mode always
++// generates each group on its own actual Q-prefix and P-prefix.
+ void install_level_special_modulus(
+     const PoseidonContext &context,
+     KeyGenerator &key_generator,
+@@ -469,6 +471,8 @@
+     const std::size_t degree = context.crt_context()->key_context_data()->parms().degree();
+     const std::size_t global_q = global.q().size();
+     const std::size_t global_p = global.p().size();
++    const bool bounded_keys =
++        options.level_special_modulus == GpuResNet20ManualOptions::LevelSpecialModulus::Secure;
+     struct Group
+     {
+         std::size_t top_q = 0;
+@@ -503,6 +507,9 @@
+         double bits = 0;
+         for (std::size_t i = 0; i < group.top_q; ++i) bits += std::log2(double(global.q()[i].value()));
+         for (std::size_t j = 0; j < p; ++j) bits += std::log2(double(global.p()[j].value()));
++        if (bounded_keys && !(bits < options.secure_modulus_bits))
++            throw std::logic_error("GPU bootstrap key group exceeds the modulus budget");
++        const bool share_global_p = !bounded_keys && p == global_p;
+         max_bits = std::max(max_bits, bits);
+         std::cout << "GPU_BOOT_LEVEL_P p=" << p << " dnum=" << (group.top_q + p - 1) / p
+                   << " top_q=" << group.top_q << " levels=" << group.levels.size()
+@@ -510,8 +517,8 @@
+                   << " elements=" << group.elements.size()
+                   << " relin_levels=" << group.relin_levels.size()
+                   << " key_modulus_bits=" << bits
+-                  << (p == global_p ? " shared_with_main=true" : "") << '\n';
+-        if (p == global_p)
++                  << (share_global_p ? " shared_with_main=true" : "") << '\n';
++        if (share_global_p)
+         {
+             main_elements.insert(group.elements.begin(), group.elements.end());
+             main_galois_levels.insert(main_galois_levels.end(),
+@@ -559,9 +566,10 @@
+             level_parameters.push_back(donor.take_level_by_q_count(q));
+         }
+     }
+-    // The main Galois set keeps only what the shared-P levels use.
+-    main_elements.insert(context.crt_context()->galois_tool()->get_elt_from_step(0));
+-    {
++    if (!bounded_keys)
++    {
++        // The main Galois set keeps only what the shared-P levels use.
++        main_elements.insert(context.crt_context()->galois_tool()->get_elt_from_step(0));
+         GaloisKeys cpu;
+         key_generator.create_galois_keys(
+             std::vector<std::uint32_t>(main_elements.begin(), main_elements.end()), cpu);
+@@ -943,6 +951,10 @@
+     const GpuResNet20ManualOptions &options)
+ {
+     const auto parameters = context.parameters_literal();
++    const bool bounded_keys =
++        options.level_special_modulus == GpuResNet20ManualOptions::LevelSpecialModulus::Secure;
++    if (bounded_keys && options.sparse_secret_hamming_weight && sparse_low_p_count() == 0)
++        throw std::invalid_argument("bounded bootstrap requires a low-modulus sparse switching key");
+     // The saved Q50 chain, or Q49 when the application leaves out one of the
+     // convolution primes below the Boot (its merged-mask convolution uses two
+     // levels). The Boot's own primes are the same physical primes either way:
+@@ -1021,23 +1033,30 @@
+     Polynomial coefficients = polynomial.sine_poly();
+     for (auto &coefficient : coefficients.data()) coefficient *= seed;
+ 
+-    RelinKeys cpu_relin;
+-    key_generator.create_relin_keys(cpu_relin);
+-    auto relin = std::make_shared<GpuRelinKeysData>(
+-        GpuUploader::upload_relin_keys(cpu_relin, cuda_device_id));
++    auto relin = std::make_shared<GpuRelinKeysData>();
++    if (!bounded_keys)
++    {
++        RelinKeys cpu_relin;
++        key_generator.create_relin_keys(cpu_relin);
++        *relin = GpuUploader::upload_relin_keys(cpu_relin, cuda_device_id);
++    }
+     auto eval_mod = GpuUploader::upload_eval_mod_high_precision(
+-        polynomial, encoder, c2s_id, cuda_device_id, relin.get(), parms_id_zero, 1,
++        polynomial, encoder, c2s_id, cuda_device_id,
++        bounded_keys ? nullptr : relin.get(), parms_id_zero, 1,
+         &coefficients, true, std::numeric_limits<std::uint32_t>::max(),
+         polynomial.sqrt_2pi() * seed, NAN, true, c2s_scale, false, upload_options);
+     if (eval_mod.output_q_count != native.output_q_count ||
+         std::abs(eval_mod.output_scale / native.output_scale - 1) > 1e-12)
+         throw std::runtime_error("manual ResNet20 output fold changed the Q/scale schedule");
+-    auto cpu_rotations = make_galois_keys(context, key_generator, c2s, s2c);
+-    auto rotations = std::make_shared<GpuGaloisKeysData>(
+-        GpuUploader::upload_double_hoist_galois_keys(cpu_rotations, cuda_device_id));
+-    GpuUploader::prepare_key_views_for_q_counts(*rotations,
+-        merge_q_counts(required_dft_key_q_counts(full_q, c2s, true),
+-            merge_q_counts(required_dft_key_q_counts(6, s2c, false), {output_q})));
++    auto rotations = std::make_shared<GpuGaloisKeysData>();
++    if (!bounded_keys)
++    {
++        auto cpu_rotations = make_galois_keys(context, key_generator, c2s, s2c);
++        *rotations = GpuUploader::upload_double_hoist_galois_keys(cpu_rotations, cuda_device_id);
++        GpuUploader::prepare_key_views_for_q_counts(*rotations,
++            merge_q_counts(required_dft_key_q_counts(full_q, c2s, true),
++                merge_q_counts(required_dft_key_q_counts(6, s2c, false), {output_q})));
++    }
+     GpuBootstrapData data;
+     data.linear_transform_mode = GpuLinearTransformMode::DoubleHoistBsgs;
+     data.allow_environment_linear_transform_override = false;
+--- a/src/poseidon/basics/util/rlwe.cpp
++++ b/src/poseidon/basics/util/rlwe.cpp
+@@ -59,8 +59,8 @@
+ 
+     RandomToStandardAdapter engine(prng);
+     uniform_int_distribution<uint64_t> dist(0, 2);
+-    if (hamming_weight > coeff_count)
+-        throw std::invalid_argument("secret Hamming weight exceeds polynomial degree");
++    if (hamming_weight == 0 || hamming_weight > coeff_count)
++        throw std::invalid_argument("fixed secret Hamming weight requires 1 <= h <= N");
+     set_zero_poly(coeff_count, coeff_modulus_size, destination);
+     uniform_int_distribution<size_t> dist_deg(0, coeff_count - 1);
+ 
+--- a/src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu
++++ b/src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu
+@@ -854,6 +854,13 @@
+                     ? 0u
+                     : ((limb < 2 * self_digit_p_count) ? 1u : 2u);
+             }
++            else if constexpr (FixedDnum == 3)
++            {
++                // For a three-digit Q partition, each Q limb is in exactly
++                // one of the first, second, or final partial digit.
++                self_digit = static_cast<std::size_t>(limb >= self_digit_p_count) +
++                    static_cast<std::size_t>(limb >= 2 * self_digit_p_count);
++            }
+             else
+             {
+                 self_digit = limb / self_digit_p_count;
+@@ -1542,8 +1549,10 @@
+                     FixedDnum > 0 ? static_cast<std::size_t>(FixedDnum) : dnum;
+                 const GpuWord *k0_0 = (FixedDnum >= 1) ? key0_ptrs[key_base] : nullptr;
+                 const GpuWord *k1_0 = (FixedDnum >= 1) ? key1_ptrs[key_base] : nullptr;
+-                const GpuWord *k0_1 = (FixedDnum == 2) ? key0_ptrs[key_base + 1] : nullptr;
+-                const GpuWord *k1_1 = (FixedDnum == 2) ? key1_ptrs[key_base + 1] : nullptr;
++                const GpuWord *k0_1 = (FixedDnum >= 2) ? key0_ptrs[key_base + 1] : nullptr;
++                const GpuWord *k1_1 = (FixedDnum >= 2) ? key1_ptrs[key_base + 1] : nullptr;
++                const GpuWord *k0_2 = (FixedDnum == 3) ? key0_ptrs[key_base + 2] : nullptr;
++                const GpuWord *k1_2 = (FixedDnum == 3) ? key1_ptrs[key_base + 2] : nullptr;
+ 
+ #pragma unroll
+                 for (int item = 0; item < ItemsPerThread; ++item)
+@@ -1573,7 +1582,7 @@
+                             pmac_mac(lazy0, d0, k0_0[source_index]);
+                             pmac_mac(lazy1, d0, k1_0[source_index]);
+                         }
+-                        else if constexpr (FixedDnum == 2)
++                        else if constexpr (FixedDnum == 2 || FixedDnum == 3)
+                         {
+                             const GpuWord d0 = digits[source_index];
+                             const GpuWord d1 = digits[words_per_digit + source_index];
+@@ -1581,6 +1590,12 @@
+                             pmac_mac(lazy1, d0, k1_0[source_index]);
+                             pmac_mac(lazy0, d1, k0_1[source_index]);
+                             pmac_mac(lazy1, d1, k1_1[source_index]);
++                            if constexpr (FixedDnum == 3)
++                            {
++                                const GpuWord d2 = digits[2 * words_per_digit + source_index];
++                                pmac_mac(lazy0, d2, k0_2[source_index]);
++                                pmac_mac(lazy1, d2, k1_2[source_index]);
++                            }
+                         }
+                         else
+                         {
+@@ -2886,6 +2901,8 @@
+             dispatch_giant_q(std::true_type{}, std::integral_constant<int, 1>{});
+         else if (dnum == 2)
+             dispatch_giant_q(std::true_type{}, std::integral_constant<int, 2>{});
++        else if (dnum == 3)
++            dispatch_giant_q(std::true_type{}, std::integral_constant<int, 3>{});
+         else
+             dispatch_giant_q(std::true_type{}, std::integral_constant<int, 0>{});
+     }
+@@ -2930,6 +2947,8 @@
+             launch_giant_p(std::true_type{}, std::integral_constant<int, 1>{});
+         else if (dnum == 2)
+             launch_giant_p(std::true_type{}, std::integral_constant<int, 2>{});
++        else if (dnum == 3)
++            launch_giant_p(std::true_type{}, std::integral_constant<int, 3>{});
+         else
+             launch_giant_p(std::true_type{}, std::integral_constant<int, 0>{});
+     }
+@@ -3488,7 +3507,17 @@
+                     else if (dnum == 2)
+                         launch_shared_dnum(std::true_type{}, std::integral_constant<int, 2>{});
+                     else
++                    {
++                        if constexpr (kItems == 4)
++                        {
++                            if (dnum == 3)
++                            {
++                                launch_shared_dnum(std::true_type{}, std::integral_constant<int, 3>{});
++                                return;
++                            }
++                        }
+                         launch_shared_dnum(std::true_type{}, std::integral_constant<int, 0>{});
++                    }
+                 }
+                 else
+                 {

@@ -1,0 +1,372 @@
+--- a/src/poseidon/gpu/gpu_bootstrap_profile.cpp
++++ b/src/poseidon/gpu/gpu_bootstrap_profile.cpp
+@@ -953,8 +953,9 @@
+     const auto parameters = context.parameters_literal();
+     const bool bounded_keys =
+         options.level_special_modulus == GpuResNet20ManualOptions::LevelSpecialModulus::Secure;
+-    if (bounded_keys && options.sparse_secret_hamming_weight && sparse_low_p_count() == 0)
+-        throw std::invalid_argument("bounded bootstrap requires a low-modulus sparse switching key");
++    if ((bounded_keys || options.complex_native_output) && options.sparse_secret_hamming_weight &&
++        sparse_low_p_count() != 2)
++        throw std::invalid_argument("sparse bootstrap requires Q2/P2 for the switch to the ephemeral key");
+     // The saved Q50 chain, or Q49 when the application leaves out one of the
+     // convolution primes below the Boot (its merged-mask convolution uses two
+     // levels). The Boot's own primes are the same physical primes either way:
+@@ -962,7 +963,7 @@
+     const std::size_t full_q = parameters ? parameters->q().size() : 0;
+     const std::size_t full_p = parameters ? parameters->p().size() : 0;
+     if (!parameters || parameters->log_n() != 16 || parameters->log_slots() != 15 ||
+-        full_q < 34 || full_q > 50 || full_p < (full_q + 1) / 2 || full_p > 25 ||
++        full_q < 34 || full_q > 50 || (options.complex_native_output ? (full_q != 34 || full_p != 9) : full_p < (full_q + 1) / 2) || full_p > 25 ||
+         parameters->q0_level() != 1)
+         throw std::invalid_argument("manual ResNet20 Boot requires N65536, valid Q/P chain, q0 level 1 and 32768 slots");
+     const std::size_t output_q = options.target_output_q ? options.target_output_q : (full_q - 19);
+@@ -986,15 +987,30 @@
+                            options.k, 0, options.sine_degree);
+     if (options.full_coefficients)
+         polynomial.enable_full_cosine_coefficients();
++    // Narrow the message part of the phase before the lift; integer wraps
++    // still occupy whole periods. The complex merge restores this factor.
++    constexpr std::uint32_t preparation_ratio = 32;
++    const std::uint32_t message_divisor = options.complex_native_output ? 4 : 1;
+     GpuBootstrapProfileConfig config;
++    auto s2c = make_slot_to_coeff_matrix_group(context, encoder, 5, 1.0,
++        config, application_scale, s2c_min_scale, 1.0 / message_divisor);
++    const double preparation_target = std::exp2(std::round(std::log2(
++        context.crt_context()->q0() / preparation_ratio)));
++    double raised_scale = working_scale;
++    if (options.complex_native_output)
++    {
++        const double s2c_scale = planned_dft_output_scale(context, application_scale, s2c);
++        // Preserve the native EvalMod scale schedule before folding its output to 2^50.
++        raised_scale = s2c_scale * std::round(preparation_target / s2c_scale) *
++            polynomial.q_div() * preparation_ratio;
++    }
++    // A lift by q0 must advance the normalized input by exactly one sine period.
+     const double c2s_scaling = polynomial.q_div() /
+-        (polynomial.k() * polynomial.sc_fac() * polynomial.q_diff());
+-    if (std::abs(options.k * context.crt_context()->q0() * c2s_scaling / working_scale - 1) > 1e-12)
++        (polynomial.k() * polynomial.sc_fac() * polynomial.q_diff()) * (raised_scale / working_scale);
++    if (std::abs(options.k * context.crt_context()->q0() * c2s_scaling / raised_scale - 1) > 1e-12)
+         throw std::invalid_argument("manual ResNet20 Boot integer-period contract failed");
+     auto c2s = make_coeff_to_slot_matrix_group(context, encoder, c2s_scaling,
+-        config, working_scale, working_scale, c2s_plaintext_scale);
+-    auto s2c = make_slot_to_coeff_matrix_group(context, encoder, 5, 1.0,
+-        config, application_scale, s2c_min_scale);
++        config, raised_scale, working_scale, c2s_plaintext_scale);
+     const std::vector<std::uint32_t> expected_drops{1, 1, 2};
+     const auto c2s_drops = dft_stage_rescale_counts(c2s);
+     if (dft_stage_rescale_counts(s2c) != expected_drops ||
+@@ -1006,12 +1022,13 @@
+     if (c2s_consumed == 0 || c2s_consumed >= full_q)
+         throw std::invalid_argument("manual ResNet20 Boot C2S exhausted Q chain");
+     const std::size_t c2s_output_q = full_q - c2s_consumed;
+-    const double c2s_scale = planned_dft_output_scale(context, working_scale, c2s);
++    const double c2s_scale = planned_dft_output_scale(context, raised_scale, c2s);
+     const auto c2s_id = context.crt_context()->parms_id_map().at(c2s_output_q - 1);
+     polynomial.set_level_start(static_cast<std::uint32_t>(c2s_output_q - 1));
+     GpuEvalModUploadOptions upload_options;
+     upload_options.dynamic_rescale = true;
+     upload_options.polynomial_log_split = options.log_split;
++    upload_options.retain_planned_leaf_scale = options.complex_native_output;
+     upload_options.flat_bsgs_b8 = false;
+     upload_options.virtual_degree_bound = false;
+     upload_options.lead_leaf_resplit = false;
+@@ -1025,11 +1042,16 @@
+         throw std::invalid_argument("manual ResNet20 Boot EvalMod ended below target output Q (" +
+                                     std::to_string(native.output_q_count) + " < " +
+                                     std::to_string(output_q) + ")");
+-    const double alpha = application_scale / native.output_scale;
+-    if (!(alpha > 0 && alpha < 1))
++    const double output_scale = options.complex_native_output ? std::exp2(50.0) : application_scale;
++    const double alpha = output_scale / native.output_scale;
++    if (!(alpha > 0 && alpha <= 1) || (options.complex_native_output && native.output_q_count != output_q))
+         throw std::invalid_argument("manual ResNet20 Boot output fold is invalid");
+     // The fold passes through every double-angle squaring.
+-    const double seed = std::pow(alpha, 1.0 / std::ldexp(1.0, static_cast<int>(options.double_angle)));
++    // The rounded Q2 integer also scales the message. Undo its gain on the
++    // EvalMod values without changing the ciphertext scale or its modulus.
++    const double message_gain_correction = working_scale / raised_scale;
++    const double seed = std::pow(alpha * message_gain_correction,
++        1.0 / std::ldexp(1.0, static_cast<int>(options.double_angle)));
+     Polynomial coefficients = polynomial.sine_poly();
+     for (auto &coefficient : coefficients.data()) coefficient *= seed;
+ 
+@@ -1061,17 +1083,16 @@
+     data.linear_transform_mode = GpuLinearTransformMode::DoubleHoistBsgs;
+     data.allow_environment_linear_transform_override = false;
+     data.slot_to_coeff_first = true;
+-    data.real_evalmod_projection_safe = true;
++    data.real_evalmod_projection_safe = !options.complex_native_output;
+     data.input_q_count = 6;
+     data.input_scale = application_scale;
+     data.output_scale_multiplier = alpha;
+-    data.slot_to_coeff_output_scale = application_scale;
++    data.slot_to_coeff_output_scale = output_scale;
+     data.q0_parms_id = context.crt_context()->parms_id_map().at(1);
+-    data.q0_over_message_ratio = std::exp2(std::round(std::log2(
+-        context.crt_context()->q0() / 32)));
+-    data.raised_scale_override = working_scale;
+-    data.project_real = true;
+-    data.output_ratio = 32;
++    data.q0_over_message_ratio = preparation_target;
++    data.raised_scale_override = raised_scale;
++    data.project_real = !options.complex_native_output;
++    data.output_ratio = preparation_ratio * message_divisor;
+     data.eval_mod = std::move(eval_mod);
+     data.coeff_to_slot_matrix_qp = GpuUploader::upload_linear_matrix_group_qp(
+         c2s, context, cuda_device_id, 1, true);
+--- a/src/poseidon/gpu/gpu_bootstrap_profile.h
++++ b/src/poseidon/gpu/gpu_bootstrap_profile.h
+@@ -105,6 +105,7 @@
+     double c2s_log_scale = 0.0;
+     double s2c_log_scale = 45.0;
+     std::uint32_t target_output_q = 0;
++    bool complex_native_output = false;
+ };
+ 
+ /**
+--- a/src/poseidon/gpu/gpu_evaluator.cpp
++++ b/src/poseidon/gpu/gpu_evaluator.cpp
+@@ -21,6 +21,14 @@
+ #include <functional>
+ #include <string>
+ #include <utility>
++
++namespace {
++const char *s2c_kernel_option(const char *name, const char *default_value)
++{
++    const char *value = std::getenv(name);
++    return value && *value ? value : default_value;
++}
++} // namespace
+ 
+ namespace poseidon
+ {
+@@ -3601,7 +3609,7 @@
+     GpuCiphertextData &destination0,
+     GpuCiphertextData &destination1) const
+ {
+-    const char *enabled = std::getenv("POSEIDON_GPU_RELIN_PAIR");
++    const char *enabled = s2c_kernel_option("POSEIDON_GPU_RELIN_PAIR", "1");
+     if (enabled == nullptr || std::string(enabled) != "1") return false;
+     if (&destination0 == &destination1)
+         throw std::invalid_argument("try_relinearize_pair: outputs must be distinct");
+@@ -6451,7 +6459,7 @@
+                 {
+                     return false;
+                 }
+-                const char *raw = std::getenv("POSEIDON_SKIP_GIANT_Q_COPY");
++                const char *raw = s2c_kernel_option("POSEIDON_SKIP_GIANT_Q_COPY", "1");
+                 return !(raw && *raw && std::string(raw) == "0");
+             }();
+             if (batched_giant_hoist)
+@@ -6476,7 +6484,7 @@
+             {
+                 return false;
+             }
+-            const char *raw = std::getenv("POSEIDON_SKIP_GIANT_Q_COPY");
++            const char *raw = s2c_kernel_option("POSEIDON_SKIP_GIANT_Q_COPY", "1");
+             return !(raw && *raw && std::string(raw) == "0");
+         }();
+ 
+@@ -7367,7 +7375,8 @@
+     const GpuRelinKeysData &relin_keys,
+     const GpuGaloisKeysData &galois_keys,
+     GpuBootstrapWorkspace &workspace,
+-    GpuCiphertextData &destination_ciphertext) const
++    GpuCiphertextData &destination_ciphertext,
++    bool real_only) const
+ {
+     const auto linear_transform_mode =
+         bootstrap_data.allow_environment_linear_transform_override
+@@ -7419,7 +7428,6 @@
+     // 32*Re(f(real) + i*f(imag)). Both CtS outputs hold real slots and f has
+     // real coefficients, so i*f(imag) is purely imaginary and the projection
+     // keeps exactly f(real); the imaginary CtS output and EvalMod are skipped.
+-    const bool real_only = opt_flag(OptFlag::BootRealOnly);
+     if (real_only &&
+         (!bootstrap_data.real_evalmod_projection_safe ||
+          !bootstrap_data.slot_to_coeff_first || !bootstrap_data.project_real ||
+@@ -7601,7 +7609,20 @@
+         NvtxRange range("StC");
+         if (bootstrap_data.slot_to_coeff_first)
+         {
+-            if (!bootstrap_data.project_real || bootstrap_data.output_ratio != 32)
++
++            if (!bootstrap_data.project_real)
++            {
++                multiply_plain(workspace.eval_mod_imag, bootstrap_data.plus_i_plaintext, workspace.scratch0);
++                add(workspace.eval_mod_real, workspace.scratch0, workspace.scratch1);
++                multiply_scalar(workspace.scratch1, bootstrap_data.output_ratio, destination_ciphertext);
++                const double folded = destination_ciphertext.meta.scale * bootstrap_data.output_scale_multiplier;
++                const double target = bootstrap_data.slot_to_coeff_output_scale;
++                if (!(std::abs(std::log2(folded / target)) <= 1e-12))
++                    throw std::runtime_error("complex Boot output scale disagrees with its coefficient fold");
++                destination_ciphertext.meta.scale = target;
++                return;
++            }
++            if (bootstrap_data.output_ratio != 32)
+                 throw std::invalid_argument("manual S2C-first Boot requires real projection and ratio 32");
+             if (real_only)
+             {
+--- a/src/poseidon/gpu/gpu_evaluator.h
++++ b/src/poseidon/gpu/gpu_evaluator.h
+@@ -980,7 +980,8 @@
+         const GpuRelinKeysData &relin_keys,
+         const GpuGaloisKeysData &galois_keys,
+         GpuBootstrapWorkspace &workspace,
+-        GpuCiphertextData &destination_ciphertext) const;
++        GpuCiphertextData &destination_ciphertext,
++        bool real_only = false) const;
+ 
+     /*
+      * The steps of bootstrap(), one call each, for a Boot the compiler
+--- a/src/poseidon/gpu/gpu_keyswitch_handler.cpp
++++ b/src/poseidon/gpu/gpu_keyswitch_handler.cpp
+@@ -16,6 +16,14 @@
+ #include <string>
+ #include <utility>
+ #include <vector>
++
++namespace {
++const char *s2c_kernel_option(const char *name, const char *default_value)
++{
++    const char *value = std::getenv(name);
++    return value && *value ? value : default_value;
++}
++} // namespace
+ 
+ namespace poseidon
+ {
+@@ -2125,7 +2133,7 @@
+ 
+     ensure_hybrid_relin_rescale_x2_scratch(scratch);
+ 
+-    const char *joint_mode = std::getenv("POSEIDON_GPU_RELIN_RESCALE_MERGED");
++    const char *joint_mode = s2c_kernel_option("POSEIDON_GPU_RELIN_RESCALE_MERGED", "1");
+     if (joint_mode && std::string(joint_mode) == "1" && scratch.degree == 65536)
+     {
+         NvtxRange joint_range("keyswitch.finalize_rescale_x2.merged_correction");
+@@ -3984,7 +3992,7 @@
+     {
+         return false;
+     }
+-    const char *joint_mode = std::getenv("POSEIDON_GPU_RELIN_RESCALE_MERGED");
++    const char *joint_mode = s2c_kernel_option("POSEIDON_GPU_RELIN_RESCALE_MERGED", "1");
+     if (joint_mode != nullptr && std::string(joint_mode) == "0")
+     {
+         return false;
+@@ -5482,7 +5490,7 @@
+     const GpuLevelInfo &level_info) const
+ {
+     // Read at each eager call/capture; a captured graph freezes this choice.
+-    const char *raw = std::getenv("POSEIDON_GPU_RELIN_PAIR");
++    const char *raw = s2c_kernel_option("POSEIDON_GPU_RELIN_PAIR", "1");
+     if (raw == nullptr || std::string(raw) != "1") return false;
+     const auto n = level_info.degree;
+     const auto q = level_info.q_count;
+@@ -5557,7 +5565,7 @@
+     const auto p2 = checked_mul(2, p_words, "pair P scratch overflow");
+     const auto q4 = checked_mul(4, q_words, "pair Q scratch overflow");
+     const auto p4 = checked_mul(4, p_words, "pair P scratch overflow");
+-    const char *arena_raw = std::getenv("POSEIDON_GPU_RELIN_PAIR_ARENA");
++    const char *arena_raw = s2c_kernel_option("POSEIDON_GPU_RELIN_PAIR_ARENA", "1");
+     const bool compact_arena = arena_raw != nullptr && std::string(arena_raw) == "1";
+     GpuWord *c2_coeff, *weighted, *modup_q, *modup_p, *partial_q, *partial_p;
+     GpuWord *accum_q, *accum_p, *p_coeff, *converted_coeff, *converted_ntt;
+@@ -5728,7 +5736,7 @@
+     const GpuConstCiphertextView *extra0,
+     const GpuConstCiphertextView *extra1) const
+ {
+-    const char *raw = std::getenv("POSEIDON_GPU_RELIN_PAIR");
++    const char *raw = s2c_kernel_option("POSEIDON_GPU_RELIN_PAIR", "1");
+     if (raw == nullptr || std::string(raw) != "1" || !opt_flag(OptFlag::RelinRescalePair))
+         return false;
+     if (drop_count != 1 && drop_count != 2) return false;
+@@ -5893,7 +5901,7 @@
+     const auto p4 = checked_mul(4, p_words, "pair rr P scratch overflow");
+     const auto drop_words = checked_mul(drop_count, n, "pair rr drop scratch overflow");
+     const auto tail_pair_words = checked_mul(8, drop_words, "pair rr tail scratch overflow");
+-    const char *arena_raw = std::getenv("POSEIDON_GPU_RELIN_PAIR_ARENA");
++    const char *arena_raw = s2c_kernel_option("POSEIDON_GPU_RELIN_PAIR_ARENA", "1");
+     const bool compact_arena = arena_raw != nullptr && std::string(arena_raw) == "1";
+     GpuWord *c2_coeff, *weighted, *modup_q, *modup_p, *partial_q, *partial_p;
+     GpuWord *accum_q, *accum_p, *p_coeff, *converted_coeff, *converted_ntt;
+--- a/src/poseidon/gpu/gpu_opt_flags.h
++++ b/src/poseidon/gpu/gpu_opt_flags.h
+@@ -80,12 +80,26 @@
+ inline std::atomic<int> g_opt_flag_values[static_cast<int>(OptFlag::Count)];
+ inline std::atomic<bool> g_opt_flags_loaded{false};
+ 
++// Defaults for the private S2C backend. Environment overrides are read-only.
++inline int s2c_default_flag(OptFlag flag)
++{
++    switch (flag) {
++    case OptFlag::ModupTile: case OptFlag::PToQTile: return 8;
++    case OptFlag::PToQDualTile: return 6;
++    case OptFlag::SharedBabyItems: return 4;
++    case OptFlag::FusedModdown: return 2;
++    case OptFlag::SmallKernels: case OptFlag::BootRealOnly:
++    case OptFlag::ConvStreams: case OptFlag::ReluStreams: case OptFlag::Count: return 0;
++    default: return 1;
++    }
++}
++
+ inline void reload_opt_flags()
+ {
+     for (int i = 0; i < static_cast<int>(OptFlag::Count); ++i)
+     {
+         const char *raw = std::getenv(opt_flag_env_name(static_cast<OptFlag>(i)));
+-        const int value = (raw == nullptr || *raw == '\0') ? 0 : std::atoi(raw);
++        const int value = (raw == nullptr || *raw == '\0') ? s2c_default_flag(static_cast<OptFlag>(i)) : std::atoi(raw);
+         g_opt_flag_values[i].store(value, std::memory_order_relaxed);
+     }
+     g_opt_flags_loaded.store(true, std::memory_order_release);
+--- a/src/poseidon/gpu/gpu_uploader.cpp
++++ b/src/poseidon/gpu/gpu_uploader.cpp
+@@ -2337,7 +2337,7 @@
+                 double effective_leaf_scale = leaf_scale;
+                 const std::size_t planned_q_count =
+                     static_cast<std::size_t>(leaf_level) + 1;
+-                if (leaf_q_count < planned_q_count)
++                if (leaf_q_count < planned_q_count && !options.retain_planned_leaf_scale)
+                 {
+                     effective_leaf_scale = requested_scale;
+                     std::size_t extra_from_top = 0;
+--- a/src/poseidon/gpu/gpu_uploader.h
++++ b/src/poseidon/gpu/gpu_uploader.h
+@@ -42,6 +42,7 @@
+     std::optional<bool> flat_bsgs_b8;
+     std::optional<bool> virtual_degree_bound;
+     std::optional<bool> lead_leaf_resplit;
++    bool retain_planned_leaf_scale = false;
+ };
+ 
+ /**
+--- a/src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu
++++ b/src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu
+@@ -9,6 +9,14 @@
+ #include <stdexcept>
+ #include <string>
+ #include <type_traits>
++
++namespace {
++const char *s2c_kernel_option(const char *name, const char *default_value)
++{
++    const char *value = std::getenv(name);
++    return value && *value ? value : default_value;
++}
++} // namespace
+ 
+ namespace poseidon
+ {
+@@ -3438,7 +3446,7 @@
+         (p_count * degree + block_size - 1) / block_size);
+ 
+     int shared_baby_mode = 2;
+-    if (const char *raw = std::getenv("POSEIDON_SHARED_BABY_MAC"))
++    if (const char *raw = s2c_kernel_option("POSEIDON_SHARED_BABY_MAC", "2"))
+     {
+         if (*raw)
+         {

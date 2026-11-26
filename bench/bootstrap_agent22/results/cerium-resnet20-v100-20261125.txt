@@ -1,0 +1,32 @@
+Cerium native ResNet20 bootstrap in a full CUDA Graph replay, 2026-11-25
+Physical GPU 1, Tesla V100-SXM2-32GB, CUDA 12.2, single physical and logical GPU.
+Cerium-cu122-single, ResNet20 compiled artifact from upstream 6b487041f69bcd04fb2138b8be87635ddeb128d6 plus the local single-GPU compatibility runtime.
+Entry point: benchmarks/resnet20/resnet_runner.py, use_cudagraphs=True, one CIFAR-10 image (id=0), 1 checked warmup and 3 timed replays of the same encrypted input.
+Generated fresh OS-random secrets and corresponding evaluation keys. Regenerated plaintexts. All preparation, initial upload and decoding outside online timing.
+Compiled main_1gpus/functions0 calls bootstrap_32K_33_1gpus 20 times and relu 19 times. In the runtime graph these are two distinct child graph handles with the same counts.
+Timing method: CUDA event record nodes in the original parent graph on both sides of each of its 20 bootstrap child nodes. Original dependencies retained. No per-call host synchronization. Read elapsed times after each complete replay.
+core_ms: GPU elapsed time around the child graph alone, after its input argument copies and before its output copies. This includes time between kernels.
+inclusive_ms: GPU elapsed time between the runtime Call's enclosing empty nodes, including device-to-device argument and return copies. Both intervals exclude caller operations outside Call.
+Per-call values are in graph construction order. The first pair of rows is the warmup, the following three pairs are timed.
+Summary, excluding warmup:
+core_median_ms=75.276287 core_min_ms=75.112450 core_max_ms=75.433983 inclusive_median_ms=75.461632 (60 calls each)
+core_total_per_image_ms=1505.364983,1505.439735,1505.580024 median_ms=1505.439735
+inclusive_total_per_image_ms=1509.092339,1509.174278,1509.289993 median_ms=1509.174278
+graph_online_wall_median_ms=2061.613139 core_share_of_wall_pct=73.0224
+Comparison source: adjacent v100-real-only-20261125.txt, s2c-first-degree22-da3-q43-dnum4 (dual branch, standalone), CUDA event median 59.9486713 ms across 18 calls.
+
+SECRET_AUDIT role=main degree=65536 actual_HW=32768 nonzero=PASS ternary=PASS RNS=PASS
+SECRET_AUDIT role=ephemeral degree=65536 actual_HW=32 nonzero=PASS ternary=PASS RNS=PASS
+RESNET_METER graph_boot_calls=20 graph_relu_calls=19
+RESNET_METER_core_ms 76.9218597 76.5501404 75.8999023 75.5722275 75.4780197 75.4288635 75.4237442 75.4882584 75.5793915 75.3766403 75.4831390 75.4933777 75.3786850 75.3080292 75.5691528 75.2537613 75.4257889 75.4626541 75.2455673 75.3530884
+RESNET_METER_inclusive_ms 77.1000290 76.7508469 76.0862732 75.7688293 75.6766739 75.6101151 75.6152344 75.6715546 75.7729263 75.5568619 75.6725769 75.6889572 75.5732498 75.5066910 75.7647324 75.4462738 75.6049957 75.6428833 75.4196472 75.5292130
+RESNET_METER_core_ms 75.2803802 75.1912994 75.2046051 75.3121262 75.3397751 75.2691193 75.2465897 75.3551331 75.1513596 75.3192978 75.1953888 75.3991699 75.2773132 75.2926712 75.1964188 75.2281570 75.2005157 75.3786850 75.1882248 75.3387527
+RESNET_METER_inclusive_ms 75.4575348 75.3817596 75.3797150 75.4913254 75.5415039 75.4626541 75.4370575 75.5292130 75.3438721 75.5005417 75.3950729 75.5916824 75.4728928 75.4872284 75.3919983 75.4206696 75.3766403 75.5691528 75.3561630 75.5056610
+COMPAT_SAMPLE index=1 wall_ms=2061.909676995
+RESNET_METER_core_ms 75.2650223 75.3018875 75.2322540 75.3223648 75.2885742 75.2271347 75.3213425 75.2127991 75.3100815 75.2527390 75.3776627 75.3766403 75.3244171 75.2373734 75.3407974 75.2773132 75.2015381 75.3264618 75.1308823 75.1124496
+RESNET_METER_inclusive_ms 75.4380798 75.4954224 75.4206696 75.5118103 75.4841614 75.4114532 75.5210266 75.3848343 75.5046387 75.4329605 75.5773468 75.5732498 75.5169296 75.4298859 75.5353622 75.4718704 75.3879013 75.5005417 75.2998428 75.2762909
+COMPAT_SAMPLE index=2 wall_ms=2061.261066003
+RESNET_METER_core_ms 75.4339828 75.2230377 75.2250900 75.1626205 75.2773132 75.2660446 75.2547836 75.1851501 75.3254395 75.3428497 75.3879013 75.3919983 75.2752609 75.2537613 75.2250900 75.1769638 75.2240677 75.3510437 75.2988129 75.2988129
+RESNET_METER_inclusive_ms 75.6039658 75.4135056 75.4155502 75.3377304 75.4606094 75.4575348 75.4472961 75.3561630 75.5087357 75.5312653 75.5814438 75.5855331 75.4667511 75.4503708 75.4196472 75.3704987 75.4053116 75.5374069 75.4759674 75.4647064
+COMPAT_SAMPLE index=3 wall_ms=2061.613138998
+COMPAT_RESULT {"status": "passed", "physical_gpus_used": 1, "logical_gpus": 1, "communication_simulated": false, "warmups": 1, "formal_samples": 3, "wall_ms": [2061.9096769951284, 2061.2610660027713, 2061.6131389979273], "median_wall_ms": 2061.6131389979273, "timing": "program.run wall; preparation/upload/decryption excluded", "repeat_check": "decoded outputs exactly equal; not an RNS-bitwise claim", "validation": {"image_id": 0, "prediction": 3, "label": 3, "real_logits": [-6.573933264822866, 2.7244068985339505, 1.5951141968508458, 22.029926682156542, -6.037362777317951, 5.867351908393754, -3.652133507224355, -7.449700487346781, -2.039491537753946, -6.462905699426724], "imag_max": 3.165385370065605e-09, "cpu_real_logits": [-6.598233794486726, 2.7671094771243556, 1.5956551728293924, 22.052389284101622, -6.0685735557621285, 5.857743197363845, -3.651918831796816, -7.490515977113183, -2.0325101798266036, -6.429567037498251], "max_complex_logit_error": 0.04270257859040526, "logit_threshold": 0.1, "scope": "sample prediction and real-arithmetic CPU logits; not dataset accuracy"}}

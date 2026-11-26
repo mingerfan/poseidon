@@ -294,11 +294,38 @@ void test_binary_rotation_keys()
     }
 }
 
+void test_secret_audit()
+{
+    const auto primes = poseidon::CoeffModulus::Create(4096, {40, 40, 40, 40});
+    auto context = [&](unsigned weight) {
+        return poseidon::PoseidonContext(poseidon::ParametersLiteral(CKKS, 12, 11, 40,
+            weight, 0, poseidon::Modulus(0), {primes[0], primes[1]}, {primes[2], primes[3]},
+            poseidon::sec_level_type::none));
+    };
+    auto expect_rejection = [](const auto &operation) {
+        try { operation(); }
+        catch (const std::invalid_argument &) { return; }
+        throw std::runtime_error("invalid secret was accepted");
+    };
+    auto valid = context(192);
+    poseidon::KeyGenerator original(valid);
+    require(original.actual_secret_weight() == 192, "generated secret does not have the requested weight");
+    auto zero = original.secret_key();
+    std::fill_n(zero.data().data(), zero.data().coeff_count(), 0);
+    expect_rejection([&] { poseidon::KeyGenerator rejected(valid, zero); });
+    auto inconsistent = original.secret_key();
+    // Zero one complete NTT limb of a valid key. Every other limb is intact.
+    std::fill_n(inconsistent.data().data()+4096, 4096, 0);
+    expect_rejection([&] { poseidon::KeyGenerator rejected(valid, inconsistent); });
+    expect_rejection([&] { poseidon::KeyGenerator rejected(context(0)); });
+    expect_rejection([&] { poseidon::KeyGenerator rejected(context(4097)); });
+}
+
 void test_runtime_reuse()
 {
     constexpr std::uint32_t degree = 4096;
     const auto moduli = poseidon::CoeffModulus::Create(degree, std::vector<int>(9, 40));
-    poseidon::ParametersLiteral parameters(CKKS, 12, 11, 40, 0, 0, poseidon::Modulus(0),
+    poseidon::ParametersLiteral parameters(CKKS, 12, 11, 40, 192, 0, poseidon::Modulus(0),
         std::vector<poseidon::Modulus>(moduli.begin(), moduli.begin() + 7),
         std::vector<poseidon::Modulus>(moduli.begin() + 7, moduli.end()), poseidon::sec_level_type::none);
     poseidon::PoseidonContext context(parameters);
@@ -415,7 +442,7 @@ void test_rescale_value_normalization()
         const std::vector<poseidon::Modulus> q(moduli.begin(), moduli.begin() + q_count);
         const std::vector<poseidon::Modulus> p(moduli.begin() + q_count, moduli.end());
         poseidon::ParametersLiteral parameters(
-            CKKS, log_degree, log_degree - 1, input_scale, 0, 0, poseidon::Modulus(0), q, p,
+            CKKS, log_degree, log_degree - 1, input_scale, 192, 0, poseidon::Modulus(0), q, p,
             poseidon::sec_level_type::none);
         poseidon::PoseidonContext context(parameters);
         poseidon::KeyGenerator key_generator(context);
@@ -544,7 +571,7 @@ void test_rejects_low_precision_rescale()
     const std::vector<poseidon::Modulus> p(
         moduli.begin() + q_count, moduli.end());
     poseidon::ParametersLiteral parameters(
-        CKKS, 12, 11, 20, 0, 0, poseidon::Modulus(0), q, p,
+        CKKS, 12, 11, 20, 192, 0, poseidon::Modulus(0), q, p,
         poseidon::sec_level_type::none);
     poseidon::PoseidonContext context(parameters);
     poseidon::KeyGenerator key_generator(context);
@@ -582,7 +609,7 @@ void test_rescale_single_drop_50_bit_moduli()
     const std::vector<poseidon::Modulus> q(moduli.begin(), moduli.begin() + 5);
     const std::vector<poseidon::Modulus> p(moduli.begin() + 5, moduli.end());
     poseidon::ParametersLiteral parameters(
-        CKKS, 12, 11, 50, 0, 0, poseidon::Modulus(0), q, p,
+        CKKS, 12, 11, 50, 192, 0, poseidon::Modulus(0), q, p,
         poseidon::sec_level_type::none);
     poseidon::PoseidonContext context(parameters);
     poseidon::KeyGenerator key_generator(context);
@@ -647,7 +674,7 @@ void test_scale40_rescale_value_normalization()
     const std::vector<poseidon::Modulus> q(moduli.begin(), moduli.begin() + q_count);
     const std::vector<poseidon::Modulus> p(moduli.begin() + q_count, moduli.end());
     poseidon::ParametersLiteral parameters(
-        CKKS, 12, 11, 40, 0, 0, poseidon::Modulus(0), q, p,
+        CKKS, 12, 11, 40, 192, 0, poseidon::Modulus(0), q, p,
         poseidon::sec_level_type::none);
     poseidon::PoseidonContext context(parameters);
     poseidon::KeyGenerator key_generator(context);
@@ -1085,6 +1112,7 @@ int main(int argc, char **argv)
             run_test("single-drop Rescale on 50-bit RNS words", test_rescale_single_drop_50_bit_moduli);
             return 0;
         }
+        run_test("secret weight and RNS audit rejects invalid keys", test_secret_audit);
         run_test("single-process Host AddCP", test_single_process_host_add_plain);
         run_test("decrypt_reencrypt Boot", test_decrypt_reencrypt_boot);
         run_test("binary rotation keys", test_binary_rotation_keys);

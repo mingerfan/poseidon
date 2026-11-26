@@ -221,10 +221,16 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
         PRIVATE
             poseidon_runtime_gpu_api
     )
-    add_test(
-        NAME poseidon_runtime_gpu_bootstrap_e2e
-        COMMAND poseidon_runtime_gpu_bootstrap_e2e
-    )
-    set_tests_properties(poseidon_runtime_gpu_bootstrap_e2e
-        PROPERTIES SKIP_RETURN_CODE 77)
+    add_test(NAME poseidon_runtime_gpu_bootstrap_e2e_degree59
+        COMMAND poseidon_runtime_gpu_bootstrap_e2e s2c-first-degree59-da2-q50p25)
+    add_test(NAME poseidon_runtime_gpu_bootstrap_e2e_degree30
+        COMMAND poseidon_runtime_gpu_bootstrap_e2e s2c-first-degree30-da3-q34p9)
+    # Both Q43 paths share key material and are checked on the same ciphertext.
+    add_test(NAME poseidon_runtime_gpu_bootstrap_e2e_degree22
+        COMMAND poseidon_runtime_gpu_bootstrap_e2e)
+    set_tests_properties(poseidon_runtime_gpu_bootstrap_e2e_degree59
+        poseidon_runtime_gpu_bootstrap_e2e_degree30 poseidon_runtime_gpu_bootstrap_e2e_degree22
+        PROPERTIES SKIP_RETURN_CODE 77 RESOURCE_LOCK poseidon_bootstrap_gpu)
 endif()
+add_subdirectory(s2c)
+target_link_libraries(poseidon_runtime_gpu_api PRIVATE poseidon_s2c_boot)

@@ -256,7 +256,7 @@ poseidon::ParametersLiteral make_test_parameters(
         log_n,
         log_n - 1,
         log_scale,
-        /*hamming_weight=*/0,
+        /*hamming_weight=*/192,
         q0_level,
         poseidon::Modulus(0),
         std::vector<poseidon::Modulus>{},
