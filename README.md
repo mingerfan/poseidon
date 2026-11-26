@@ -24,7 +24,7 @@ one topological prefix and reuses its existing per-device executor. Explicit
 Fence operations remain boundaries; the compiler inserts no batch Fence.
 
 Prepare supports complete CPU Encode plus upload, complete GPU Encode from
-real raw slots, and `auto` queue-based selection among legal candidates. GPU
+real raw slots, and GPU-first `auto` selection among resource-feasible candidates. GPU
 Encode uses the context degree, level and scale, with explicit cuFFT scratch,
 RNS reduction and CUDA NTT. Wide finite FP64 integer coefficients are supported
 within the context modulus range. Foreground streams have higher CUDA priority
@@ -62,9 +62,12 @@ H2D counters include Host cipher and CPU plaintext uploads; GPU raw uploads
 are counted separately, and direct setup key uploads are excluded.
 
 V4 Waterline currently supports one rank and ciphertexts with at most three
-components. Native Boot resource bounds are not implemented and cause an
-explicit error. Host decrypt/re-encrypt Boot uses the secret key and is reported
-as a test refresh, with its actual semantics stated in each model result.
+components. Configured native Boot profiles have a hard workspace allocation
+limit; their constants, keys and workspace capacity must fit the fixed reserve.
+Host decrypt/re-encrypt Boot uses the secret key and is reported as a test
+refresh, with its actual semantics stated in each model result. The current
+protocol has no automatic four-mode per-item residency assignment; GPU Prepare
+uploads raw Host slots on demand rather than keeping a persistent raw-Device input.
 Historical validation outputs are local/external archives, not bundled test
 inputs. The entire `test-results/` directory is ignored; see the
 [experiment artifact policy](docs/experiment-artifacts.md). Maintained benchmark
