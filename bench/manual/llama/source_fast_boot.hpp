@@ -274,7 +274,8 @@ inline HostFastBootBundle prepare_host_fast_boot_bundle(
     }
     const auto t_sub=Clock::now();
     std::vector<std::unique_ptr<poseidon::PoseidonContext>> sub_ctxs(specs.size());
-    #pragma omp parallel for schedule(dynamic, 1)
+    // Construct bands sequentially so each PoseidonContext uses all OpenMP threads
+    // inside CreateNTTTables and CrtContext::validate without nested-OMP serialization.
     for(std::size_t i=0;i<specs.size();++i) {
         poseidon::ParametersLiteral lit=global;
         lit.set_modulus(
@@ -401,7 +402,7 @@ inline void install_fast_runtime_levels_from_bundle(Runtime &r,const HostFastBoo
             for(auto q:b.qs)(*galois_map)[q]=band_galois[i];
         }
         GpuParameterData donor(b.sub,dev,b.qs);
-        for(auto q:b.qs)r.parameters.adopt_level(donor.take_level_by_q_count(q));
+        for(auto q:b.qs)r.parameters.adopt_or_insert_level(donor.take_level_by_q_count(q));
     }
     if(!gpu_cache_hit&&!h.level_gpu_keys_path.empty()) {
         const auto ts=Clock::now();
@@ -479,7 +480,7 @@ inline void install_fast_runtime_levels(
             for(auto q:b.qs)(*galois_map)[q]=g_gpu;
         }
         GpuParameterData donor(sub,dev,b.qs);
-        for(auto q:b.qs)r.parameters.adopt_level(donor.take_level_by_q_count(q));
+        for(auto q:b.qs)r.parameters.adopt_or_insert_level(donor.take_level_by_q_count(q));
     }
     r.relin.level_keys=std::move(relin_map);
     r.galois.level_keys=std::move(galois_map);

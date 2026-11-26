@@ -48,6 +48,7 @@ void configure_safe_implementation(cerium_source::manual::Mode mode=cerium_sourc
         fixed("LLAMA_FAST_NONLINEAR","0");
     }
     fixed("LLAMA_SCALAR_CACHE","1");fixed("LLAMA_ADD_PREFIX","1");fixed("POSEIDON_NTT_ALGO","fourstep");
+    fixed("POSEIDON_GPU_SKIP_MONTGOMERY_TABLES","1");
     fixed("POSEIDON_GPU_SSE_LOW_P","2");fixed("POSEIDON_RESCALE_X2","1");fixed("POSEIDON_MANUAL_BOOT_RANGE_EXPERIMENT","1");
     for(const auto *name:{"LLAMA_DIAG_DUMP_ACTIVE","LLAMA_PERIODIC_GPU_LIBRARY","POSEIDON_GPU_KEYLOAD_TRACE"})
         if(const char *p=std::getenv(name);p&&*p&&std::string(p)!="0")throw std::invalid_argument(std::string("unsupported manual inherited ")+name);
@@ -106,7 +107,8 @@ int main(int argc,char **argv)try {
             throw std::invalid_argument("LLAMA_CKPT_END_LAYER out of range");
     }
     HostRuntimeKeys host_keys=HostRuntimeKeys::create(literal,source_rotations(),dev_key_cache);
-    Runtime runtime(host_keys,0);
+    const bool defer_fast_p=(input.plan.mode==manual::Mode::Fast&&fast_boot::fast_p_enabled());
+    Runtime runtime(host_keys,0,defer_fast_p);
     manual::Llama model(runtime,input.plan);
     std::size_t start_layer=0;
     std::vector<CT> state;

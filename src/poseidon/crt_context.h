@@ -223,7 +223,8 @@ public:
 
 private:
     CrtContext::ContextData validate(const ParametersLiteral &params,
-                                     const vector<Modulus> &modulus_p);
+                                     const vector<Modulus> &modulus_p,
+                                     const util::RNSBase *shared_base_p = nullptr);
     CrtContext::ContextData validate(const ParametersLiteral &params);
     parms_id_type create_next_context_data(const parms_id_type &id);
 

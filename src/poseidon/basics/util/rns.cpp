@@ -655,6 +655,27 @@ void RNSTool::initialize(size_t poly_modulus_degree, const RNSBase &q, const Mod
     // Allocate memory for the bases q, B, Bsk, Bsk U m_tilde, t_gamma
     size_t base_q_size = q.size();
 
+    // CKKS (plain_modulus == 0) only uses base_q_ (encoder/decryptor) and
+    // inv_q_last_mod_q_ (rescaling). Skip the BFV-only BEHZ Bsk prime search,
+    // Bsk NTT tables, and auxiliary base converters when t_ is zero.
+    if (t_.is_zero())
+    {
+        base_q_ = allocate<RNSBase>(pool_, q, pool_);
+        uint64_t temp = 0;
+        inv_q_last_mod_q_ = allocate<MultiplyUIntModOperand>(base_q_size - 1, pool_);
+        POSEIDON_ITERATE(
+            iter(inv_q_last_mod_q_, base_q_->base()), base_q_size - 1,
+            [&](auto I)
+            {
+                if (!try_invert_uint_mod((*base_q_)[base_q_size - 1].value(), get<1>(I), temp))
+                {
+                    POSEIDON_THROW_LOGIC_ERROR("invalid rns bases");
+                }
+                get<0>(I).set(temp, get<1>(I));
+            });
+        return;
+    }
+
     // In some cases we might need to increase the size of the base B by one, namely we require
     // K * n * t * q^2 < q * prod(B) * m_sk, where K takes into account cross terms when larger size
     // ciphertexts are used, and n is the "delta factor" for the ring. We reserve 32 bits for K * n.

@@ -78,6 +78,7 @@ int main(int argc, char **argv) {
         ::setenv("LLAMA_SCALAR_CACHE", "1", 1);
         ::setenv("LLAMA_ADD_PREFIX", "1", 1);
         ::setenv("POSEIDON_NTT_ALGO", "fourstep", 1);
+        ::setenv("POSEIDON_GPU_SKIP_MONTGOMERY_TABLES", "1", 0);
         ::setenv("POSEIDON_GPU_SSE_LOW_P", "2", 1);
         ::setenv("POSEIDON_RESCALE_X2", "1", 1);
         ::setenv("POSEIDON_MANUAL_BOOT_RANGE_EXPERIMENT", "1", 1);
@@ -85,6 +86,35 @@ int main(int argc, char **argv) {
         const auto literal = parameters_from_fixture(fixture.c_str());
         require_cerium_parameters(literal);
         const auto rots = source_rotations();
+
+        // ------------------------------------------------------------------
+        // 0) PoseidonContext + GpuParameterData build benchmark (full vs sparse)
+        // ------------------------------------------------------------------
+        {
+            ScopedRmm rmm(0);
+            const auto t_ctx = Clock::now();
+            poseidon::PoseidonContext ctx(literal);
+            const double ctx_s = seconds(t_ctx);
+
+            const auto t_full = Clock::now();
+            GpuParameterData full_params(ctx, 0);
+            const double full_s = seconds(t_full);
+            const double full_gib = double(full_params.allocated_bytes()) / double(1ULL << 30);
+
+            const auto t_sp = Clock::now();
+            GpuParameterData sparse_params(ctx, 0, fast_runtime_global_q_counts(49), true);
+            const double sparse_s = seconds(t_sp);
+            const double sparse_gib = double(sparse_params.allocated_bytes()) / double(1ULL << 30);
+
+            std::cout << std::fixed << std::setprecision(3)
+                      << "TEST0_CTX_AND_PARAMS ctx_s=" << ctx_s
+                      << " full_levels=" << full_params.level_count()
+                      << " full_params_s=" << full_s
+                      << " full_params_gib=" << full_gib
+                      << " sparse_levels=" << sparse_params.level_count()
+                      << " sparse_params_s=" << sparse_s
+                      << " sparse_params_gib=" << sparse_gib << " PASS\n";
+        }
 
         // ------------------------------------------------------------------
         // 1) Parallel Galois keygen benchmark (1 thread vs multi-thread)
@@ -154,8 +184,19 @@ int main(int argc, char **argv) {
             poseidon::CKKSEncoder enc(hk.context);
             auto bundle = fast_boot::prepare_host_fast_boot_bundle(
                 hk.context, kg, enc, rots, pub_dir.string(), key_dir.string());
-            Runtime rt(hk, 0);
+            Runtime rt(hk, 0, true);
             fast_boot::install_fast_runtime_levels_from_bundle(rt, bundle);
+            // Verify canonical modulus-chain ordering after sparse adopt_or_insert_level.
+            if (rt.parameters.level_count() != 50 || rt.parameters.get_first_q_level().q_count != 49) {
+                throw std::runtime_error("unexpected level_count or first_q_level after sparse band install");
+            }
+            for (std::size_t q = 49; q >= 2; --q) {
+                const auto &cur = rt.parameters.get_level_by_q_count(q);
+                const auto &nxt = rt.parameters.get_next_level(cur.parms_id);
+                if (nxt.q_count != q - 1 || nxt.p_count != 0) {
+                    throw std::runtime_error("broken get_next_level chain at q=" + std::to_string(q));
+                }
+            }
             manual_backend::SubmissionOwner owner;
             auto pair = fast_boot::make_fast_profile_pair(rt, owner, &bundle, pub_dir.string());
             cold_setup_s = seconds(t0);
@@ -227,8 +268,19 @@ int main(int argc, char **argv) {
                 hk.context, kg, enc, rots, pub_dir.string(), key_dir.string());
             if (!bundle.keys_loaded_from_cache || bundle.has_cpu_dft)
                 throw std::runtime_error("expected both fast_boot key cache hit and skipped CPU DFT");
-            Runtime rt(hk, 0);
+            Runtime rt(hk, 0, true);
             fast_boot::install_fast_runtime_levels_from_bundle(rt, bundle);
+            // Verify canonical modulus-chain ordering after sparse adopt_or_insert_level.
+            if (rt.parameters.level_count() != 50 || rt.parameters.get_first_q_level().q_count != 49) {
+                throw std::runtime_error("unexpected level_count or first_q_level after sparse band install");
+            }
+            for (std::size_t q = 49; q >= 2; --q) {
+                const auto &cur = rt.parameters.get_level_by_q_count(q);
+                const auto &nxt = rt.parameters.get_next_level(cur.parms_id);
+                if (nxt.q_count != q - 1 || nxt.p_count != 0) {
+                    throw std::runtime_error("broken get_next_level chain at q=" + std::to_string(q));
+                }
+            }
             manual_backend::SubmissionOwner owner;
             auto pair = fast_boot::make_fast_profile_pair(rt, owner, &bundle, pub_dir.string());
             warm_setup_s = seconds(t0);
@@ -290,8 +342,19 @@ int main(int argc, char **argv) {
                 hk.context, kg, enc, rots, pub_dir.string(), ""); // public cache ONLY
             if (bundle.has_cpu_dft || bundle.keys_loaded_from_cache)
                 throw std::runtime_error("public-cache-only contract mismatch");
-            Runtime rt(hk, 0);
+            Runtime rt(hk, 0, true);
             fast_boot::install_fast_runtime_levels_from_bundle(rt, bundle);
+            // Verify canonical modulus-chain ordering after sparse adopt_or_insert_level.
+            if (rt.parameters.level_count() != 50 || rt.parameters.get_first_q_level().q_count != 49) {
+                throw std::runtime_error("unexpected level_count or first_q_level after sparse band install");
+            }
+            for (std::size_t q = 49; q >= 2; --q) {
+                const auto &cur = rt.parameters.get_level_by_q_count(q);
+                const auto &nxt = rt.parameters.get_next_level(cur.parms_id);
+                if (nxt.q_count != q - 1 || nxt.p_count != 0) {
+                    throw std::runtime_error("broken get_next_level chain at q=" + std::to_string(q));
+                }
+            }
             manual_backend::SubmissionOwner owner;
             auto pair = fast_boot::make_fast_profile_pair(rt, owner, &bundle, pub_dir.string());
             pub_only_setup_s = seconds(t0);

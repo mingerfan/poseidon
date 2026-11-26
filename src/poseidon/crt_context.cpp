@@ -1,4 +1,6 @@
 #include "crt_context.h"
+#include <exception>
+#include <mutex>
 
 namespace poseidon
 {
@@ -41,9 +43,31 @@ CrtContext::CrtContext(const std::shared_ptr<const ParametersLiteral> &params,
         }
     }
 
-    auto params_copy = *params;
-    auto prev_parms_id = parms_id_zero;
+    // Precompute the shared special-modulus RNSBase once instead of rebuilding
+    // it independently for every level along the modulus chain.
+    Pointer<RNSBase> shared_base_p;
+    if (!modulus_p.empty() && modulus_p.size() != 1)
+    {
+        try
+        {
+            shared_base_p = allocate<RNSBase>(pool_, modulus_p, pool_);
+        }
+        catch (const invalid_argument &)
+        {
+            POSEIDON_THROW(invalid_argument_error, "modulus_p RNSBase's constructor  fail!");
+        }
+    }
 
+    // Collect the deterministic chain of level parameter literals first, then
+    // validate/build all independent levels in parallel.
+    struct LevelSpec
+    {
+        ParametersLiteral literal;
+        uint32_t map_key;
+        parms_id_type parms_id;
+    };
+    std::vector<LevelSpec> specs;
+    auto params_copy = *params;
     if (params_copy.p().empty())  // no key switch
     {
         using_keyswitch_ = false;
@@ -52,11 +76,8 @@ CrtContext::CrtContext(const std::shared_ptr<const ParametersLiteral> &params,
     {
         auto rns_num = add_safe(params_copy.q().size(), params_copy.p().size());
         key_parms_id_ = params_copy.parms_id();
-        parms_id_map_.emplace(rns_num - 1, key_parms_id_);
-        context_data_map_.emplace(key_parms_id_,
-                                  make_shared<const ContextData>(validate(params_copy, modulus_p)));
+        specs.push_back(LevelSpec{params_copy, safe_cast<uint32_t>(rns_num - 1), key_parms_id_});
         params_copy.set_modulus(params->q(), {});
-        prev_parms_id = key_parms_id_;
     }
 
     first_parms_id_ = params_copy.parms_id();
@@ -64,15 +85,8 @@ CrtContext::CrtContext(const std::shared_ptr<const ParametersLiteral> &params,
     {
         key_parms_id_ = first_parms_id_;
     }
-    parms_id_map_.emplace(params_copy.q().size() - 1, first_parms_id_);
-    context_data_map_.emplace(first_parms_id_,
-                              make_shared<const ContextData>(validate(params_copy, modulus_p)));
-    if (prev_parms_id != parms_id_zero)
-    {
-        const_pointer_cast<ContextData>(context_data_map_.at(prev_parms_id))->next_context_data_ =
-            context_data_map_.at(params_copy.parms_id());
-    }
-    prev_parms_id = params_copy.parms_id();
+    specs.push_back(
+        LevelSpec{params_copy, safe_cast<uint32_t>(params_copy.q().size() - 1), first_parms_id_});
 
     while (params_copy.q().size() > 1)
     {
@@ -81,32 +95,58 @@ CrtContext::CrtContext(const std::shared_ptr<const ParametersLiteral> &params,
         auto rns_num = modulus_q.size();
         params_copy.set_modulus(modulus_q, {});
         auto parms_id = params_copy.parms_id();
-        parms_id_map_.emplace(rns_num - 1, parms_id);
-        context_data_map_.emplace(parms_id,
-                                  make_shared<const ContextData>(validate(params_copy, modulus_p)));
-        const_pointer_cast<ContextData>(context_data_map_.at(prev_parms_id))->next_context_data_ =
-            context_data_map_.at(params_copy.parms_id());
-        prev_parms_id = params_copy.parms_id();
+        specs.push_back(LevelSpec{params_copy, safe_cast<uint32_t>(rns_num - 1), parms_id});
     }
 
-    last_parms_id_ = prev_parms_id;
+    std::vector<std::shared_ptr<ContextData>> built(specs.size());
+    std::exception_ptr first_exc = nullptr;
+    std::mutex exc_mutex;
+
+#pragma omp parallel for schedule(dynamic, 1)
+    for (size_t i = 0; i < specs.size(); ++i)
+    {
+        try
+        {
+            built[i] = std::make_shared<ContextData>(
+                validate(specs[i].literal, modulus_p, shared_base_p.get()));
+        }
+        catch (...)
+        {
+            std::lock_guard<std::mutex> lock(exc_mutex);
+            if (!first_exc)
+            {
+                first_exc = std::current_exception();
+            }
+        }
+    }
+
+    if (first_exc)
+    {
+        std::rethrow_exception(first_exc);
+    }
+
+    // Wire maps, linked list, and chain_index in exact original order.
+    const size_t total_levels = specs.size();
+    for (size_t i = 0; i < total_levels; ++i)
+    {
+        built[i]->chain_index_ = total_levels - 1 - i;
+        if (i + 1 < total_levels)
+        {
+            built[i]->next_context_data_ = built[i + 1];
+        }
+        parms_id_map_.emplace(specs[i].map_key, specs[i].parms_id);
+        context_data_map_.emplace(specs[i].parms_id, built[i]);
+    }
+
+    last_parms_id_ = specs.back().parms_id;
 
     // Create GaloisTool
     galois_tool_ = allocate<GaloisTool>(pool_, logn, pool_);
-
-    // Set the chain_index for each context_data
-    size_t parms_count = context_data_map_.size();
-    auto context_data_ptr = context_data_map_.at(key_parms_id_);
-    while (context_data_ptr)
-    {
-        // We need to remove constness first to modify this
-        const_pointer_cast<ContextData>(context_data_ptr)->chain_index_ = --parms_count;
-        context_data_ptr = context_data_ptr->next_context_data_;
-    }
 }
 
 CrtContext::ContextData CrtContext::validate(const ParametersLiteral &params,
-                                             const vector<Modulus> &modulus_p)
+                                             const vector<Modulus> &modulus_p,
+                                             const util::RNSBase *shared_base_p)
 {
     auto context_data = CrtContext::ContextData(params, pool_);
     auto scheme_type = params.scheme();
@@ -163,16 +203,21 @@ CrtContext::ContextData CrtContext::validate(const ParametersLiteral &params,
         return context_data;
     }
 
-    Pointer<RNSBase> coeff_modulus_q;
-    try
+    Pointer<RNSBase> coeff_modulus_q_owned;
+    const RNSBase *coeff_modulus_q = coeff_modulus_base.get();
+    if (!params.p().empty())
     {
-        coeff_modulus_q = allocate<RNSBase>(pool_, params.q(), pool_);
-    }
-    catch (const invalid_argument &)
-    {
-        // Parameters are not valid
-        POSEIDON_THROW(invalid_argument_error, "RNSBase's constructor  fail!");
-        return context_data;
+        try
+        {
+            coeff_modulus_q_owned = allocate<RNSBase>(pool_, params.q(), pool_);
+            coeff_modulus_q = coeff_modulus_q_owned.get();
+        }
+        catch (const invalid_argument &)
+        {
+            // Parameters are not valid
+            POSEIDON_THROW(invalid_argument_error, "RNSBase's constructor  fail!");
+            return context_data;
+        }
     }
 
     if (scheme_type == BFV || scheme_type == BGV)
@@ -270,16 +315,21 @@ CrtContext::ContextData CrtContext::validate(const ParametersLiteral &params,
     if (!modulus_p.empty() && modulus_p.size() != 1)
     {  // not bv & has p
 
-        Pointer<RNSBase> coeff_modulus_p;
-        try
+        Pointer<RNSBase> coeff_modulus_p_owned;
+        const RNSBase *coeff_modulus_p = shared_base_p;
+        if (!coeff_modulus_p)
         {
-            coeff_modulus_p = allocate<RNSBase>(pool_, modulus_p, pool_);
-        }
-        catch (const invalid_argument &)
-        {
-            // Parameters are not valid
-            POSEIDON_THROW(invalid_argument_error, "modulus_p RNSBase's constructor  fail!");
-            return context_data;
+            try
+            {
+                coeff_modulus_p_owned = allocate<RNSBase>(pool_, modulus_p, pool_);
+                coeff_modulus_p = coeff_modulus_p_owned.get();
+            }
+            catch (const invalid_argument &)
+            {
+                // Parameters are not valid
+                POSEIDON_THROW(invalid_argument_error, "modulus_p RNSBase's constructor  fail!");
+                return context_data;
+            }
         }
 
         try

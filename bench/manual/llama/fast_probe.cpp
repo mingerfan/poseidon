@@ -357,6 +357,7 @@ int main(int argc,char **argv)try {
     ::setenv("LLAMA_SCALAR_CACHE","1",1);
     ::setenv("LLAMA_ADD_PREFIX","1",1);
     ::setenv("POSEIDON_NTT_ALGO","fourstep",1);
+    ::setenv("POSEIDON_GPU_SKIP_MONTGOMERY_TABLES","1",0);
     ::setenv("POSEIDON_GPU_SSE_LOW_P","2",1);
     ::setenv("POSEIDON_RESCALE_X2","1",1);
     ::setenv("POSEIDON_MANUAL_BOOT_RANGE_EXPERIMENT","1",1);
@@ -374,7 +375,7 @@ int main(int argc,char **argv)try {
         ::setenv("LLAMA_FAST_NONLINEAR","1",1);
         ::setenv("LLAMA_FAST_ATTENTION","1",1);
         std::vector<int> rots=source_rotations();
-        Runtime r(literal,false,rots);
+        Runtime r(literal,false,rots,0,true);
         fast_boot::install_fast_runtime_levels(r,rots);
         manual_backend::SubmissionOwner host;
         auto built=fast_boot::make_fast_profile_pair(r,host);
@@ -625,7 +626,7 @@ int main(int argc,char **argv)try {
 
     if(argc>=3&&std::string(argv[2])=="--v2") {
         ::setenv("LLAMA_FAST_P","1",1);
-        Runtime r(literal,false,source_rotations());
+        Runtime r(literal,false,source_rotations(),0,true);
         fast_boot::install_fast_runtime_levels(r,source_rotations());
         NativeLinearAdapter lin(*r.api,r.context);
         // Diagnostic: isolate d=0 non-const, d=1, d=16, dense 1x1 (B=2), dense 4x4 (B=8)

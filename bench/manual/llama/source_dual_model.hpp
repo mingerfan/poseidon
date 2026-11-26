@@ -287,7 +287,7 @@ struct GpuWorkerContext {
         rmm::mr::set_per_device_resource(rmm::cuda_device_id{device_id}, memory.get());
         poseidon::gpu::ScopedGpuMemoryResource scoped_mem(memory.get());
 
-        runtime = std::make_unique<Runtime>(host_keys, device_id);
+        runtime = std::make_unique<Runtime>(host_keys, device_id, is_fast && fast_bundle != nullptr);
         sub_owner = std::make_unique<manual_backend::SubmissionOwner>();
         if (is_fast && fast_bundle) {
             fast_boot::install_fast_runtime_levels_from_bundle(*runtime, *fast_bundle);

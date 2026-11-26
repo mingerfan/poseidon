@@ -86,7 +86,9 @@ public:
     static HostRuntimeKeys create(const poseidon::ParametersLiteral &literal,
                                   const std::vector<int> &steps=source_rotations(),
                                   const std::string &dev_key_cache_override={}) {
+        const auto t_ctx=Clock::now();
         poseidon::PoseidonContext ctx(require_cerium_parameters(literal));
+        std::cout<<"SOURCE_SETUP stage=context_ready seconds="<<seconds(t_ctx)<<std::endl;
         const std::string cache_root=cache::dev_key_cache_dir(dev_key_cache_override);
         const char *fp_env=std::getenv("LLAMA_FAST_P");const bool fast_p=fp_env&&std::string(fp_env)=="1";
         const char *fl_env=std::getenv("LLAMA_FAST_LINEAR");const bool fast_l=fl_env&&*fl_env&&std::string(fl_env)!="0";
@@ -124,6 +126,31 @@ public:
         return HostRuntimeKeys(ctx,kg,steps);
     }
 };
+inline std::vector<std::size_t> fast_runtime_global_q_counts(std::size_t global_q) {
+    const char *fe=std::getenv("LLAMA_FAST_EVALMOD_P");
+    const bool fast_evalmod_p=fe&&*fe&&std::string(fe)=="1";
+    const std::size_t first_global=fast_evalmod_p?45:28;
+    std::vector<std::size_t> qs;
+    qs.reserve(global_q);
+    if(global_q>=1)qs.push_back(1);
+    if(global_q>=2)qs.push_back(2);
+    for(std::size_t q=first_global;q<=global_q;++q)qs.push_back(q);
+    return qs;
+}
+inline poseidon::gpu::GpuParameterData make_runtime_parameters(
+    const poseidon::PoseidonContext &ctx,int dev,bool defer_fast_p_levels) {
+    const auto t0=Clock::now();
+    const std::size_t global_q=ctx.parameters_literal()->q().size();
+    poseidon::gpu::GpuParameterData params = (defer_fast_p_levels&&global_q==49)
+        ?poseidon::gpu::GpuParameterData(ctx,dev,fast_runtime_global_q_counts(global_q),true)
+        :poseidon::gpu::GpuParameterData(ctx,dev);
+    std::cout<<"SOURCE_SETUP stage=gpu_parameters_ready device="<<dev
+             <<" levels="<<params.level_count()
+             <<" gib="<<(double(params.allocated_bytes())/double(1ULL<<30))
+             <<" sparse_defer="<<(defer_fast_p_levels&&global_q==49?"true":"false")
+             <<" seconds="<<seconds(t0)<<std::endl;
+    return params;
+}
 struct Runtime {
     int device_id=0;
     poseidon::PoseidonContext context;
@@ -139,13 +166,14 @@ struct Runtime {
     // Operator experiments may explicitly skip Boot setup and request only
     // their direct rotation keys. The model keeps the original full setup.
     Runtime(const char *fixture,bool with_boot=true,
-            const std::vector<int> &steps=source_rotations(),int dev=0)
-        :Runtime(parameters_from_fixture(fixture),with_boot,steps,dev) {}
+            const std::vector<int> &steps=source_rotations(),int dev=0,bool defer_fast_p_levels=false)
+        :Runtime(parameters_from_fixture(fixture),with_boot,steps,dev,defer_fast_p_levels) {}
     // Explicit parameter construction is for separately labelled FHE control
     // experiments. The fixture/model constructor above keeps Q49/P25 intact.
     Runtime(const poseidon::ParametersLiteral &literal,bool with_boot,
-            const std::vector<int> &steps,int dev=0)
-        :device_id(dev),context(require_cerium_parameters(literal)),keys(context),encoder(context),parameters(context,dev) {
+            const std::vector<int> &steps,int dev=0,bool defer_fast_p_levels=false)
+        :device_id(dev),context(require_cerium_parameters(literal)),keys(context),encoder(context),
+         parameters(make_runtime_parameters(context,dev,defer_fast_p_levels&&!with_boot)) {
         const auto start=Clock::now();
         std::cout<<"SOURCE_SETUP stage=cerium_geometry device="<<dev<<" N="<<context.parameters_literal()->degree()
                  <<" complex_slots="<<encoder.slot_count()<<" token_capacity="<<layout::token_capacity
@@ -183,9 +211,9 @@ struct Runtime {
         poseidon::gpu::gpu_check_cuda(cudaDeviceSynchronize(),"source setup complete");
         std::cout<<"SOURCE_SETUP stage=completed device="<<dev<<" seconds="<<seconds(start)<<std::endl;
     }
-    Runtime(const HostRuntimeKeys &shared,int dev)
+    Runtime(const HostRuntimeKeys &shared,int dev,bool defer_fast_p_levels=false)
         :device_id(dev),context(shared.context),keys(context,shared.secret_key),encoder(context),
-         parameters(context,dev),public_key(shared.public_key) {
+         parameters(make_runtime_parameters(context,dev,defer_fast_p_levels)),public_key(shared.public_key) {
         const auto start=Clock::now();
         poseidon::gpu::gpu_check_cuda(cudaSetDevice(dev),"runtime shared setup set device");
         relin=poseidon::gpu::GpuUploader::upload_relin_keys(shared.relin,dev);

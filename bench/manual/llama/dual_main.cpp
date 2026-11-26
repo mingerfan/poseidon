@@ -310,6 +310,7 @@ int main(int argc, char **argv) {
         ::setenv("LLAMA_SCALAR_CACHE", "1", 0);
         ::setenv("LLAMA_ADD_PREFIX", "1", 0);
         ::setenv("POSEIDON_NTT_ALGO", "fourstep", 1);
+        ::setenv("POSEIDON_GPU_SKIP_MONTGOMERY_TABLES", "1", 0);
         ::setenv("POSEIDON_GPU_SSE_LOW_P", "2", 1);
         ::setenv("POSEIDON_RESCALE_X2", "1", 1);
         ::setenv("POSEIDON_MANUAL_BOOT_RANGE_EXPERIMENT", "1", 1);

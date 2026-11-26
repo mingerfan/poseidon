@@ -250,7 +250,8 @@ public:
     GpuParameterData(
         const PoseidonContext &context,
         int device_id,
-        const std::vector<std::size_t> &active_q_counts);
+        const std::vector<std::size_t> &active_q_counts,
+        bool include_key_level = false);
 
     /**
      * @brief Build GPU-side parameter tables from PoseidonContext.
@@ -268,7 +269,8 @@ public:
     void build_from_poseidon_context(
         const PoseidonContext &context,
         int device_id,
-        const std::vector<std::size_t> &active_q_counts);
+        const std::vector<std::size_t> &active_q_counts,
+        bool include_key_level = false);
 
     /**
      * @brief Query level information by parms_id.
@@ -322,6 +324,16 @@ public:
      * its own hybrid key-switch tables. Order and every other level stay.
      */
     void adopt_level(GpuLevelInfo level);
+
+    /**
+     * @brief Replace the level with the same (parms_id, p_count), or insert it
+     *        in canonical modulus-chain order.
+     *
+     * Keeps any key level (p_count > 0) before q-only levels and keeps q-only
+     * levels strictly descending in q_count so get_next_level stays exact when
+     * sparse global tables are completed by per-band donor levels.
+     */
+    void adopt_or_insert_level(GpuLevelInfo level);
 
     bool empty() const;
 
